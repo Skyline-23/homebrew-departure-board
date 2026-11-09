@@ -50,10 +50,12 @@ internal sealed class FlapRenderer(StringCatalog strings)
                 ? Math.Clamp(frame.Settings.Density, 6, 32)
                 : Math.Min(32, (int)Math.Ceiling(16 / frame.Settings.Scale));
         var rowHeight = (bounds.Height - 218) / rowCount;
+        var pages = Math.Max(1, (frame.Rows.Count + rowCount - 1) / rowCount);
+        var firstRow = frame.PageCycle % pages * rowCount;
 
-        for (var index = 0; index < rowCount && index < frame.Rows.Count; index++)
+        for (var index = 0; index < rowCount && firstRow + index < frame.Rows.Count; index++)
         {
-            var row = frame.Rows[index];
+            var row = frame.Rows[firstRow + index];
             var values = new[]
             {
                 row.Time,

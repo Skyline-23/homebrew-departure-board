@@ -43,6 +43,7 @@ internal sealed class AppServices : IDisposable
     public BoardSettings Settings { get; private set; }
     public bool HasApiKey => apiKey.Length > 0;
     public event EventHandler? SettingsChanged;
+    public event EventHandler? DataChanged;
 
     public void Save(BoardSettings settings, string replacementKey)
     {
@@ -55,6 +56,7 @@ internal sealed class AppServices : IDisposable
         StartupRegistration.Apply(settings.LaunchAtLogin);
         Settings = settings;
         SettingsChanged?.Invoke(this, EventArgs.Empty);
+        _ = RefreshAsync();
     }
 
     internal void UsePreviewSettings(BoardSettings settings)
@@ -76,6 +78,13 @@ internal sealed class AppServices : IDisposable
             await Flights
                 .RefreshAsync(Settings.Airport, apiKey, Settings.RefreshSeconds, cancellation.Token)
                 .ConfigureAwait(false);
+
+            if (!cancellation.IsCancellationRequested)
+            {
+                _ = System.Windows.Application.Current.Dispatcher.BeginInvoke(() =>
+                    DataChanged?.Invoke(this, EventArgs.Empty)
+                );
+            }
         }
         catch (OperationCanceledException) when (cancellation.IsCancellationRequested)
         {

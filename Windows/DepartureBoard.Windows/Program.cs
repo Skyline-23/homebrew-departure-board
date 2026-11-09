@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using DepartureBoard.Core.Runtime;
@@ -21,7 +22,10 @@ internal static class Program
 
             if (options.Mode == LaunchMode.SelfTest)
             {
-                return WindowsSmokeTest.Run(arguments.Length > 1 ? arguments[1] : "smoke-output");
+                return WindowsSmokeTest.Run(
+                    arguments.Length > 1 ? arguments[1] : "smoke-output",
+                    arguments.Contains("--desktop")
+                );
             }
 
             using var services = new AppServices();

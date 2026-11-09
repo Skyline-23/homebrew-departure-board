@@ -73,6 +73,30 @@ var normalized = new BoardSettings
 Check(normalized.Scale == 0.5, "Reject an unusable display scale.");
 Check(normalized.Density == 8, "Reject a negative row count.");
 Check(normalized.RefreshSeconds == 60, "Enforce the minimum refresh interval.");
+Check(
+    new BoardSettings { Brightness = -1 }
+        .Normalize()
+        .Brightness == 0.35,
+    "Match the macOS brightness range."
+);
+Check(
+    new BoardSettings { Brightness = double.NaN }
+        .Normalize()
+        .Brightness == 1,
+    "Reject non-finite brightness."
+);
+Check(
+    new BoardSettings { RefreshSeconds = 21600, Style = "lcd" }
+        .Normalize()
+        .RefreshSeconds == 21600,
+    "Keep the six-hour refresh option."
+);
+Check(
+    new BoardSettings { Style = "lcd" }
+        .Normalize()
+        .Style == "lcd",
+    "Keep the LCD option."
+);
 
 var operation = Fixtures.Flight("NH 1", "Operator", "HL123");
 var alias = Fixtures.Flight("UA 2", "IsCodeshared", "");
@@ -113,8 +137,23 @@ var storage = Path.Combine(Path.GetTempPath(), "DepartureBoard.Tests-" + Guid.Ne
 try
 {
     var settings = new SettingsRepository(storage);
-    settings.Save(new BoardSettings { Airport = "HND", SampleData = false });
+    settings.Save(
+        new BoardSettings
+        {
+            Airport = "HND",
+            SampleData = false,
+            Brightness = 0.5,
+            ReduceMotion = true,
+            ShowAllDesktops = false,
+        }
+    );
     Check(settings.Load().Airport == "HND", "Settings persist.");
+    Check(
+        settings.Load().Brightness == 0.5
+            && settings.Load().ReduceMotion
+            && !settings.Load().ShowAllDesktops,
+        "Display preferences persist."
+    );
     Check(
         !File.ReadAllText(Path.Combine(storage, "settings.json")).Contains("apiKey"),
         "Settings never contain an API key."

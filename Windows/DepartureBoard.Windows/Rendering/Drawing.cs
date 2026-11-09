@@ -6,7 +6,7 @@ using System.Windows.Media;
 
 namespace DepartureBoard.Windows.Rendering;
 
-internal sealed class Drawing(DrawingContext context)
+internal sealed class Drawing(DrawingContext context, TextLayoutCache? textLayouts = null)
 {
     private static readonly Dictionary<string, SolidColorBrush> BrushesByColor = [];
     private static readonly Dictionary<(string Font, bool Bold), Typeface> Typefaces = [];
@@ -38,31 +38,49 @@ internal sealed class Drawing(DrawingContext context)
             return;
         }
 
-        var key = (font, bold);
-
-        if (!Typefaces.TryGetValue(key, out var typeface))
-        {
-            typeface = CreateTypeface(font, bold);
-            Typefaces[key] = typeface;
-        }
-
-        var formatted = new FormattedText(
+        var layoutKey = new TextLayoutCache.Key(
             value,
-            CultureInfo.CurrentUICulture,
-            FlowDirection.LeftToRight,
-            typeface,
-            Math.Max(6, size),
-            Brush(color),
-            1
+            rectangle.Size,
+            size,
+            color,
+            font,
+            bold,
+            alignment,
+            CultureInfo.CurrentUICulture.Name
         );
-        var heightRatio = rectangle.Height / Math.Max(1, formatted.Height);
-        var widthRatio = rectangle.Width / Math.Max(1, formatted.WidthIncludingTrailingWhitespace);
-        var fit = Math.Min(1, Math.Min(heightRatio, Math.Max(0.65, widthRatio)));
-        formatted.SetFontSize(Math.Max(1, size * fit));
-        formatted.MaxTextWidth = rectangle.Width;
-        formatted.MaxLineCount = 1;
-        formatted.Trimming = TextTrimming.CharacterEllipsis;
-        formatted.TextAlignment = alignment;
+        FormattedText? formatted = null;
+        textLayouts?.TryGet(layoutKey, out formatted);
+
+        if (formatted is null)
+        {
+            var key = (font, bold);
+
+            if (!Typefaces.TryGetValue(key, out var typeface))
+            {
+                typeface = CreateTypeface(font, bold);
+                Typefaces[key] = typeface;
+            }
+
+            formatted = new FormattedText(
+                value,
+                CultureInfo.CurrentUICulture,
+                FlowDirection.LeftToRight,
+                typeface,
+                Math.Max(6, size),
+                Brush(color),
+                1
+            );
+            var heightRatio = rectangle.Height / Math.Max(1, formatted.Height);
+            var widthRatio =
+                rectangle.Width / Math.Max(1, formatted.WidthIncludingTrailingWhitespace);
+            var fit = Math.Min(1, Math.Min(heightRatio, Math.Max(0.65, widthRatio)));
+            formatted.SetFontSize(Math.Max(1, size * fit));
+            formatted.MaxTextWidth = rectangle.Width;
+            formatted.MaxLineCount = 1;
+            formatted.Trimming = TextTrimming.CharacterEllipsis;
+            formatted.TextAlignment = alignment;
+            textLayouts?.Add(layoutKey, formatted);
+        }
         var y = rectangle.Y + Math.Max(0, (rectangle.Height - formatted.Height) / 2);
         context.PushClip(new RectangleGeometry(rectangle));
         context.DrawText(formatted, new Point(rectangle.X, y));

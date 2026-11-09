@@ -7,10 +7,11 @@ using DepartureBoard.Core.Airports;
 
 namespace DepartureBoard.Windows.Rendering;
 
-internal sealed class BoardRenderer(AirportCatalog catalog)
+internal sealed class BoardRenderer(AirportCatalog catalog, bool cacheText = true)
 {
     private readonly Dictionary<string, AirportAdapter> adapters = [];
     private readonly LogoStore logos = new(catalog.ResourceDirectory);
+    private readonly TextLayoutCache? textLayouts = cacheText ? new() : null;
     private static readonly Dictionary<string, double> Weights = new()
     {
         ["time"] = 0.13,
@@ -37,7 +38,7 @@ internal sealed class BoardRenderer(AirportCatalog catalog)
         var bounds = new Rect(0, 0, logicalWidth, size.Height / scale);
         context.PushClip(new RectangleGeometry(new Rect(size)));
         context.PushTransform(new ScaleTransform(scale, scale));
-        var drawing = new Drawing(context);
+        var drawing = new Drawing(context, textLayouts);
         drawing.Fill(bounds, frame.Airport.Data.Text("bg", "080d13"));
 
         if (frame.Settings.Style == "flap")
@@ -47,6 +48,13 @@ internal sealed class BoardRenderer(AirportCatalog catalog)
         else
         {
             DrawTable(drawing, bounds, frame);
+        }
+
+        if (frame.Settings.Brightness < 1)
+        {
+            context.PushOpacity(1 - frame.Settings.Brightness);
+            drawing.Fill(bounds, "000000");
+            context.Pop();
         }
 
         context.Pop();

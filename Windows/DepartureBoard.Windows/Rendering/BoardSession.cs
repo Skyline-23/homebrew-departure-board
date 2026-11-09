@@ -7,7 +7,24 @@ namespace DepartureBoard.Windows.Rendering;
 
 internal sealed class BoardSession(AirportCatalog catalog, FlightRepository flights)
 {
-    private string? lastFrameKey;
+    private readonly record struct RowKey(
+        string Airport,
+        bool SampleData,
+        long DataTick,
+        string Language,
+        FlightSnapshot? Snapshot
+    );
+
+    private readonly record struct FrameKey(
+        BoardSettings Settings,
+        RowKey Rows,
+        int Page,
+        bool HasApiKey,
+        string? Error
+    );
+
+    private FrameKey? lastFrameKey;
+    private RowKey? lastRowKey;
     private DateTimeOffset startedAt = DateTimeOffset.UtcNow;
     private string? airportCode;
 
@@ -29,17 +46,27 @@ internal sealed class BoardSession(AirportCatalog catalog, FlightRepository flig
             "native" => airport.Language,
             _ => (int)(elapsed / 12) % 2 == 0 ? "en" : airport.Language,
         };
-        var snapshot = flights.Read(airport.Code);
-        var key =
-            $"{settings}:{now.ToUnixTimeSeconds() / 4}:{(int)(elapsed / 15)}:{language}:{snapshot?.FetchedAt}";
+        // Sample rows and every clock change once per minute. Live codeshares still
+        // rotate every four seconds, and shared-cache updates remain visible.
+        var snapshot = settings.SampleData ? null : flights.Read(airport.Code);
+        var rowsKey = new RowKey(
+            airport.Code,
+            settings.SampleData,
+            now.ToUnixTimeSeconds() / (settings.SampleData ? 60 : 4),
+            language,
+            snapshot
+        );
+        var page = (int)(elapsed / 15);
+        var key = new FrameKey(settings, rowsKey, page, hasApiKey, flights.LastError);
 
         if (key == lastFrameKey)
         {
             return false;
         }
 
-        var rows = settings.SampleData
-            ? SampleSchedule.Rows(catalog, airport, now, language)
+        var rows =
+            lastRowKey == rowsKey && Frame is not null ? Frame.Rows
+            : settings.SampleData ? SampleSchedule.Rows(catalog, airport, now, language)
             : FlightRows.Create(snapshot, catalog, airport, now, language);
         Frame = new BoardFrame(
             airport,
@@ -47,10 +74,11 @@ internal sealed class BoardSession(AirportCatalog catalog, FlightRepository flig
             now,
             language,
             settings,
-            (int)(elapsed / 15),
+            page,
             EmptyMessage(settings, snapshot, now, hasApiKey)
         );
         lastFrameKey = key;
+        lastRowKey = rowsKey;
         return true;
     }
 

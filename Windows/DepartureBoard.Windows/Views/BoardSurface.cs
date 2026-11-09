@@ -1,6 +1,7 @@
 using System;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using DepartureBoard.Windows.Rendering;
 using BoardDrawing = DepartureBoard.Windows.Rendering.Drawing;
@@ -29,6 +30,11 @@ internal sealed class BoardSurface : FrameworkElement
         timer.Tick += OnTimerTick;
         Loaded += OnLoaded;
         Unloaded += OnUnloaded;
+        IsVisibleChanged += (_, _) =>
+        {
+            if (IsVisible)
+                Tick();
+        };
     }
 
     public DateTimeOffset? ReferenceTime { get; set; }
@@ -78,7 +84,8 @@ internal sealed class BoardSurface : FrameworkElement
     private void OnTimerTick(object? sender, EventArgs arguments)
     {
 
-        Tick();
+        if (IsVisible)
+            Tick();
     }
 
     public void Tick()
@@ -96,6 +103,23 @@ internal sealed class BoardSurface : FrameworkElement
                 )
             )
             {
+                if (
+                    IsLoaded
+                    && IsVisible
+                    && services.Settings.Style == "flap"
+                    && !services.Settings.ReduceMotion
+                    && SystemParameters.ClientAreaAnimation
+                )
+                {
+                    BeginAnimation(
+                        OpacityProperty,
+                        new DoubleAnimation(0.9, 1, TimeSpan.FromMilliseconds(140))
+                    );
+                }
+                else
+                {
+                    BeginAnimation(OpacityProperty, null);
+                }
                 InvalidateVisual();
             }
         }

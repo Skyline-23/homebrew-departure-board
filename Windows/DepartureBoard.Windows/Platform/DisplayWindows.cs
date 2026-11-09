@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Interop;
@@ -10,7 +11,13 @@ namespace DepartureBoard.Windows.Platform;
 
 internal sealed class DisplayWindows(AppServices services) : IDisposable
 {
-    private readonly List<BoardWindow> wallpaperWindows = [];
+    private readonly List<WallpaperWindow> wallpaperWindows = [];
+    private DesktopVisibility? desktopVisibility;
+    private DispatcherTimer? wallpaperTimer;
+    private nint wallpaperHost;
+    private string displayLayout = "";
+
+    internal IReadOnlyList<WallpaperWindow> WallpaperWindows => wallpaperWindows;
 
     public IReadOnlyList<BoardWindow> ShowScreenSaver()
     {
@@ -90,7 +97,29 @@ internal sealed class DisplayWindows(AppServices services) : IDisposable
             return true;
         }
 
-        var host = WindowEmbedding.DesktopHost();
+        desktopVisibility = services.Settings.ShowAllDesktops ? null : new DesktopVisibility();
+        var applied = CreateWallpaper();
+        wallpaperTimer = new DispatcherTimer(
+            TimeSpan.FromSeconds(2),
+            DispatcherPriority.Background,
+            (_, _) => MaintainWallpaper(),
+            System.Windows.Application.Current.Dispatcher
+        );
+        return applied;
+    }
+
+    private bool CreateWallpaper()
+    {
+
+        foreach (var window in wallpaperWindows)
+        {
+            window.Close();
+        }
+        wallpaperWindows.Clear();
+
+        var host = WindowEmbedding.DesktopHost(out var after, out var layered);
+        wallpaperHost = host;
+        displayLayout = CurrentDisplayLayout();
 
         if (host == 0)
         {
@@ -102,15 +131,51 @@ internal sealed class DisplayWindows(AppServices services) : IDisposable
             var bounds = screen.Bounds;
             var point = new NativeMethods.NativePoint { X = bounds.Left, Y = bounds.Top };
             NativeMethods.MapWindowPoints(0, host, ref point, 1);
-            var window = EmbeddedWindow();
-            window.SourceInitialized += (_, _) =>
-                WindowEmbedding.Attach(window, host, point.X, point.Y, bounds.Width, bounds.Height);
+            var window = new WallpaperWindow(
+                services,
+                host,
+                after,
+                new System.Drawing.Rectangle(point.X, point.Y, bounds.Width, bounds.Height),
+                layered
+            );
             window.Show();
-            WindowEmbedding.Attach(window, host, point.X, point.Y, bounds.Width, bounds.Height);
             wallpaperWindows.Add(window);
         }
 
         return true;
+    }
+
+    private static string CurrentDisplayLayout()
+    {
+
+        return string.Join(";", Screen.AllScreens.Select(screen => screen.Bounds.ToString()));
+    }
+
+    private void MaintainWallpaper()
+    {
+
+        try
+        {
+            if (!NativeMethods.IsWindow(wallpaperHost) || displayLayout != CurrentDisplayLayout())
+            {
+                CreateWallpaper();
+            }
+
+            var visible = desktopVisibility?.IsCurrent ?? true;
+
+            foreach (var window in wallpaperWindows)
+            {
+                window.Visible = visible;
+            }
+        }
+        catch (Exception error)
+            when (error
+                    is System.ComponentModel.Win32Exception
+                        or System.Runtime.InteropServices.COMException
+            )
+        {
+            // Explorer may be rebuilding its desktop; retry on the next timer tick.
+        }
     }
 
     private static BoardWindow EmbeddedWindow(AppServices services)
@@ -159,6 +224,11 @@ internal sealed class DisplayWindows(AppServices services) : IDisposable
 
     public void Dispose()
     {
+
+        wallpaperTimer?.Stop();
+        wallpaperTimer = null;
+        desktopVisibility?.Dispose();
+        desktopVisibility = null;
 
         foreach (var window in wallpaperWindows)
         {
