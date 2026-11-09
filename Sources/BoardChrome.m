@@ -5,31 +5,47 @@
 
 @implementation DBBoardView (BoardChrome)
 
-- (void)planeAt:(NSPoint)p size:(CGFloat)s color:(NSColor *)color {
-    [NSGraphicsContext saveGraphicsState];
-    NSAffineTransform *t = NSAffineTransform.transform;
-    [t translateXBy:p.x yBy:p.y];
-    [t scaleBy:s / 44];
-    [t concat];
-    NSBezierPath *path = NSBezierPath.bezierPath;
-    [path moveToPoint:NSMakePoint(1, 24)];
-    [path lineToPoint:NSMakePoint(4, 20)];
-    [path lineToPoint:NSMakePoint(19, 23)];
-    [path lineToPoint:NSMakePoint(31, 5)];
-    [path lineToPoint:NSMakePoint(37, 4)];
-    [path lineToPoint:NSMakePoint(30, 25)];
-    [path lineToPoint:NSMakePoint(42, 27)];
-    [path curveToPoint:NSMakePoint(39, 33)
-         controlPoint1:NSMakePoint(47, 28)
-         controlPoint2:NSMakePoint(45, 32)];
-    [path lineToPoint:NSMakePoint(24, 31)];
-    [path lineToPoint:NSMakePoint(16, 42)];
-    [path lineToPoint:NSMakePoint(10, 42)];
-    [path lineToPoint:NSMakePoint(15, 29)];
-    [path closePath];
-    [color setFill];
-    [path fill];
-    [NSGraphicsContext restoreGraphicsState];
+- (void)planeAt:(NSPoint)point size:(CGFloat)size color:(NSColor *)color {
+    static NSCache *icons;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        icons = NSCache.new;
+        icons.countLimit = 32;
+        icons.totalCostLimit = 2 * 1024 * 1024;
+    });
+    NSColor *rgb = [color colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
+    NSString *key = [NSString stringWithFormat:@"%.3f/%.3f/%.3f/%.3f",
+                     rgb.redComponent, rgb.greenComponent, rgb.blueComponent, rgb.alphaComponent];
+    NSImage *icon = [icons objectForKey:key];
+    if (!icon) {
+        NSImage *symbol = [[NSImage imageWithSystemSymbolName:@"airplane.departure" accessibilityDescription:nil]
+            imageWithSymbolConfiguration:[NSImageSymbolConfiguration configurationWithPointSize:128
+                                                                                         weight:NSFontWeightRegular]];
+        if (!symbol)
+            return;
+        NSSize resolution = NSMakeSize(ceil(symbol.size.width), ceil(symbol.size.height));
+        NSBitmapImageRep *bitmap = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL
+            pixelsWide:resolution.width pixelsHigh:resolution.height bitsPerSample:8 samplesPerPixel:4
+            hasAlpha:YES isPlanar:NO colorSpaceName:NSDeviceRGBColorSpace bytesPerRow:0 bitsPerPixel:0];
+        [NSGraphicsContext saveGraphicsState];
+        NSGraphicsContext.currentContext = [NSGraphicsContext graphicsContextWithBitmapImageRep:bitmap];
+        NSRect rect = NSMakeRect(0, 0, resolution.width, resolution.height);
+        [NSColor.clearColor setFill];
+        NSRectFillUsingOperation(rect, NSCompositingOperationCopy);
+        [symbol drawInRect:rect];
+        [color setFill];
+        NSRectFillUsingOperation(rect, NSCompositingOperationSourceIn);
+        [NSGraphicsContext restoreGraphicsState];
+        icon = [[NSImage alloc] initWithSize:resolution];
+        [icon addRepresentation:bitmap];
+        [icons setObject:icon forKey:key cost:(NSUInteger)(resolution.width * resolution.height * 4)];
+    }
+    CGFloat factor = size / MAX(icon.size.width, icon.size.height);
+    NSRect destination = NSMakeRect(point.x + (size - icon.size.width * factor) / 2,
+                                    point.y + (size - icon.size.height * factor) / 2,
+                                    icon.size.width * factor, icon.size.height * factor);
+    [icon drawInRect:destination fromRect:NSZeroRect operation:NSCompositingOperationSourceOver
+           fraction:1 respectFlipped:YES hints:nil];
 }
 
 - (void)header:(NSRect)area compact:(BOOL)compact {

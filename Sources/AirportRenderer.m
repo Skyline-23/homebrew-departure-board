@@ -68,7 +68,6 @@ static void DrawAirlineLogo(NSImage *logo, NSRect bounds) {
         box.lineWidth = 5 * unit;
         [box stroke];
         [self planeAt:NSMakePoint(90 * unit, 52 * unit) size:124 * unit color:ink];
-        DBFillRect(NSMakeRect(99 * unit, 182 * unit, 105 * unit, 5 * unit), ink);
         DBDrawTextWithFont(DBBoardString(@"heading.departures", @"ko"),
                            NSMakeRect(290 * unit, 20 * unit, 230 * unit, height - 36 * unit),
                            DBNamedFont(@"AppleSDGothicNeo-Bold", height * .47), ink, NSTextAlignmentLeft);
