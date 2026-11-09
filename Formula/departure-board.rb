@@ -1,9 +1,9 @@
 class DepartureBoard < Formula
   desc "Airport and railway boards as a native macOS screen saver"
   homepage "https://github.com/Skyline-23/homebrew-departure-board"
-  url "https://github.com/Skyline-23/homebrew-departure-board/releases/download/v0.5.6/DepartureBoard-0.5.6-source.tar.gz"
-  sha256 "a5ef6d2ade859bdcf65fe1fdf4fb645649bf72d5e7b0e1217b9500911776762d"
-  version "0.5.6"
+  url "https://github.com/Skyline-23/homebrew-departure-board/releases/download/v0.5.7/DepartureBoard-0.5.7-source.tar.gz"
+  sha256 "af63f61bb55f4ce6293f78f5c522b2a035cdf2f5071fe2bd2bca98db44f24702"
+  version "0.5.7"
   license "MIT"
 
   depends_on macos: :monterey
