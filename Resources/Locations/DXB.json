@@ -132,7 +132,6 @@
     "footerHeight": 26,
     "referenceAspect": 1.8,
     "headerFraction": 0.09,
-    "headerVariant": "bilingual",
     "bodyFont": "HelveticaNeue-Medium",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": false,
@@ -150,7 +149,8 @@
     "footerStyle": "date-clock",
     "footerColor": "10478c",
     "verticalRules": "1e5792",
-    "detailRevision": 2
+    "detailRevision": 2,
+    "adapter": "profile"
   },
   "reference": {
     "source": "Delays, Cancellations at Dubai Airport After Crash-landing (https://www.voanews.com/a/delays-cancellations-at-dubai-airport-after-crash-landing/3448716.html)",

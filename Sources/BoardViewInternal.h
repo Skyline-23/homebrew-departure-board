@@ -1,3 +1,4 @@
+#import "Airports/AirportAdapter.h"
 #import "DepartureBoardView.h"
 
 static const NSTimeInterval DBFlapTransitionDuration = .66;
@@ -6,6 +7,7 @@ static const NSTimeInterval DBFlapTransitionDuration = .66;
 // Timetable generation stays in DepartureSchedule; renderers only draw rows.
 @interface DBBoardView ()
 @property(nonatomic, strong) NSDictionary *location;
+@property(nonatomic, strong) id<DBAirportAdapter> airportAdapter;
 @property(nonatomic, strong) NSDictionary *loadedSettings;
 @property(nonatomic) NSInteger currentPage;
 @property(nonatomic, strong) NSArray *rows;
@@ -30,25 +32,10 @@ static const NSTimeInterval DBFlapTransitionDuration = .66;
 @end
 
 @interface DBBoardView (AirportRenderer)
-- (void)drawAirportHeader:(NSRect)area;
+- (DBAirportRenderContext *)airportRenderContext;
 - (CGFloat)airportHeaderHeight:(NSRect)area;
-- (CGFloat)airportColumnHeaderHeight;
 - (NSInteger)airportRowCountForArea:(NSRect)area;
-- (void)drawHanedaCounters:(NSRect)area;
-- (void)drawAirportCell:(NSDictionary *)row
-                 column:(NSString *)column
-                   rect:(NSRect)cell
-               fontSize:(CGFloat)size
-               rowIndex:(NSInteger)rowIndex;
-- (NSArray *)airportColumns;
-- (CGFloat)weightFor:(NSString *)key;
-- (NSString *)columnLabel:(NSString *)key;
 - (void)drawAirport:(NSRect)area;
-@end
-
-@interface DBBoardView (AirportChromeRenderer)
-- (void)drawProfileHeader:(NSRect)area;
-- (BOOL)drawProfileFooter:(NSRect)area;
 @end
 
 @interface DBBoardView (SplitFlapRenderer)

@@ -8,5 +8,5 @@
 + (NSRunningApplication *)runningApplication;
 + (BOOL)shouldStartForSettings:(NSDictionary *)settings
                   runtimeState:(NSDictionary *)state
-                sessionIdentifier:(NSString *)sessionIdentifier;
+             sessionIdentifier:(NSString *)sessionIdentifier;
 @end

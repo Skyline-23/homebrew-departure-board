@@ -138,7 +138,6 @@
     "footerHeight": 26,
     "referenceAspect": 1.52,
     "headerFraction": 0.12,
-    "headerVariant": "bilingual",
     "bodyFont": "HelveticaNeue-Medium",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": true,
@@ -168,7 +167,8 @@
       "expected": 0.1,
       "state": 0.22
     },
-    "detailRevision": 2
+    "detailRevision": 2,
+    "adapter": "profile"
   },
   "reference": {
     "source": "File:中国北京首都国际机场 China Beijing Capital International Airport - panoramio (14).jpg - Wikimedia Commons (https://commons.wikimedia.org/wiki/File%3A%E4%B8%AD%E5%9B%BD%E5%8C%97%E4%BA%AC%E9%A6%96%E9%83%BD%E5%9B%BD%E9%99%85%E6%9C%BA%E5%9C%BA_China_Beijing_Capital_International_Airport_-_panoramio_%2814%29.jpg)",

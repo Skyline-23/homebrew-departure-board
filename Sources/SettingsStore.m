@@ -11,6 +11,7 @@ static NSDate *settingsModified;
 static NSTimeInterval nextSettingsCheck;
 
 @implementation DBSettingsStore
+
 + (NSURL *)settingsURL {
     NSString *folder = [[LiveFlightStore userHome]
         stringByAppendingPathComponent:@"Library/Application Support/DepartureBoard"];
@@ -20,14 +21,17 @@ static NSTimeInterval nextSettingsCheck;
 + (NSDictionary *)settings {
     @synchronized(self) {
         NSTimeInterval now = NSProcessInfo.processInfo.systemUptime;
-        if (cachedSettings && now < nextSettingsCheck)
+        if (cachedSettings && now < nextSettingsCheck) {
             return cachedSettings;
+        }
         nextSettingsCheck = now + 1;
         NSURL *url = self.settingsURL;
-        NSDate *modified = [NSFileManager.defaultManager attributesOfItemAtPath:url.path
-                                                                        error:NULL][NSFileModificationDate];
-        if (cachedSettings && modified && [modified isEqual:settingsModified])
+        NSDate *modified =
+            [NSFileManager.defaultManager attributesOfItemAtPath:url.path
+                                                           error:NULL][NSFileModificationDate];
+        if (cachedSettings && modified && [modified isEqual:settingsModified]) {
             return cachedSettings;
+        }
         cachedSettings = [NSDictionary dictionaryWithContentsOfURL:url]
             ?: [NSUserDefaults.standardUserDefaults persistentDomainForName:DBDefaultsDomain]
             ?: [NSUserDefaults.standardUserDefaults persistentDomainForName:@"io.skyline.departureboard"]
@@ -37,13 +41,16 @@ static NSTimeInterval nextSettingsCheck;
     }
 }
 
-+ (BOOL)saveSettings:(NSDictionary *)settings replacementAPIKey:(NSString *)apiKey error:(NSError **)error {
++ (BOOL)saveSettings:(NSDictionary *)settings
+    replacementAPIKey:(NSString *)apiKey
+                error:(NSError **)error {
     NSMutableDictionary *saved = [settings mutableCopy];
     [saved removeObjectForKey:@"gatewayURL"];
     [saved removeObjectForKey:@"hasAccessToken"];
     if (apiKey.length && ![apiKey isEqual:DBStoredAPIKeyMask]) {
-        if (![LiveFlightStore saveAPIKey:apiKey error:error])
+        if (![LiveFlightStore saveAPIKey:apiKey error:error]) {
             return NO;
+        }
         saved[@"hasAPIKey"] = @YES;
     } else if (!saved[@"hasAPIKey"]) {
         saved[@"hasAPIKey"] = @([LiveFlightStore APIKey].length > 0);
@@ -52,14 +59,16 @@ static NSTimeInterval nextSettingsCheck;
     if (![NSFileManager.defaultManager createDirectoryAtURL:url.URLByDeletingLastPathComponent
                                 withIntermediateDirectories:YES
                                                  attributes:nil
-                                                      error:error])
+                                                      error:error]) {
         return NO;
+    }
     NSData *data = [NSPropertyListSerialization dataWithPropertyList:saved
                                                               format:NSPropertyListBinaryFormat_v1_0
                                                              options:0
                                                                error:error];
-    if (!data || ![data writeToURL:url options:NSDataWritingAtomic error:error])
+    if (!data || ![data writeToURL:url options:NSDataWritingAtomic error:error]) {
         return NO;
+    }
     [NSFileManager.defaultManager setAttributes:@{NSFilePosixPermissions : @0600}
                                    ofItemAtPath:url.path
                                           error:NULL];
@@ -69,10 +78,11 @@ static NSTimeInterval nextSettingsCheck;
         nextSettingsCheck = 0;
     }
     [NSUserDefaults.standardUserDefaults setPersistentDomain:saved forName:DBDefaultsDomain];
-    [NSDistributedNotificationCenter.defaultCenter postNotificationName:DBSettingsChangedNotification
-                                                                 object:nil
-                                                               userInfo:nil
-                                                     deliverImmediately:YES];
+    [NSDistributedNotificationCenter.defaultCenter
+        postNotificationName:DBSettingsChangedNotification
+                      object:nil
+                    userInfo:nil
+          deliverImmediately:YES];
     return YES;
 }
 
@@ -83,4 +93,5 @@ static NSTimeInterval nextSettingsCheck;
     [self saveSettings:settings replacementAPIKey:apiKey error:&error];
     completion(error);
 }
+
 @end

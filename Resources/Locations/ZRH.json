@@ -137,7 +137,6 @@
     "footerHeight": 26,
     "referenceAspect": 2.1,
     "headerFraction": 0.11,
-    "headerVariant": "bilingual",
     "bodyFont": "HelveticaNeue-Medium",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": false,
@@ -158,7 +157,8 @@
     "footerColor": "d7dfd9",
     "footerInk": "213529",
     "footerBrand": "Flughafen Zürich",
-    "detailRevision": 2
+    "detailRevision": 2,
+    "adapter": "profile"
   },
   "reference": {
     "source": "Connexions et terminaux à l'aéroport de Zurich ZRH (https://www.cestee.fr/aeroport/zurich-zrh/terminal)",

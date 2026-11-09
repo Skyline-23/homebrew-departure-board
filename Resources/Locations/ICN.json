@@ -257,7 +257,6 @@
     },
     "referenceAspect": 0.92,
     "headerFraction": 0.16,
-    "headerVariant": "icn",
     "bodyFont": "HelveticaNeue-Medium",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": false,
@@ -268,7 +267,12 @@
     },
     "statusFillInk": "ffffff",
     "verticalRules": "17354e",
-    "detailRevision": 2
+    "detailRevision": 2,
+    "adapter": "incheon",
+    "compactHeader": {
+      "bottomRuleColor": "4883ba",
+      "bottomRuleHeight": 4
+    }
   },
   "reference": {
     "source": "ダナン旅行6日目：韓国仁川空港グルメ | むらさんの人生の楽園 (https://ameblo.jp/murasan2014/entry-12893821746.html)",

@@ -221,7 +221,6 @@
     "footerHeight": 26,
     "referenceAspect": 2.2,
     "headerFraction": 0.09,
-    "headerVariant": "left",
     "bodyFont": "HelveticaNeue-Medium",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": false,
@@ -244,6 +243,10 @@
     "gateIncludesTerminal": true,
     "columnLabels": {
       "gate": "column.terminalGate"
+    },
+    "adapter": "profile",
+    "compactHeader": {
+      "titleLanguage": "en"
     }
   },
   "reference": {

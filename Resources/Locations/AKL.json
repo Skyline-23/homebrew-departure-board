@@ -136,7 +136,6 @@
     "footerHeight": 26,
     "referenceAspect": 2.05,
     "headerFraction": 0.08,
-    "headerVariant": "left",
     "bodyFont": "HelveticaNeue",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": false,
@@ -162,7 +161,8 @@
       "state": 0.22,
       "gate": 0.08
     },
-    "detailRevision": 2
+    "detailRevision": 2,
+    "adapter": "profile"
   },
   "reference": {
     "source": "Review of Air Tahiti Nui flight from Auckland to Papeete in Business (https://flight-report.com/en/report/9823/Air_Tahiti_Nui_TN102_Auckland_AKL_Papeete_PPT/)",

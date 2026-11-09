@@ -138,7 +138,6 @@
     "footerHeight": 26,
     "referenceAspect": 1.6,
     "headerFraction": 0.13,
-    "headerVariant": "left",
     "bodyFont": "ArialMT",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": false,
@@ -162,7 +161,8 @@
       "gate": 0.08,
       "state": 0.22
     },
-    "detailRevision": 2
+    "detailRevision": 2,
+    "adapter": "profile"
   },
   "reference": {
     "source": "Travelers stranded as Middle East conflict spreads as governments scramble to bring citizens home - The Economic Times (https://m.economictimes.com/nri/latest-updates/travelers-stranded-as-middle-east-conflict-spreads-as-governments-scramble-to-bring-citizens-home/articleshow/128946590.cms)",

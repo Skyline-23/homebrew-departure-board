@@ -21,11 +21,16 @@
         NSString *cellKey = [NSString stringWithFormat:@"%@-%ld", key, (long)i];
         NSDictionary *state = self.flapStates[cellKey];
         if (![state[@"target"] isEqual:glyph]) {
-            state = @{@"old" : state[@"target"] ?: @" ", @"target" : glyph, @"start" : @(now + i * .008)};
+            state = @{
+                @"old" : state[@"target"] ?: @" ",
+                @"target" : glyph,
+                @"start" : @(now + i * .008)
+            };
             self.flapStates[cellKey] = state;
             // Keep the final clean frame even if the next timer fires late.
-            if (!self.referenceDate && !self.reducedMotion)
+            if (!self.referenceDate && !self.reducedMotion) {
                 self.flapWasAnimating = YES;
+            }
         }
         NSRect c = NSMakeRect(rect.origin.x + i * cw, rect.origin.y, cw - gap, fh);
         NSGradient *gradient = [[NSGradient alloc] initWithStartingColor:DBColor(@"33373b")
@@ -39,7 +44,8 @@
         if (moving && progress < .42 && [glyph canBeConvertedToEncoding:NSASCIIStringEncoding]) {
             NSString *alphabet = @"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             shown = [alphabet
-                substringWithRange:NSMakeRange(((NSInteger)(progress * 65) + i * 3) % alphabet.length, 1)];
+                substringWithRange:NSMakeRange(
+                                       ((NSInteger)(progress * 65) + i * 3) % alphabet.length, 1)];
         }
         NSRect gr = NSInsetRect(c, 1, -1);
         CGFloat size = MIN(cw * 1.10, fh * .79);
@@ -50,9 +56,10 @@
             DBFillRect(NSMakeRect(c.origin.x, c.origin.y + fh / 2 - strip, c.size.width, strip),
                        [NSColor colorWithWhite:0 alpha:.22]);
         }
-        DBFillRect(NSMakeRect(c.origin.x, c.origin.y + floor(fh / 2), c.size.width, 1.6), DBColor(@"090b0d"));
-        DBFillRect(NSMakeRect(c.origin.x, c.origin.y + 1, c.size.width, 1), [NSColor colorWithWhite:1
-                                                                                              alpha:.05]);
+        DBFillRect(NSMakeRect(c.origin.x, c.origin.y + floor(fh / 2), c.size.width, 1.6),
+                   DBColor(@"090b0d"));
+        DBFillRect(NSMakeRect(c.origin.x, c.origin.y + 1, c.size.width, 1),
+                   [NSColor colorWithWhite:1 alpha:.05]);
     }
 }
 
@@ -67,20 +74,23 @@
         xs[index] *= horizontal;
         widths[index] *= horizontal;
     }
-    for (int j = 0; j < 5; j++)
+    for (int j = 0; j < 5; j++) {
         DBDrawText(labels[j], NSMakeRect(xs[j], 126, widths[j], 26), 16, DBColor(@"9da8aa"), YES,
                    NSTextAlignmentLeft, NO);
-    NSInteger count =
-        self.density > 0 ? MAX(6, MIN(32, self.density)) : MIN(32, (NSInteger)ceil(16 / self.boardScale));
+    }
+    NSInteger count = self.density > 0 ? MAX(6, MIN(32, self.density))
+                                       : MIN(32, (NSInteger)ceil(16 / self.boardScale));
     CGFloat rowH = (area.size.height - 218) / count;
     for (NSInteger i = 0; i < count; i++) {
-        if ((NSUInteger)i >= self.rows.count)
+        if ((NSUInteger)i >= self.rows.count) {
             break;
+        }
         NSDictionary *row = self.rows[i];
         CGFloat y = 167 + i * rowH;
         NSArray *texts = @[
             row[@"time"], [DBLocalized(row[@"destination"], self.currentLanguage) uppercaseString],
-            row[@"flight"], row[@"gate"], [DBStatusText(row[@"state"], self.currentLanguage) uppercaseString]
+            row[@"flight"], row[@"gate"],
+            [DBStatusText(row[@"state"], self.currentLanguage) uppercaseString]
         ];
         NSInteger cells[] = {5, 20, 10, 3, 15};
         for (int j = 0; j < 5; j++) {

@@ -19,6 +19,10 @@ own Mac, set `RUN_INTERACTIVE_TESTS=1`; they open and close test windows.
 
 ## Making a change
 
+See [Airport rendering architecture](docs/architecture.md) for the adapter
+boundary, source layout and steps for adding an airport. Run `./script/format.sh`
+before committing Objective-C changes.
+
 - Keep source code and settings text in English. Put visible board text in
   `Resources/<language>.lproj/Localizable.strings`.
 - Keep airport-specific layout data in `Resources/Locations`. Include the source

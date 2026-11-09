@@ -8,11 +8,8 @@ VERSION="${VERSION:-0.1.0}"
 mkdir -p "$BUILD_DIR" "$DIST_DIR"
 
 # Both bundles share the same drawing and timetable code. No WebView or network service.
-COMMON_SOURCES=()
-for source in DepartureSchedule Localization DestinationStore AirlineLogoStore BackgroundAgent LiveFlightStore SettingsStore UserInstallation BoardView DrawingSupport BoardChrome AirportChromeRenderer AirportRenderer SplitFlapRenderer RailwayRenderer SettingsController; do
-  COMMON_SOURCES+=("$PROJECT_ROOT/Sources/$source.m")
-done
-COMMON_FLAGS=(-fobjc-arc -fmodules -O2 -Wall -Wextra -Wno-unused-parameter -mmacosx-version-min=12.0 -framework Cocoa -framework QuartzCore -framework Security -framework LocalAuthentication)
+source "$PROJECT_ROOT/script/common-sources.sh"
+COMMON_FLAGS=(-I "$PROJECT_ROOT/Sources" -fobjc-arc -fmodules -O2 -Wall -Wextra -Wno-unused-parameter -mmacosx-version-min=12.0 -framework Cocoa -framework QuartzCore -framework Security -framework LocalAuthentication)
 ARCH_FLAGS=(-arch arm64 -arch x86_64)
 if [[ "${BUILD_ARCH:-universal}" != "universal" ]]; then ARCH_FLAGS=(-arch "$BUILD_ARCH"); fi
 
@@ -46,7 +43,7 @@ SAVER_BUNDLE="$BUILD_DIR/DepartureBoardSaver.bundle"
 make_bundle "$APP_BUNDLE" DepartureBoard com.skyline23.departureboard APPL NSApplication
 make_bundle "$SAVER_BUNDLE" DepartureBoard com.skyline23.departureboard.saver BNDL DepartureBoardSaver
 
-xcrun clang "${COMMON_FLAGS[@]}" "${ARCH_FLAGS[@]}" "${COMMON_SOURCES[@]}" "$PROJECT_ROOT/Sources/WallpaperRenderer.m" "$PROJECT_ROOT/Sources/DesktopController.m" "$PROJECT_ROOT/Sources/CommandLine.m" "$PROJECT_ROOT/Sources/App.m" -o "$APP_BUNDLE/Contents/MacOS/DepartureBoard"
+xcrun clang "${COMMON_FLAGS[@]}" "${ARCH_FLAGS[@]}" "${COMMON_SOURCES[@]}" "${APP_SOURCES[@]}" "$PROJECT_ROOT/Sources/App.m" -o "$APP_BUNDLE/Contents/MacOS/DepartureBoard"
 xcrun clang "${COMMON_FLAGS[@]}" "${ARCH_FLAGS[@]}" -bundle -framework ScreenSaver "${COMMON_SOURCES[@]}" "$PROJECT_ROOT/Sources/ScreenSaver.m" -o "$SAVER_BUNDLE/Contents/MacOS/DepartureBoard"
 
 # Local builds use an ad-hoc signature. Release signing is opt-in and uses the caller's identity.

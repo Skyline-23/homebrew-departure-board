@@ -136,7 +136,6 @@
     "footerHeight": 26,
     "referenceAspect": 3.0,
     "headerFraction": 0.1,
-    "headerVariant": "left",
     "bodyFont": "HelveticaNeue",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": false,
@@ -160,7 +159,8 @@
       "state": 0.22,
       "gate": 0.08
     },
-    "detailRevision": 2
+    "detailRevision": 2,
+    "adapter": "profile"
   },
   "reference": {
     "source": "Review of Air Canada Rouge flight from Toronto to Bogota in Economy (https://flight-report.com/en/report/43443/air-canada-rouge-ac1944-toronto-yyz-bogota-bog/)",

@@ -188,7 +188,6 @@
     "footerHeight": 26,
     "referenceAspect": 0.68,
     "headerFraction": 0.07,
-    "headerVariant": "left",
     "bodyFont": "HelveticaNeue",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": true,
@@ -219,7 +218,8 @@
       "closed": "a82739"
     },
     "terminalHeading": true,
-    "brandWidth": 210
+    "brandWidth": 210,
+    "adapter": "profile"
   },
   "reference": {
     "source": "ミラノマルペンサ空港の荷物預かりサービスMilano Malpensa Left Luggage | 男が仕切る結婚式。 (https://ameblo.jp/kenjimovement/entry-12848568324.html)",

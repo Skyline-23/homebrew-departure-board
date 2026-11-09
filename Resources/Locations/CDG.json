@@ -234,7 +234,6 @@
     "footerHeight": 26,
     "referenceAspect": 2.05,
     "headerFraction": 0.085,
-    "headerVariant": "centered",
     "bodyFont": "Arial-BoldMT",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": false,
@@ -256,7 +255,8 @@
     "gateIncludesTerminal": true,
     "columnLabels": {
       "gate": "column.terminalGate"
-    }
+    },
+    "adapter": "profile"
   },
   "reference": {
     "source": "Sosiri și plecări la Aeroportul Paris Charles de Gaulle (CDG) (https://www.cestee.ro/aeroport/paris-charles-de-gaulle-cdg/sosiri-plecari)",

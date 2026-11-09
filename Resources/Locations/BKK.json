@@ -132,7 +132,6 @@
     "footerHeight": 26,
     "referenceAspect": 2.2,
     "headerFraction": 0.14,
-    "headerVariant": "bilingual",
     "bodyFont": "HelveticaNeue-Medium",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": false,
@@ -157,7 +156,8 @@
       "closing": "c88c29",
       "cancelled": "9f314e"
     },
-    "detailRevision": 2
+    "detailRevision": 2,
+    "adapter": "profile"
   },
   "reference": {
     "source": "[ปันโปรรีวิว] วันนี้ที่รอคอย AirAsia ขึ้นเครื่องที่สนามบินสุวรรณภูมิได้แล้ว! | ปันโปร - Punpromotion (https://www.punpro.com/p/AirAsia-Suvarnabhumi)",

@@ -137,7 +137,6 @@
     "footerHeight": 26,
     "referenceAspect": 2.4,
     "headerFraction": 0.13,
-    "headerVariant": "bilingual",
     "bodyFont": "HelveticaNeue",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": false,
@@ -157,7 +156,8 @@
     "footerStyle": "brand-only",
     "footerColor": "194498",
     "footerBrand": "HELSINKI AIRPORT",
-    "detailRevision": 2
+    "detailRevision": 2,
+    "adapter": "profile"
   },
   "reference": {
     "source": "Finns prioritize travel frequency over international travel expenses, survey reveals - Helsinki Times (https://www.helsinkitimes.fi/themes/themes/travel/24302-finns-prioritize-travel-frequency-over-international-travel-expenses-survey-reveals.html)",

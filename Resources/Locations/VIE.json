@@ -137,7 +137,6 @@
     "footerHeight": 26,
     "referenceAspect": 1.65,
     "headerFraction": 0.13,
-    "headerVariant": "bilingual",
     "bodyFont": "HelveticaNeue",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": false,
@@ -163,7 +162,8 @@
       "delayed": "895500",
       "cancelled": "a82739",
       "closed": "a82739"
-    }
+    },
+    "adapter": "profile"
   },
   "reference": {
     "source": "Review of easyJet flight from Vienna to Nápoli in Economy (https://flight-report.com/en/report/27875/EasyJet-EZY4852-Vienna-VIE-N-poli-NAP/)",

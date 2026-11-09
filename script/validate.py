@@ -20,7 +20,7 @@ assert required_airports <= set(codes)
 
 english = (RESOURCES / "en.lproj/Localizable.strings").read_text()
 english_keys = set(re.findall(r'^"([^"]+)"\s*=', english, re.M))
-for source in (ROOT / "Sources").glob("*.m"):
+for source in (ROOT / "Sources").rglob("*.m"):
     referenced = re.findall(r'@"((?:settings|menu|heading|data|style|language|density|notice)\.[^"\s]+)"', source.read_text())
     missing = set(referenced) - english_keys
     assert not missing, f"Missing English strings in {source.name}: {sorted(missing)}"
@@ -31,11 +31,12 @@ for code in codes:
     assert f'"location.{code}"' in english
     assert location["routes"]
     if location["kind"] == "airport":
+        assert re.fullmatch(r"[a-z][a-z0-9-]*", location["display"]["adapter"])
         assert location["reference"]["source"]
         assert location["display"]["rowCount"] >= 8
         assert location["display"]["detailRevision"] >= 2
         assert (location["display"].get("headerLayout") or
-                location["display"].get("headerVariant") in {"icn", "haneda"})
+                location["display"]["adapter"] != "profile")
         title_key = location["display"].get("titleKey", location["titleKey"])
         native_strings = (RESOURCES / f'{location["lang"]}.lproj' / "Localizable.strings").read_text()
         assert f'"{title_key}"' in native_strings, f"Untranslated native heading for {code}"

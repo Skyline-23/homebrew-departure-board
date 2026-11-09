@@ -132,7 +132,6 @@
     "footerHeight": 26,
     "referenceAspect": 3.8,
     "headerFraction": 0.09,
-    "headerVariant": "left",
     "bodyFont": "Menlo",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": true,
@@ -149,7 +148,8 @@
     "footerBrand": "FRANKFURT AIRPORT",
     "verticalRules": "252c25",
     "detailRevision": 2,
-    "clockColor": "e3dca8"
+    "clockColor": "e3dca8",
+    "adapter": "profile"
   },
   "reference": {
     "source": "Temen que este popular aeropuerto sea la puerta de entrada a Europa del nuevo virus que sacude a China (https://www.huffingtonpost.es/sociedad/temen-popular-aeropuerto-sea-puerta-entrada-europa-nuevo-virus-sacude-china.html)",

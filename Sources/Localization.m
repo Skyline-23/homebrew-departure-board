@@ -21,8 +21,9 @@ NSString *DBBoardString(NSString *key, NSString *language) {
         tables[locale] = strings ?: @{};
     }
     NSString *value = strings[key];
-    if (value)
+    if (value) {
         return value;
+    }
     return [locale isEqual:@"en"] ? key : DBBoardString(key, @"en");
 }
 

@@ -25,22 +25,63 @@ static BOOL VerifyContentDrivenRendering(DBBoardView *board, Class store) {
     board.reducedMotion = YES;
     Method method = class_getClassMethod(store, @selector(rowsForLocation:now:));
     IMP original = method_getImplementation(method);
-    IMP mock = imp_implementationWithBlock(^NSArray *(id receiver, NSDictionary *location, NSDate *date) {
-        return @[ @{@"flight" : @((NSInteger)date.timeIntervalSince1970 / 4)} ];
-    });
+    IMP mock =
+        imp_implementationWithBlock(^NSArray *(id receiver, NSDictionary *location, NSDate *date) {
+            return @[ @{@"flight" : @((NSInteger)date.timeIntervalSince1970 / 4)} ];
+        });
     method_setImplementation(method, mock);
     [board updateAtDate:[NSDate dateWithTimeIntervalSince1970:1800000005] uptime:40];
-    BOOL unchanged = ![board updateAtDate:[NSDate dateWithTimeIntervalSince1970:1800000006] uptime:41] &&
+    BOOL unchanged = ![board updateAtDate:[NSDate dateWithTimeIntervalSince1970:1800000006]
+                                   uptime:41] &&
                      board.preferredAnimationInterval == 1;
-    BOOL codeshare = [board updateAtDate:[NSDate dateWithTimeIntervalSince1970:1800000008] uptime:43];
-    BOOL pageChanged = [board updateAtDate:[NSDate dateWithTimeIntervalSince1970:1800000009] uptime:45];
+    BOOL codeshare = [board updateAtDate:[NSDate dateWithTimeIntervalSince1970:1800000008]
+                                  uptime:43];
+    BOOL pageChanged = [board updateAtDate:[NSDate dateWithTimeIntervalSince1970:1800000009]
+                                    uptime:45];
     method_setImplementation(method, original);
     imp_removeBlock(mock);
     [board reloadSettings];
-    if (!unchanged || !codeshare || !pageChanged)
-        fprintf(stderr, "Content redraw check: unchanged=%d codeshare=%d page=%d\n", unchanged, codeshare,
-                pageChanged);
+    if (!unchanged || !codeshare || !pageChanged) {
+        fprintf(stderr, "Content redraw check: unchanged=%d codeshare=%d page=%d\n", unchanged,
+                codeshare, pageChanged);
+    }
     return unchanged && codeshare && pageChanged;
+}
+
+static BOOL VerifyAirportAdapters(DBBoardView *board) {
+    id (*adapterForLocation)(NSDictionary *) = dlsym(RTLD_DEFAULT, "DBAirportAdapterForLocation");
+    NSArray *(*locations)(void) = dlsym(RTLD_DEFAULT, "DBLocations");
+    if (!adapterForLocation || !locations) {
+        return NO;
+    }
+    NSDictionary *incheon;
+    for (NSDictionary *location in locations()) {
+        id adapter = adapterForLocation(location);
+        BOOL airport = [location[@"kind"] isEqual:@"airport"];
+        if (airport != (adapter != nil)) {
+            return NO;
+        }
+        if (!airport) {
+            continue;
+        }
+        board.locationCode = location[@"code"];
+        if (![[[board valueForKey:@"airportAdapter"] valueForKey:@"location"] isEqual:location]) {
+            return NO;
+        }
+        if ([location[@"code"] isEqual:@"ICN"]) {
+            incheon = location;
+        }
+    }
+    // Routing follows the profile's adapter identifier, not a hardcoded IATA switch.
+    NSMutableDictionary *custom = [incheon mutableCopy];
+    custom[@"code"] = @"TEST";
+    if ([adapterForLocation(custom) class] != [adapterForLocation(incheon) class]) {
+        return NO;
+    }
+    NSMutableDictionary *display = [custom[@"display"] mutableCopy];
+    display[@"adapter"] = @"profile";
+    custom[@"display"] = display;
+    return [adapterForLocation(custom) class] != [adapterForLocation(incheon) class];
 }
 
 static BOOL VerifyFlapTimer(DBBoardView *board) {
@@ -69,9 +110,10 @@ static BOOL VerifyFlapTimer(DBBoardView *board) {
     [states removeAllObjects];
     [board applySnapshotConfiguration:configuration];
     BOOL passed = idle && moving && settled && reduced && finalFrame && stops;
-    if (!passed)
-        fprintf(stderr, "Flap timer: idle=%d moving=%d settled=%d reduced=%d final=%d stops=%d\n", idle,
-                moving, settled, reduced, finalFrame, stops);
+    if (!passed) {
+        fprintf(stderr, "Flap timer: idle=%d moving=%d settled=%d reduced=%d final=%d stops=%d\n",
+                idle, moving, settled, reduced, finalFrame, stops);
+    }
     return passed;
 }
 
@@ -84,10 +126,13 @@ static BOOL VerifySharedRowsCache(Class store) {
         @"destinationName" : @"Hong Kong",
         @"gate" : @"101",
         @"variants" : @[
-            @{@"number" : @"NH 100", @"airline" : @"ANA"}, @{@"number" : @"UA 7000", @"airline" : @"United"}
+            @{@"number" : @"NH 100", @"airline" : @"ANA"},
+            @{@"number" : @"UA 7000", @"airline" : @"United"}
         ]
     };
-    __block NSDictionary *snapshot = @{@"fetchedAt" : @"2026-11-09T05:00:00Z", @"flights" : @[ flight ]};
+    __block NSDictionary *snapshot =
+        @{@"fetchedAt" : @"2026-11-09T05:00:00Z",
+          @"flights" : @[ flight ]};
     Method method = class_getClassMethod(store, @selector(cachedSnapshotForAirport:));
     IMP original = method_getImplementation(method);
     IMP mock = imp_implementationWithBlock(^NSDictionary *(id receiver, NSString *airport) {
@@ -111,8 +156,8 @@ static BOOL VerifySharedRowsCache(Class store) {
     NSDate *boundary = [NSISO8601DateFormatter.new dateFromString:@"2026-11-09T05:00:01Z"];
     NSArray *beforeMinute = [store rowsForLocation:location now:boundary];
     NSArray *atMinute = [store rowsForLocation:location now:[boundary dateByAddingTimeInterval:1]];
-    BOOL minuteChanged =
-        [beforeMinute[0][@"minutes"] integerValue] == 61 && [atMinute[0][@"minutes"] integerValue] == 60;
+    BOOL minuteChanged = [beforeMinute[0][@"minutes"] integerValue] == 61 &&
+                         [atMinute[0][@"minutes"] integerValue] == 60;
     NSDate *expiry = [NSISO8601DateFormatter.new dateFromString:@"2026-11-09T06:30:02Z"];
     NSArray *atExpiry = [store rowsForLocation:location now:expiry];
     NSArray *expired = [store rowsForLocation:location now:[expiry dateByAddingTimeInterval:.5]];
@@ -163,28 +208,32 @@ static BOOL VerifySystemFontScaling(void) {
     NSBundle *bundle = [NSBundle bundleForClass:NSClassFromString(@"DBBoardView")];
     void *handle = dlopen(bundle.executablePath.fileSystemRepresentation, RTLD_NOW);
     DrawText draw = (DrawText)dlsym(handle, "DBDrawText");
-    if (!draw)
+    if (!draw) {
         return NO;
+    }
     typedef NSString *(*StatusText)(NSString *, NSString *);
     StatusText statusText = (StatusText)dlsym(handle, "DBStatusText");
     if (!statusText || ![statusText(@"unknown", @"en") isEqual:@"Status unavailable"] ||
-        !statusText(@"unknown", @"fr").length || !statusText(@"boarding", @"en").length)
+        !statusText(@"unknown", @"fr").length || !statusText(@"boarding", @"en").length) {
         return NO;
-    NSBitmapImageRep *bitmap = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL
-                                                                       pixelsWide:120
-                                                                       pixelsHigh:24
-                                                                    bitsPerSample:8
-                                                                  samplesPerPixel:4
-                                                                         hasAlpha:YES
-                                                                         isPlanar:NO
-                                                                   colorSpaceName:NSDeviceRGBColorSpace
-                                                                      bytesPerRow:0
-                                                                     bitsPerPixel:0];
+    }
+    NSBitmapImageRep *bitmap =
+        [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL
+                                                pixelsWide:120
+                                                pixelsHigh:24
+                                             bitsPerSample:8
+                                           samplesPerPixel:4
+                                                  hasAlpha:YES
+                                                  isPlanar:NO
+                                            colorSpaceName:NSDeviceRGBColorSpace
+                                               bytesPerRow:0
+                                              bitsPerPixel:0];
     [NSGraphicsContext saveGraphicsState];
     NSGraphicsContext.currentContext = [NSGraphicsContext graphicsContextWithBitmapImageRep:bitmap];
     [NSColor.blackColor setFill];
     NSRectFill(NSMakeRect(0, 0, 120, 24));
-    draw(@"12:34", NSMakeRect(0, 0, 120, 12), 40, NSColor.whiteColor, YES, NSTextAlignmentRight, YES);
+    draw(@"12:34", NSMakeRect(0, 0, 120, 12), 40, NSColor.whiteColor, YES, NSTextAlignmentRight,
+         YES);
     [NSGraphicsContext restoreGraphicsState];
     NSUInteger visible = 0;
     for (NSUInteger y = 0; y < 24; y++) {
@@ -193,13 +242,15 @@ static BOOL VerifySystemFontScaling(void) {
             visible += pixel[0] > 120 && pixel[1] > 120 && pixel[2] > 120;
         }
     }
-    if (handle)
+    if (handle) {
         dlclose(handle);
+    }
     return visible > 30;
 }
 
 static BOOL VerifyAvailabilityStates(Class store) {
-    NSString *folder = [NSTemporaryDirectory() stringByAppendingPathComponent:NSUUID.UUID.UUIDString];
+    NSString *folder =
+        [NSTemporaryDirectory() stringByAppendingPathComponent:NSUUID.UUID.UUIDString];
     [NSFileManager.defaultManager createDirectoryAtPath:folder
                             withIntermediateDirectories:YES
                                              attributes:nil
@@ -222,8 +273,8 @@ static BOOL VerifyAvailabilityStates(Class store) {
     BOOL empty = [store availabilityForAirport:@"CDG"] == DBFlightAvailabilityEmpty;
     snapshot = @{@"fetchedAt" : @"2020-01-01T00:00:00Z", @"flights" : @[]};
     BOOL stale = [store availabilityForAirport:@"CDG"] == DBFlightAvailabilityUnavailable;
-    int lock =
-        open([url.path stringByAppendingString:@".lock"].fileSystemRepresentation, O_CREAT | O_RDWR, 0600);
+    int lock = open([url.path stringByAppendingString:@".lock"].fileSystemRepresentation,
+                    O_CREAT | O_RDWR, 0600);
     flock(lock, LOCK_EX);
     BOOL loading = [store availabilityForAirport:@"CDG"] == DBFlightAvailabilityLoading;
     flock(lock, LOCK_UN);
@@ -242,14 +293,17 @@ static BOOL VerifyAvailabilityStates(Class store) {
 }
 
 static BOOL VerifySharedRefreshLock(Class store) {
-    NSString *directory = [NSTemporaryDirectory() stringByAppendingPathComponent:NSUUID.UUID.UUIDString];
+    NSString *directory =
+        [NSTemporaryDirectory() stringByAppendingPathComponent:NSUUID.UUID.UUIDString];
     [NSFileManager.defaultManager createDirectoryAtPath:directory
                             withIntermediateDirectories:YES
                                              attributes:nil
                                                   error:NULL];
-    NSURL *cacheURL = [NSURL fileURLWithPath:[directory stringByAppendingPathComponent:@"flights.json"]];
+    NSURL *cacheURL =
+        [NSURL fileURLWithPath:[directory stringByAppendingPathComponent:@"flights.json"]];
     Method cacheMethod = class_getClassMethod(store, NSSelectorFromString(@"cacheURLForAirport:"));
-    Method refreshMethod = class_getClassMethod(store, NSSelectorFromString(@"refreshLockedAirport:error:"));
+    Method refreshMethod =
+        class_getClassMethod(store, NSSelectorFromString(@"refreshLockedAirport:error:"));
     IMP cacheIMP = method_getImplementation(cacheMethod);
     IMP refreshIMP = method_getImplementation(refreshMethod);
     dispatch_semaphore_t entered = dispatch_semaphore_create(0);
@@ -259,26 +313,29 @@ static BOOL VerifySharedRefreshLock(Class store) {
     IMP mockCache = imp_implementationWithBlock(^NSURL *(id receiver, NSString *airport) {
         return cacheURL;
     });
-    IMP mockRefresh = imp_implementationWithBlock(^BOOL(id receiver, NSString *airport, NSError **error) {
-        @synchronized(store) {
-            calls++;
-        }
-        dispatch_semaphore_signal(entered);
-        dispatch_semaphore_wait(release, dispatch_time(DISPATCH_TIME_NOW, 4 * NSEC_PER_SEC));
-        return YES;
-    });
+    IMP mockRefresh =
+        imp_implementationWithBlock(^BOOL(id receiver, NSString *airport, NSError **error) {
+            @synchronized(store) {
+                calls++;
+            }
+            dispatch_semaphore_signal(entered);
+            dispatch_semaphore_wait(release, dispatch_time(DISPATCH_TIME_NOW, 4 * NSEC_PER_SEC));
+            return YES;
+        });
     method_setImplementation(cacheMethod, mockCache);
     method_setImplementation(refreshMethod, mockRefresh);
     dispatch_group_async(requests, dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
         [store refreshAirport:@"ICN" error:NULL];
     });
-    BOOL started = dispatch_semaphore_wait(entered, dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC)) == 0;
+    BOOL started =
+        dispatch_semaphore_wait(entered, dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC)) == 0;
     dispatch_semaphore_t secondDone = dispatch_semaphore_create(0);
     dispatch_group_async(requests, dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
         [store refreshAirport:@"ICN" error:NULL];
         dispatch_semaphore_signal(secondDone);
     });
-    BOOL reused = dispatch_semaphore_wait(secondDone, dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC)) == 0;
+    BOOL reused =
+        dispatch_semaphore_wait(secondDone, dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC)) == 0;
     dispatch_semaphore_signal(release);
     dispatch_semaphore_signal(release);
     dispatch_group_wait(requests, DISPATCH_TIME_FOREVER);
@@ -292,8 +349,9 @@ static BOOL VerifySharedRefreshLock(Class store) {
 
 int main(int argc, const char *argv[]) {
     @autoreleasepool {
-        if (argc != 2)
+        if (argc != 2) {
             return 2;
+        }
         [NSApplication sharedApplication];
         NSBundle *bundle = [NSBundle bundleWithPath:[NSString stringWithUTF8String:argv[1]]];
         NSError *error = nil;
@@ -304,39 +362,48 @@ int main(int argc, const char *argv[]) {
         }
         NSString *icon = bundle.infoDictionary[@"CFBundleIconFile"];
         NSString *iconPath = [bundle pathForResource:icon ofType:@"icns"];
-        if (!iconPath || ![[NSImage alloc] initWithContentsOfFile:iconPath].valid)
+        if (!iconPath || ![[NSImage alloc] initWithContentsOfFile:iconPath].valid) {
             return 1;
+        }
         Class principal = bundle.principalClass;
-        if (![principal isSubclassOfClass:ScreenSaverView.class])
+        if (![principal isSubclassOfClass:ScreenSaverView.class]) {
             return 1;
-        ScreenSaverView *preview = [[principal alloc] initWithFrame:NSMakeRect(0, 0, 800, 450) isPreview:YES];
+        }
+        ScreenSaverView *preview = [[principal alloc] initWithFrame:NSMakeRect(0, 0, 800, 450)
+                                                          isPreview:YES];
         [preview startAnimation];
         [preview animateOneFrame];
         NSWindow *sheet = preview.configureSheet;
         if (!preview.hasConfigureSheet || !sheet || preview.configureSheet != sheet ||
-            preview.subviews.count != 1)
+            preview.subviews.count != 1) {
             return 1;
-        if (![[sheet.contentView viewWithTag:301] isEnabled])
+        }
+        if (![[sheet.contentView viewWithTag:301] isEnabled]) {
             return 1;
+        }
         DBBoardView *board = (DBBoardView *)preview.subviews.firstObject;
         NSWindow *editor = [board settingsWindowWithTarget:nil action:NULL];
         NSSecureTextField *token = [editor.contentView viewWithTag:202];
-        if (!token.enabled || !token.editable || !token.selectable || !token.acceptsFirstResponder)
+        if (!token.enabled || !token.editable || !token.selectable ||
+            !token.acceptsFirstResponder) {
             return 1;
-        if (![[editor.contentView viewWithTag:207] isEnabled])
+        }
+        if (![[editor.contentView viewWithTag:207] isEnabled]) {
             return 1;
+        }
         NSRect liveFrame = board.frame;
         NSString *snapshotPath = [NSTemporaryDirectory()
             stringByAppendingPathComponent:[NSString stringWithFormat:@"departure-snapshot-%@.png",
                                                                       NSUUID.UUID.UUIDString]];
         __block NSUInteger frameChanges = 0;
         board.postsFrameChangedNotifications = YES;
-        id observer = [NSNotificationCenter.defaultCenter addObserverForName:NSViewFrameDidChangeNotification
-                                                                      object:board
-                                                                       queue:nil
-                                                                  usingBlock:^(NSNotification *notification) {
-                                                                      frameChanges++;
-                                                                  }];
+        id observer =
+            [NSNotificationCenter.defaultCenter addObserverForName:NSViewFrameDidChangeNotification
+                                                            object:board
+                                                             queue:nil
+                                                        usingBlock:^(NSNotification *notification) {
+                                                            frameChanges++;
+                                                        }];
         BOOL snapshotSaved = [board writeSnapshot:snapshotPath size:NSMakeSize(1280, 720)];
         [NSNotificationCenter.defaultCenter removeObserver:observer];
         if (!snapshotSaved || !NSEqualRects(board.frame, liveFrame) || frameChanges != 0) {
@@ -349,7 +416,8 @@ int main(int argc, const char *argv[]) {
         NSDictionary *flight = @{
             @"number" : @"KE 703",
             @"status" : @"Boarding",
-            @"departure" : @{@"scheduledTime" : @{@"utc" : @"2026-11-09 02:35Z"}, @"gate" : NSNull.null},
+            @"departure" :
+                @{@"scheduledTime" : @{@"utc" : @"2026-11-09 02:35Z"}, @"gate" : NSNull.null},
             @"arrival" : @{@"airport" : @{@"iata" : @"NRT", @"municipalityName" : @"Tokyo"}}
         };
         NSDictionary *snapshot = [store normalizeDepartures:@{
@@ -358,25 +426,35 @@ int main(int argc, const char *argv[]) {
                                                     airport:@"ICN"];
         if ([snapshot[@"flights"] count] != 1 ||
             ![snapshot[@"flights"][0][@"scheduledUtc"] isEqual:@"2026-11-09T02:35:00Z"] ||
-            ![snapshot[@"flights"][0][@"gate"] isEqual:@""])
+            ![snapshot[@"flights"][0][@"gate"] isEqual:@""]) {
             return 1;
+        }
         NSMutableDictionary *shared = [flight mutableCopy];
         shared[@"number"] = @"DL 7951";
         shared[@"codeshareStatus"] = @"IsCodeshared";
-        snapshot = [store normalizeDepartures:@{@"departures" : @[ flight, shared ]} airport:@"ICN"];
-        if ([snapshot[@"flights"] count] != 1 || [snapshot[@"flights"][0][@"variants"] count] != 2)
+        snapshot = [store normalizeDepartures:@{
+            @"departures" : @[ flight, shared ]
+        }
+                                      airport:@"ICN"];
+        if ([snapshot[@"flights"] count] != 1 ||
+            [snapshot[@"flights"][0][@"variants"] count] != 2) {
             return 1;
+        }
         NSMutableDictionary *operating = [flight mutableCopy];
         operating[@"codeshareStatus"] = @"IsOperator";
-        operating[@"departure"] = @{@"scheduledTime" : @{@"utc" : @"2026-11-09 02:35Z"}, @"gate" : @"21"};
+        operating[@"departure"] =
+            @{@"scheduledTime" : @{@"utc" : @"2026-11-09 02:35Z"},
+              @"gate" : @"21"};
         NSMutableDictionary *mislabelledAlias = [operating mutableCopy];
         mislabelledAlias[@"number"] = @"DL 7951";
         snapshot = [store normalizeDepartures:@{
             @"departures" : @[ operating, mislabelledAlias ]
         }
                                       airport:@"ICN"];
-        if ([snapshot[@"flights"] count] != 1 || [snapshot[@"flights"][0][@"variants"] count] != 2)
+        if ([snapshot[@"flights"] count] != 1 ||
+            [snapshot[@"flights"][0][@"variants"] count] != 2) {
             return 1;
+        }
         NSMutableDictionary *separateFlight = [operating mutableCopy];
         separateFlight[@"number"] = @"NH 100";
         separateFlight[@"departure"] =
@@ -386,13 +464,16 @@ int main(int argc, const char *argv[]) {
             @"departures" : @[ operating, separateFlight, shared ]
         }
                                       airport:@"ICN"];
-        if ([snapshot[@"flights"] count] != 2)
+        if ([snapshot[@"flights"] count] != 2) {
             return 1;
-        if (!VerifyCompactScale(board) || !VerifyAirlineLogos() || !VerifySystemFontScaling() ||
-            !VerifyAvailabilityStates(store) || !VerifySnapshotConfiguration(board) ||
-            !VerifySharedRowsCache(store) || !VerifyContentDrivenRendering(board, store) ||
-            !VerifyFlapTimer(board) || !VerifySharedRefreshLock(store))
+        }
+        if (!VerifyAirportAdapters(board) || !VerifyCompactScale(board) || !VerifyAirlineLogos() ||
+            !VerifySystemFontScaling() || !VerifyAvailabilityStates(store) ||
+            !VerifySnapshotConfiguration(board) || !VerifySharedRowsCache(store) ||
+            !VerifyContentDrivenRendering(board, store) || !VerifyFlapTimer(board) ||
+            !VerifySharedRefreshLock(store)) {
             return 1;
+        }
         [preview stopAnimation];
         puts("The native screen saver loads, animates and creates its settings sheet.");
     }

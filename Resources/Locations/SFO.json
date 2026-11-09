@@ -252,7 +252,6 @@
     "footerHeight": 26,
     "referenceAspect": 2.4,
     "headerFraction": 0.09,
-    "headerVariant": "left",
     "bodyFont": "HelveticaNeue",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": false,
@@ -265,7 +264,8 @@
     "footerStyle": "date-clock",
     "footerColor": "0b2848",
     "verticalRules": "41677e",
-    "detailRevision": 2
+    "detailRevision": 2,
+    "adapter": "profile"
   },
   "reference": {
     "source": "SFO terminal reopens after suspicious package investigation (https://sfstandard.com/2025/12/26/police-activity-closes-sfo-terminal/)",

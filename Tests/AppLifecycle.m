@@ -9,20 +9,22 @@
 
 int main(int argc, const char *argv[]) {
     @autoreleasepool {
-        if (argc != 2)
+        if (argc != 2) {
             return 2;
+        }
         NSString *resultPath = [NSString stringWithUTF8String:argv[1]];
         NSApplication *application = NSApplication.sharedApplication;
-        BOOL launchedAsAgent = application.activationPolicy == NSApplicationActivationPolicyAccessory;
+        BOOL launchedAsAgent =
+            application.activationPolicy == NSApplicationActivationPolicyAccessory;
         dispatch_async(dispatch_get_main_queue(), ^{
             BOOL commandLinePassed =
                 [DBCommandLine runWithArguments:@[ @"DepartureBoard", @"--background" ]] == nil;
-            commandLinePassed &=
-                [[DBCommandLine
-                    runWithArguments:@[ @"DepartureBoard", @"--render-wallpapers", @"invalid-json" ]]
-                    intValue] == 1;
+            commandLinePassed &= [[DBCommandLine runWithArguments:@[
+                                     @"DepartureBoard", @"--render-wallpapers", @"invalid-json"
+                                 ]] intValue] == 1;
             DBBoardView *configured = [DBCommandLine boardWithArguments:@[
-                @"DepartureBoard", @"--location", @"HND", @"--style", @"lcd", @"--language", @"english"
+                @"DepartureBoard", @"--location", @"HND", @"--style", @"lcd", @"--language",
+                @"english"
             ]];
             commandLinePassed &= [configured.locationCode isEqual:@"HND"] &&
                                  [configured.displayStyle isEqual:@"lcd"] &&
@@ -32,14 +34,16 @@ int main(int argc, const char *argv[]) {
             [controller buildMenus];
             [controller buildStatusMenu];
             [controller.window setFrameOrigin:NSMakePoint(-10000, -10000)];
-            BOOL passed = launchedAsAgent && commandLinePassed && !controller.window.releasedWhenClosed &&
+            BOOL passed = launchedAsAgent && commandLinePassed &&
+                          !controller.window.releasedWhenClosed &&
                           ![controller applicationShouldTerminateAfterLastWindowClosed:application];
             for (NSInteger attempt = 0; attempt < 12; attempt++) {
                 [controller showBoard:nil];
-                if (attempt % 2 == 0)
+                if (attempt % 2 == 0) {
                     [controller closeWindow:nil];
-                else
+                } else {
                     [controller.window close];
+                }
                 passed &= !controller.window.visible &&
                           application.activationPolicy == NSApplicationActivationPolicyAccessory;
                 [controller applicationShouldHandleReopen:application hasVisibleWindows:NO];
@@ -50,16 +54,18 @@ int main(int argc, const char *argv[]) {
             DBDesktopController *desktop = DBDesktopController.new;
             [desktop setValue:@{@"showAllSpaces" : @NO} forKey:@"appliedSettings"];
             [desktop configureWindow:controller.window];
-            passed &= !(controller.window.collectionBehavior & NSWindowCollectionBehaviorCanJoinAllSpaces);
+            passed &= !(controller.window.collectionBehavior &
+                        NSWindowCollectionBehaviorCanJoinAllSpaces);
             [desktop setValue:@{@"showAllSpaces" : @YES} forKey:@"appliedSettings"];
             [desktop configureWindow:controller.window];
-            passed &=
-                (controller.window.collectionBehavior & NSWindowCollectionBehaviorCanJoinAllSpaces) != 0;
+            passed &= (controller.window.collectionBehavior &
+                       NSWindowCollectionBehaviorCanJoinAllSpaces) != 0;
             NSMutableArray *desktopWindows = [NSMutableArray arrayWithObject:controller.window];
             [desktop setValue:desktopWindows forKey:@"windows"];
             [desktop setValue:[desktop currentScreenLayout] forKey:@"screenLayout"];
-            for (NSUInteger event = 0; event < 50; event++)
+            for (NSUInteger event = 0; event < 50; event++) {
                 [desktop screensChanged:nil];
+            }
             passed &= desktopWindows.count == 1 && desktopWindows.firstObject == controller.window;
             [controller.window close];
             passed &= ![DBBackgroundAgent shouldStartForSettings:@{

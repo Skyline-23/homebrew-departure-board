@@ -137,7 +137,6 @@
     "footerHeight": 26,
     "referenceAspect": 1.65,
     "headerFraction": 0.13,
-    "headerVariant": "bilingual",
     "bodyFont": "HelveticaNeue-Medium",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": false,
@@ -164,7 +163,8 @@
       "counter": 0.12,
       "state": 0.22
     },
-    "detailRevision": 2
+    "detailRevision": 2,
+    "adapter": "profile"
   },
   "reference": {
     "source": "Nytt larm om drönare på Arlanda (https://www.epochtimes.se/nytt-larm-om-dronare-pa-arlanda-815075)",

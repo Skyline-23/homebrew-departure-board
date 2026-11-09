@@ -176,7 +176,6 @@
     "footerHeight": 26,
     "referenceAspect": 1.65,
     "headerFraction": 0.06,
-    "headerVariant": "bilingual",
     "bodyFont": "HelveticaNeue",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": false,
@@ -199,7 +198,8 @@
     "footerColor": "0878c5",
     "footerNoticeKey": "notice.boardingPass",
     "verticalRules": "315b77",
-    "detailRevision": 2
+    "detailRevision": 2,
+    "adapter": "profile"
   },
   "reference": {
     "source": "Accordi – L’aeroporto di Venezia si rinnova con le soluzioni L... (https://www.tecnelab.it/news/attualita/accordi--laeroporto-di-venezia-si-rinnova-con-le-soluzioni-lg-business-solutions)",

@@ -139,7 +139,6 @@
     "footerHeight": 26,
     "referenceAspect": 1.62,
     "headerFraction": 0.1,
-    "headerVariant": "left",
     "bodyFont": "HelveticaNeue-Medium",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": false,
@@ -170,7 +169,8 @@
       "expected": 0.1,
       "counter": 0.12
     },
-    "detailRevision": 2
+    "detailRevision": 2,
+    "adapter": "profile"
   },
   "reference": {
     "source": "UK, Germany and Italy detect Omicron variant cases, Israel closes borders | Nippon.com (https://www.nippon.com/en/news/reu20211127KBN2IC0A8/)",

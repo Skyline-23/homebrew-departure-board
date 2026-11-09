@@ -139,7 +139,6 @@
     "footerHeight": 26,
     "referenceAspect": 2.15,
     "headerFraction": 0.115,
-    "headerVariant": "bilingual",
     "bodyFont": "Arial-BoldMT",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": false,
@@ -177,7 +176,8 @@
       "delayed": "895500",
       "cancelled": "a82739",
       "closed": "a82739"
-    }
+    },
+    "adapter": "profile"
   },
   "reference": {
     "source": "Air India to Thailand Review – Layovers, Service & Concerns (https://mysakonnakhon.com/air-india-from-bangkok-review-layovers-service-concerns/)",

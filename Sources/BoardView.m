@@ -77,6 +77,7 @@
 - (void)setLocationCode:(NSString *)locationCode {
     _locationCode = [locationCode copy];
     self.location = DBLocation(locationCode);
+    self.airportAdapter = DBAirportAdapterForLocation(self.location);
     self.startTime = NSProcessInfo.processInfo.systemUptime;
     self.lastRenderedSecond = -1;
     self.pageCycle = -1;
@@ -84,32 +85,37 @@
 }
 
 - (NSString *)effectiveStyle {
-    if ([self.location[@"kind"] isEqual:@"rail"])
+    if ([self.location[@"kind"] isEqual:@"rail"]) {
         return self.location[@"preset"];
-    if ([self.displayStyle isEqual:@"flap"])
+    }
+    if ([self.displayStyle isEqual:@"flap"]) {
         return @"flap";
-    if ([self.displayStyle isEqual:@"lcd"])
-        return self.location[@"preset"];
+    }
     return self.location[@"preset"];
 }
 
 - (BOOL)hasActiveFlapAnimationAt:(NSTimeInterval)uptime {
-    for (NSDictionary *cell in self.flapStates.objectEnumerator)
-        if (uptime - [cell[@"start"] doubleValue] < DBFlapTransitionDuration)
+    for (NSDictionary *cell in self.flapStates.objectEnumerator) {
+        if (uptime - [cell[@"start"] doubleValue] < DBFlapTransitionDuration) {
             return YES;
+        }
+    }
     return NO;
 }
 
 - (NSTimeInterval)preferredAnimationInterval {
     BOOL flap = [[self effectiveStyle] isEqual:@"flap"] && !self.reducedMotion;
-    if (!flap)
+    if (!flap) {
         return 1;
-    BOOL moving = self.needsDisplay || [self hasActiveFlapAnimationAt:NSProcessInfo.processInfo.systemUptime];
+    }
+    BOOL moving =
+        self.needsDisplay || [self hasActiveFlapAnimationAt:NSProcessInfo.processInfo.systemUptime];
     return moving ? 1.0 / 30.0 : 1.0;
 }
 
 - (void)tick {
-    [self updateAtDate:self.referenceDate ?: NSDate.date uptime:NSProcessInfo.processInfo.systemUptime];
+    [self updateAtDate:self.referenceDate ?: NSDate.date
+                uptime:NSProcessInfo.processInfo.systemUptime];
 }
 
 - (BOOL)updateAtDate:(NSDate *)now uptime:(NSTimeInterval)uptime {
@@ -131,10 +137,11 @@
                              : cycle % 2                             ? native
                                                                      : @"en";
         NSArray *rows = self.rows;
-        if (second != self.lastRenderedSecond || self.referenceDate || !rows)
+        if (second != self.lastRenderedSecond || self.referenceDate || !rows) {
             rows = self.referenceDate || self.useSampleData
                        ? DBDepartures(self.location, now, 128)
                        : [LiveFlightStore rowsForLocation:self.location now:now];
+        }
         NSString *emptyMessage = @"data.noDepartures";
         if (!rows.count && !self.referenceDate && !self.useSampleData) {
             switch ([LiveFlightStore availabilityForAirport:self.locationCode]) {
@@ -154,8 +161,9 @@
         NSInteger page = (NSInteger)floor((uptime - self.startTime) / 15.0);
         NSString *style = [self effectiveStyle];
         BOOL secondsClock = [style isEqual:@"victoria"] || [style isEqual:@"sydney"];
-        BOOL changed = self.lastRenderedSecond < 0 || self.referenceDate || animating || finishedAnimation ||
-                       secondsClock || floor(second / 60) != floor(self.lastRenderedSecond / 60) ||
+        BOOL changed = self.lastRenderedSecond < 0 || self.referenceDate || animating ||
+                       finishedAnimation || secondsClock ||
+                       floor(second / 60) != floor(self.lastRenderedSecond / 60) ||
                        ![language isEqual:self.currentLanguage] || ![rows isEqual:self.rows] ||
                        ![emptyMessage isEqual:self.emptyMessageKey] ||
                        ([self.location[@"kind"] isEqual:@"airport"] && page != self.pageCycle);
@@ -165,8 +173,9 @@
         self.emptyMessageKey = emptyMessage;
         self.rows = rows;
         self.pageCycle = page;
-        if (changed)
+        if (changed) {
             self.needsDisplay = YES;
+        }
         return changed;
     }
     return NO;
@@ -177,11 +186,13 @@
 }
 
 - (void)drawBoardInRect:(NSRect)bounds {
-    if (!self.boardDate)
+    if (!self.boardDate) {
         [self tick];
+    }
     DBFillRect(bounds, DBColor(@"030508"));
-    if (bounds.size.width < 1 || bounds.size.height < 1)
+    if (bounds.size.width < 1 || bounds.size.height < 1) {
         return;
+    }
     NSString *style = [self effectiveStyle];
     CGFloat w = 1600 / self.boardScale;
     CGFloat h = w * bounds.size.height / bounds.size.width;
@@ -194,17 +205,19 @@
         [transform concat];
         NSRect area = NSMakeRect(0, 0, w, h);
         DBFillRect(area, DBColor(self.location[@"bg"]));
-        if ([style isEqual:@"flap"])
+        if ([style isEqual:@"flap"]) {
             [self drawFlapBoard:area];
-        else if ([style isEqual:@"victoria"] || [style isEqual:@"sydney"])
+        } else if ([style isEqual:@"victoria"] || [style isEqual:@"sydney"]) {
             [self drawRailCards:area];
-        else if ([self.location[@"kind"] isEqual:@"rail"])
+        } else if ([self.location[@"kind"] isEqual:@"rail"]) {
             [self drawRailTable:area];
-        else
+        } else {
             [self drawAirport:area];
+        }
         CGFloat darkness = 1 - MAX(.35, MIN(1, self.brightness));
-        if (darkness > 0)
+        if (darkness > 0) {
             DBFillRect(area, [NSColor colorWithWhite:0 alpha:darkness]);
+        }
         [NSGraphicsContext restoreGraphicsState];
     }
 }
@@ -230,7 +243,8 @@
     self.reducedMotion = [configuration[@"reduceMotion"] boolValue];
     self.density = [configuration[@"density"] integerValue];
     self.brightness = [configuration[@"brightness"] doubleValue];
-    self.boardScale = configuration[@"boardScale"] ? [configuration[@"boardScale"] doubleValue] : .75;
+    self.boardScale =
+        configuration[@"boardScale"] ? [configuration[@"boardScale"] doubleValue] : .75;
     self.useSampleData = [configuration[@"sampleData"] boolValue];
     self.startTime = [configuration[@"startTime"] doubleValue];
     self.lastRenderedSecond = -1;
@@ -239,18 +253,20 @@
 - (BOOL)writeSnapshot:(NSString *)path size:(NSSize)size {
     @autoreleasepool {
         [self tick];
-        NSBitmapImageRep *rep = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL
-                                                                        pixelsWide:(NSInteger)size.width
-                                                                        pixelsHigh:(NSInteger)size.height
-                                                                     bitsPerSample:8
-                                                                   samplesPerPixel:4
-                                                                          hasAlpha:YES
-                                                                          isPlanar:NO
-                                                                    colorSpaceName:NSDeviceRGBColorSpace
-                                                                       bytesPerRow:0
-                                                                      bitsPerPixel:0];
+        NSBitmapImageRep *rep =
+            [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL
+                                                    pixelsWide:(NSInteger)size.width
+                                                    pixelsHigh:(NSInteger)size.height
+                                                 bitsPerSample:8
+                                               samplesPerPixel:4
+                                                      hasAlpha:YES
+                                                      isPlanar:NO
+                                                colorSpaceName:NSDeviceRGBColorSpace
+                                                   bytesPerRow:0
+                                                  bitsPerPixel:0];
         [NSGraphicsContext saveGraphicsState];
-        NSGraphicsContext *bitmapContext = [NSGraphicsContext graphicsContextWithBitmapImageRep:rep];
+        NSGraphicsContext *bitmapContext =
+            [NSGraphicsContext graphicsContextWithBitmapImageRep:rep];
         NSGraphicsContext.currentContext =
             [NSGraphicsContext graphicsContextWithCGContext:bitmapContext.CGContext flipped:YES];
         NSAffineTransform *flip = NSAffineTransform.transform;
@@ -261,8 +277,8 @@
         // oversized backing surfaces in WindowServer.
         [self drawBoardInRect:NSMakeRect(0, 0, size.width, size.height)];
         [NSGraphicsContext restoreGraphicsState];
-        BOOL saved = [[rep representationUsingType:NSBitmapImageFileTypePNG properties:@{}] writeToFile:path
-                                                                                             atomically:YES];
+        BOOL saved = [[rep representationUsingType:NSBitmapImageFileTypePNG
+                                        properties:@{}] writeToFile:path atomically:YES];
         return saved;
     }
 }

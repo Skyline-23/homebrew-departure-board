@@ -132,7 +132,6 @@
     "footerHeight": 26,
     "referenceAspect": 2.2,
     "headerFraction": 0.1,
-    "headerVariant": "left",
     "bodyFont": "HelveticaNeue",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": false,
@@ -153,7 +152,8 @@
       "gate": "f2eddf"
     },
     "verticalRules": "3b4142",
-    "detailRevision": 2
+    "detailRevision": 2,
+    "adapter": "profile"
   },
   "reference": {
     "source": "citeオーストラリア シドニーからゴールドコーストへ国内線移動 - 旅と暮らしと美味しいものと (https://fuwari-x.hatenablog.com/entry/2024/09/19/121500)",

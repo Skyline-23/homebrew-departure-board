@@ -1,8 +1,10 @@
 BasedOnStyle: LLVM
 IndentWidth: 4
-ColumnLimit: 110
+ColumnLimit: 100
 ObjCBlockIndentWidth: 4
 AllowShortFunctionsOnASingleLine: None
 AllowShortIfStatementsOnASingleLine: Never
 BreakBeforeBraces: Attach
 PointerAlignment: Right
+InsertBraces: true
+SeparateDefinitionBlocks: Always

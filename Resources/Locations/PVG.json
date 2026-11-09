@@ -137,7 +137,6 @@
     "footerHeight": 26,
     "referenceAspect": 3.45,
     "headerFraction": 0.06,
-    "headerVariant": "bilingual",
     "bodyFont": "Menlo-Bold",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": true,
@@ -159,7 +158,8 @@
       "closing": "ec964f",
       "delayed": "f4ac57"
     },
-    "detailRevision": 2
+    "detailRevision": 2,
+    "adapter": "profile"
   },
   "reference": {
     "source": "File:Departure board of Terminal 2 of Shanghai Pudong International Airport.JPG - Wikimedia Commons (https://commons.wikimedia.org/wiki/File%3ADeparture_board_of_Terminal_2_of_Shanghai_Pudong_International_Airport.JPG)",

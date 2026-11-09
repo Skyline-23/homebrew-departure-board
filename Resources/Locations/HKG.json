@@ -237,7 +237,6 @@
     "footerHeight": 26,
     "referenceAspect": 2.55,
     "headerFraction": 0.055,
-    "headerVariant": "left",
     "bodyFont": "HelveticaNeue-Medium",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": true,
@@ -266,7 +265,8 @@
     },
     "detailRevision": 2,
     "terminalHeading": true,
-    "brandWidth": 210
+    "brandWidth": 210,
+    "adapter": "profile"
   },
   "reference": {
     "source": "機場電腦故障　航班資訊未即時更新　林世雄促機管局調查及交報告 (https://www.hk01.com/%E7%A4%BE%E6%9C%83%E6%96%B0%E8%81%9E/1031470/%E6%A9%9F%E5%A0%B4%E9%9B%BB%E8%85%A6%E6%95%85%E9%9A%9C-%E8%88%AA%E7%8F%AD%E8%B3%87%E8%A8%8A%E6%9C%AA%E5%8D%B3%E6%99%82%E6%9B%B4%E6%96%B0-%E6%9E%97%E4%B8%96%E9%9B%84%E4%BF%83%E6%A9%9F%E7%AE%A1%E5%B1%80%E8%AA%BF%E6%9F%A5%E5%8F%8A%E4%BA%A4%E5%A0%B1%E5%91%8A)",

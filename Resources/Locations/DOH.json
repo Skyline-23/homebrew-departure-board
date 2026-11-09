@@ -137,7 +137,6 @@
     "footerHeight": 26,
     "referenceAspect": 2.6,
     "headerFraction": 0.09,
-    "headerVariant": "bilingual",
     "bodyFont": "HelveticaNeue-Medium",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": false,
@@ -156,7 +155,8 @@
     "footerColor": "8c275a",
     "footerBrand": "HAMAD INTERNATIONAL AIRPORT",
     "verticalRules": "354ba6",
-    "detailRevision": 2
+    "detailRevision": 2,
+    "adapter": "profile"
   },
   "reference": {
     "source": "ドーハのハマド空港で乗り継ぎ時間をつぶす　トルコの旅(2) | 旅って楽しい！Amyのlet's enjoy life♪ (https://ameblo.jp/amy-2010/entry-12917062928.html)",

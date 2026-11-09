@@ -171,7 +171,6 @@
     },
     "referenceAspect": 0.61,
     "headerFraction": 0.29,
-    "headerVariant": "haneda",
     "bodyFont": "ArialMT",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": true,
@@ -179,7 +178,12 @@
     "rowFontScale": 0.85,
     "minimumHeaderHeight": 170,
     "verticalRules": "20384b",
-    "detailRevision": 2
+    "detailRevision": 2,
+    "adapter": "haneda",
+    "compactHeader": {
+      "bottomRuleColor": "68d6e5",
+      "bottomRuleHeight": 6
+    }
   },
   "reference": {
     "source": "2.2023年9月14日　早朝の空港にて | Atsushiの飛行機修行旅日記 (https://ameblo.jp/atsushi2019/entry-12822662974.html)",

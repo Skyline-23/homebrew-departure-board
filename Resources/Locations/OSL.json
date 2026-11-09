@@ -138,7 +138,6 @@
     "footerHeight": 26,
     "referenceAspect": 2.5,
     "headerFraction": 0.15,
-    "headerVariant": "bilingual",
     "bodyFont": "HelveticaNeue-Medium",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": false,
@@ -165,7 +164,8 @@
       "counter": 0.12,
       "state": 0.22
     },
-    "detailRevision": 2
+    "detailRevision": 2,
+    "adapter": "profile"
   },
   "reference": {
     "source": "Chegadas e partidas no aeroporto de Oslo (OSL) (https://www.cestee.pt/aeroporto/oslo-osl/chegadas-partidas)",

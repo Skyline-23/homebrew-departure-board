@@ -11,6 +11,7 @@
 @end
 
 @implementation DepartureBoardSaver
+
 - (instancetype)initWithFrame:(NSRect)frame isPreview:(BOOL)preview {
     if ((self = [super initWithFrame:frame isPreview:preview])) {
         self.animationTimeInterval = 1.0;
@@ -20,46 +21,55 @@
     }
     return self;
 }
+
 - (void)startAnimation {
     [self.board reloadSettings];
     [self updateHeartbeat];
     [super startAnimation];
 }
+
 - (void)stopAnimation {
-    if (self.heartbeatPath.length)
+    if (self.heartbeatPath.length) {
         [NSFileManager.defaultManager removeItemAtPath:self.heartbeatPath error:NULL];
+    }
     [super stopAnimation];
 }
+
 - (void)setFrameSize:(NSSize)size {
     [super setFrameSize:size];
     self.board.frame = self.bounds;
 }
+
 - (void)animateOneFrame {
     [self.board tick];
     self.animationTimeInterval = self.board.preferredAnimationInterval;
-    if (NSDate.timeIntervalSinceReferenceDate - self.lastHeartbeat > 30)
+    if (NSDate.timeIntervalSinceReferenceDate - self.lastHeartbeat > 30) {
         [self updateHeartbeat];
+    }
 }
+
 - (void)updateHeartbeat {
     if (!self.isPreview) {
         NSString *folder =
-            [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES).firstObject
-                stringByAppendingPathComponent:@"DepartureBoard"];
+            [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)
+                    .firstObject stringByAppendingPathComponent:@"DepartureBoard"];
         [NSFileManager.defaultManager createDirectoryAtPath:folder
                                 withIntermediateDirectories:YES
                                                  attributes:nil
                                                       error:NULL];
         self.heartbeatPath = [folder
-            stringByAppendingPathComponent:[NSString
-                                               stringWithFormat:@"active-%d",
-                                                                NSProcessInfo.processInfo.processIdentifier]];
+            stringByAppendingPathComponent:[NSString stringWithFormat:@"active-%d",
+                                                                      NSProcessInfo.processInfo
+                                                                          .processIdentifier]];
         [NSData.data writeToFile:self.heartbeatPath atomically:YES];
         self.lastHeartbeat = NSDate.timeIntervalSinceReferenceDate;
     }
 }
+
 - (BOOL)hasConfigureSheet {
     return YES;
 }
+
 - (NSWindow *)configureSheet {
     if (!self.options) {
         self.options = [[NSPanel alloc] initWithContentRect:NSMakeRect(0, 0, 500, 164)
@@ -88,10 +98,13 @@
     }
     return self.options;
 }
+
 - (void)openCompanion:(id)sender {
     NSString *path = DBSettingsStore.settings[@"companionPath"];
-    if (!path.length)
-        path = [NSHomeDirectory() stringByAppendingPathComponent:@"Applications/Departure Board.app"];
+    if (!path.length) {
+        path =
+            [NSHomeDirectory() stringByAppendingPathComponent:@"Applications/Departure Board.app"];
+    }
     NSWorkspaceOpenConfiguration *configuration = NSWorkspaceOpenConfiguration.configuration;
     configuration.activates = YES;
     configuration.arguments = @[ @"--settings" ];
@@ -99,9 +112,11 @@
                                         configuration:configuration
                                     completionHandler:nil];
 }
+
 - (void)closeOptions:(id)sender {
     [NSApp endSheet:self.options];
     [self.options orderOut:nil];
     self.options = nil;
 }
+
 @end

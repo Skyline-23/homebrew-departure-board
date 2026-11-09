@@ -137,7 +137,6 @@
     "footerHeight": 26,
     "referenceAspect": 2.1,
     "headerFraction": 0.075,
-    "headerVariant": "bilingual",
     "bodyFont": "HelveticaNeue",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": true,
@@ -156,7 +155,8 @@
       "cancelled": "aa2430",
       "delayed": "a97327"
     },
-    "detailRevision": 2
+    "detailRevision": 2,
+    "adapter": "profile"
   },
   "reference": {
     "source": "American Airlines 777-300ER Flagship First Review (2026): Buenos Aires to New York | AwardFares Blog (https://awardfares.com/blog/aa-777-300-eze-jfk/)",

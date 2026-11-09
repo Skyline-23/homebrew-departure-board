@@ -138,7 +138,6 @@
     "footerHeight": 26,
     "referenceAspect": 0.77,
     "headerFraction": 0.07,
-    "headerVariant": "left",
     "bodyFont": "Arial-BoldMT",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": true,
@@ -163,7 +162,8 @@
       "gate": 0.08,
       "state": 0.22
     },
-    "detailRevision": 2
+    "detailRevision": 2,
+    "adapter": "profile"
   },
   "reference": {
     "source": "Volcano eruption grounds flights at Indonesia's Jakarta airport (https://www.1news.co.nz/2026/09/06/volcano-eruption-grounds-flights-at-indonesias-jakarta-airport/)",

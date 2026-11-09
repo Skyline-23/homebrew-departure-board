@@ -232,7 +232,6 @@
     "footerHeight": 26,
     "referenceAspect": 3.2,
     "headerFraction": 0.095,
-    "headerVariant": "bilingual",
     "bodyFont": "Menlo-Bold",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": true,
@@ -257,7 +256,12 @@
       "closing": "f08860",
       "cancelled": "ff4e45"
     },
-    "detailRevision": 2
+    "detailRevision": 2,
+    "adapter": "profile",
+    "compactHeader": {
+      "leftRuleColor": "60a77d",
+      "leftRuleWidth": 12
+    }
   },
   "reference": {
     "source": "成田機場第一航廈出入境設施、交通搭車處、免稅店 @來一球叭噗 (https://gototravel.tw/tokyo-narita-airport-terminal-1/)",

@@ -132,7 +132,6 @@
     "footerHeight": 26,
     "referenceAspect": 1.65,
     "headerFraction": 0.04,
-    "headerVariant": "left",
     "bodyFont": "Menlo-Bold",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": true,
@@ -149,7 +148,8 @@
     },
     "footerStyle": "brand-only",
     "footerColor": "0a0d0c",
-    "detailRevision": 2
+    "detailRevision": 2,
+    "adapter": "profile"
   },
   "reference": {
     "source": "Review of Emirates flight from Los Angeles to Dubai in Business (https://flight-report.com/en/report/10503/Emirates_EK216_Los_Angeles_LAX_Dubai_DXB/)",
