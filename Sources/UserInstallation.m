@@ -26,8 +26,12 @@ BOOL RegisterUserInstallation(NSString *installationRoot, NSError **error) {
                            }];
             return NO;
         }
-        if (existing && ![existing containsString:@"/departure-board/"])
-            return NO;
+        if (existing && ![existing containsString:@"/departure-board/"]) {
+            NSString *identifier = [NSBundle bundleWithPath:existing].bundleIdentifier;
+            if (![identifier isEqual:@"com.skyline23.departureboard"] &&
+                ![identifier isEqual:@"io.skyline.departureboard.preview"])
+                return NO;
+        }
         if (![files createDirectoryAtPath:destination.stringByDeletingLastPathComponent
                 withIntermediateDirectories:YES
                                  attributes:nil

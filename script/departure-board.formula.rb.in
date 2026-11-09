@@ -13,12 +13,14 @@ class DepartureBoard < Formula
     system "bash", "script/build.sh"
     libexec.install "outputs/DepartureBoard/dist/Departure Board.app"
     libexec.install "outputs/DepartureBoard/dist/Departure Board.saver"
+    libexec.install "script/sign-local.sh"
 
     (bin/"departure-board").write <<~SH
       #!/bin/bash
       if [[ "${1:-}" == "--version" ]]; then
         exec "#{opt_libexec}/Departure Board.app/Contents/MacOS/DepartureBoard" --version
       fi
+      "#{opt_libexec}/sign-local.sh" || exit $?
       exec /usr/bin/open -n "#{opt_libexec}/Departure Board.app" --args --register-bundles "#{opt_libexec}" "$@"
     SH
   end

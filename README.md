@@ -23,6 +23,9 @@ a separate **Screen Saver** settings pane. Open the
 **Departure Board** app to change location, display style, language, density,
 brightness and your API key. Requires macOS 12 or later. Both Homebrew and
 release builds include Apple Silicon and Intel code for the system screen-saver hosts.
+If your Mac has an Apple Development or Developer ID signing identity, the
+launcher applies that stable identity after Homebrew installation to retain
+Keychain approvals across updates.
 
 ## Live flight information
 
