@@ -1,4 +1,5 @@
 #import "LiveFlightStore.h"
+#import "BackgroundAgent.h"
 #import "DepartureBoardView.h"
 #import "DestinationStore.h"
 #import "SettingsStore.h"
@@ -501,67 +502,6 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
 }
 
 + (void)configureBackgroundRefresh {
-    NSString *folder = [[self userHome] stringByAppendingPathComponent:@"Library/LaunchAgents"];
-    [NSFileManager.defaultManager createDirectoryAtPath:folder
-                            withIntermediateDirectories:YES
-                                             attributes:nil
-                                                  error:NULL];
-    NSString *legacyPath = [folder stringByAppendingPathComponent:@"io.skyline.departureboard.refresh.plist"];
-    NSDictionary *legacyJob = [NSDictionary dictionaryWithContentsOfFile:legacyPath];
-    if ([legacyJob[@"Label"] isEqual:@"io.skyline.departureboard.refresh"]) {
-        NSTask *stopLegacy = NSTask.new;
-        stopLegacy.executableURL = [NSURL fileURLWithPath:@"/bin/launchctl"];
-        stopLegacy.arguments = @[
-            @"bootout", [NSString stringWithFormat:@"gui/%u/io.skyline.departureboard.refresh", getuid()]
-        ];
-        stopLegacy.standardOutput = NSFileHandle.fileHandleWithNullDevice;
-        stopLegacy.standardError = NSFileHandle.fileHandleWithNullDevice;
-        [stopLegacy launchAndReturnError:NULL];
-        [stopLegacy waitUntilExit];
-        [NSFileManager.defaultManager removeItemAtPath:legacyPath error:NULL];
-    }
-    NSString *path = [folder stringByAppendingPathComponent:@"com.skyline23.departureboard.refresh.plist"];
-    NSString *executable = NSBundle.mainBundle.executablePath;
-    for (NSString *application in @[
-             [[self userHome] stringByAppendingPathComponent:@"Applications/Departure Board.app"],
-             @"/Applications/Departure Board.app"
-         ]) {
-        NSBundle *bundle = [NSBundle bundleWithPath:application];
-        if ([bundle.bundleIdentifier isEqual:@"com.skyline23.departureboard"]) {
-            executable = [application stringByAppendingPathComponent:@"Contents/MacOS/DepartureBoard"];
-            break;
-        }
-    }
-    NSDictionary *job = @{
-        @"Label" : @"com.skyline23.departureboard.refresh",
-        @"ProgramArguments" : @[ executable, @"--refresh-data" ],
-        @"StartInterval" : @60,
-        @"RunAtLoad" : @YES,
-        @"ProcessType" : @"Background"
-    };
-    BOOL unchanged = [[NSDictionary dictionaryWithContentsOfFile:path] isEqual:job];
-    [job writeToFile:path atomically:YES];
-    NSString *service = [NSString stringWithFormat:@"gui/%u/com.skyline23.departureboard.refresh", getuid()];
-    NSTask *check = NSTask.new;
-    check.executableURL = [NSURL fileURLWithPath:@"/bin/launchctl"];
-    check.arguments = @[ @"print", service ];
-    check.standardOutput = NSFileHandle.fileHandleWithNullDevice;
-    check.standardError = NSFileHandle.fileHandleWithNullDevice;
-    [check launchAndReturnError:NULL];
-    [check waitUntilExit];
-    if (unchanged && check.terminationStatus == 0)
-        return;
-    if (check.terminationStatus == 0) {
-        NSTask *stop = NSTask.new;
-        stop.executableURL = check.executableURL;
-        stop.arguments = @[ @"bootout", service ];
-        stop.standardError = NSFileHandle.fileHandleWithNullDevice;
-        [stop launchAndReturnError:NULL];
-        [stop waitUntilExit];
-    }
-    NSTask *task = NSTask.new;
-    task.executableURL = [NSURL fileURLWithPath:@"/bin/launchctl"];
-    task.arguments = @[ @"bootstrap", [NSString stringWithFormat:@"gui/%u", getuid()], path ];
-    [task launchAndReturnError:NULL];
+    [DBBackgroundAgent configure];
 }
 @end

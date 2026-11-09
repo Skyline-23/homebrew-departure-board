@@ -62,6 +62,13 @@ avoids Keychain access and preference writes from the system screen-saver sandbo
 Missing data is shown as unavailable. **Sample schedule** is for visual previews;
 the four railway profiles currently use sample timetables, not live railway feeds.
 
+Closing the preview keeps Departure Board running in the menu bar and removes
+its Dock icon. Use the menu bar icon to reopen the board or settings. **Quit
+Departure Board** stops it for the current login session. Enable **Launch in
+background at login** in Settings to start it automatically after signing in.
+A local maintenance job restores the app after an unexpected exit; flight
+requests still follow the configured refresh interval.
+
 ## Visual profiles
 
 Each airport has its own palette, column order, row density and reference
@@ -104,6 +111,7 @@ trigger GitHub Actions to build, validate, release and update the Homebrew cask.
 | `Resources/*.lproj/Localizable.strings` | Display text and translations |
 | `Sources/SettingsStore.m` | Shared preferences and secure settings handoff |
 | `Sources/DesktopController.m` | Live wallpaper windows, one per display |
+| `Sources/BackgroundAgent.m` | Login startup, crash recovery and refresh scheduling |
 | `.github/workflows/` | Validation and macOS releases |
 
 ## Credits

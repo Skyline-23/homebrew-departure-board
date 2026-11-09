@@ -290,3 +290,8 @@
 "settings.setWallpaper" = "Set as Wallpaper";
 "settings.wallpaperApplied" = "Wallpaper Applied";
 "settings.wallpaperFailed" = "Could not apply the system wallpaper";
+
+"settings.launchAtLogin" = "Launch in background at login";
+"menu.showBoard" = "Show Departure Board";
+"menu.window" = "Window";
+"menu.closeWindow" = "Close Window";

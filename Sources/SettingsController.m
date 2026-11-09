@@ -1,3 +1,4 @@
+#import "BackgroundAgent.h"
 #import "BoardViewInternal.h"
 #import "DrawingSupport.h"
 #import "LiveFlightStore.h"
@@ -7,7 +8,7 @@
 @implementation DBBoardView (SettingsController)
 
 - (NSWindow *)settingsWindowWithTarget:(id)target action:(SEL)action {
-    NSWindow *window = [[NSPanel alloc] initWithContentRect:NSMakeRect(0, 0, 700, 662)
+    NSWindow *window = [[NSPanel alloc] initWithContentRect:NSMakeRect(0, 0, 700, 710)
                                                   styleMask:NSWindowStyleMaskTitled
                                                     backing:NSBackingStoreBuffered
                                                       defer:NO];
@@ -157,6 +158,20 @@
     done.tag = 205;
     done.frame = NSMakeRect(468, 24, 92, 32);
     [v addSubview:done];
+    for (NSView *view in v.subviews) {
+        if (view.frame.origin.y >= 278) {
+            NSRect frame = view.frame;
+            frame.origin.y += 48;
+            view.frame = frame;
+        }
+    }
+    NSButton *login = [NSButton checkboxWithTitle:DBUIString(@"settings.launchAtLogin")
+                                           target:nil
+                                           action:NULL];
+    login.tag = 208;
+    login.state = [saved[@"launchAtLogin"] boolValue];
+    login.frame = NSMakeRect(161, 284, 497, 24);
+    [v addSubview:login];
     self.optionsWindow = window;
     return window;
 }
@@ -173,6 +188,7 @@
     saved[@"sampleData"] = @([(NSPopUpButton *)[v viewWithTag:203] indexOfSelectedItem] == 1);
     saved[@"desktopEnabled"] = @([(NSButton *)[v viewWithTag:204] state] == NSControlStateValueOn);
     saved[@"refreshInterval"] = [(NSPopUpButton *)[v viewWithTag:206] selectedItem].representedObject;
+    saved[@"launchAtLogin"] = @([(NSButton *)[v viewWithTag:208] state] == NSControlStateValueOn);
     NSButton *button = (NSButton *)[v viewWithTag:205];
     button.enabled = NO;
     button.title = DBUIString(@"settings.saving");
@@ -191,10 +207,10 @@
                        return;
                    }
                    [self reloadSettings];
-                   if ([NSBundle.mainBundle.bundleIdentifier isEqual:@"com.skyline23.departureboard"] &&
-                       [DBSettingsStore.settings[@"hasAPIKey"] boolValue] && !self.useSampleData) {
-                       [LiveFlightStore configureBackgroundRefresh];
-                       [LiveFlightStore refreshInBackground];
+                   if ([NSBundle.mainBundle.bundleIdentifier isEqual:@"com.skyline23.departureboard"]) {
+                       [DBBackgroundAgent configure];
+                       if ([DBSettingsStore.settings[@"hasAPIKey"] boolValue] && !self.useSampleData)
+                           [LiveFlightStore refreshInBackground];
                    }
                    completion(YES);
                }];

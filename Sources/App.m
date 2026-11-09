@@ -1,3 +1,4 @@
+#import "BackgroundAgent.h"
 #import "DepartureBoardView.h"
 #import "DesktopController.h"
 #import "LiveFlightStore.h"
@@ -11,6 +12,8 @@
 @property(nonatomic, strong) NSWindow *options;
 @property(nonatomic, strong) NSTimer *timer;
 @property(nonatomic, strong) DBDesktopController *desktop;
+@property(nonatomic, strong) NSStatusItem *statusItem;
+@property(nonatomic) BOOL runtimeRegistered;
 @end
 
 @implementation DepartureBoardApp
@@ -24,7 +27,8 @@
                   error.localizedDescription ?: @"Invalid installation root");
         }
     }
-    self.board = [[DBBoardView alloc] initWithFrame:NSMakeRect(0, 0, 1440, 900)];
+    if (!self.board)
+        self.board = [[DBBoardView alloc] initWithFrame:NSMakeRect(0, 0, 1440, 900)];
     NSUInteger index = [arguments indexOfObject:@"--location"];
     if (index != NSNotFound && index + 1 < arguments.count)
         self.board.locationCode = arguments[index + 1];
@@ -84,6 +88,35 @@
     NSMutableDictionary *currentSettings = [DBSettingsStore.settings mutableCopy];
     currentSettings[@"companionPath"] = NSBundle.mainBundle.bundlePath;
     [DBSettingsStore saveSettings:currentSettings replacementAPIKey:nil error:NULL];
+    [self createMainWindow];
+    BOOL background = [arguments containsObject:@"--background"];
+    [self buildMenus];
+    [self buildStatusMenu];
+    if (!background)
+        [self showBoard:nil];
+    self.desktop = DBDesktopController.new;
+    [self.desktop refresh];
+    self.runtimeRegistered = YES;
+    [DBBackgroundAgent recordApplicationStarted];
+    __weak DepartureBoardApp *weakSelf = self;
+    self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0 / 30.0
+                                                 repeats:YES
+                                                   block:^(NSTimer *timer) {
+                                                       [weakSelf.board tick];
+                                                       [weakSelf.desktop tick];
+                                                   }];
+    [LiveFlightStore refreshInBackground];
+    [DBBackgroundAgent configure];
+    if ([arguments containsObject:@"--fullscreen"])
+        [self.window toggleFullScreen:nil];
+    if ([arguments containsObject:@"--settings"] || (!background && arguments.count == 1))
+        [self showSettings:nil];
+}
+- (void)createMainWindow {
+    if (self.window)
+        return;
+    if (!self.board)
+        self.board = [[DBBoardView alloc] initWithFrame:NSMakeRect(0, 0, 1440, 900)];
     self.window =
         [[NSWindow alloc] initWithContentRect:self.board.frame
                                     styleMask:NSWindowStyleMaskTitled | NSWindowStyleMaskClosable |
@@ -91,41 +124,78 @@
                                       backing:NSBackingStoreBuffered
                                         defer:NO];
     self.window.title = @"Departure Board";
+    // ARC owns this window across close/reopen cycles.
+    self.window.releasedWhenClosed = NO;
     self.window.minSize = NSMakeSize(900, 580);
     self.window.delegate = self;
     self.window.contentView = self.board;
     self.board.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
     [self.window center];
-    BOOL background = NO;
-    if (!background)
-        [self.window makeKeyAndOrderFront:nil];
-    [self buildMenus];
-    if (!background)
-        [NSApp activateIgnoringOtherApps:YES];
-    self.desktop = DBDesktopController.new;
-    [self.desktop refresh];
-    self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0 / 30.0
-                                                 repeats:YES
-                                                   block:^(NSTimer *timer) {
-                                                       [self.board tick];
-                                                       [self.desktop tick];
-                                                   }];
-    [LiveFlightStore refreshInBackground];
-    NSDictionary *savedSettings = DBSettingsStore.settings;
-    if ([savedSettings[@"hasAPIKey"] boolValue] && !self.board.useSampleData) {
-        [LiveFlightStore configureBackgroundRefresh];
-    }
-    if ([arguments containsObject:@"--fullscreen"])
-        [self.window toggleFullScreen:nil];
-    if ([arguments containsObject:@"--settings"] || arguments.count == 1)
-        [self showSettings:nil];
 }
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender {
-    return ![DBSettingsStore.settings[@"desktopEnabled"] boolValue];
+    return NO;
 }
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)sender hasVisibleWindows:(BOOL)visible {
     [self showSettings:nil];
     return YES;
+}
+- (void)applicationWillTerminate:(NSNotification *)notification {
+    [self.timer invalidate];
+    [NSDistributedNotificationCenter.defaultCenter removeObserver:self];
+    if (self.runtimeRegistered)
+        [DBBackgroundAgent recordApplicationQuit];
+}
+- (void)windowWillClose:(NSNotification *)notification {
+    if (notification.object != self.window)
+        return;
+    [self closeSettings];
+    [NSApp setActivationPolicy:NSApplicationActivationPolicyAccessory];
+}
+- (void)showBoard:(id)sender {
+    [self createMainWindow];
+    [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
+    [self.window makeKeyAndOrderFront:nil];
+    [NSApp activateIgnoringOtherApps:YES];
+}
+- (void)closeSettings {
+    NSWindow *settings = self.options;
+    if (!settings)
+        return;
+    [self.window endSheet:settings];
+    [settings orderOut:nil];
+    self.options = nil;
+}
+- (void)closeWindow:(id)sender {
+    [self closeSettings];
+    [self.window close];
+}
+- (void)buildStatusMenu {
+    self.statusItem = [NSStatusBar.systemStatusBar statusItemWithLength:NSVariableStatusItemLength];
+    self.statusItem.button.image = [NSImage imageWithSystemSymbolName:@"airplane.departure"
+                                             accessibilityDescription:@"Departure Board"];
+    NSMenu *menu = NSMenu.new;
+    for (NSArray *entry in @[
+             @[ @"menu.settings", NSStringFromSelector(@selector(showSettings:)) ],
+             @[ @"menu.showBoard", NSStringFromSelector(@selector(showBoard:)) ],
+             @[ @"settings.setWallpaper", NSStringFromSelector(@selector(applyWallpaper:)) ]
+         ]) {
+        NSMenuItem *item = [menu addItemWithTitle:DBUIString(entry[0])
+                                           action:NSSelectorFromString(entry[1])
+                                    keyEquivalent:@""];
+        item.target = self;
+    }
+    [menu addItem:NSMenuItem.separatorItem];
+    NSMenuItem *quit = [menu addItemWithTitle:DBUIString(@"menu.quit")
+                                       action:@selector(terminate:)
+                                keyEquivalent:@""];
+    quit.target = NSApp;
+    self.statusItem.menu = menu;
+    [NSDistributedNotificationCenter.defaultCenter
+               addObserver:self
+                  selector:@selector(showSettings:)
+                      name:@"com.skyline23.departureboard.showSettings"
+                    object:nil
+        suspensionBehavior:NSNotificationSuspensionBehaviorDeliverImmediately];
 }
 - (void)buildMenus {
     NSMenu *bar = NSMenu.new;
@@ -166,6 +236,16 @@
     [view addItemWithTitle:DBUIString(@"menu.next") action:@selector(nextLocation:) keyEquivalent:@"]"];
     viewItem.submenu = view;
     [bar addItem:viewItem];
+    NSMenuItem *windowItem = [[NSMenuItem alloc] initWithTitle:DBUIString(@"menu.window")
+                                                        action:NULL
+                                                 keyEquivalent:@""];
+    NSMenu *windowMenu = [[NSMenu alloc] initWithTitle:DBUIString(@"menu.window")];
+    NSMenuItem *close = [windowMenu addItemWithTitle:DBUIString(@"menu.closeWindow")
+                                              action:@selector(closeWindow:)
+                                       keyEquivalent:@"w"];
+    close.target = self;
+    windowItem.submenu = windowMenu;
+    [bar addItem:windowItem];
     NSApp.mainMenu = bar;
 }
 - (void)chooseLocation:(NSMenuItem *)sender {
@@ -182,8 +262,7 @@
     [self.board tick];
 }
 - (void)showSettings:(id)sender {
-    [self.window makeKeyAndOrderFront:nil];
-    [NSApp activateIgnoringOtherApps:YES];
+    [self showBoard:nil];
     if (self.options) {
         [self.options makeKeyAndOrderFront:nil];
         return;
@@ -197,9 +276,7 @@
                              completion:^(BOOL saved) {
                                  if (!saved)
                                      return;
-                                 [self.window endSheet:self.options];
-                                 [self.options orderOut:nil];
-                                 self.options = nil;
+                                 [self closeSettings];
                                  [self.desktop refresh];
                              }];
 }
@@ -239,6 +316,33 @@
 }
 @end
 
+#ifndef DB_APP_TEST
+static BOOL HandleRunningApplication(NSArray<NSString *> *arguments) {
+    NSRunningApplication *running = [DBBackgroundAgent runningApplication];
+    if (!running)
+        return NO;
+    NSString *installedVersion =
+        [NSBundle bundleWithURL:running.bundleURL].infoDictionary[@"CFBundleShortVersionString"];
+    NSString *currentVersion = NSBundle.mainBundle.infoDictionary[@"CFBundleShortVersionString"];
+    if (currentVersion && ![installedVersion isEqual:currentVersion]) {
+        [running terminate];
+        NSDate *deadline = [NSDate dateWithTimeIntervalSinceNow:3];
+        while (!running.terminated && deadline.timeIntervalSinceNow > 0)
+            [NSThread sleepForTimeInterval:.05];
+        if (running.terminated)
+            return NO;
+    }
+    if (![arguments containsObject:@"--background"]) {
+        [NSDistributedNotificationCenter.defaultCenter
+            postNotificationName:@"com.skyline23.departureboard.showSettings"
+                          object:nil
+                        userInfo:nil
+              deliverImmediately:YES];
+        [running activateWithOptions:NSApplicationActivateIgnoringOtherApps];
+    }
+    return YES;
+}
+
 int main(int argc, const char *argv[]) {
     @autoreleasepool {
         if (argc > 2 && strcmp(argv[1], "--import-api-key") == 0) {
@@ -258,15 +362,10 @@ int main(int argc, const char *argv[]) {
                      : "development");
             return 0;
         }
-        if (argc > 1 && strcmp(argv[1], "--refresh-data") == 0) {
-            if (![LiveFlightStore shouldRefreshInBackground])
-                return 0;
-            NSError *error = nil;
-            BOOL refreshed = [LiveFlightStore refreshWithError:&error];
-            if (!refreshed)
-                fprintf(stderr, "%s\n",
-                        error.localizedDescription.UTF8String ?: "Could not refresh flights.");
-            return refreshed ? 0 : 1;
+        if (argc > 1 &&
+            (strcmp(argv[1], "--refresh-data") == 0 || strcmp(argv[1], "--maintain-background") == 0)) {
+            [DBBackgroundAgent performMaintenance];
+            return 0;
         }
         if (argc > 2 && strcmp(argv[1], "--refresh-airport") == 0) {
             NSError *error = nil;
@@ -279,11 +378,19 @@ int main(int argc, const char *argv[]) {
         }
         if (!DBSettingsStore.settings[@"hasAPIKey"])
             [DBSettingsStore saveSettings:DBSettingsStore.settings replacementAPIKey:nil error:NULL];
+        NSArray<NSString *> *arguments = NSProcessInfo.processInfo.arguments;
+        BOOL snapshot =
+            [arguments containsObject:@"--snapshot"] || [arguments containsObject:@"--snapshot-all"];
+        if (!snapshot && HandleRunningApplication(arguments))
+            return 0;
         NSApplication *app = NSApplication.sharedApplication;
-        [app setActivationPolicy:NSApplicationActivationPolicyRegular];
-        DepartureBoardApp *delegate = DepartureBoardApp.new;
+        [app setActivationPolicy:[arguments containsObject:@"--background"]
+                                     ? NSApplicationActivationPolicyAccessory
+                                     : NSApplicationActivationPolicyRegular];
+        __attribute__((objc_precise_lifetime)) DepartureBoardApp *delegate = DepartureBoardApp.new;
         app.delegate = delegate;
         [app run];
     }
     return 0;
 }
+#endif
