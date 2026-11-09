@@ -17,6 +17,7 @@ internal static class WindowsSmokeTest
     {
 
         Directory.CreateDirectory(outputDirectory);
+        File.WriteAllText(Path.Combine(outputDirectory, "progress.txt"), "Started self-test.\n");
         var storage = Path.Combine(outputDirectory, "isolated-data");
         using var services = new AppServices(storage);
         var count = RenderAirports(services, outputDirectory);
@@ -53,6 +54,10 @@ internal static class WindowsSmokeTest
                 var path = Path.Combine(outputDirectory, airport.Code + "-" + language + ".png");
                 SaveImage(surface, path);
                 count++;
+                File.AppendAllText(
+                    Path.Combine(outputDirectory, "progress.txt"),
+                    airport.Code + " " + language + " rendered.\n"
+                );
             }
         }
 

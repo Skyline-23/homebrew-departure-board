@@ -13,10 +13,12 @@ public sealed class SettingsRepository(string directory)
         try
         {
             return File.Exists(path)
-                ? JsonSerializer.Deserialize<BoardSettings>(File.ReadAllText(path)) ?? new()
+                ? (
+                    JsonSerializer.Deserialize<BoardSettings>(File.ReadAllText(path)) ?? new()
+                ).Normalize()
                 : new();
         }
-        catch (JsonException)
+        catch (Exception error) when (error is JsonException or IOException)
         {
             return new();
         }
@@ -27,7 +29,7 @@ public sealed class SettingsRepository(string directory)
 
         Directory.CreateDirectory(directory);
         var temporaryPath = path + ".new";
-        File.WriteAllText(temporaryPath, JsonSerializer.Serialize(settings, Options));
+        File.WriteAllText(temporaryPath, JsonSerializer.Serialize(settings.Normalize(), Options));
         File.Move(temporaryPath, path, true);
     }
 }

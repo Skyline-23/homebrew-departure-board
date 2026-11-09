@@ -36,7 +36,7 @@ void Reject(Action action, string message)
 }
 
 Check(catalog.Airports.Count == 40, "Expected all 40 airport profiles.");
-Reject(() => catalog.Get("SEOUL"), "Removed station codes must not select an airport.");
+Reject(() => catalog.Get("INVALID"), "Unsupported codes must not select an airport.");
 
 foreach (var airport in catalog.Airports)
 {
@@ -54,6 +54,16 @@ Check(LaunchOptions.Parse(["/c:42"]).Mode == LaunchMode.Settings, "Settings mode
 Check(LaunchOptions.Parse(["/p", "123"]).PreviewParent == 123, "Separate preview handle.");
 Check(LaunchOptions.Parse(["/P:123"]).PreviewParent == 123, "Inline preview handle.");
 Reject(() => LaunchOptions.Parse(["/p", "0"]), "Reject an invalid preview parent.");
+
+var normalized = new BoardSettings
+{
+    Scale = 0,
+    Density = -5,
+    RefreshSeconds = 1,
+}.Normalize();
+Check(normalized.Scale == 0.5, "Reject an unusable display scale.");
+Check(normalized.Density == 8, "Reject a negative row count.");
+Check(normalized.RefreshSeconds == 60, "Enforce the minimum refresh interval.");
 
 var operation = Fixtures.Flight("NH 1", "Operator", "HL123");
 var alias = Fixtures.Flight("UA 2", "IsCodeshared", "");

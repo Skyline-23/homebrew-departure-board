@@ -56,7 +56,7 @@ dotnet build Windows/DepartureBoard.slnx -c Release
 ./Windows/scripts/Publish.ps1 -Runtime win-x64
 ```
 
-Core tests and cross-compilation also run on macOS/Linux. WPF execution requires Windows.
+The shared-core tests and cross-compilation also run on macOS/Linux. WPF execution requires Windows.
 CI renders each airport in English and its local language, checks native preview embedding,
 and tests the extracted installer and uninstaller. It does not replace physical multi-monitor
 or lock/unlock testing.

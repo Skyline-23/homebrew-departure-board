@@ -1,11 +1,14 @@
 name: Windows preview
 on:
   push:
-    branches: [main, feat/windows-port]
+    branches: [main]
     paths: ['Windows/**', 'Resources/**', '.github/workflows/windows.yml']
   pull_request:
     paths: ['Windows/**', 'Resources/**', '.github/workflows/windows.yml']
   workflow_dispatch:
+concurrency:
+  group: windows-preview-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
@@ -57,9 +60,11 @@ jobs:
           $selected = (Get-ItemProperty 'HKCU:\Control Panel\Desktop').'SCRNSAVE.EXE'
           if ($selected -ne "$installed\DepartureBoard.scr") { throw 'Screen saver not registered.' }
           try {
-            $process = Start-Process "$installed/DepartureBoard.scr" -ArgumentList @(
-              '--self-test', $images
-            ) -PassThru
+            $start = [Diagnostics.ProcessStartInfo]::new("$installed/DepartureBoard.scr")
+            $start.UseShellExecute = $false
+            $start.ArgumentList.Add('--self-test')
+            $start.ArgumentList.Add($images)
+            $process = [Diagnostics.Process]::Start($start)
             if (!$process.WaitForExit(120000)) {
               Stop-Process -Id $process.Id -Force
               throw 'Windows smoke test timed out.'

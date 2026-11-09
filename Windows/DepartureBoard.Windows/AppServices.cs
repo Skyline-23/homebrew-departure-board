@@ -47,6 +47,7 @@ internal sealed class AppServices : IDisposable
     public void Save(BoardSettings settings, string replacementKey)
     {
 
+        settings = settings.Normalize();
         Catalog.Get(settings.Airport);
         credentials.Save(replacementKey);
         apiKey = credentials.Read();
