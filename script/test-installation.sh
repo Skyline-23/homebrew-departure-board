@@ -14,7 +14,9 @@ if brew command trust >/dev/null 2>&1; then
 fi
 HOMEBREW_NO_AUTO_UPDATE=1 brew install --cask skyline-23/departure-board/departure-board
 VERSION="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP/Contents/Info.plist")"
-[[ -z "${EXPECTED_VERSION:-}" || "$VERSION" == "$EXPECTED_VERSION" ]]
+EXPECTED_VERSION="${EXPECTED_VERSION:-}"
+EXPECTED_VERSION="${EXPECTED_VERSION#v}"
+[[ -z "$EXPECTED_VERSION" || "$VERSION" == "$EXPECTED_VERSION" ]]
 validate_ticket() {
   for attempt in 1 2 3; do
     if xcrun stapler validate "$1"; then return 0; fi

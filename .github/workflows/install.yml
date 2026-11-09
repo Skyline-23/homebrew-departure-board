@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install published cask and exercise first launch
         env:
-          EXPECTED_VERSION: ${{ inputs.version }}
+          EXPECTED_VERSION: ${{ inputs.version || github.event.workflow_run.head_branch }}
         run: ./script/test-installation.sh
       - uses: actions/upload-artifact@v4
         if: always()
