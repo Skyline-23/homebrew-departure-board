@@ -82,6 +82,16 @@ int main(int argc, const char *argv[]) {
         NSSecureTextField *token = [editor.contentView viewWithTag:202];
         if (!token.enabled || !token.editable || !token.selectable || !token.acceptsFirstResponder)
             return 1;
+        if (![[editor.contentView viewWithTag:207] isEnabled])
+            return 1;
+        NSRect liveFrame = board.frame;
+        NSString *snapshotPath = [NSTemporaryDirectory()
+            stringByAppendingPathComponent:[NSString stringWithFormat:@"departure-snapshot-%@.png",
+                                                                      NSUUID.UUID.UUIDString]];
+        if (![board writeSnapshot:snapshotPath size:NSMakeSize(1280, 720)] ||
+            !NSEqualRects(board.frame, liveFrame))
+            return 1;
+        [NSFileManager.defaultManager removeItemAtPath:snapshotPath error:NULL];
         Class store = NSClassFromString(@"LiveFlightStore");
         NSDictionary *flight = @{
             @"number" : @"KE 703",

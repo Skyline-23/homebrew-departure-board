@@ -47,9 +47,13 @@ are combined into one request. Failed requests use increasing retry delays, and
 quota/authentication errors pause retries for an hour (or the provider's longer
 `Retry-After` interval). A replacement key clears that pause.
 
-Enable **Use as live desktop wallpaper** to display the board behind desktop
-icons on every connected screen. The app must remain running for the wallpaper
-to update. Turn the option off to reveal the existing wallpaper again.
+Click **Set as Wallpaper** in Settings to apply and register the live board automatically
+behind desktop icons on every connected screen. A full-resolution still frame
+is also registered with macOS once per minute and when settings change, so the
+lock screen uses the same board instead of an unrelated photo. The app must
+remain running for updates. Turning the option off restores the previous
+system wallpaper. The current board also appears automatically in the system wallpaper chooser;
+no file or folder import is needed.
 
 The screen saver reads local flight data without opening Keychain prompts over
 the lock screen. Its **Options** button opens the companion settings editor. Keeping one editor

@@ -156,6 +156,9 @@
                                                       action:NULL
                                                keyEquivalent:@""];
     NSMenu *view = [[NSMenu alloc] initWithTitle:DBUIString(@"menu.view")];
+    [view addItemWithTitle:DBUIString(@"settings.setWallpaper")
+                    action:@selector(applyWallpaper:)
+             keyEquivalent:@""];
     NSMenuItem *full = [view addItemWithTitle:DBUIString(@"menu.fullscreen")
                                        action:@selector(toggleFullScreen:)
                                 keyEquivalent:@"f"];
@@ -199,6 +202,33 @@
                                  self.options = nil;
                                  [self.desktop refresh];
                              }];
+}
+- (void)applyWallpaper:(id)sender {
+    void (^apply)(void) = ^{
+        BOOL success = [self.desktop applyWallpaper];
+        if ([sender isKindOfClass:NSButton.class]) {
+            NSButton *button = sender;
+            button.title = DBUIString(success ? @"settings.wallpaperApplied" : @"settings.setWallpaper");
+        }
+        if (!success) {
+            NSAlert *alert = NSAlert.new;
+            alert.messageText = DBUIString(@"settings.wallpaperFailed");
+            [alert runModal];
+        }
+    };
+    if (self.options) {
+        [(NSButton *)[self.options.contentView viewWithTag:204] setState:NSControlStateValueOn];
+        [self.board applySettingsFromWindow:self.options
+                                 completion:^(BOOL saved) {
+                                     if (saved)
+                                         apply();
+                                 }];
+    } else {
+        NSMutableDictionary *settings = [DBSettingsStore.settings mutableCopy];
+        settings[@"desktopEnabled"] = @YES;
+        [DBSettingsStore saveSettings:settings replacementAPIKey:nil error:NULL];
+        apply();
+    }
 }
 - (void)openScreenSaverSettings:(id)sender {
     NSString *pane = @"com.apple.ScreenSaver-Settings.extension";

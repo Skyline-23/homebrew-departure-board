@@ -261,7 +261,7 @@
 
 "data.retrieved" = "Retrieved";
 
-"settings.desktop" = "Use as live desktop wallpaper";
+"settings.desktop" = "Live wallpaper";
 "settings.lastUpdate" = "Flight data: AeroDataBox · Updated: %@";
 "settings.neverUpdated" = "Not retrieved yet";
 "settings.apiKeySaved" = "API key saved in Keychain. Enter a new key to replace it.";
@@ -286,3 +286,7 @@
 "settings.companionExplanation" = "Edit the shared settings in Departure Board. Changes also apply to this screen saver and the live desktop wallpaper.";
 "settings.openCompanion" = "Open Departure Board Settings…";
 "settings.done" = "Done";
+
+"settings.setWallpaper" = "Set as Wallpaper";
+"settings.wallpaperApplied" = "Wallpaper Applied";
+"settings.wallpaperFailed" = "Could not apply the system wallpaper";

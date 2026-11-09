@@ -86,8 +86,15 @@
     NSButton *desktop = [NSButton checkboxWithTitle:DBUIString(@"settings.desktop") target:nil action:NULL];
     desktop.tag = 204;
     desktop.state = [saved[@"desktopEnabled"] boolValue];
-    desktop.frame = NSMakeRect(161, 284, 497, 24);
+    desktop.frame = NSMakeRect(161, 284, 250, 24);
     [v addSubview:desktop];
+    NSButton *wallpaper = [NSButton buttonWithTitle:DBUIString(@"settings.setWallpaper")
+                                             target:target
+                                             action:@selector(applyWallpaper:)];
+    wallpaper.bezelStyle = NSBezelStyleRounded;
+    wallpaper.frame = NSMakeRect(452, 278, 206, 32);
+    wallpaper.tag = 207;
+    [v addSubview:wallpaper];
     NSTextField *refreshLabel = [NSTextField labelWithString:DBUIString(@"settings.refresh")];
     refreshLabel.frame = NSMakeRect(29, 245, 130, 25);
     [v addSubview:refreshLabel];

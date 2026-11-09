@@ -151,6 +151,7 @@
 }
 
 - (BOOL)writeSnapshot:(NSString *)path size:(NSSize)size {
+    NSRect originalFrame = self.frame;
     [self setFrameSize:size];
     [self tick];
     NSBitmapImageRep *rep = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL
@@ -173,8 +174,11 @@
     [flip concat];
     [self drawRect:self.bounds];
     [NSGraphicsContext restoreGraphicsState];
-    return [[rep representationUsingType:NSBitmapImageFileTypePNG properties:@{}] writeToFile:path
-                                                                                   atomically:YES];
+    BOOL saved = [[rep representationUsingType:NSBitmapImageFileTypePNG properties:@{}] writeToFile:path
+                                                                                         atomically:YES];
+    self.frame = originalFrame;
+    self.needsDisplay = YES;
+    return saved;
 }
 
 @end
