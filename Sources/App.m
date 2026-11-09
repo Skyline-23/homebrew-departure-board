@@ -4,6 +4,8 @@
 #import "LiveFlightStore.h"
 #import "SettingsStore.h"
 #import "UserInstallation.h"
+#import <errno.h>
+#import <signal.h>
 #import <unistd.h>
 
 @interface DepartureBoardApp : NSObject <NSApplicationDelegate, NSWindowDelegate>
@@ -341,11 +343,13 @@ static BOOL HandleRunningApplication(NSArray<NSString *> *arguments) {
     if (currentVersion && ![installedVersion isEqual:currentVersion]) {
         [running terminate];
         NSDate *deadline = [NSDate dateWithTimeIntervalSinceNow:3];
-        // NSRunningApplication updates termination state through the run loop.
-        while (!running.terminated && deadline.timeIntervalSinceNow > 0)
+        // Launch Services may cache isTerminated after the process has exited.
+        pid_t previousPID = running.processIdentifier;
+        while (deadline.timeIntervalSinceNow > 0) {
+            if (kill(previousPID, 0) == -1 && errno == ESRCH)
+                return NO;
             [NSRunLoop.currentRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:.05]];
-        if (running.terminated)
-            return NO;
+        }
     }
     if (![arguments containsObject:@"--background"]) {
         [NSDistributedNotificationCenter.defaultCenter
