@@ -17,7 +17,9 @@ Homebrew compiles the app on your Mac. Its first launch registers it in
 `~/Applications` and `~/Library/Screen Savers`, outside Homebrew's isolated build
 environment. This avoids relying on an unnotarized downloaded binary.
 
-Choose **Departure Board** in **System Settings → Screen Saver**. Open the
+Choose **Departure Board** under **Other** in the screen-saver selector. On current
+macOS this is **System Settings → Wallpaper → Screen Saver**; older releases have
+a separate **Screen Saver** settings pane. Open the
 **Departure Board** app to change location, display style, language, density,
 brightness and the live-data gateway. Requires macOS 12 or later; release
 builds target the current Mac. Binary release ZIPs also contain Apple Silicon and Intel architectures.

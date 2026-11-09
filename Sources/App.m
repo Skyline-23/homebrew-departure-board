@@ -161,8 +161,11 @@
     self.options = nil;
 }
 - (void)openScreenSaverSettings:(id)sender {
+    NSString *pane = @"com.apple.ScreenSaver-Settings.extension";
+    if (@available(macOS 26.0, *))
+        pane = @"com.apple.Wallpaper-Settings.extension";
     [NSWorkspace.sharedWorkspace
-        openURL:[NSURL URLWithString:@"x-apple.systempreferences:com.apple.ScreenSaver-Settings.extension"]];
+        openURL:[NSURL URLWithString:[@"x-apple.systempreferences:" stringByAppendingString:pane]]];
 }
 @end
 
