@@ -5,8 +5,9 @@ translations, schedules and airline assets. macOS remains the stable release.
 
 ## Install a preview build
 
-1. Download `DepartureBoard-win-x64` or `DepartureBoard-win-arm64` from a successful
-   **Windows preview** GitHub Actions run. Extract the artifact, then extract the ZIP inside it.
+1. Download `DepartureBoard-win-x64.zip` or `DepartureBoard-win-arm64.zip` from the
+   [latest release](https://github.com/Skyline-23/homebrew-departure-board/releases/latest) and extract it.
+   Development builds are also available as artifacts from successful **Windows preview** runs.
 2. Double-click **Install.cmd**. It installs for your Windows user, adds a Start menu shortcut
    and selects Departure Board as your screen saver. Administrator access is not needed.
 3. Open **Departure Board** from Start. Choose an airport and use **Apply**.
@@ -37,7 +38,9 @@ Provider failures retain cached flights and share a retry delay between processe
 to choose your idle timeout and sign-in requirement. The app supports full-screen `/s`,
 preview `/p <HWND>` and settings `/c` commands.
 
-**Set as wallpaper** saves the current board as a Windows wallpaper image.
+**Set as wallpaper** saves the current board as a Windows wallpaper image. Both still and
+live wallpapers keep the board inside each monitor’s working area so the taskbar does not
+cover the last row or footer.
 
 **Live desktop wallpaper** embeds the board behind desktop icons using Explorer's WorkerW
 host, including the layered desktop used by newer Windows 11 builds. The app recreates its

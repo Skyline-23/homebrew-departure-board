@@ -2,9 +2,9 @@
 
 **[English](README.md) · [한국어](README.ko.md)**
 
-Airport departure boards for your Mac — a screen saver, live wallpaper and companion app.
+Airport departure boards for macOS and Windows — a screen saver, live wallpaper and companion app.
 
-**macOS 12+ · Apple Silicon & Intel · 40 airports**
+**macOS 12+ · Windows 11 preview · 40 airports**
 
 ![Departure Board displaying Haneda departures in English](docs/screenshots/haneda-english.png)
 *Haneda (HND), English — captured from Departure Board. Flight data: [AeroDataBox](https://aerodatabox.com/).*
@@ -44,6 +44,12 @@ The formula builds locally and installs the screen saver in `~/Library/Screen Sa
 
 </details>
 
+## Install on Windows
+
+Download [Windows x64](https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-win-x64.zip) or [Windows ARM64](https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-win-arm64.zip), extract the ZIP and run **Install.cmd**. The package includes the .NET runtime and installs for your user without administrator access.
+
+Windows is an unsigned preview. See the [Windows guide](Windows/README.md) for installation, screen-saver selection and live wallpaper settings.
+
 ## Get an API key
 
 Live departures use **your own AeroDataBox subscription through RapidAPI**. One key works across the supported airports; availability depends on the provider's coverage and your plan.
@@ -55,7 +61,7 @@ Live departures use **your own AeroDataBox subscription through RapidAPI**. One 
 
 For account setup, key creation, plan limits and troubleshooting, see the **[API key guide](docs/api-key.md)**. RapidAPI may require billing details for a free plan, so review the current price and quota before subscribing.
 
-The key stays in your Mac's Keychain. It is not included in the app or shared with the project. You can try the layouts without a key by choosing **Sample schedule · visual preview only**.
+The key stays in macOS Keychain or Windows Credential Manager. It is not included in the app or shared with the project. You can try the layouts without a key by choosing **Sample schedule · visual preview only**.
 
 ## Make it your screen saver or wallpaper
 
@@ -88,7 +94,7 @@ These are independent recreations of airport displays; layout and live-data cove
 | Platform | Status |
 | --- | --- |
 | macOS 12 or later · Apple Silicon and Intel | Available |
-| Windows | [Preview port](Windows/README.md): x64/ARM64 builds in the Windows preview workflow; unsigned |
+| Windows 11 · x64 and ARM64 | [Unsigned preview](Windows/README.md), included in releases |
 
 ## Development
 

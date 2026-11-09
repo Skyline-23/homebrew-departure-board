@@ -2,7 +2,7 @@
 
 ## Release requirements
 
-The tag-triggered `Release macOS screen saver` workflow uses the `macos-release`
+The tag-triggered `Release Departure Board` workflow uses the `macos-release`
 environment. It must have these encrypted secrets:
 
 | Secret | Contents |
@@ -31,6 +31,19 @@ Build validation on branches and pull requests needs no signing secrets and may
 use ad-hoc signatures. Local source builds are also distinct from notarized
 release downloads. Releases through **0.6.1** were not notarized.
 
+## Windows release gate
+
+The release workflow first calls the Windows preview workflow. Native x64 and
+ARM64 runners check formatting, shared logic, rendered boards, screen-saver
+embedding, credential storage, single-instance behavior and installation,
+upgrade and removal. Both self-contained ZIPs and their SHA-256 files are
+attached to the same release only after those jobs and macOS notarization pass.
+Windows packages remain explicitly unsigned previews; macOS signing secrets
+are not used for them.
+
+A failed platform job prevents publication and the Homebrew update. Tag the
+reviewed merge on `main` as `v<version>` to start the complete release.
+
 ## Local notarization
 
 Build with a Developer ID identity and the same `APPLE_TEAM_ID`. Use a validated
@@ -52,5 +65,5 @@ References: [Apple notarization requirements](https://developer.apple.com/docume
 ## Flight API credentials
 
 No flight-provider credential is needed by GitHub Actions. Each user saves their
-own AeroDataBox RapidAPI key in the companion app. It remains in that user's Mac
-Keychain and is sent only to the provider's RapidAPI endpoint.
+own AeroDataBox RapidAPI key in the companion app. It remains in that user's macOS
+Keychain or Windows Credential Manager and is sent only to the provider's RapidAPI endpoint.

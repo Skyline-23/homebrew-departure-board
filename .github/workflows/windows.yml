@@ -6,6 +6,7 @@ on:
   pull_request:
     paths: ['Windows/**', 'Resources/**', '.github/workflows/windows.yml']
   workflow_dispatch:
+  workflow_call:
 concurrency:
   group: windows-preview-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
