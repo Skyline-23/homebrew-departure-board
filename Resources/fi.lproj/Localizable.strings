@@ -13,3 +13,7 @@
 "status.departed" = "Lähtenyt";
 "status.gate" = "Siirry portille";
 "status.scheduled" = "Ajallaan";
+"status.unknown" = "Vahvistamatta";
+"status.checkin" = "Lähtöselvitys avoinna";
+"status.closed" = "Portti suljettu";
+"status.diverted" = "Ohjattu muualle";

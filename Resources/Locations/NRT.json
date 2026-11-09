@@ -222,16 +222,22 @@
     "headerHeight": 70,
     "headerInk": "ffffff",
     "rowColors": [
-      "111915",
-      "1a221d"
+      "090b0e",
+      "090b0e"
     ],
-    "textColor": "f0efe0",
-    "timeColor": "f0efe0",
+    "textColor": "e5c566",
+    "timeColor": "e5c566",
     "columnBand": "151b18",
     "columnInk": "ffffff",
     "gateHighlight": false,
     "airlineBadge": false,
-    "footerHeight": 26
+    "footerHeight": 26,
+    "referenceAspect": 3.2,
+    "headerFraction": 0.095,
+    "headerVariant": "bilingual",
+    "bodyFont": "Menlo-Bold",
+    "headerFont": "Arial-BoldMT",
+    "uppercaseDestinations": true
   },
   "reference": {
     "source": "成田機場第一航廈出入境設施、交通搭車處、免稅店 @來一球叭噗 (https://gototravel.tw/tokyo-narita-airport-terminal-1/)",

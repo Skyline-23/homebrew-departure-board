@@ -118,7 +118,7 @@
   "titleKey": "heading.departures",
   "display": {
     "panelCount": 2,
-    "rowCount": 21,
+    "rowCount": 25,
     "headerHeight": 96,
     "headerInk": "ffffff",
     "rowColors": [
@@ -131,7 +131,13 @@
     "columnInk": "ffffff",
     "gateHighlight": false,
     "airlineBadge": true,
-    "footerHeight": 26
+    "footerHeight": 26,
+    "referenceAspect": 2.2,
+    "headerFraction": 0.1,
+    "headerVariant": "left",
+    "bodyFont": "ArialNarrow",
+    "headerFont": "Arial-BoldMT",
+    "uppercaseDestinations": false
   },
   "reference": {
     "source": "citeオーストラリア シドニーからゴールドコーストへ国内線移動 - 旅と暮らしと美味しいものと (https://fuwari-x.hatenablog.com/entry/2024/09/19/121500)",

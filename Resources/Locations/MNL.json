@@ -123,7 +123,7 @@
   "titleKey": "heading.departures",
   "display": {
     "panelCount": 1,
-    "rowCount": 14,
+    "rowCount": 15,
     "headerHeight": 96,
     "headerInk": "ffffff",
     "rowColors": [
@@ -136,7 +136,13 @@
     "columnInk": "ffffff",
     "gateHighlight": false,
     "airlineBadge": true,
-    "footerHeight": 26
+    "footerHeight": 26,
+    "referenceAspect": 1.6,
+    "headerFraction": 0.13,
+    "headerVariant": "left",
+    "bodyFont": "ArialMT",
+    "headerFont": "Arial-BoldMT",
+    "uppercaseDestinations": false
   },
   "reference": {
     "source": "Travelers stranded as Middle East conflict spreads as governments scramble to bring citizens home - The Economic Times (https://m.economictimes.com/nri/latest-updates/travelers-stranded-as-middle-east-conflict-spreads-as-governments-scramble-to-bring-citizens-home/articleshow/128946590.cms)",

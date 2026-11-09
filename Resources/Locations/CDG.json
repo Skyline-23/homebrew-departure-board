@@ -220,7 +220,7 @@
   "titleKey": "heading.departures",
   "display": {
     "panelCount": 3,
-    "rowCount": 24,
+    "rowCount": 31,
     "headerHeight": 96,
     "headerInk": "ffffff",
     "rowColors": [
@@ -233,7 +233,13 @@
     "columnInk": "ffffff",
     "gateHighlight": false,
     "airlineBadge": true,
-    "footerHeight": 26
+    "footerHeight": 26,
+    "referenceAspect": 2.05,
+    "headerFraction": 0.085,
+    "headerVariant": "centered",
+    "bodyFont": "Arial-BoldMT",
+    "headerFont": "Arial-BoldMT",
+    "uppercaseDestinations": false
   },
   "reference": {
     "source": "Sosiri și plecări la Aeroportul Paris Charles de Gaulle (CDG) (https://www.cestee.ro/aeroport/paris-charles-de-gaulle-cdg/sosiri-plecari)",

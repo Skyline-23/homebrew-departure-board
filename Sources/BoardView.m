@@ -1,6 +1,7 @@
 #import "BoardViewInternal.h"
 #import "DrawingSupport.h"
 #import "LiveFlightStore.h"
+#import "SettingsStore.h"
 #import <CoreText/CoreText.h>
 
 @implementation DBBoardView
@@ -32,8 +33,8 @@
 }
 
 - (void)reloadSettings {
-    NSDictionary *prefs =
-        [NSUserDefaults.standardUserDefaults persistentDomainForName:DBDefaultsDomain] ?: @{};
+    NSDictionary *prefs = DBSettingsStore.settings;
+    self.loadedSettings = prefs;
     self.locationCode = prefs[@"location"] ?: @"ICN";
     self.displayStyle = prefs[@"style"] ?: @"auto";
     self.languageMode = prefs[@"language"] ?: @"alternate";
@@ -49,9 +50,7 @@
 }
 
 - (void)saveSettings {
-    NSMutableDictionary *settings =
-        [[NSUserDefaults.standardUserDefaults persistentDomainForName:DBDefaultsDomain] mutableCopy]
-            ?: NSMutableDictionary.new;
+    NSMutableDictionary *settings = [DBSettingsStore.settings mutableCopy];
     [settings addEntriesFromDictionary:@{
         @"location" : self.locationCode ?: @"ICN",
         @"style" : self.displayStyle ?: @"auto",
@@ -61,7 +60,8 @@
         @"brightness" : @(self.brightness),
         @"sampleData" : @(self.useSampleData)
     }];
-    [NSUserDefaults.standardUserDefaults setPersistentDomain:settings forName:DBDefaultsDomain];
+    [DBSettingsStore saveSettings:settings replacementAPIKey:nil error:NULL];
+    self.loadedSettings = settings;
 }
 
 - (void)setLocationCode:(NSString *)locationCode {
@@ -97,6 +97,11 @@
             }
     }
     if (second != self.lastRenderedSecond || animating || self.referenceDate) {
+        if (!self.referenceDate && second != self.lastRenderedSecond &&
+            ![DBSettingsStore.settings isEqual:self.loadedSettings]) {
+            [self reloadSettings];
+            return;
+        }
         self.lastRenderedSecond = second;
         self.boardDate = now;
         NSString *native = self.location[@"lang"] ?: @"en";
@@ -119,31 +124,30 @@
     DBFillRect(self.bounds, DBColor(@"030508"));
     if (self.bounds.size.width < 1 || self.bounds.size.height < 1)
         return;
-    CGFloat w = 1600, h = 1600 * self.bounds.size.height / self.bounds.size.width;
-    // Keep a usable board in portrait and ultrawide displays, with quiet margins.
-    h = MIN(1400, MAX(640, h));
-    CGFloat scale = MIN(self.bounds.size.width / w, self.bounds.size.height / h);
-    CGFloat dx = (self.bounds.size.width - w * scale) / 2, dy = (self.bounds.size.height - h * scale) / 2;
-    [NSGraphicsContext saveGraphicsState];
-    NSAffineTransform *transform = NSAffineTransform.transform;
-    [transform translateXBy:dx yBy:dy];
-    [transform scaleBy:scale];
-    [transform concat];
-    NSRect area = NSMakeRect(0, 0, w, h);
-    DBFillRect(area, DBColor(self.location[@"bg"]));
     NSString *style = [self effectiveStyle];
-    if ([style isEqual:@"flap"])
-        [self drawFlapBoard:area];
-    else if ([style isEqual:@"victoria"] || [style isEqual:@"sydney"])
-        [self drawRailCards:area];
-    else if ([self.location[@"kind"] isEqual:@"rail"])
-        [self drawRailTable:area];
-    else
-        [self drawAirport:area];
-    CGFloat darkness = 1 - MAX(.35, MIN(1, self.brightness));
-    if (darkness > 0)
-        DBFillRect(area, [NSColor colorWithWhite:0 alpha:darkness]);
-    [NSGraphicsContext restoreGraphicsState];
+    CGFloat w = 1600, h = w * self.bounds.size.height / self.bounds.size.width;
+    {
+        CGFloat scale = self.bounds.size.width / w;
+        [NSGraphicsContext saveGraphicsState];
+        NSRectClip(self.bounds);
+        NSAffineTransform *transform = NSAffineTransform.transform;
+        [transform scaleBy:scale];
+        [transform concat];
+        NSRect area = NSMakeRect(0, 0, w, h);
+        DBFillRect(area, DBColor(self.location[@"bg"]));
+        if ([style isEqual:@"flap"])
+            [self drawFlapBoard:area];
+        else if ([style isEqual:@"victoria"] || [style isEqual:@"sydney"])
+            [self drawRailCards:area];
+        else if ([self.location[@"kind"] isEqual:@"rail"])
+            [self drawRailTable:area];
+        else
+            [self drawAirport:area];
+        CGFloat darkness = 1 - MAX(.35, MIN(1, self.brightness));
+        if (darkness > 0)
+            DBFillRect(area, [NSColor colorWithWhite:0 alpha:darkness]);
+        [NSGraphicsContext restoreGraphicsState];
+    }
 }
 
 - (BOOL)writeSnapshot:(NSString *)path size:(NSSize)size {

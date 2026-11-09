@@ -13,3 +13,7 @@
 "status.departed" = "Gestartet";
 "status.gate" = "Zum Gate";
 "status.scheduled" = "Pünktlich";
+"status.unknown" = "Wird geprüft";
+"status.checkin" = "Check-in geöffnet";
+"status.closed" = "Gate geschlossen";
+"status.diverted" = "Umgeleitet";

@@ -238,7 +238,7 @@
   "titleKey": "heading.departures",
   "display": {
     "panelCount": 2,
-    "rowCount": 22,
+    "rowCount": 29,
     "headerHeight": 96,
     "headerInk": "ffffff",
     "rowColors": [
@@ -251,7 +251,13 @@
     "columnInk": "ffffff",
     "gateHighlight": false,
     "airlineBadge": true,
-    "footerHeight": 26
+    "footerHeight": 26,
+    "referenceAspect": 2.4,
+    "headerFraction": 0.09,
+    "headerVariant": "left",
+    "bodyFont": "ArialNarrow",
+    "headerFont": "Arial-BoldMT",
+    "uppercaseDestinations": false
   },
   "reference": {
     "source": "SFO terminal reopens after suspicious package investigation (https://sfstandard.com/2025/12/26/police-activity-closes-sfo-terminal/)",

@@ -123,7 +123,7 @@
   "titleKey": "heading.departures",
   "display": {
     "panelCount": 4,
-    "rowCount": 23,
+    "rowCount": 32,
     "headerHeight": 96,
     "headerInk": "ffffff",
     "rowColors": [
@@ -136,7 +136,13 @@
     "columnInk": "ffffff",
     "gateHighlight": false,
     "airlineBadge": true,
-    "footerHeight": 26
+    "footerHeight": 26,
+    "referenceAspect": 3.0,
+    "headerFraction": 0.06,
+    "headerVariant": "bilingual",
+    "bodyFont": "ArialNarrow-Bold",
+    "headerFont": "Arial-BoldMT",
+    "uppercaseDestinations": false
   },
   "reference": {
     "source": "Bewertung der Turkish Airlines Business Class in der Boeing 777-300ER nach Singapur (https://travel-dealz.de/blog/bewertung-turkish-airlines-business-class-boeing-777-300er/)",

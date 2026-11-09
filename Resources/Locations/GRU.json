@@ -123,7 +123,7 @@
   "titleKey": "heading.departures",
   "display": {
     "panelCount": 3,
-    "rowCount": 24,
+    "rowCount": 29,
     "headerHeight": 96,
     "headerInk": "202a2d",
     "rowColors": [
@@ -136,7 +136,13 @@
     "columnInk": "ffffff",
     "gateHighlight": false,
     "airlineBadge": true,
-    "footerHeight": 26
+    "footerHeight": 26,
+    "referenceAspect": 3.2,
+    "headerFraction": 0.09,
+    "headerVariant": "bilingual",
+    "bodyFont": "ArialNarrow",
+    "headerFont": "Arial-BoldMT",
+    "uppercaseDestinations": true
   },
   "reference": {
     "source": "GRU Airport - Aeroporto Internacional de São Paulo - Guarulhos, Terminal 3 (https://br.pinterest.com/pin/97038566950293468/)",

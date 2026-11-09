@@ -116,3 +116,10 @@
 "status.departed" = "출발";
 "status.gate" = "탑승구 안내";
 "status.scheduled" = "정시";
+
+"notice.hnd.counter" = "S 카운터는 1층에 있습니다.";
+"status.unknown" = "확인 중";
+"status.checkin" = "체크인 중";
+"status.closed" = "탑승 마감";
+"status.diverted" = "회항";
+"column.terminal" = "터미널";

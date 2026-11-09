@@ -27,5 +27,5 @@ FOUNDATION_EXPORT NSString *DBUIString(NSString *key);
 
 @interface DBBoardView (SettingsController)
 - (NSWindow *)settingsWindowWithTarget:(id)target action:(SEL)action;
-- (void)applySettingsFromWindow:(NSWindow *)window;
+- (void)applySettingsFromWindow:(NSWindow *)window completion:(void (^)(BOOL saved))completion;
 @end

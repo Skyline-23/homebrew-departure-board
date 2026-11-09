@@ -123,7 +123,7 @@
   "titleKey": "heading.departures",
   "display": {
     "panelCount": 1,
-    "rowCount": 18,
+    "rowCount": 15,
     "headerHeight": 96,
     "headerInk": "243441",
     "rowColors": [
@@ -136,7 +136,13 @@
     "columnInk": "ffffff",
     "gateHighlight": false,
     "airlineBadge": true,
-    "footerHeight": 26
+    "footerHeight": 26,
+    "referenceAspect": 1.7,
+    "headerFraction": 0.14,
+    "headerVariant": "left",
+    "bodyFont": "Arial-BoldMT",
+    "headerFont": "Arial-BoldMT",
+    "uppercaseDestinations": true
   },
   "reference": {
     "source": "Two Surprisingly Easy And Pleasant Experiences At Cairo Airport - One Mile at a Time (https://onemileatatime.com/cairo-airport-experience/)",

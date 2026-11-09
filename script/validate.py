@@ -13,6 +13,11 @@ required_airports = {"ICN", "LHR", "CDG", "NRT", "HND", "HKG", "SIN"}
 assert required_airports <= set(codes)
 
 english = (RESOURCES / "en.lproj/Localizable.strings").read_text()
+english_keys = set(re.findall(r'^"([^"]+)"\s*=', english, re.M))
+for source in (ROOT / "Sources").glob("*.m"):
+    referenced = re.findall(r'@"((?:settings|menu|heading|data|style|language|density|notice)\.[^"\s]+)"', source.read_text())
+    missing = set(referenced) - english_keys
+    assert not missing, f"Missing English strings in {source.name}: {sorted(missing)}"
 for code in codes:
     location = json.loads((RESOURCES / "Locations" / f"{code}.json").read_text())
     assert location["code"] == code

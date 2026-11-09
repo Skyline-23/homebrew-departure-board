@@ -162,7 +162,7 @@
   "titleKey": "heading.departures",
   "display": {
     "panelCount": 2,
-    "rowCount": 25,
+    "rowCount": 26,
     "headerHeight": 96,
     "headerInk": "ffffff",
     "rowColors": [
@@ -175,7 +175,13 @@
     "columnInk": "ffffff",
     "gateHighlight": false,
     "airlineBadge": true,
-    "footerHeight": 26
+    "footerHeight": 26,
+    "referenceAspect": 1.65,
+    "headerFraction": 0.06,
+    "headerVariant": "bilingual",
+    "bodyFont": "ArialNarrow",
+    "headerFont": "Arial-BoldMT",
+    "uppercaseDestinations": false
   },
   "reference": {
     "source": "Accordi – L’aeroporto di Venezia si rinnova con le soluzioni L... (https://www.tecnelab.it/news/attualita/accordi--laeroporto-di-venezia-si-rinnova-con-le-soluzioni-lg-business-solutions)",

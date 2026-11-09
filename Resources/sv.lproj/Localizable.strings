@@ -13,3 +13,7 @@
 "status.departed" = "Avgått";
 "status.gate" = "Gå till gate";
 "status.scheduled" = "I tid";
+"status.unknown" = "Inväntar besked";
+"status.checkin" = "Incheckning öppen";
+"status.closed" = "Gate stängd";
+"status.diverted" = "Omdirigerat";

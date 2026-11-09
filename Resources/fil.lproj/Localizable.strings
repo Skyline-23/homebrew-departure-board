@@ -13,3 +13,7 @@
 "status.departed" = "Umalis na";
 "status.gate" = "Pumunta sa gate";
 "status.scheduled" = "Nasa oras";
+"status.unknown" = "Kinukumpirma";
+"status.checkin" = "Bukas ang check-in";
+"status.closed" = "Sarado ang gate";
+"status.diverted" = "Inilihis";

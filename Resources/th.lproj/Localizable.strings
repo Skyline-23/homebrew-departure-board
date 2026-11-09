@@ -13,3 +13,7 @@
 "status.departed" = "ออกเดินทางแล้ว";
 "status.gate" = "ไปที่ประตู";
 "status.scheduled" = "ตรงเวลา";
+"status.unknown" = "รอยืนยัน";
+"status.checkin" = "เปิดเช็กอิน";
+"status.closed" = "ปิดประตูขึ้นเครื่อง";
+"status.diverted" = "เปลี่ยนเส้นทาง";

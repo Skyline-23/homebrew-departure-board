@@ -118,20 +118,26 @@
   "titleKey": "heading.departures",
   "display": {
     "panelCount": 2,
-    "rowCount": 21,
+    "rowCount": 25,
     "headerHeight": 96,
     "headerInk": "f1d06d",
     "rowColors": [
-      "141a14",
-      "1c241c"
+      "090b0e",
+      "090b0e"
     ],
-    "textColor": "e2c46c",
-    "timeColor": "e2c46c",
+    "textColor": "e5c566",
+    "timeColor": "e5c566",
     "columnBand": "252a21",
     "columnInk": "ffffff",
     "gateHighlight": false,
     "airlineBadge": false,
-    "footerHeight": 26
+    "footerHeight": 26,
+    "referenceAspect": 1.65,
+    "headerFraction": 0.04,
+    "headerVariant": "left",
+    "bodyFont": "Menlo-Bold",
+    "headerFont": "Arial-BoldMT",
+    "uppercaseDestinations": true
   },
   "reference": {
     "source": "Review of Emirates flight from Los Angeles to Dubai in Business (https://flight-report.com/en/report/10503/Emirates_EK216_Los_Angeles_LAX_Dubai_DXB/)",

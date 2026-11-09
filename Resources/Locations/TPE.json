@@ -118,7 +118,7 @@
   "titleKey": "heading.departures",
   "display": {
     "panelCount": 3,
-    "rowCount": 17,
+    "rowCount": 16,
     "headerHeight": 96,
     "headerInk": "e4d6b3",
     "rowColors": [
@@ -131,7 +131,13 @@
     "columnInk": "ffffff",
     "gateHighlight": false,
     "airlineBadge": true,
-    "footerHeight": 26
+    "footerHeight": 26,
+    "referenceAspect": 5.0,
+    "headerFraction": 0.05,
+    "headerVariant": "bilingual",
+    "bodyFont": "ArialNarrow-Bold",
+    "headerFont": "Arial-BoldMT",
+    "uppercaseDestinations": true
   },
   "reference": {
     "source": "利用者数急上昇、桃園空港延べ1,000万人突破-ニュース-財団法人中央廣播電台(中央放送局)ニュース・番組制作、放送に関する規約 (https://www.rti.org.tw/jp/news?pid=52658&uid=3)",

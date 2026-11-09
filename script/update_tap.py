@@ -28,8 +28,8 @@ text = f'''cask "departure-board" do
     args: [
       "-c",
       <<~EOS,
-        /bin/launchctl bootout "gui/$(id -u)/io.skyline.departureboard.refresh" >/dev/null 2>&1 || true
-        /bin/rm -f "$HOME/Library/LaunchAgents/io.skyline.departureboard.refresh.plist"
+        /bin/launchctl bootout "gui/$(id -u)/com.skyline23.departureboard.refresh" >/dev/null 2>&1 || true
+        /bin/rm -f "$HOME/Library/LaunchAgents/com.skyline23.departureboard.refresh.plist"
       EOS
     ],
     sudo: false,
@@ -37,13 +37,13 @@ text = f'''cask "departure-board" do
 
   zap trash: [
     "~/Library/Application Support/DepartureBoard",
-    "~/Library/LaunchAgents/io.skyline.departureboard.refresh.plist",
-    "~/Library/Preferences/io.skyline.departureboard.plist",
+    "~/Library/LaunchAgents/com.skyline23.departureboard.refresh.plist",
+    "~/Library/Preferences/com.skyline23.departureboard.plist",
   ]
 
   caveats <<~EOS
     Choose Departure Board in System Settings > Screen Saver.
-    Use the companion app to configure the live-data gateway.
+    Use the companion app to enter your own AeroDataBox RapidAPI key.
   EOS
 end
 '''

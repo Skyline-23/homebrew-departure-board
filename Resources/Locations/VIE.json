@@ -123,7 +123,7 @@
   "titleKey": "heading.departures",
   "display": {
     "panelCount": 3,
-    "rowCount": 24,
+    "rowCount": 28,
     "headerHeight": 96,
     "headerInk": "ffffff",
     "rowColors": [
@@ -136,7 +136,13 @@
     "columnInk": "ffffff",
     "gateHighlight": false,
     "airlineBadge": true,
-    "footerHeight": 26
+    "footerHeight": 26,
+    "referenceAspect": 1.65,
+    "headerFraction": 0.13,
+    "headerVariant": "bilingual",
+    "bodyFont": "ArialNarrow",
+    "headerFont": "Arial-BoldMT",
+    "uppercaseDestinations": false
   },
   "reference": {
     "source": "Review of easyJet flight from Vienna to Nápoli in Economy (https://flight-report.com/en/report/27875/EasyJet-EZY4852-Vienna-VIE-N-poli-NAP/)",

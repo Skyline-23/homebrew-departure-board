@@ -13,3 +13,7 @@
 "status.departed" = "Afgået";
 "status.gate" = "Gå til gate";
 "status.scheduled" = "Til tiden";
+"status.unknown" = "Afventer";
+"status.checkin" = "Indtjekning åben";
+"status.closed" = "Gate lukket";
+"status.diverted" = "Omdirigeret";

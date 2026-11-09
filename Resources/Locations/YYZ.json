@@ -123,7 +123,7 @@
   "titleKey": "heading.departures",
   "display": {
     "panelCount": 2,
-    "rowCount": 24,
+    "rowCount": 18,
     "headerHeight": 96,
     "headerInk": "ffffff",
     "rowColors": [
@@ -136,7 +136,13 @@
     "columnInk": "ffffff",
     "gateHighlight": false,
     "airlineBadge": true,
-    "footerHeight": 26
+    "footerHeight": 26,
+    "referenceAspect": 3.0,
+    "headerFraction": 0.1,
+    "headerVariant": "left",
+    "bodyFont": "ArialNarrow",
+    "headerFont": "Arial-BoldMT",
+    "uppercaseDestinations": false
   },
   "reference": {
     "source": "Review of Air Canada Rouge flight from Toronto to Bogota in Economy (https://flight-report.com/en/report/43443/air-canada-rouge-ac1944-toronto-yyz-bogota-bog/)",

@@ -13,3 +13,7 @@
 "status.departed" = "प्रस्थान किया";
 "status.gate" = "द्वार पर जाएँ";
 "status.scheduled" = "समय पर";
+"status.unknown" = "पुष्टि लंबित";
+"status.checkin" = "चेक-इन खुला है";
+"status.closed" = "गेट बंद";
+"status.diverted" = "मार्ग परिवर्तित";

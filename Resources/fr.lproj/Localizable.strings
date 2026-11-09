@@ -77,3 +77,8 @@
 "status.departed" = "Décollé";
 "status.gate" = "Porte ouverte";
 "status.scheduled" = "À l’heure";
+"status.unknown" = "À confirmer";
+"status.checkin" = "Enregistrement";
+"status.closed" = "Embarquement clos";
+"status.diverted" = "Dérouté";
+"column.terminal" = "Terminal";

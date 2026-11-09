@@ -123,20 +123,26 @@
   "titleKey": "heading.departures",
   "display": {
     "panelCount": 3,
-    "rowCount": 22,
+    "rowCount": 19,
     "headerHeight": 70,
     "headerInk": "efe7ad",
     "rowColors": [
-      "141613",
-      "1d1e18"
+      "090b0e",
+      "090b0e"
     ],
-    "textColor": "f1db74",
-    "timeColor": "f1db74",
+    "textColor": "e5c566",
+    "timeColor": "e5c566",
     "columnBand": "20221b",
     "columnInk": "ffffff",
     "gateHighlight": false,
     "airlineBadge": false,
-    "footerHeight": 26
+    "footerHeight": 26,
+    "referenceAspect": 3.45,
+    "headerFraction": 0.06,
+    "headerVariant": "bilingual",
+    "bodyFont": "Menlo-Bold",
+    "headerFont": "Arial-BoldMT",
+    "uppercaseDestinations": true
   },
   "reference": {
     "source": "File:Departure board of Terminal 2 of Shanghai Pudong International Airport.JPG - Wikimedia Commons (https://commons.wikimedia.org/wiki/File%3ADeparture_board_of_Terminal_2_of_Shanghai_Pudong_International_Airport.JPG)",

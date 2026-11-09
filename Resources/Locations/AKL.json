@@ -123,7 +123,7 @@
   "titleKey": "heading.departures",
   "display": {
     "panelCount": 2,
-    "rowCount": 24,
+    "rowCount": 25,
     "headerHeight": 96,
     "headerInk": "ffffff",
     "rowColors": [
@@ -136,7 +136,13 @@
     "columnInk": "213449",
     "gateHighlight": true,
     "airlineBadge": true,
-    "footerHeight": 26
+    "footerHeight": 26,
+    "referenceAspect": 2.05,
+    "headerFraction": 0.08,
+    "headerVariant": "left",
+    "bodyFont": "ArialNarrow",
+    "headerFont": "Arial-BoldMT",
+    "uppercaseDestinations": false
   },
   "reference": {
     "source": "Review of Air Tahiti Nui flight from Auckland to Papeete in Business (https://flight-report.com/en/report/9823/Air_Tahiti_Nui_TN102_Auckland_AKL_Papeete_PPT/)",

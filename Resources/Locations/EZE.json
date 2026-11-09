@@ -123,7 +123,7 @@
   "titleKey": "heading.departures",
   "display": {
     "panelCount": 2,
-    "rowCount": 18,
+    "rowCount": 25,
     "headerHeight": 96,
     "headerInk": "ffffff",
     "rowColors": [
@@ -136,7 +136,13 @@
     "columnInk": "ffffff",
     "gateHighlight": false,
     "airlineBadge": true,
-    "footerHeight": 26
+    "footerHeight": 26,
+    "referenceAspect": 2.1,
+    "headerFraction": 0.075,
+    "headerVariant": "bilingual",
+    "bodyFont": "ArialNarrow",
+    "headerFont": "Arial-BoldMT",
+    "uppercaseDestinations": true
   },
   "reference": {
     "source": "American Airlines 777-300ER Flagship First Review (2026): Buenos Aires to New York | AwardFares Blog (https://awardfares.com/blog/aa-777-300-eze-jfk/)",

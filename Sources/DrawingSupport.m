@@ -22,12 +22,18 @@ NSFont *DBFont(CGFloat size, BOOL bold, BOOL mono) {
 }
 void DBDrawText(NSString *text, NSRect rect, CGFloat size, NSColor *color, BOOL bold, NSTextAlignment align,
                 BOOL mono) {
+    DBDrawTextWithFont(text, rect, DBFont(size, bold, mono), color, align);
+}
+NSFont *DBNamedFont(NSString *name, CGFloat size) {
+    return [NSFont fontWithName:name ?: @"ArialNarrow-Bold" size:size] ?: DBFont(size, YES, NO);
+}
+void DBDrawTextWithFont(NSString *text, NSRect rect, NSFont *font, NSColor *color, NSTextAlignment align) {
     if (!text.length || rect.size.width <= 0)
         return;
     NSMutableParagraphStyle *paragraph = NSMutableParagraphStyle.new;
     paragraph.alignment = align;
     paragraph.lineBreakMode = NSLineBreakByTruncatingTail;
-    NSFont *font = DBFont(size, bold, mono);
+    CGFloat size = font.pointSize;
     NSMutableDictionary *attrs = [@{
         NSFontAttributeName : font,
         NSForegroundColorAttributeName : color,
@@ -35,7 +41,7 @@ void DBDrawText(NSString *text, NSRect rect, CGFloat size, NSColor *color, BOOL 
     } mutableCopy];
     CGFloat measured = [text sizeWithAttributes:attrs].width;
     if (measured > rect.size.width) {
-        font = DBFont(MAX(size * .62, size * rect.size.width / measured), bold, mono);
+        font = [NSFont fontWithName:font.fontName size:MAX(size * .65, size * rect.size.width / measured)];
         attrs[NSFontAttributeName] = font;
     }
     CGFloat h = ceil(font.ascender - font.descender + font.leading);

@@ -118,7 +118,7 @@
   "titleKey": "heading.departures",
   "display": {
     "panelCount": 2,
-    "rowCount": 24,
+    "rowCount": 26,
     "headerHeight": 96,
     "headerInk": "ffffff",
     "rowColors": [
@@ -131,7 +131,13 @@
     "columnInk": "ffffff",
     "gateHighlight": false,
     "airlineBadge": true,
-    "footerHeight": 26
+    "footerHeight": 26,
+    "referenceAspect": 1.8,
+    "headerFraction": 0.09,
+    "headerVariant": "bilingual",
+    "bodyFont": "ArialNarrow-Bold",
+    "headerFont": "Arial-BoldMT",
+    "uppercaseDestinations": false
   },
   "reference": {
     "source": "Delays, Cancellations at Dubai Airport After Crash-landing (https://www.voanews.com/a/delays-cancellations-at-dubai-airport-after-crash-landing/3448716.html)",

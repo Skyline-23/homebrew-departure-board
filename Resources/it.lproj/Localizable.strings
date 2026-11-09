@@ -77,3 +77,7 @@
 "status.departed" = "Partito";
 "status.gate" = "Gate aperto";
 "status.scheduled" = "In orario";
+"status.unknown" = "Da confermare";
+"status.checkin" = "Check-in aperto";
+"status.closed" = "Imbarco chiuso";
+"status.diverted" = "Dirottato";

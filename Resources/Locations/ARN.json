@@ -123,7 +123,7 @@
   "titleKey": "heading.departures",
   "display": {
     "panelCount": 2,
-    "rowCount": 22,
+    "rowCount": 21,
     "headerHeight": 96,
     "headerInk": "ffffff",
     "rowColors": [
@@ -136,7 +136,13 @@
     "columnInk": "ffffff",
     "gateHighlight": false,
     "airlineBadge": false,
-    "footerHeight": 26
+    "footerHeight": 26,
+    "referenceAspect": 1.65,
+    "headerFraction": 0.13,
+    "headerVariant": "bilingual",
+    "bodyFont": "ArialNarrow-Bold",
+    "headerFont": "Arial-BoldMT",
+    "uppercaseDestinations": false
   },
   "reference": {
     "source": "Nytt larm om drönare på Arlanda (https://www.epochtimes.se/nytt-larm-om-dronare-pa-arlanda-815075)",

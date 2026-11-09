@@ -1,12 +1,16 @@
 #import "DepartureBoardView.h"
+#import "DesktopController.h"
 #import "LiveFlightStore.h"
+#import "SettingsStore.h"
 #import "UserInstallation.h"
+#import <unistd.h>
 
 @interface DepartureBoardApp : NSObject <NSApplicationDelegate, NSWindowDelegate>
 @property(nonatomic, strong) NSWindow *window;
 @property(nonatomic, strong) DBBoardView *board;
 @property(nonatomic, strong) NSWindow *options;
 @property(nonatomic, strong) NSTimer *timer;
+@property(nonatomic, strong) DBDesktopController *desktop;
 @end
 
 @implementation DepartureBoardApp
@@ -33,8 +37,18 @@
     index = [arguments indexOfObject:@"--snapshot"];
     if (index != NSNotFound && index + 1 < arguments.count) {
         // A fixed instant makes design review and regression snapshots reproducible.
-        self.board.referenceDate = [NSDate dateWithTimeIntervalSince1970:1794214800];
-        BOOL result = [self.board writeSnapshot:arguments[index + 1] size:NSMakeSize(1920, 1080)];
+        if ([arguments containsObject:@"--live-data"])
+            self.board.useSampleData = NO;
+        else
+            self.board.referenceDate = [NSDate dateWithTimeIntervalSince1970:1794214800];
+        NSSize size = NSMakeSize(1920, 1080);
+        NSUInteger dimensions = [arguments indexOfObject:@"--snapshot-size"];
+        if (dimensions != NSNotFound && dimensions + 1 < arguments.count) {
+            NSArray *parts = [arguments[dimensions + 1] componentsSeparatedByString:@"x"];
+            if (parts.count == 2 && [parts[0] doubleValue] > 0 && [parts[1] doubleValue] > 0)
+                size = NSMakeSize([parts[0] doubleValue], [parts[1] doubleValue]);
+        }
+        BOOL result = [self.board writeSnapshot:arguments[index + 1] size:size];
         fprintf(result ? stdout : stderr, "Snapshot %s: %s\n", result ? "saved" : "failed",
                 arguments[index + 1].UTF8String);
         [NSApp terminate:nil];
@@ -54,13 +68,22 @@
             self.board.locationCode = location[@"code"];
             NSString *path = [directory
                 stringByAppendingPathComponent:[location[@"code"] stringByAppendingString:@".png"]];
-            success &= [self.board writeSnapshot:path size:NSMakeSize(1920, 1080)];
+            NSSize size = NSMakeSize(1920, 1080);
+            if ([arguments containsObject:@"--reference-size"] && location[@"display"][@"referenceAspect"]) {
+                CGFloat aspect = [location[@"display"][@"referenceAspect"] doubleValue];
+                size = aspect >= 1 ? NSMakeSize(1600, round(1600 / aspect))
+                                   : NSMakeSize(round(1200 * aspect), 1200);
+            }
+            success &= [self.board writeSnapshot:path size:size];
         }
         fprintf(success ? stdout : stderr, "Rendered %lu board snapshots: %s\n",
                 (unsigned long)DBLocations().count, directory.UTF8String);
         [NSApp terminate:nil];
         return;
     }
+    NSMutableDictionary *currentSettings = [DBSettingsStore.settings mutableCopy];
+    currentSettings[@"companionPath"] = NSBundle.mainBundle.bundlePath;
+    [DBSettingsStore saveSettings:currentSettings replacementAPIKey:nil error:NULL];
     self.window =
         [[NSWindow alloc] initWithContentRect:self.board.frame
                                     styleMask:NSWindowStyleMaskTitled | NSWindowStyleMaskClosable |
@@ -73,26 +96,35 @@
     self.window.contentView = self.board;
     self.board.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
     [self.window center];
-    [self.window makeKeyAndOrderFront:nil];
+    BOOL background = NO;
+    if (!background)
+        [self.window makeKeyAndOrderFront:nil];
     [self buildMenus];
-    [NSApp activateIgnoringOtherApps:YES];
+    if (!background)
+        [NSApp activateIgnoringOtherApps:YES];
+    self.desktop = DBDesktopController.new;
+    [self.desktop refresh];
     self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0 / 30.0
                                                  repeats:YES
                                                    block:^(NSTimer *timer) {
                                                        [self.board tick];
+                                                       [self.desktop tick];
                                                    }];
     [LiveFlightStore refreshInBackground];
-    NSDictionary *savedSettings =
-        [NSUserDefaults.standardUserDefaults persistentDomainForName:DBDefaultsDomain];
-    if ([savedSettings[@"gatewayURL"] length] && !self.board.useSampleData) {
+    NSDictionary *savedSettings = DBSettingsStore.settings;
+    if ([savedSettings[@"hasAPIKey"] boolValue] && !self.board.useSampleData) {
         [LiveFlightStore configureBackgroundRefresh];
     }
     if ([arguments containsObject:@"--fullscreen"])
         [self.window toggleFullScreen:nil];
-    if ([arguments containsObject:@"--settings"])
+    if ([arguments containsObject:@"--settings"] || arguments.count == 1)
         [self showSettings:nil];
 }
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender {
+    return ![DBSettingsStore.settings[@"desktopEnabled"] boolValue];
+}
+- (BOOL)applicationShouldHandleReopen:(NSApplication *)sender hasVisibleWindows:(BOOL)visible {
+    [self showSettings:nil];
     return YES;
 }
 - (void)buildMenus {
@@ -147,18 +179,26 @@
     [self.board tick];
 }
 - (void)showSettings:(id)sender {
+    [self.window makeKeyAndOrderFront:nil];
+    [NSApp activateIgnoringOtherApps:YES];
     if (self.options) {
         [self.options makeKeyAndOrderFront:nil];
         return;
     }
+    [self.board reloadSettings];
     self.options = [self.board settingsWindowWithTarget:self action:@selector(saveSettings:)];
     [self.window beginSheet:self.options completionHandler:nil];
 }
 - (void)saveSettings:(id)sender {
-    [self.board applySettingsFromWindow:self.options];
-    [self.window endSheet:self.options];
-    [self.options orderOut:nil];
-    self.options = nil;
+    [self.board applySettingsFromWindow:self.options
+                             completion:^(BOOL saved) {
+                                 if (!saved)
+                                     return;
+                                 [self.window endSheet:self.options];
+                                 [self.options orderOut:nil];
+                                 self.options = nil;
+                                 [self.desktop refresh];
+                             }];
 }
 - (void)openScreenSaverSettings:(id)sender {
     NSString *pane = @"com.apple.ScreenSaver-Settings.extension";
@@ -171,6 +211,16 @@
 
 int main(int argc, const char *argv[]) {
     @autoreleasepool {
+        if (argc > 2 && strcmp(argv[1], "--import-api-key") == 0) {
+            NSString *path = [NSString stringWithUTF8String:argv[2]];
+            NSDictionary *attributes = [NSFileManager.defaultManager attributesOfItemAtPath:path error:NULL];
+            if ([attributes[NSFileOwnerAccountID] unsignedIntValue] != getuid() ||
+                ([attributes[NSFilePosixPermissions] unsignedIntValue] & 0077) != 0)
+                return 1;
+            NSString *key = [[NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:NULL]
+                stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
+            return [LiveFlightStore saveAPIKey:key error:NULL] ? 0 : 1;
+        }
         if (argc > 1 && strcmp(argv[1], "--version") == 0) {
             puts([NSBundle.mainBundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"]
                      ? [[NSBundle.mainBundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"]
@@ -179,8 +229,26 @@ int main(int argc, const char *argv[]) {
             return 0;
         }
         if (argc > 1 && strcmp(argv[1], "--refresh-data") == 0) {
-            return [LiveFlightStore refreshWithError:NULL] ? 0 : 1;
+            if (![LiveFlightStore shouldRefreshInBackground])
+                return 0;
+            NSError *error = nil;
+            BOOL refreshed = [LiveFlightStore refreshWithError:&error];
+            if (!refreshed)
+                fprintf(stderr, "%s\n",
+                        error.localizedDescription.UTF8String ?: "Could not refresh flights.");
+            return refreshed ? 0 : 1;
         }
+        if (argc > 2 && strcmp(argv[1], "--refresh-airport") == 0) {
+            NSError *error = nil;
+            BOOL refreshed = [LiveFlightStore refreshAirport:[NSString stringWithUTF8String:argv[2]]
+                                                       error:&error];
+            if (!refreshed)
+                fprintf(stderr, "%s\n",
+                        error.localizedDescription.UTF8String ?: "Could not refresh flights.");
+            return refreshed ? 0 : 1;
+        }
+        if (!DBSettingsStore.settings[@"hasAPIKey"])
+            [DBSettingsStore saveSettings:DBSettingsStore.settings replacementAPIKey:nil error:NULL];
         NSApplication *app = NSApplication.sharedApplication;
         [app setActivationPolicy:NSApplicationActivationPolicyRegular];
         DepartureBoardApp *delegate = DepartureBoardApp.new;

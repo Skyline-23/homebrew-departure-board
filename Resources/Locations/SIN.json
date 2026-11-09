@@ -198,7 +198,7 @@
   "titleKey": "heading.departures",
   "display": {
     "panelCount": 2,
-    "rowCount": 18,
+    "rowCount": 16,
     "headerHeight": 96,
     "headerInk": "f8db58",
     "rowColors": [
@@ -211,7 +211,13 @@
     "columnInk": "ffffff",
     "gateHighlight": true,
     "airlineBadge": true,
-    "footerHeight": 26
+    "footerHeight": 26,
+    "referenceAspect": 2.4,
+    "headerFraction": 0.08,
+    "headerVariant": "bilingual",
+    "bodyFont": "ArialNarrow-Bold",
+    "headerFont": "Arial-BoldMT",
+    "uppercaseDestinations": true
   },
   "reference": {
     "source": "シンガポールチャンギ国際空港  シルバークリスラウンジ 第３ターミナル 訪問記cite2019年旅行記3-13 - SFC修行となぞの旅人 (https://www.sfc-traveler.com/entry/2019/06/20/154146)",

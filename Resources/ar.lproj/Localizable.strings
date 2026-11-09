@@ -13,3 +13,7 @@
 "status.departed" = "غادرت";
 "status.gate" = "إلى البوابة";
 "status.scheduled" = "في الموعد";
+"status.unknown" = "بانتظار التأكيد";
+"status.checkin" = "تسجيل الوصول مفتوح";
+"status.closed" = "أغلقت البوابة";
+"status.diverted" = "تم تغيير الوجهة";

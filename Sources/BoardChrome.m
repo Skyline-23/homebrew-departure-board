@@ -65,22 +65,34 @@
 }
 
 - (void)footer:(NSRect)area text:(NSString *)message {
-    CGFloat y = area.size.height - 40;
-    DBFillRect(NSMakeRect(0, y, area.size.width, 40), DBColor(@"080d13"));
-    DBDrawText(message, NSMakeRect(32, y + 3, 1130, 34), 15, DBColor(@"aabcc9"), NO, NSTextAlignmentLeft, NO);
-    NSString *dataLabel = DBUIString(@"footer.simulated");
-    if (!self.referenceDate && !self.useSampleData) {
-        NSDictionary *snapshot = [LiveFlightStore cachedSnapshotForAirport:self.locationCode];
-        dataLabel =
-            snapshot && self.rows.count
-                ? [NSString stringWithFormat:@"AeroDataBox · %@ · %@",
-                                             [snapshot[@"stale"] boolValue] ? DBUIString(@"data.cached")
-                                                                            : DBUIString(@"data.retrieved"),
-                                             snapshot[@"fetchedAt"] ?: @""]
-                : DBUIString(@"data.unavailable");
+    BOOL airport = [self.location[@"kind"] isEqual:@"airport"];
+    CGFloat height = airport ? MAX(26, [self.location[@"display"][@"footerHeight"] doubleValue]) : 40;
+    CGFloat y = area.size.height - height;
+    DBFillRect(NSMakeRect(0, y, area.size.width, height), DBColor(@"080d13"));
+    if (airport) {
+        // Only show footer content present in this airport's reference display.
+        NSString *notice = self.location[@"display"][@"footerNoticeKey"];
+        message = notice ? DBBoardString(notice, self.currentLanguage) : @"";
+        if ([self.locationCode isEqual:@"ICN"]) {
+            NSInteger panels = self.currentPanelCount;
+            CGFloat width = area.size.width / MAX(1, panels);
+            for (NSInteger panel = 0; panel < panels; panel++) {
+                CGFloat x = panel * width;
+                DBDrawText(DBTime(self.boardDate, self.location, @"yyyy. MM. dd."),
+                           NSMakeRect(x + 24, y + 2, 280, height - 4), height * .60, NSColor.whiteColor, YES,
+                           NSTextAlignmentLeft, YES);
+                DBDrawText([NSString stringWithFormat:@"%ld", (long)(self.currentPage * panels + panel + 1)],
+                           NSMakeRect(x + width / 2 - 20, y + 2, 40, height - 4), height * .60,
+                           NSColor.whiteColor, YES, NSTextAlignmentCenter, YES);
+                DBDrawText(DBTime(self.boardDate, self.location, @"HH:mm"),
+                           NSMakeRect(x + width - 140, y + 2, 115, height - 4), height * .60,
+                           DBColor(@"ffea83"), YES, NSTextAlignmentRight, YES);
+            }
+        }
     }
-    DBDrawText(dataLabel, NSMakeRect(area.size.width - 433, y + 3, 400, 34), 13, DBColor(@"78909f"), YES,
-               NSTextAlignmentRight, NO);
+    if (message.length)
+        DBDrawText(message, NSMakeRect(24, y + 2, 1450, height - 3), height * .57, NSColor.whiteColor, NO,
+                   NSTextAlignmentLeft, NO);
 }
 
 @end

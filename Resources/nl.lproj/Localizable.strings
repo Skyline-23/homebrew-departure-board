@@ -13,3 +13,7 @@
 "status.departed" = "Vertrokken";
 "status.gate" = "Naar gate";
 "status.scheduled" = "Op tijd";
+"status.unknown" = "Nog te bevestigen";
+"status.checkin" = "Inchecken geopend";
+"status.closed" = "Gate gesloten";
+"status.diverted" = "Omgeleid";

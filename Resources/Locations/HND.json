@@ -134,9 +134,11 @@
   ],
   "columns": [
     "time",
+    "expected",
     "destination",
     "flight",
-    "gate",
+    "terminal",
+    "counter",
     "state"
   ],
   "twoPanels": false,
@@ -144,9 +146,9 @@
   "displayNameKey": "location.HND",
   "titleKey": "heading.departures",
   "display": {
-    "panelCount": 2,
-    "rowCount": 21,
-    "headerHeight": 236,
+    "panelCount": 1,
+    "rowCount": 34,
+    "headerHeight": 228,
     "headerInk": "ffffff",
     "rowColors": [
       "10253c",
@@ -158,11 +160,30 @@
     "columnInk": "ffffff",
     "gateHighlight": false,
     "airlineBadge": true,
-    "footerHeight": 26
+    "footerHeight": 44,
+    "footerNoticeKey": "notice.hnd.counter",
+    "columnWeights": {
+      "time": 0.1,
+      "expected": 0.1,
+      "destination": 0.29,
+      "flight": 0.16,
+      "terminal": 0.06,
+      "counter": 0.09,
+      "state": 0.2
+    },
+    "referenceAspect": 0.61,
+    "headerFraction": 0.29,
+    "headerVariant": "haneda",
+    "bodyFont": "ArialMT",
+    "headerFont": "Arial-BoldMT",
+    "uppercaseDestinations": true,
+    "hideScheduledStatus": true,
+    "rowFontScale": 0.85
   },
   "reference": {
     "source": "2.2023年9月14日　早朝の空港にて | Atsushiの飛行機修行旅日記 (https://ameblo.jp/atsushi2019/entry-12822662974.html)",
     "image": "https://stat.ameba.jp/user_images/20231001/02/atsushi2019/c3/92/j/o1280096015344962345.jpg",
     "accessed": "2026-11-09"
-  }
+  },
+  "terminal": "3"
 }

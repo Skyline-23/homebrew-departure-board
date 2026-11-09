@@ -207,7 +207,7 @@
   "titleKey": "heading.departures",
   "display": {
     "panelCount": 3,
-    "rowCount": 20,
+    "rowCount": 24,
     "headerHeight": 96,
     "headerInk": "111a1f",
     "rowColors": [
@@ -220,7 +220,13 @@
     "columnInk": "ffffff",
     "gateHighlight": false,
     "airlineBadge": false,
-    "footerHeight": 26
+    "footerHeight": 26,
+    "referenceAspect": 2.2,
+    "headerFraction": 0.09,
+    "headerVariant": "left",
+    "bodyFont": "ArialNarrow-Bold",
+    "headerFont": "Arial-BoldMT",
+    "uppercaseDestinations": false
   },
   "reference": {
     "source": "Heathrow Flight Information Displays - No-Nonsense Design (https://www.nononsensedesign.co.uk/portfolio/heathrow-flight-information-displays/)",

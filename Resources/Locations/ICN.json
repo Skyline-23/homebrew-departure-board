@@ -7,7 +7,7 @@
   "preset": "icn",
   "accent": "67baff",
   "bg": "081323",
-  "header": "164980",
+  "header": "17365c",
   "kind": "airport",
   "routes": [
     {
@@ -221,9 +221,10 @@
   ],
   "columns": [
     "time",
+    "expected",
     "flight",
     "destination",
-    "expected",
+    "terminal",
     "gate",
     "state"
   ],
@@ -233,12 +234,12 @@
   "titleKey": "heading.departures",
   "display": {
     "panelCount": 2,
-    "rowCount": 24,
+    "rowCount": 33,
     "headerHeight": 96,
     "headerInk": "ffffff",
     "rowColors": [
-      "103e7c",
-      "174886"
+      "116c9d",
+      "0d477c"
     ],
     "textColor": "ffffff",
     "timeColor": "ffffff",
@@ -246,7 +247,23 @@
     "columnInk": "ffffff",
     "gateHighlight": false,
     "airlineBadge": true,
-    "footerHeight": 26
+    "footerHeight": 44,
+    "columnWeights": {
+      "time": 0.1,
+      "expected": 0.1,
+      "flight": 0.17,
+      "destination": 0.26,
+      "terminal": 0.06,
+      "gate": 0.09,
+      "state": 0.22
+    },
+    "referenceAspect": 0.92,
+    "headerFraction": 0.16,
+    "headerVariant": "icn",
+    "bodyFont": "ArialNarrow-Bold",
+    "headerFont": "Arial-BoldMT",
+    "uppercaseDestinations": false,
+    "hideScheduledStatus": true
   },
   "reference": {
     "source": "ダナン旅行6日目：韓国仁川空港グルメ | むらさんの人生の楽園 (https://ameblo.jp/murasan2014/entry-12893821746.html)",

@@ -6,13 +6,10 @@ on:
 permissions:
   contents: read
 jobs:
-  native-and-gateway:
+  native:
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
       - run: ./script/build.sh
       - run: ./script/validate.sh
       - uses: actions/upload-artifact@v4

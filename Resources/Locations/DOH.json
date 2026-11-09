@@ -123,7 +123,7 @@
   "titleKey": "heading.departures",
   "display": {
     "panelCount": 2,
-    "rowCount": 24,
+    "rowCount": 32,
     "headerHeight": 96,
     "headerInk": "192b3c",
     "rowColors": [
@@ -136,7 +136,13 @@
     "columnInk": "ffffff",
     "gateHighlight": false,
     "airlineBadge": true,
-    "footerHeight": 26
+    "footerHeight": 26,
+    "referenceAspect": 2.6,
+    "headerFraction": 0.09,
+    "headerVariant": "bilingual",
+    "bodyFont": "ArialNarrow-Bold",
+    "headerFont": "Arial-BoldMT",
+    "uppercaseDestinations": false
   },
   "reference": {
     "source": "ドーハのハマド空港で乗り継ぎ時間をつぶす　トルコの旅(2) | 旅って楽しい！Amyのlet's enjoy life♪ (https://ameblo.jp/amy-2010/entry-12917062928.html)",

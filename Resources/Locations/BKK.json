@@ -118,7 +118,7 @@
   "titleKey": "heading.departures",
   "display": {
     "panelCount": 4,
-    "rowCount": 24,
+    "rowCount": 27,
     "headerHeight": 96,
     "headerInk": "f1d15c",
     "rowColors": [
@@ -131,7 +131,13 @@
     "columnInk": "ffffff",
     "gateHighlight": false,
     "airlineBadge": true,
-    "footerHeight": 26
+    "footerHeight": 26,
+    "referenceAspect": 2.2,
+    "headerFraction": 0.14,
+    "headerVariant": "bilingual",
+    "bodyFont": "ArialNarrow-Bold",
+    "headerFont": "Arial-BoldMT",
+    "uppercaseDestinations": false
   },
   "reference": {
     "source": "[ปันโปรรีวิว] วันนี้ที่รอคอย AirAsia ขึ้นเครื่องที่สนามบินสุวรรณภูมิได้แล้ว! | ปันโปร - Punpromotion (https://www.punpro.com/p/AirAsia-Suvarnabhumi)",

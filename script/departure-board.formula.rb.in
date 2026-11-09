@@ -10,7 +10,6 @@ class DepartureBoard < Formula
 
   def install
     ENV["VERSION"] = version.to_s
-    ENV["BUILD_ARCH"] = Hardware::CPU.arch.to_s
     system "bash", "script/build.sh"
     libexec.install "outputs/DepartureBoard/dist/Departure Board.app"
     libexec.install "outputs/DepartureBoard/dist/Departure Board.saver"
@@ -28,8 +27,8 @@ class DepartureBoard < Formula
     <<~EOS
       Built locally from source; no Gatekeeper bypass is needed.
       Run departure-board once to register it in Applications and Screen Savers.
-      Select Departure Board in System Settings > Screen Saver.
-      Configure the live-data gateway in the companion app.
+      Select Departure Board in System Settings > Wallpaper > Screen Saver.
+      Enter your personal AeroDataBox RapidAPI key in Options or the companion app.
     EOS
   end
 

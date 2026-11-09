@@ -118,7 +118,7 @@
   "titleKey": "heading.departures",
   "display": {
     "panelCount": 3,
-    "rowCount": 24,
+    "rowCount": 31,
     "headerHeight": 96,
     "headerInk": "f2dc68",
     "rowColors": [
@@ -131,7 +131,13 @@
     "columnInk": "ffffff",
     "gateHighlight": false,
     "airlineBadge": false,
-    "footerHeight": 26
+    "footerHeight": 26,
+    "referenceAspect": 2.6,
+    "headerFraction": 0.11,
+    "headerVariant": "bilingual",
+    "bodyFont": "ArialNarrow",
+    "headerFont": "Arial-BoldMT",
+    "uppercaseDestinations": false
   },
   "reference": {
     "source": "Amsterdam Schiphol Airport, Haarlemmermeer, near Amsterdam Netherlands (EHAM) Photo (https://airport-data.com/airport/photo/011980.html.html)",

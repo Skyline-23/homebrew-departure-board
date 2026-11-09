@@ -1,6 +1,7 @@
 #import "DepartureBoardView.h"
+#import "DestinationStore.h"
 
-NSString *const DBDefaultsDomain = @"io.skyline.departureboard";
+NSString *const DBDefaultsDomain = @"com.skyline23.departureboard";
 
 static NSDictionary *DBData(void) {
     static NSDictionary *data;
@@ -52,6 +53,10 @@ NSString *DBTime(NSDate *date, NSDictionary *location, NSString *format) {
     return [formatter stringFromDate:date];
 }
 NSString *DBLocalized(NSDictionary *record, NSString *language) {
+    if (record[@"airport"])
+        return [DBDestinationStore nameForAirport:record[@"airport"]
+                                         language:language
+                                         fallback:record[@"en"]];
     if (record[@"key"])
         return DBBoardString(record[@"key"], language);
     return record[language] ?: record[@"en"] ?: @"";

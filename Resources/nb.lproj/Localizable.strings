@@ -13,3 +13,7 @@
 "status.departed" = "Avreist";
 "status.gate" = "Gå til gate";
 "status.scheduled" = "I rute";
+"status.unknown" = "Avventer";
+"status.checkin" = "Innsjekking åpen";
+"status.closed" = "Gate stengt";
+"status.diverted" = "Omdirigert";

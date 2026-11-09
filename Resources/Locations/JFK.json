@@ -209,7 +209,7 @@
   "titleKey": "heading.departures",
   "display": {
     "panelCount": 1,
-    "rowCount": 18,
+    "rowCount": 20,
     "headerHeight": 96,
     "headerInk": "ffffff",
     "rowColors": [
@@ -222,7 +222,13 @@
     "columnInk": "ffffff",
     "gateHighlight": false,
     "airlineBadge": true,
-    "footerHeight": 26
+    "footerHeight": 26,
+    "referenceAspect": 1.3,
+    "headerFraction": 0.095,
+    "headerVariant": "centered",
+    "bodyFont": "ArialNarrow-Bold",
+    "headerFont": "Arial-BoldMT",
+    "uppercaseDestinations": true
   },
   "reference": {
     "source": "cite実録 ニューヨークJFK空港T7でプライオリティパスは使えない？ ANA直行便を利用時にラウンジ利用を試みた体験談紹介 - ミニマリスト品川太郎の海外旅行記 〜毎月海外に行く会社員の体験談ブログ〜 (https://abtem.hateblo.jp/entry/US.NewYorkJFKAirport.PriorityPass.Lounge)",

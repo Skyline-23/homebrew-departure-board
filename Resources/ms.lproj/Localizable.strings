@@ -13,3 +13,7 @@
 "status.departed" = "Berlepas";
 "status.gate" = "Ke pintu";
 "status.scheduled" = "Mengikut jadual";
+"status.unknown" = "Belum disahkan";
+"status.checkin" = "Daftar masuk dibuka";
+"status.closed" = "Pintu ditutup";
+"status.diverted" = "Dilencungkan";

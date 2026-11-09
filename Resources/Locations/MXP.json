@@ -172,7 +172,7 @@
   "titleKey": "heading.departures",
   "display": {
     "panelCount": 2,
-    "rowCount": 24,
+    "rowCount": 36,
     "headerHeight": 96,
     "headerInk": "ffffff",
     "rowColors": [
@@ -185,7 +185,13 @@
     "columnInk": "ffffff",
     "gateHighlight": false,
     "airlineBadge": true,
-    "footerHeight": 26
+    "footerHeight": 26,
+    "referenceAspect": 0.68,
+    "headerFraction": 0.07,
+    "headerVariant": "left",
+    "bodyFont": "ArialNarrow",
+    "headerFont": "Arial-BoldMT",
+    "uppercaseDestinations": true
   },
   "reference": {
     "source": "ミラノマルペンサ空港の荷物預かりサービスMilano Malpensa Left Luggage | 男が仕切る結婚式。 (https://ameblo.jp/kenjimovement/entry-12848568324.html)",

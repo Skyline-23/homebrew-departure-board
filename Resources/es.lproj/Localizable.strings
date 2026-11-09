@@ -13,3 +13,7 @@
 "status.departed" = "Despegado";
 "status.gate" = "Ir a puerta";
 "status.scheduled" = "En hora";
+"status.unknown" = "Por confirmar";
+"status.checkin" = "Facturación abierta";
+"status.closed" = "Embarque cerrado";
+"status.diverted" = "Desviado";

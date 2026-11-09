@@ -21,39 +21,47 @@ Choose **Departure Board** under **Other** in the screen-saver selector. On curr
 macOS this is **System Settings → Wallpaper → Screen Saver**; older releases have
 a separate **Screen Saver** settings pane. Open the
 **Departure Board** app to change location, display style, language, density,
-brightness and the live-data gateway. Requires macOS 12 or later; release
-builds target the current Mac. Binary release ZIPs also contain Apple Silicon and Intel architectures.
+brightness and your API key. Requires macOS 12 or later. Both Homebrew and
+release builds include Apple Silicon and Intel code for the system screen-saver hosts.
 
 ## Live flight information
 
-The app does not contain an airline-data provider key. An authenticated
-Cloudflare Worker calls AeroDataBox and caches normalized departure data. The
-companion app stores the gateway access token in Keychain and refreshes a local
-cache. The screen saver reads that cache without network requests or Keychain
-prompts over the lock screen.
+Each user supplies their own AeroDataBox RapidAPI key and subscription. The
+companion app calls AeroDataBox directly and stores the key in macOS Keychain.
+There is no shared proxy, bundled key, or shared request allowance.
 
-1. Subscribe to AeroDataBox through RapidAPI.
-2. Add the secrets listed in [deployment.md](docs/deployment.md) to GitHub.
-3. Run **Deploy flight-data gateway** in GitHub Actions.
-4. Enter the deployed HTTPS URL and gateway access token in the companion app.
+1. Subscribe to AeroDataBox on RapidAPI.
+2. Open **Options → Open Departure Board Settings** from the system screen-saver selector, or **Settings** in the app.
+3. Enter your personal RapidAPI key and select **Apply**.
 
-Missing or expired live data is shown as unavailable. A separately selected
-**Sample schedule** mode is available for visual previews. Railway profiles
-currently have sample timetables; they are not presented as live rail feeds.
+The app, screen saver and live desktop wallpaper share the same location and
+display settings. A saved key is represented by a masked value. The app caches 12 hours of departures and lets each user choose a refresh
+interval from one minute to six hours. Requests run while the app or screen saver
+is active. Provider quotas and availability depend on the user's subscription.
+Codeshare numbers rotate every four seconds and board pages every 15 seconds
+without additional API requests. Concurrent refreshes from the app and background job
+are combined into one request. Failed requests use increasing retry delays, and
+quota/authentication errors pause retries for an hour (or the provider's longer
+`Retry-After` interval). A replacement key clears that pause.
 
-The default upstream allowance is four requests per day with six-hour refreshes
-and a 12-hour departure horizon to stay within the free plan. The daily allowance
-is shared across all selected airports. Change it to match the subscribed allowance before using
-frequent live refreshes. AeroDataBox coverage, update times and gate availability
-vary by airport. Cached information retains its provider attribution and is never
-kept for more than the permitted seven-day retention period.
+Enable **Use as live desktop wallpaper** to display the board behind desktop
+icons on every connected screen. The app must remain running for the wallpaper
+to update. Turn the option off to reveal the existing wallpaper again.
+
+The screen saver reads local flight data without opening Keychain prompts over
+the lock screen. Its **Options** button opens the companion settings editor. Keeping one editor
+avoids Keychain access and preference writes from the system screen-saver sandbox. The provider and retrieval time are shown in settings.
+
+Missing data is shown as unavailable. **Sample schedule** is for visual previews;
+the four railway profiles currently use sample timetables, not live railway feeds.
 
 ## Visual profiles
 
-Each airport has its own palette, column order, panel count, row density and
-reference photograph. Haneda includes its check-in area diagram; Changi uses
-highlighted gate cells; Heathrow uses its yellow header; Incheon uses blue paired
-panels. Railway renderers have their own table and column layouts. A classic
+Each airport has its own palette, column order, row density and reference
+photograph. The default layout shows one physical panel per monitor: a long
+reference wall is cropped to one panel instead of shrinking or repeating it. Haneda includes its check-in area diagram; Changi uses
+highlighted gate cells; Heathrow uses its yellow header; Incheon uses blue
+rows and its multilingual header. Railway renderers have their own table and column layouts. A classic
 split-flap renderer is available as an alternative for airports.
 
 The reference catalogue records the photographs used. These are reconstructed
@@ -62,7 +70,7 @@ uses the same display today.
 
 ## Build and validate
 
-Requires Xcode command-line tools, Python 3, and Node.js 22.
+Requires Xcode command-line tools and Python 3.
 
 ```sh
 ./script/build_and_run.sh
@@ -70,7 +78,7 @@ Requires Xcode command-line tools, Python 3, and Node.js 22.
 ```
 
 `build.sh` creates the `.app` and `.saver`; `validate.sh` checks the catalogue,
-language bundles, gateway behaviour and native screen-saver loading, then renders
+language bundles, provider data normalization and native screen-saver loading, then renders
 all 44 profiles. `package.sh` creates the release ZIP. Tags such as `v0.1.0`
 trigger GitHub Actions to build, validate, release and update the Homebrew cask.
 
@@ -87,8 +95,9 @@ trigger GitHub Actions to build, validate, release and update the Homebrew cask.
 | `Sources/SettingsController.m` | English configuration sheet |
 | `Resources/Locations/*.json` | One readable file per location |
 | `Resources/*.lproj/Localizable.strings` | Display text and translations |
-| `server/src/` | Authenticated, cached AeroDataBox gateway |
-| `.github/workflows/` | Validation, release and gateway deployment |
+| `Sources/SettingsStore.m` | Shared preferences and secure settings handoff |
+| `Sources/DesktopController.m` | Live wallpaper windows, one per display |
+| `.github/workflows/` | Validation and macOS releases |
 
 ## Credits
 
@@ -99,3 +108,7 @@ distributed under the included GUST Font License. Airline names and trademarks
 belong to their respective owners.
 
 Code: MIT.
+
+Live destination names are resolved from cached multilingual Wikidata labels,
+using provider airport codes rather than a manual city-alias table. See
+[the data notes](docs/destination-names.md).

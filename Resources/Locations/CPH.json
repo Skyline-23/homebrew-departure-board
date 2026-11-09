@@ -123,7 +123,7 @@
   "titleKey": "heading.departures",
   "display": {
     "panelCount": 3,
-    "rowCount": 23,
+    "rowCount": 21,
     "headerHeight": 96,
     "headerInk": "f8db43",
     "rowColors": [
@@ -136,7 +136,13 @@
     "columnInk": "ffffff",
     "gateHighlight": false,
     "airlineBadge": true,
-    "footerHeight": 26
+    "footerHeight": 26,
+    "referenceAspect": 2.5,
+    "headerFraction": 0.15,
+    "headerVariant": "bilingual",
+    "bodyFont": "ArialNarrow-Bold",
+    "headerFont": "Arial-BoldMT",
+    "uppercaseDestinations": false
   },
   "reference": {
     "source": "カストルップ国際空港 (CPH) クチコミ・アクセス・営業時間｜コペンハーゲンciteフォートラベル (https://4travel.jp/os_shisetsu/10264935)",

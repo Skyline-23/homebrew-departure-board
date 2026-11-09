@@ -102,3 +102,13 @@
 "status.departed" = "出発済";
 "status.gate" = "搭乗口へ";
 "status.scheduled" = "定刻";
+
+"notice.hnd.counter" = "Sカウンターは1階にございます。";
+"heading.checkinInformation" = "チェックインカウンターのご案内";
+"heading.securityNorth" = "↑ 保安検査（北）";
+"heading.securityCentral" = "↑ 保安検査（中央）";
+"status.unknown" = "確認中";
+"status.checkin" = "搭乗手続中";
+"status.closed" = "搭乗締切";
+"status.diverted" = "目的地変更";
+"column.terminal" = "ターミナル";

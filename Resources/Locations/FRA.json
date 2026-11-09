@@ -118,7 +118,7 @@
   "titleKey": "heading.departures",
   "display": {
     "panelCount": 4,
-    "rowCount": 25,
+    "rowCount": 30,
     "headerHeight": 96,
     "headerInk": "172027",
     "rowColors": [
@@ -131,7 +131,13 @@
     "columnInk": "ffffff",
     "gateHighlight": false,
     "airlineBadge": true,
-    "footerHeight": 26
+    "footerHeight": 26,
+    "referenceAspect": 3.8,
+    "headerFraction": 0.09,
+    "headerVariant": "left",
+    "bodyFont": "ArialNarrow-Bold",
+    "headerFont": "Arial-BoldMT",
+    "uppercaseDestinations": false
   },
   "reference": {
     "source": "Temen que este popular aeropuerto sea la puerta de entrada a Europa del nuevo virus que sacude a China (https://www.huffingtonpost.es/sociedad/temen-popular-aeropuerto-sea-puerta-entrada-europa-nuevo-virus-sacude-china.html)",

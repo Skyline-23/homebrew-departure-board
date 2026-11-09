@@ -1,16 +1,18 @@
 #import "BoardViewInternal.h"
 #import "DrawingSupport.h"
 #import "LiveFlightStore.h"
+#import "SettingsStore.h"
 #import <CoreText/CoreText.h>
 
 @implementation DBBoardView (SettingsController)
 
 - (NSWindow *)settingsWindowWithTarget:(id)target action:(SEL)action {
-    NSWindow *window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 700, 622)
-                                                   styleMask:NSWindowStyleMaskTitled
-                                                     backing:NSBackingStoreBuffered
-                                                       defer:NO];
+    NSWindow *window = [[NSPanel alloc] initWithContentRect:NSMakeRect(0, 0, 700, 662)
+                                                  styleMask:NSWindowStyleMaskTitled
+                                                    backing:NSBackingStoreBuffered
+                                                      defer:NO];
     window.title = DBUIString(@"settings.title");
+    window.releasedWhenClosed = NO;
     NSView *v = window.contentView;
     NSTextField *title = [NSTextField labelWithString:@"Departure Board"];
     title.font = DBFont(23, YES, NO);
@@ -75,18 +77,47 @@
     motion.state = self.reducedMotion;
     motion.frame = NSMakeRect(161, 107, 397, 24);
     [v addSubview:motion];
-    NSTextField *note = [NSTextField wrappingLabelWithString:DBUIString(@"settings.note")];
-    note.textColor = NSColor.secondaryLabelColor;
-    note.font = DBFont(12, NO, NO);
-    note.frame = NSMakeRect(29, 49, 425, 44);
-    [v addSubview:note];
     for (NSView *view in v.subviews) {
         NSRect frame = view.frame;
-        frame.origin.y += 180;
+        frame.origin.y += 220;
         view.frame = frame;
     }
-    NSDictionary *saved = [NSUserDefaults.standardUserDefaults persistentDomainForName:DBDefaultsDomain];
-    NSArray *extraLabels = @[ @"settings.data", @"settings.gateway", @"settings.token" ];
+    NSDictionary *saved = DBSettingsStore.settings;
+    NSButton *desktop = [NSButton checkboxWithTitle:DBUIString(@"settings.desktop") target:nil action:NULL];
+    desktop.tag = 204;
+    desktop.state = [saved[@"desktopEnabled"] boolValue];
+    desktop.frame = NSMakeRect(161, 284, 497, 24);
+    [v addSubview:desktop];
+    NSTextField *refreshLabel = [NSTextField labelWithString:DBUIString(@"settings.refresh")];
+    refreshLabel.frame = NSMakeRect(29, 245, 130, 25);
+    [v addSubview:refreshLabel];
+    NSPopUpButton *refresh = [[NSPopUpButton alloc] initWithFrame:NSMakeRect(161, 243, 497, 29) pullsDown:NO];
+    refresh.tag = 206;
+    for (NSNumber *interval in @[ @60, @300, @900, @3600, @21600 ]) {
+        [refresh addItemWithTitle:DBUIString([NSString stringWithFormat:@"refresh.%@", interval])];
+        refresh.lastItem.representedObject = interval;
+        if (interval.integerValue ==
+            (saved[@"refreshInterval"] ? [saved[@"refreshInterval"] integerValue] : 60))
+            [refresh selectItem:refresh.lastItem];
+    }
+    [v addSubview:refresh];
+    NSDictionary *snapshot = [LiveFlightStore cachedSnapshotForAirport:self.locationCode];
+    NSString *updated = snapshot[@"fetchedAt"] ?: DBUIString(@"settings.neverUpdated");
+    NSDate *date = [NSISO8601DateFormatter.new dateFromString:updated];
+    if (!date) {
+        NSISO8601DateFormatter *formatter = NSISO8601DateFormatter.new;
+        formatter.formatOptions |= NSISO8601DateFormatWithFractionalSeconds;
+        date = [formatter dateFromString:updated];
+    }
+    if (date)
+        updated = DBTime(date, self.location, @"dd MMM yyyy, HH:mm z");
+    NSTextField *lastUpdate =
+        [NSTextField labelWithString:[NSString stringWithFormat:DBUIString(@"settings.lastUpdate"), updated]];
+    lastUpdate.frame = NSMakeRect(161, 215, 497, 22);
+    lastUpdate.textColor = NSColor.secondaryLabelColor;
+    lastUpdate.font = DBFont(11, NO, NO);
+    [v addSubview:lastUpdate];
+    NSArray *extraLabels = @[ @"settings.data", @"settings.provider", @"settings.apiKey" ];
     for (NSInteger index = 0; index < 3; index++) {
         NSTextField *label = [NSTextField labelWithString:DBUIString(extraLabels[index])];
         label.frame = NSMakeRect(29, 181 - index * 44, 130, 25);
@@ -97,62 +128,69 @@
     [source addItemsWithTitles:@[ DBUIString(@"data.live"), DBUIString(@"data.sample") ]];
     [source selectItemAtIndex:self.useSampleData ? 1 : 0];
     [v addSubview:source];
-    NSTextField *gateway = [[NSTextField alloc] initWithFrame:NSMakeRect(161, 137, 497, 25)];
-    gateway.tag = 201;
-    gateway.stringValue = saved[@"gatewayURL"] ?: @"";
-    gateway.placeholderString = @"https://departure-board-api.example.workers.dev";
-    [v addSubview:gateway];
-    NSSecureTextField *token = [[NSSecureTextField alloc] initWithFrame:NSMakeRect(161, 93, 497, 25)];
-    token.tag = 202;
-    token.placeholderString = DBUIString(@"settings.tokenHint");
-    [v addSubview:token];
-    BOOL companion = [NSBundle.mainBundle.bundleIdentifier isEqual:@"io.skyline.departureboard.preview"];
-    gateway.enabled = companion;
-    token.enabled = companion;
-    NSTextField *tokenNote = [NSTextField
-        labelWithString:DBUIString(companion ? @"settings.keychain" : @"settings.openCompanion")];
-    tokenNote.frame = NSMakeRect(161, 58, 497, 25);
-    tokenNote.font = DBFont(11, NO, NO);
-    tokenNote.textColor = NSColor.secondaryLabelColor;
-    [v addSubview:tokenNote];
+    NSTextField *provider = [NSTextField labelWithString:@"AeroDataBox · RapidAPI"];
+    provider.frame = NSMakeRect(161, 137, 497, 25);
+    [v addSubview:provider];
+    NSSecureTextField *apiKey = [[NSSecureTextField alloc] initWithFrame:NSMakeRect(161, 93, 497, 25)];
+    apiKey.tag = 202;
+    apiKey.placeholderString = DBUIString(@"settings.apiKeyHint");
+    BOOL keySaved = [saved[@"hasAPIKey"] boolValue];
+    if (keySaved)
+        apiKey.stringValue = DBStoredAPIKeyMask;
+    [v addSubview:apiKey];
+    NSTextField *keyNote = [NSTextField
+        labelWithString:DBUIString(keySaved ? @"settings.apiKeySaved" : @"settings.apiKeyMissing")];
+    keyNote.frame = NSMakeRect(161, 58, 497, 25);
+    keyNote.font = DBFont(11, NO, NO);
+    keyNote.textColor = NSColor.secondaryLabelColor;
+    [v addSubview:keyNote];
     NSButton *done = [NSButton buttonWithTitle:DBUIString(@"settings.apply") target:target action:action];
     done.bezelStyle = NSBezelStyleRounded;
     done.keyEquivalent = @"\r";
+    done.tag = 205;
     done.frame = NSMakeRect(468, 24, 92, 32);
     [v addSubview:done];
     self.optionsWindow = window;
     return window;
 }
 
-- (void)applySettingsFromWindow:(NSWindow *)window {
+- (void)applySettingsFromWindow:(NSWindow *)window completion:(void (^)(BOOL saved))completion {
     NSView *v = window.contentView;
-    self.locationCode = [(NSPopUpButton *)[v viewWithTag:101] selectedItem].representedObject;
-    self.displayStyle = [(NSPopUpButton *)[v viewWithTag:102] selectedItem].representedObject;
-    self.languageMode = [(NSPopUpButton *)[v viewWithTag:103] selectedItem].representedObject;
-    self.density = [[(NSPopUpButton *)[v viewWithTag:104] selectedItem].representedObject integerValue];
-    self.brightness = [(NSSlider *)[v viewWithTag:105] doubleValue];
-    self.reducedMotion = [(NSButton *)[v viewWithTag:106] state] == NSControlStateValueOn;
-    self.useSampleData = [(NSPopUpButton *)[v viewWithTag:203] indexOfSelectedItem] == 1;
-    if ([NSBundle.mainBundle.bundleIdentifier isEqual:@"io.skyline.departureboard.preview"]) {
-        NSMutableDictionary *saved =
-            [[NSUserDefaults.standardUserDefaults persistentDomainForName:DBDefaultsDomain] mutableCopy]
-                ?: NSMutableDictionary.new;
-        saved[@"gatewayURL"] = [(NSTextField *)[v viewWithTag:201] stringValue];
-        [NSUserDefaults.standardUserDefaults setPersistentDomain:saved forName:DBDefaultsDomain];
-        NSError *error = nil;
-        if (![LiveFlightStore saveAccessToken:[(NSSecureTextField *)[v viewWithTag:202] stringValue]
-                                        error:&error]) {
-            NSAlert *alert = NSAlert.new;
-            alert.messageText = DBUIString(@"settings.keychainFailed");
-            [alert runModal];
-        }
-        if ([saved[@"gatewayURL"] length] && !self.useSampleData)
-            [LiveFlightStore configureBackgroundRefresh];
-    }
-    [self saveSettings];
-    [LiveFlightStore refreshInBackground];
-    [self tick];
-    self.needsDisplay = YES;
+    NSMutableDictionary *saved = [DBSettingsStore.settings mutableCopy];
+    saved[@"location"] = [(NSPopUpButton *)[v viewWithTag:101] selectedItem].representedObject;
+    saved[@"style"] = [(NSPopUpButton *)[v viewWithTag:102] selectedItem].representedObject;
+    saved[@"language"] = [(NSPopUpButton *)[v viewWithTag:103] selectedItem].representedObject;
+    saved[@"density"] = [(NSPopUpButton *)[v viewWithTag:104] selectedItem].representedObject;
+    saved[@"brightness"] = @([(NSSlider *)[v viewWithTag:105] doubleValue]);
+    saved[@"reduceMotion"] = @([(NSButton *)[v viewWithTag:106] state] == NSControlStateValueOn);
+    saved[@"sampleData"] = @([(NSPopUpButton *)[v viewWithTag:203] indexOfSelectedItem] == 1);
+    saved[@"desktopEnabled"] = @([(NSButton *)[v viewWithTag:204] state] == NSControlStateValueOn);
+    saved[@"refreshInterval"] = [(NSPopUpButton *)[v viewWithTag:206] selectedItem].representedObject;
+    NSButton *button = (NSButton *)[v viewWithTag:205];
+    button.enabled = NO;
+    button.title = DBUIString(@"settings.saving");
+    [DBSettingsStore
+           submitSettings:saved
+        replacementAPIKey:[(NSSecureTextField *)[v viewWithTag:202] stringValue]
+               completion:^(NSError *error) {
+                   button.enabled = YES;
+                   button.title = DBUIString(@"settings.apply");
+                   if (error) {
+                       NSAlert *alert = NSAlert.new;
+                       alert.messageText = DBUIString(@"settings.saveFailed");
+                       alert.informativeText = error.localizedDescription;
+                       [alert runModal];
+                       completion(NO);
+                       return;
+                   }
+                   [self reloadSettings];
+                   if ([NSBundle.mainBundle.bundleIdentifier isEqual:@"com.skyline23.departureboard"] &&
+                       [DBSettingsStore.settings[@"hasAPIKey"] boolValue] && !self.useSampleData) {
+                       [LiveFlightStore configureBackgroundRefresh];
+                       [LiveFlightStore refreshInBackground];
+                   }
+                   completion(YES);
+               }];
 }
 
 @end

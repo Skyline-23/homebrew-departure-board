@@ -4,6 +4,9 @@
 // Timetable generation stays in DepartureSchedule; renderers only draw rows.
 @interface DBBoardView ()
 @property(nonatomic, strong) NSDictionary *location;
+@property(nonatomic, strong) NSDictionary *loadedSettings;
+@property(nonatomic) NSInteger currentPage;
+@property(nonatomic) NSInteger currentPanelCount;
 @property(nonatomic, strong) NSArray *rows;
 @property(nonatomic, copy) NSString *currentLanguage;
 @property(nonatomic) NSTimeInterval startTime;
@@ -23,6 +26,7 @@
 
 @interface DBBoardView (AirportRenderer)
 - (void)drawAirportHeader:(NSRect)area;
+- (CGFloat)airportHeaderHeight:(NSRect)area;
 - (void)drawHanedaCounters:(NSRect)area;
 - (void)drawAirportCell:(NSDictionary *)row
                  column:(NSString *)column

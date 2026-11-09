@@ -13,3 +13,7 @@
 "status.departed" = "Kalktı";
 "status.gate" = "Kapıya gidiniz";
 "status.scheduled" = "Zamanında";
+"status.unknown" = "Doğrulanıyor";
+"status.checkin" = "Check-in açık";
+"status.closed" = "Kapı kapandı";
+"status.diverted" = "Yönlendirildi";

@@ -13,3 +13,7 @@
 "status.departed" = "Partiu";
 "status.gate" = "Dirija-se ao portão";
 "status.scheduled" = "No horário";
+"status.unknown" = "A confirmar";
+"status.checkin" = "Check-in aberto";
+"status.closed" = "Embarque encerrado";
+"status.diverted" = "Desviado";

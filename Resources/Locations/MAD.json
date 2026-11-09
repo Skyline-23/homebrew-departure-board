@@ -123,7 +123,7 @@
   "titleKey": "heading.departures",
   "display": {
     "panelCount": 2,
-    "rowCount": 20,
+    "rowCount": 29,
     "headerHeight": 96,
     "headerInk": "ffffff",
     "rowColors": [
@@ -136,7 +136,13 @@
     "columnInk": "ffffff",
     "gateHighlight": false,
     "airlineBadge": true,
-    "footerHeight": 26
+    "footerHeight": 26,
+    "referenceAspect": 1.5,
+    "headerFraction": 0.17,
+    "headerVariant": "bilingual",
+    "bodyFont": "ArialNarrow",
+    "headerFont": "Arial-BoldMT",
+    "uppercaseDestinations": false
   },
   "reference": {
     "source": "Aerolíneas españolas prolongan la suspensión de vuelos desde y hacia Venezuela (https://www.elespectador.com/mundo/venezuela/aerolineas-espanolas-prolongan-la-suspension-de-vuelos-desde-y-hacia-venezuela/)",

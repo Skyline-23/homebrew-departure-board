@@ -77,3 +77,10 @@
 "status.departed" = "已起飞";
 "status.gate" = "前往登机口";
 "status.scheduled" = "准点";
+
+"notice.hnd.counter" = "S值机柜台位于一楼。";
+"status.unknown" = "待确认";
+"status.checkin" = "正在办理值机";
+"status.closed" = "登机结束";
+"status.diverted" = "备降";
+"column.terminal" = "航站楼";
