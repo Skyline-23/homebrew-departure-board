@@ -1,18 +1,24 @@
-// Keep provider-specific field names out of the native app.
+function utcTimestamp(value) {
+  const timestamp = Date.parse(value);
+  return Number.isFinite(timestamp) ? new Date(timestamp).toISOString() : null;
+}
+
+// Keep provider-specific field names and date formats out of the native app.
 export function normalizeDepartures(payload, airport, fetchedAt = new Date().toISOString()) {
   const departures = Array.isArray(payload.departures) ? payload.departures : [];
   const flights = departures.flatMap((flight) => {
     const departure = flight.departure ?? flight.movement;
     const destination = flight.arrival?.airport ?? flight.movement?.airport;
     const scheduled = departure?.scheduledTime;
-    if (!scheduled?.utc || !Number.isFinite(Date.parse(scheduled.utc)) || !flight.number) return [];
+    const scheduledUtc = utcTimestamp(scheduled?.utc);
+    if (!scheduledUtc || !flight.number) return [];
     return [{
       number: flight.number,
       destinationCode: destination?.iata ?? "",
       destinationName: destination?.municipalityName ?? destination?.shortName ?? destination?.name ?? "",
-      scheduledUtc: scheduled.utc,
+      scheduledUtc,
       scheduledLocal: scheduled.local,
-      revisedUtc: departure.revisedTime?.utc ?? null,
+      revisedUtc: utcTimestamp(departure.revisedTime?.utc),
       status: flight.status ?? "Unknown",
       gate: departure.gate ?? "",
       terminal: departure.terminal ?? "",

@@ -29,7 +29,9 @@ The client stores only the gateway access token in macOS Keychain.
 
 The Worker uses a single Durable Object to enforce an account-wide daily request
 allowance and to prevent simultaneous clients from duplicating upstream calls.
-Its default is four provider requests per UTC day and a 15-minute cache window.
+Its default is four provider requests per UTC day and a six-hour cache window,
+with a 12-hour departure horizon. This spreads one airport's free-plan refreshes
+across the day instead of spending the daily allowance in the first hour.
 Both are in `server/wrangler.jsonc`; adjust them only within the chosen provider
 plan. A stale result is labelled cached, and data older than seven days is not
 served. The app refuses to display a local snapshot older than 24 hours.

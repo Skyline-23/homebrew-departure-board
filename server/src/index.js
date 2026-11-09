@@ -42,9 +42,11 @@ export class AirportCache {
       const code = new URL(request.url).pathname.slice(1);
       if (!AIRPORTS.has(code)) return json({ error: "Unsupported airport" }, 404);
       const now = Date.now();
-      const cached = await this.state.storage.get(`airport:${code}`);
+      // v2 stores canonical ISO timestamps, including for older provider formats.
+      const cacheKey = `airport:v2:${code}`;
+      const cached = await this.state.storage.get(cacheKey);
       const age = cached ? now - Date.parse(cached.fetchedAt) : Infinity;
-      const ttl = Math.max(300, Number(this.env.CACHE_SECONDS) || 900) * 1000;
+      const ttl = Math.max(300, Number(this.env.CACHE_SECONDS) || 21600) * 1000;
       if (age < ttl) return json(cached);
 
       const day = new Date(now).toISOString().slice(0, 10);
@@ -61,7 +63,7 @@ export class AirportCache {
 
       const endpoint = new URL(`https://aerodatabox.p.rapidapi.com/flights/airports/iata/${code}`);
       endpoint.search = new URLSearchParams({
-        offsetMinutes: "-30", durationMinutes: "360", direction: "Departure",
+        offsetMinutes: "-30", durationMinutes: "720", direction: "Departure",
         withLeg: "true", withCancelled: "true", withCodeshared: "false",
         withCargo: "false", withPrivate: "false", withLocation: "false",
       });
@@ -84,7 +86,7 @@ export class AirportCache {
       let payload;
       try { payload = await response.json(); } catch { return json({ error: "Invalid provider response" }, 502); }
       const normalized = normalizeDepartures(payload, code);
-      await this.state.storage.put(`airport:${code}`, normalized);
+      await this.state.storage.put(cacheKey, normalized);
       return json(normalized);
     });
   }

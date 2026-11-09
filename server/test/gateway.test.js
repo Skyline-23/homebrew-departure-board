@@ -16,6 +16,18 @@ test("rejects an unauthenticated request before touching the provider", async ()
   assert.equal(response.status, 401);
 });
 
+test("converts provider timestamps with spaces into ISO timestamps for macOS", () => {
+  const result = normalizeDepartures({ departures: [{
+    number: "UL 471",
+    departure: {
+      scheduledTime: { utc: "2026-11-09 02:35Z" },
+      revisedTime: { utc: "2026-11-09 03:55Z" },
+    },
+  }] }, "ICN");
+  assert.equal(result.flights[0].scheduledUtc, "2026-11-09T02:35:00.000Z");
+  assert.equal(result.flights[0].revisedUtc, "2026-11-09T03:55:00.000Z");
+});
+
 test("rejects arbitrary upstream targets", async () => {
   const response = await worker.fetch(new Request("https://example.test/v1/departures/XYZ"), {});
   assert.equal(response.status, 404);
@@ -29,7 +41,7 @@ test("enforces the shared daily request budget without invoking upstream fetch",
 });
 
 test("returns a cached snapshot without consuming a provider request", async () => {
-  const value = { airport: "ICN", fetchedAt: new Date().toISOString(), flights: [] };
-  const cache = new AirportCache({ storage: { get: async key => key === "airport:ICN" ? value : undefined }, blockConcurrencyWhile: action => action() }, {});
+  const value = { airport: "ICN", fetchedAt: new Date(Date.now() - 5 * 3600000).toISOString(), flights: [] };
+  const cache = new AirportCache({ storage: { get: async key => key === "airport:v2:ICN" ? value : undefined }, blockConcurrencyWhile: action => action() }, {});
   assert.deepEqual(await (await cache.fetch(new Request("https://internal/ICN"))).json(), value);
 });

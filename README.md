@@ -41,8 +41,9 @@ Missing or expired live data is shown as unavailable. A separately selected
 **Sample schedule** mode is available for visual previews. Railway profiles
 currently have sample timetables; they are not presented as live rail feeds.
 
-The default upstream allowance is four requests per day to keep initial testing
-within the free plan. Change it to match the subscribed allowance before using
+The default upstream allowance is four requests per day with six-hour refreshes
+and a 12-hour departure horizon to stay within the free plan. The daily allowance
+is shared across all selected airports. Change it to match the subscribed allowance before using
 frequent live refreshes. AeroDataBox coverage, update times and gate availability
 vary by airport. Cached information retains its provider attribution and is never
 kept for more than the permitted seven-day retention period.
