@@ -68,13 +68,13 @@ def main():
                        cwd=ROOT, check=True)
 
         for source in sources:
-            formatted = spacing((target / source.relative_to(ROOT)).read_text())
+            formatted = spacing((target / source.relative_to(ROOT)).read_text(encoding="utf-8"))
 
-            if formatted != source.read_text():
+            if formatted != source.read_text(encoding="utf-8"):
                 changed.append(str(source.relative_to(ROOT)))
 
                 if not arguments.check:
-                    source.write_text(formatted)
+                    source.write_text(formatted, encoding="utf-8", newline="\n")
 
     if arguments.check and changed:
         print("Run python Windows/scripts/format.py to format these files:")
