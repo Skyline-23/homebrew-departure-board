@@ -15,9 +15,16 @@ fi
 HOMEBREW_NO_AUTO_UPDATE=1 brew install --cask skyline-23/departure-board/departure-board
 VERSION="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP/Contents/Info.plist")"
 [[ -z "${EXPECTED_VERSION:-}" || "$VERSION" == "$EXPECTED_VERSION" ]]
+validate_ticket() {
+  for attempt in 1 2 3; do
+    if xcrun stapler validate "$1"; then return 0; fi
+    [[ "$attempt" == 3 ]] || sleep 5
+  done
+  return 1
+}
 for bundle in "$APP" "$SAVER"; do
   codesign --verify --strict "$bundle"
-  xcrun stapler validate "$bundle"
+  validate_ticket "$bundle"
   metadata="$(codesign -dvv "$bundle" 2>&1)"
   grep -q '^TeamIdentifier=Q23JLSJCCV$' <<< "$metadata"
   lipo "$bundle/Contents/MacOS/DepartureBoard" -verify_arch "$(uname -m)"
