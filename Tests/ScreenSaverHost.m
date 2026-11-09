@@ -72,18 +72,9 @@ static BOOL VerifyAirportAdapters(DBBoardView *board) {
 
     for (NSDictionary *location in locations()) {
         id adapter = adapterForLocation(location);
-        BOOL airport = [location[@"kind"] isEqual:@"airport"];
 
-        if (!airport) {
+        if (![location[@"kind"] isEqual:@"airport"] || !adapter) {
             return NO;
-        }
-
-        if (airport != (adapter != nil)) {
-            return NO;
-        }
-
-        if (!airport) {
-            continue;
         }
         board.locationCode = location[@"code"];
 
