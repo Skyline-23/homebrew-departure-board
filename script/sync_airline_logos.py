@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Refresh the bundled, offline airline logo catalogue from pinned sources."""
 import io
+import hashlib
 import json
 from pathlib import Path
 import re
@@ -23,6 +24,7 @@ def download(url):
 
 
 def main():
+    excluded = set(json.loads((DESTINATION / "ExcludedAssets.json").read_text())["sha256"])
     # The archive avoids thousands of individual network requests. Builds never
     # run this script; the reviewed assets are committed and available offline.
     archive_url = f"https://codeload.github.com/Jxck-S/airline-logos/tar.gz/{LOGO_REVISION}"
@@ -44,7 +46,8 @@ def main():
                 if path not in files:
                     continue
                 data = archive.extractfile(files[path]).read()
-                if not data.startswith(b"\x89PNG\r\n\x1a\n"):
+                if (not data.startswith(b"\x89PNG\r\n\x1a\n") or
+                        hashlib.sha256(data).hexdigest() in excluded):
                     continue
                 (DESTINATION / f"{code}.png").write_bytes(data)
                 sources[code] = f"{LOGO_REPOSITORY}/{LOGO_REVISION}/{path}"
@@ -63,9 +66,12 @@ def main():
     additions = json.loads((DESTINATION / "AdditionalSources.json").read_text())
     for code, url in additions.items():
         target = DESTINATION / f"{code}.png"
+        data = target.read_bytes() if target.exists() else download(url)
+        if hashlib.sha256(data).hexdigest() in excluded:
+            continue
         if not target.exists():
-            target.write_bytes(download(url))
-    sources.update(additions)
+            target.write_bytes(data)
+        sources[code] = url
     identities = json.loads((DESTINATION / "Additions.json").read_text())
     for iata, records in identities.items():
         catalog.setdefault(iata, []).extend(records)

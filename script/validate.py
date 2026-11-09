@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Validate the catalogue and localization files before shipping a bundle."""
 import json
+import hashlib
 import re
 import struct
 import zlib
@@ -42,11 +43,13 @@ for language in RESOURCES.glob("*.lproj"):
 logo_folder = RESOURCES / "AirlineLogos"
 logo_sources = json.loads((logo_folder / "Sources.json").read_text())
 logo_catalog = json.loads((logo_folder / "Catalog.json").read_text())
+excluded_logos = set(json.loads((logo_folder / "ExcludedAssets.json").read_text())["sha256"])
 assert len(logo_sources) >= 1600, "The full offline logo collection is missing"
 for carrier, source in logo_sources.items():
     assert re.fullmatch(r"[A-Z0-9]{2,3}", carrier)
     assert source.startswith("https://")
     data = (logo_folder / f"{carrier}.png").read_bytes()
+    assert hashlib.sha256(data).hexdigest() not in excluded_logos, f"Placeholder logo: {carrier}"
     assert data.startswith(b"\x89PNG\r\n\x1a\n"), carrier
     width, height = struct.unpack(">II", data[16:24])
     assert 0 < width <= 2048 and 0 < height <= 2048, carrier
