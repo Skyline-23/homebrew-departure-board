@@ -1,19 +1,28 @@
 #import "BackgroundAgent.h"
 #import "LiveFlightStore.h"
 #import "SettingsStore.h"
+#import <bsm/audit.h>
 #import <sys/sysctl.h>
 #import <unistd.h>
 
 @implementation DBBackgroundAgent
-+ (NSString *)bootIdentifier {
++ (NSString *)sessionIdentifier {
     char value[128] = {0};
     size_t length = sizeof(value);
-    if (sysctlbyname("kern.bootsessionuuid", value, &length, NULL, 0) == 0)
-        return [NSString stringWithUTF8String:value];
-    struct timeval bootTime = {0};
-    length = sizeof(bootTime);
-    sysctlbyname("kern.boottime", &bootTime, &length, NULL, 0);
-    return [NSString stringWithFormat:@"%lld", (long long)bootTime.tv_sec];
+    NSString *boot;
+    if (sysctlbyname("kern.bootsessionuuid", value, &length, NULL, 0) == 0) {
+        boot = [NSString stringWithUTF8String:value];
+    } else {
+        struct timeval bootTime = {0};
+        length = sizeof(bootTime);
+        sysctlbyname("kern.boottime", &bootTime, &length, NULL, 0);
+        boot = [NSString stringWithFormat:@"%lld", (long long)bootTime.tv_sec];
+    }
+    // A logout/login starts a new audit session even without restarting macOS.
+    auditinfo_addr_t audit = {0};
+    if (getaudit_addr(&audit, sizeof(audit)) == 0)
+        return [NSString stringWithFormat:@"%@:%u", boot, audit.ai_asid];
+    return boot;
 }
 + (NSString *)statePath {
     return [[LiveFlightStore userHome]
@@ -25,7 +34,7 @@
                             withIntermediateDirectories:YES
                                              attributes:nil
                                                   error:NULL];
-    [@{@"bootIdentifier" : self.bootIdentifier, @"keepRunning" : @(running)} writeToFile:path atomically:YES];
+    [@{@"sessionIdentifier" : self.sessionIdentifier, @"keepRunning" : @(running)} writeToFile:path atomically:YES];
 }
 + (void)recordApplicationStarted {
     [self recordRunning:YES];
@@ -35,8 +44,8 @@
 }
 + (BOOL)shouldStartForSettings:(NSDictionary *)settings
                   runtimeState:(NSDictionary *)state
-                bootIdentifier:(NSString *)bootIdentifier {
-    if ([state[@"bootIdentifier"] isEqual:bootIdentifier])
+                sessionIdentifier:(NSString *)sessionIdentifier {
+    if ([state[@"sessionIdentifier"] isEqual:sessionIdentifier])
         return [state[@"keepRunning"] boolValue];
     return [settings[@"launchAtLogin"] boolValue];
 }
@@ -52,7 +61,7 @@
     NSDictionary *state = [NSDictionary dictionaryWithContentsOfFile:self.statePath] ?: @{};
     if (!self.runningApplication && [self shouldStartForSettings:DBSettingsStore.settings
                                                     runtimeState:state
-                                                  bootIdentifier:self.bootIdentifier]) {
+                                                  sessionIdentifier:self.sessionIdentifier]) {
         NSString *path = DBSettingsStore.settings[@"companionPath"];
         NSString *installed =
             [[LiveFlightStore userHome] stringByAppendingPathComponent:@"Applications/Departure Board.app"];

@@ -34,26 +34,34 @@ int main(int argc, const char *argv[]) {
                 @"launchAtLogin" : @NO
             }
                 runtimeState:@{}
-                bootIdentifier:@"new-boot"];
+                sessionIdentifier:@"boot:login-2"];
             passed &= [DBBackgroundAgent shouldStartForSettings:@{
                 @"launchAtLogin" : @YES
             }
                 runtimeState:@{}
-                bootIdentifier:@"new-boot"];
+                sessionIdentifier:@"boot:login-2"];
             passed &= [DBBackgroundAgent shouldStartForSettings:@{}
                 runtimeState:@{
-                    @"bootIdentifier" : @"same-boot",
+                    @"sessionIdentifier" : @"boot:login-1",
                     @"keepRunning" : @YES
                 }
-                bootIdentifier:@"same-boot"];
+                sessionIdentifier:@"boot:login-1"];
             passed &= ![DBBackgroundAgent shouldStartForSettings:@{
                 @"launchAtLogin" : @YES
             }
                 runtimeState:@{
-                    @"bootIdentifier" : @"same-boot",
+                    @"sessionIdentifier" : @"boot:login-1",
                     @"keepRunning" : @NO
                 }
-                bootIdentifier:@"same-boot"];
+                sessionIdentifier:@"boot:login-1"];
+            passed &= [DBBackgroundAgent shouldStartForSettings:@{
+                @"launchAtLogin" : @YES
+            }
+                runtimeState:@{
+                    @"sessionIdentifier" : @"boot:login-1",
+                    @"keepRunning" : @NO
+                }
+                sessionIdentifier:@"boot:login-2"];
             [(passed ? @"passed" : @"failed") writeToFile:resultPath
                                                atomically:YES
                                                  encoding:NSUTF8StringEncoding
