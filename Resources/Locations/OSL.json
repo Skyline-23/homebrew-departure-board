@@ -7,7 +7,7 @@
   "preset": "oslo",
   "accent": "99d9ef",
   "bg": "09152a",
-  "header": "11213c",
+  "header": "151e27",
   "kind": "airport",
   "routes": [
     {
@@ -112,9 +112,10 @@
   ],
   "columns": [
     "time",
+    "airline",
     "flight",
     "destination",
-    "gate",
+    "counter",
     "state"
   ],
   "twoPanels": false,
@@ -131,18 +132,42 @@
       "2052b3"
     ],
     "textColor": "ffffff",
-    "timeColor": "ffffff",
+    "timeColor": "efd970",
     "columnBand": "315b9d",
     "columnInk": "ffffff",
     "gateHighlight": false,
-    "airlineBadge": true,
+    "airlineBadge": false,
     "footerHeight": 26,
     "referenceAspect": 2.5,
     "headerFraction": 0.15,
     "headerVariant": "bilingual",
     "bodyFont": "HelveticaNeue-Medium",
     "headerFont": "Arial-BoldMT",
-    "uppercaseDestinations": false
+    "uppercaseDestinations": false,
+    "headerLayout": "inline",
+    "headerLanguages": [
+      "nb",
+      "en"
+    ],
+    "titleKey": "heading.checkin",
+    "headerSecondaryInk": "eddb31",
+    "headerIcon": "none",
+    "minimumHeaderHeight": 110,
+    "titleSize": 50,
+    "clockPosition": "footer",
+    "footerStyle": "date-clock",
+    "footerColor": "123f92",
+    "footerInk": "e5d76b",
+    "verticalRules": "3b659b",
+    "columnWeights": {
+      "time": 0.1,
+      "airline": 0.12,
+      "flight": 0.15,
+      "destination": 0.29,
+      "counter": 0.12,
+      "state": 0.22
+    },
+    "detailRevision": 2
   },
   "reference": {
     "source": "Chegadas e partidas no aeroporto de Oslo (OSL) (https://www.cestee.pt/aeroporto/oslo-osl/chegadas-partidas)",

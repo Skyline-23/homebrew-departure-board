@@ -142,7 +142,18 @@
     "headerVariant": "bilingual",
     "bodyFont": "HelveticaNeue-Medium",
     "headerFont": "Arial-BoldMT",
-    "uppercaseDestinations": false
+    "uppercaseDestinations": true,
+    "headerLayout": "single",
+    "titleKey": "heading.internationalDepartures",
+    "headerIcon": "plane",
+    "minimumHeaderHeight": 72,
+    "titleSize": 32,
+    "headerRule": "768cac",
+    "verticalRules": "364d79",
+    "footerStyle": "brand-only",
+    "footerColor": "132652",
+    "footerBrand": "iGA ISTANBUL AIRPORT",
+    "detailRevision": 2
   },
   "reference": {
     "source": "Bewertung der Turkish Airlines Business Class in der Boeing 777-300ER nach Singapur (https://travel-dealz.de/blog/bewertung-turkish-airlines-business-class-boeing-777-300er/)",

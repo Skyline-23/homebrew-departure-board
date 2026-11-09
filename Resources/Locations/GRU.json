@@ -7,7 +7,7 @@
   "preset": "guarulhos",
   "accent": "74d0ce",
   "bg": "151a1a",
-  "header": "dfcf53",
+  "header": "f1d04a",
   "kind": "airport",
   "routes": [
     {
@@ -125,15 +125,15 @@
     "panelCount": 3,
     "rowCount": 29,
     "headerHeight": 96,
-    "headerInk": "202a2d",
+    "headerInk": "14292b",
     "rowColors": [
       "f2f2e8",
       "e3e6df"
     ],
     "textColor": "193540",
     "timeColor": "193540",
-    "columnBand": "cddbd9",
-    "columnInk": "ffffff",
+    "columnBand": "b5c5c6",
+    "columnInk": "203137",
     "gateHighlight": false,
     "airlineBadge": true,
     "footerHeight": 26,
@@ -142,7 +142,30 @@
     "headerVariant": "bilingual",
     "bodyFont": "HelveticaNeue",
     "headerFont": "Arial-BoldMT",
-    "uppercaseDestinations": true
+    "uppercaseDestinations": true,
+    "headerLayout": "stacked",
+    "headerLanguages": [
+      "pt",
+      "en"
+    ],
+    "headerIcon": "boxed",
+    "iconFill": "f1d04a",
+    "iconInk": "192b2c",
+    "headerSecondaryInk": "354741",
+    "minimumHeaderHeight": 100,
+    "verticalRules": "abbabd",
+    "footerStyle": "brand-only",
+    "footerColor": "18354c",
+    "footerBrand": "GRU AIRPORT",
+    "detailRevision": 2,
+    "statusColors": {
+      "boarding": "256337",
+      "gate": "256337",
+      "closing": "895500",
+      "delayed": "895500",
+      "cancelled": "a82739",
+      "closed": "a82739"
+    }
   },
   "reference": {
     "source": "GRU Airport - Aeroporto Internacional de São Paulo - Guarulhos, Terminal 3 (https://br.pinterest.com/pin/97038566950293468/)",

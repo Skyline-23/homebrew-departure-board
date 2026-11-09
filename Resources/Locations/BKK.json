@@ -120,7 +120,7 @@
     "panelCount": 4,
     "rowCount": 27,
     "headerHeight": 96,
-    "headerInk": "f1d15c",
+    "headerInk": "efd555",
     "rowColors": [
       "08132c",
       "101f39"
@@ -137,7 +137,29 @@
     "headerVariant": "bilingual",
     "bodyFont": "HelveticaNeue-Medium",
     "headerFont": "Arial-BoldMT",
-    "uppercaseDestinations": false
+    "uppercaseDestinations": false,
+    "headerLayout": "stacked",
+    "headerLanguages": [
+      "th",
+      "en"
+    ],
+    "headerIcon": "boxed",
+    "iconFill": "e4bd3a",
+    "iconInk": "161714",
+    "minimumHeaderHeight": 104,
+    "titleSize": 43,
+    "clockStyle": "digital",
+    "clockColor": "e5c345",
+    "verticalRules": "21456f",
+    "footerStyle": "brand-only",
+    "footerColor": "182c53",
+    "footerBrand": "SUVARNABHUMI AIRPORT",
+    "statusFills": {
+      "boarding": "43723d",
+      "closing": "c88c29",
+      "cancelled": "9f314e"
+    },
+    "detailRevision": 2
   },
   "reference": {
     "source": "[ปันโปรรีวิว] วันนี้ที่รอคอย AirAsia ขึ้นเครื่องที่สนามบินสุวรรณภูมิได้แล้ว! | ปันโปร - Punpromotion (https://www.punpro.com/p/AirAsia-Suvarnabhumi)",

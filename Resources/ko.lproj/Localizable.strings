@@ -123,3 +123,13 @@
 "status.closed" = "탑승 마감";
 "status.diverted" = "회항";
 "column.terminal" = "터미널";
+
+"data.loading" = "운항 정보를 불러오는 중입니다…";
+
+"data.noDepartures" = "이 시간대의 출발편이 없습니다";
+
+"data.unavailable" = "운항 정보를 일시적으로 불러올 수 없습니다";
+
+"data.configure" = "Departure Board에서 실시간 운항 정보를 설정해 주세요";
+
+"column.airline" = "항공사";

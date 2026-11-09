@@ -120,7 +120,7 @@
     "panelCount": 4,
     "rowCount": 30,
     "headerHeight": 96,
-    "headerInk": "172027",
+    "headerInk": "e8e7d8",
     "rowColors": [
       "101713",
       "19211a"
@@ -130,14 +130,27 @@
     "columnBand": "212721",
     "columnInk": "ffffff",
     "gateHighlight": false,
-    "airlineBadge": true,
+    "airlineBadge": false,
     "footerHeight": 26,
     "referenceAspect": 3.8,
     "headerFraction": 0.09,
     "headerVariant": "left",
-    "bodyFont": "HelveticaNeue-Medium",
+    "bodyFont": "Menlo",
     "headerFont": "Arial-BoldMT",
-    "uppercaseDestinations": false
+    "uppercaseDestinations": true,
+    "headerLayout": "inline",
+    "headerIcon": "boxed",
+    "headerLanguages": [
+      "de",
+      "en"
+    ],
+    "minimumHeaderHeight": 90,
+    "headerRule": "be9d47",
+    "footerStyle": "brand-only",
+    "footerColor": "6643a5",
+    "footerBrand": "FRANKFURT AIRPORT",
+    "verticalRules": "252c25",
+    "detailRevision": 2
   },
   "reference": {
     "source": "Temen que este popular aeropuerto sea la puerta de entrada a Europa del nuevo virus que sacude a China (https://www.huffingtonpost.es/sociedad/temen-popular-aeropuerto-sea-puerta-entrada-europa-nuevo-virus-sacude-china.html)",

@@ -17,3 +17,13 @@
 "status.checkin" = "Facturación abierta";
 "status.closed" = "Embarque cerrado";
 "status.diverted" = "Desviado";
+
+"data.loading" = "Cargando información de vuelos…";
+
+"data.noDepartures" = "No hay salidas en este período";
+
+"data.unavailable" = "Información de vuelos temporalmente no disponible";
+
+"data.configure" = "Configura los vuelos en directo en Departure Board";
+
+"column.airline" = "Compañía";

@@ -139,16 +139,27 @@
             rows = self.referenceDate || self.useSampleData
                        ? DBDepartures(self.location, now, 128)
                        : [LiveFlightStore rowsForLocation:self.location now:now];
+        NSString *emptyMessage = @"data.noDepartures";
+        if (!rows.count && !self.referenceDate && !self.useSampleData) {
+            switch ([LiveFlightStore availabilityForAirport:self.locationCode]) {
+                case DBFlightAvailabilityLoading: emptyMessage = @"data.loading"; break;
+                case DBFlightAvailabilityUnavailable: emptyMessage = @"data.unavailable"; break;
+                case DBFlightAvailabilityConfigurationRequired: emptyMessage = @"data.configure"; break;
+                case DBFlightAvailabilityEmpty: break;
+            }
+        }
         NSInteger page = (NSInteger)floor((uptime - self.startTime) / 15.0);
         NSString *style = [self effectiveStyle];
         BOOL secondsClock = [style isEqual:@"victoria"] || [style isEqual:@"sydney"];
         BOOL changed = self.lastRenderedSecond < 0 || self.referenceDate || animating || secondsClock ||
                        floor(second / 60) != floor(self.lastRenderedSecond / 60) ||
                        ![language isEqual:self.currentLanguage] || ![rows isEqual:self.rows] ||
+                       ![emptyMessage isEqual:self.emptyMessageKey] ||
                        ([self.location[@"kind"] isEqual:@"airport"] && page != self.pageCycle);
         self.lastRenderedSecond = second;
         self.boardDate = now;
         self.currentLanguage = language;
+        self.emptyMessageKey = emptyMessage;
         self.rows = rows;
         self.languageCycle = cycle;
         self.pageCycle = page;

@@ -237,7 +237,29 @@
     "headerVariant": "bilingual",
     "bodyFont": "Menlo-Bold",
     "headerFont": "Arial-BoldMT",
-    "uppercaseDestinations": true
+    "uppercaseDestinations": true,
+    "headerLayout": "stacked",
+    "headerIcon": "boxed",
+    "titleKey": "heading.southWingDepartures",
+    "clockStyle": "digital",
+    "clockColor": "ff594b",
+    "minimumHeaderHeight": 100,
+    "titleSize": 40,
+    "columnHeaderLanguages": [
+      "ja",
+      "en"
+    ],
+    "headerSecondaryInk": "c6cbc3",
+    "verticalRules": "30372b",
+    "footerStyle": "date-clock",
+    "footerColor": "121b16",
+    "footerInk": "dfddbd",
+    "statusColors": {
+      "boarding": "d8d455",
+      "closing": "f08860",
+      "cancelled": "ff4e45"
+    },
+    "detailRevision": 2
   },
   "reference": {
     "source": "成田機場第一航廈出入境設施、交通搭車處、免稅店 @來一球叭噗 (https://gototravel.tw/tokyo-narita-airport-terminal-1/)",

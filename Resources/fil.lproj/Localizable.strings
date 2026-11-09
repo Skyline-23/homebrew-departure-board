@@ -17,3 +17,15 @@
 "status.checkin" = "Bukas ang check-in";
 "status.closed" = "Sarado ang gate";
 "status.diverted" = "Inilihis";
+
+"data.loading" = "Naglo-load ng impormasyon ng mga flight…";
+
+"data.noDepartures" = "Walang pag-alis sa panahong ito";
+
+"data.unavailable" = "Pansamantalang hindi available ang impormasyon ng mga flight";
+
+"data.configure" = "I-set up ang live na datos ng flight sa Departure Board";
+
+"column.airline" = "Airline";
+
+"notice.manila.welcome" = "Maligayang pagdating sa Ninoy Aquino International Airport";

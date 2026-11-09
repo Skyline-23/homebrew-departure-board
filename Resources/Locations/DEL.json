@@ -7,7 +7,7 @@
   "preset": "delhi",
   "accent": "f6d783",
   "bg": "1b1c1b",
-  "header": "1c1f1f",
+  "header": "151c19",
   "kind": "airport",
   "routes": [
     {
@@ -112,6 +112,8 @@
   ],
   "columns": [
     "time",
+    "expected",
+    "airline",
     "flight",
     "destination",
     "gate",
@@ -125,24 +127,59 @@
     "panelCount": 2,
     "rowCount": 17,
     "headerHeight": 96,
-    "headerInk": "d9b954",
+    "headerInk": "d9b737",
     "rowColors": [
-      "f1f0ea",
-      "d8dcd9"
+      "e5e7e5",
+      "cbd3d2"
     ],
-    "textColor": "1b2124",
-    "timeColor": "1b2124",
-    "columnBand": "232a2e",
-    "columnInk": "ffffff",
+    "textColor": "202725",
+    "timeColor": "202725",
+    "columnBand": "252c29",
+    "columnInk": "e8eade",
     "gateHighlight": false,
-    "airlineBadge": true,
+    "airlineBadge": false,
     "footerHeight": 26,
     "referenceAspect": 2.15,
     "headerFraction": 0.115,
     "headerVariant": "bilingual",
     "bodyFont": "Arial-BoldMT",
     "headerFont": "Arial-BoldMT",
-    "uppercaseDestinations": false
+    "uppercaseDestinations": false,
+    "headerLayout": "stacked",
+    "headerLanguages": [
+      "en",
+      "hi"
+    ],
+    "titleKey": "heading.flightInformation",
+    "headerIcon": "boxed",
+    "iconFill": "d9b737",
+    "iconInk": "141916",
+    "brand": "DELHI",
+    "brandWidth": 160,
+    "minimumHeaderHeight": 112,
+    "titleSize": 41,
+    "verticalRules": "939e9a",
+    "footerStyle": "date-clock",
+    "footerColor": "322972",
+    "footerInk": "e6e9e6",
+    "columnWeights": {
+      "time": 0.1,
+      "expected": 0.1,
+      "airline": 0.12,
+      "flight": 0.15,
+      "destination": 0.29,
+      "gate": 0.08,
+      "state": 0.22
+    },
+    "detailRevision": 2,
+    "statusColors": {
+      "boarding": "256337",
+      "gate": "256337",
+      "closing": "895500",
+      "delayed": "895500",
+      "cancelled": "a82739",
+      "closed": "a82739"
+    }
   },
   "reference": {
     "source": "Air India to Thailand Review – Layovers, Service & Concerns (https://mysakonnakhon.com/air-india-from-bangkok-review-layovers-service-concerns/)",

@@ -4,6 +4,10 @@
 #import <Cocoa/Cocoa.h>
 #import <ScreenSaver/ScreenSaver.h>
 #import <objc/runtime.h>
+#import <dlfcn.h>
+#import <fcntl.h>
+#import <sys/file.h>
+#import <unistd.h>
 
 @interface DBBoardView (RenderingTests)
 @property(nonatomic) NSTimeInterval startTime;
@@ -107,6 +111,65 @@ static BOOL VerifyAirlineLogos(void) {
     return tway && seoul && premia && perimeter && premia != perimeter &&
            tway.size.width > tway.size.height &&
            [store imageForCarrier:@"TW" icao:nil name:@"T'way Air"] == tway;
+}
+
+static BOOL VerifySystemFontScaling(void) {
+    typedef void (*DrawText)(NSString *, NSRect, CGFloat, NSColor *, BOOL, NSTextAlignment, BOOL);
+    NSBundle *bundle = [NSBundle bundleForClass:NSClassFromString(@"DBBoardView")];
+    void *handle = dlopen(bundle.executablePath.fileSystemRepresentation, RTLD_NOW);
+    DrawText draw = (DrawText)dlsym(handle, "DBDrawText");
+    if (!draw)
+        return NO;
+    NSBitmapImageRep *bitmap = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL pixelsWide:120
+        pixelsHigh:24 bitsPerSample:8 samplesPerPixel:4 hasAlpha:YES isPlanar:NO
+        colorSpaceName:NSDeviceRGBColorSpace bytesPerRow:0 bitsPerPixel:0];
+    [NSGraphicsContext saveGraphicsState];
+    NSGraphicsContext.currentContext = [NSGraphicsContext graphicsContextWithBitmapImageRep:bitmap];
+    [NSColor.blackColor setFill];
+    NSRectFill(NSMakeRect(0, 0, 120, 24));
+    draw(@"12:34", NSMakeRect(0, 0, 120, 12), 40, NSColor.whiteColor, YES, NSTextAlignmentRight, YES);
+    [NSGraphicsContext restoreGraphicsState];
+    NSUInteger visible = 0;
+    for (NSUInteger y = 0; y < 24; y++) {
+        for (NSUInteger x = 0; x < 120; x++) {
+            unsigned char *pixel = bitmap.bitmapData + y * bitmap.bytesPerRow + x * 4;
+            visible += pixel[0] > 120 && pixel[1] > 120 && pixel[2] > 120;
+        }
+    }
+    if (handle)
+        dlclose(handle);
+    return visible > 30;
+}
+
+static BOOL VerifyAvailabilityStates(Class store) {
+    NSString *folder = [NSTemporaryDirectory() stringByAppendingPathComponent:NSUUID.UUID.UUIDString];
+    [NSFileManager.defaultManager createDirectoryAtPath:folder withIntermediateDirectories:YES attributes:nil error:NULL];
+    NSURL *url = [NSURL fileURLWithPath:[folder stringByAppendingPathComponent:@"CDG.json"]];
+    Method cache = class_getClassMethod(store, @selector(cachedSnapshotForAirport:));
+    Method path = class_getClassMethod(store, NSSelectorFromString(@"cacheURLForAirport:"));
+    IMP oldCache = method_getImplementation(cache), oldPath = method_getImplementation(path);
+    __block NSDictionary *snapshot = @{@"fetchedAt":[NSISO8601DateFormatter.new stringFromDate:NSDate.date], @"flights":@[]};
+    IMP mockCache = imp_implementationWithBlock(^id(id receiver, NSString *airport) { return snapshot; });
+    IMP mockPath = imp_implementationWithBlock(^id(id receiver, NSString *airport) { return url; });
+    method_setImplementation(cache, mockCache);
+    method_setImplementation(path, mockPath);
+    BOOL empty = [store availabilityForAirport:@"CDG"] == DBFlightAvailabilityEmpty;
+    snapshot = @{@"fetchedAt":@"2020-01-01T00:00:00Z", @"flights":@[]};
+    BOOL stale = [store availabilityForAirport:@"CDG"] == DBFlightAvailabilityUnavailable;
+    int lock = open([url.path stringByAppendingString:@".lock"].fileSystemRepresentation, O_CREAT | O_RDWR, 0600);
+    flock(lock, LOCK_EX);
+    BOOL loading = [store availabilityForAirport:@"CDG"] == DBFlightAvailabilityLoading;
+    flock(lock, LOCK_UN);
+    close(lock);
+    [@{@"status":@429, @"failures":@1} writeToFile:[url.path stringByAppendingString:@".retry.plist"] atomically:YES];
+    BOOL limited = [store availabilityForAirport:@"CDG"] == DBFlightAvailabilityUnavailable &&
+                   [store refreshFailureStatusForAirport:@"CDG"] == 429;
+    method_setImplementation(cache, oldCache);
+    method_setImplementation(path, oldPath);
+    imp_removeBlock(mockCache);
+    imp_removeBlock(mockPath);
+    [NSFileManager.defaultManager removeItemAtPath:folder error:NULL];
+    return empty && stale && loading && limited;
 }
 
 static BOOL VerifySharedRefreshLock(Class store) {
@@ -249,7 +312,8 @@ int main(int argc, const char *argv[]) {
                                       airport:@"ICN"];
         if ([snapshot[@"flights"] count] != 2)
             return 1;
-        if (!VerifyCompactScale(board) || !VerifyAirlineLogos() ||
+        if (!VerifyCompactScale(board) || !VerifyAirlineLogos() || !VerifySystemFontScaling() ||
+            !VerifyAvailabilityStates(store) ||
             !VerifySnapshotConfiguration(board) || !VerifySharedRowsCache(store) ||
             !VerifyContentDrivenRendering(board, store) || !VerifySharedRefreshLock(store))
             return 1;

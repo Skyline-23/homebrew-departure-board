@@ -26,6 +26,9 @@ static void DrawAirlineLogo(NSImage *logo, NSRect bounds) {
         @"flight" : @.21,
         @"destination" : @.30,
         @"expected" : @.12,
+        @"airline" : @.14,
+        @"terminal" : @.07,
+        @"counter" : @.10,
         @"gate" : @.08,
         @"state" : @.22
     };
@@ -33,14 +36,21 @@ static void DrawAirlineLogo(NSImage *logo, NSRect bounds) {
 }
 
 - (NSString *)columnLabel:(NSString *)column {
-    return DBBoardString([@"column." stringByAppendingString:column], self.currentLanguage);
+    NSString *key = self.location[@"display"][@"columnLabels"][column]
+                    ?: [@"column." stringByAppendingString:column];
+    return DBBoardString(key, self.currentLanguage);
 }
 - (CGFloat)airportHeaderHeight:(NSRect)area {
     CGFloat fraction = [self.location[@"display"][@"headerFraction"] doubleValue];
+    CGFloat height = fraction > 0 ? area.size.height * fraction * self.boardScale
+                                 : [self.location[@"display"][@"headerHeight"] doubleValue];
     if ([self.locationCode isEqual:@"HND"] && area.size.width > area.size.height)
-        return 90;
-    return fraction > 0 ? area.size.height * fraction * self.boardScale
-                        : [self.location[@"display"][@"headerHeight"] doubleValue];
+        height = MIN(210, area.size.height * .19);
+    return MAX(height, [self.location[@"display"][@"minimumHeaderHeight"] doubleValue]);
+}
+
+- (CGFloat)airportColumnHeaderHeight {
+    return [self.location[@"display"][@"columnHeaderLanguages"] count] > 1 ? 46 : 30;
 }
 
 - (void)drawAirportHeader:(NSRect)area {
@@ -73,8 +83,8 @@ static void DrawAirlineLogo(NSImage *logo, NSRect bounds) {
         return;
     }
     if (haneda) {
-        CGFloat unit = MIN(2, area.size.width / 800);
-        if (area.size.height > area.size.width) {
+        CGFloat unit = MIN(1.6, height / 230);
+        if (height >= 140) {
             DBDrawText(DBBoardString(@"heading.checkinInformation", self.currentLanguage),
                        NSMakeRect(26, 3, 1400, 30 * unit), 23 * unit, ink, YES, NSTextAlignmentLeft, NO);
             [self drawHanedaCounters:NSMakeRect(24, 38 * unit, area.size.width - 48, height - 93 * unit)];
@@ -90,28 +100,7 @@ static void DrawAirlineLogo(NSImage *logo, NSRect bounds) {
                    28 * unit, DBColor(@"a9e482"), YES, NSTextAlignmentRight, YES);
         return;
     }
-    CGFloat titleHeight = haneda ? 76 : height;
-    CGFloat fontSize = MIN(88, titleHeight * .56);
-    [self planeAt:NSMakePoint(26, titleHeight * .22) size:40 color:ink];
-    NSString *title = DBBoardString(self.location[@"titleKey"], self.currentLanguage);
-    BOOL bilingual =
-        [profile[@"headerVariant"] isEqual:@"bilingual"] && ![self.location[@"lang"] isEqual:@"en"];
-    BOOL centered = [profile[@"headerVariant"] isEqual:@"centered"];
-    DBDrawTextWithFont(title, NSMakeRect(86, 4, area.size.width - 375, titleHeight * (bilingual ? .58 : .90)),
-                       DBNamedFont(profile[@"headerFont"], fontSize), ink,
-                       centered ? NSTextAlignmentCenter : NSTextAlignmentLeft);
-    if (bilingual) {
-        NSString *secondary =
-            DBBoardString(self.location[@"titleKey"],
-                          [self.currentLanguage isEqual:@"en"] ? self.location[@"lang"] : @"en");
-        DBDrawTextWithFont(secondary,
-                           NSMakeRect(88, titleHeight * .58, area.size.width - 375, titleHeight * .36),
-                           DBNamedFont(profile[@"headerFont"], fontSize * .6), ink, NSTextAlignmentLeft);
-    }
-    if (![self.locationCode isEqual:@"ICN"])
-        DBDrawText(DBTime(self.boardDate, self.location, @"HH:mm"),
-                   NSMakeRect(area.size.width - 265, 5, 233, titleHeight * .63), fontSize, ink, YES,
-                   NSTextAlignmentRight, YES);
+    [self drawProfileHeader:area];
 }
 
 - (void)drawHanedaCounters:(NSRect)area {
@@ -119,7 +108,7 @@ static void DrawAirlineLogo(NSImage *logo, NSRect bounds) {
     NSArray *counters =
         @[ @"N", @"M", @"L", @"K", @"J", @"I", @"H", @"G", @"F", @"", @"E", @"D", @"C", @"B", @"A" ];
     CGFloat width = (area.size.width - 24) / counters.count;
-    CGFloat unit = MIN(2, area.size.width / 800);
+    CGFloat unit = MIN(1.25, area.size.height / 120);
     for (NSUInteger index = 0; index < counters.count; index++) {
         NSString *letter = counters[index];
         if (!letter.length)
@@ -164,9 +153,10 @@ static void DrawAirlineLogo(NSImage *logo, NSRect bounds) {
     if (self.density > 0)
         return MAX(8, MIN(64, self.density));
     NSDictionary *profile = self.location[@"display"];
-    CGFloat tableTop = [self airportHeaderHeight:area] + 33;
+    CGFloat tableTop = [self airportHeaderHeight:area] + [self airportColumnHeaderHeight] + 4;
     CGFloat tableBottom = area.size.height - MAX(29, [profile[@"footerHeight"] doubleValue] + 3);
-    NSInteger readableRows = (NSInteger)floor(MAX(0, tableBottom - tableTop) / 34);
+    CGFloat minimum = [profile[@"stackedDestination"] boolValue] ? 49 : 34;
+    NSInteger readableRows = (NSInteger)floor(MAX(0, tableBottom - tableTop) / minimum);
     NSInteger preferredRows = (NSInteger)ceil([profile[@"rowCount"] doubleValue] / self.boardScale);
     // Preserve each airport's density without enlarging a tall reference panel
     // to the full width of a landscape desktop.
@@ -187,7 +177,8 @@ static void DrawAirlineLogo(NSImage *logo, NSRect bounds) {
     CGFloat margin = 20;
     CGFloat panelWidth = (area.size.width - 2 * margin - panelGap * (panels - 1)) / panels;
     CGFloat headingY = [self airportHeaderHeight:area] + 4;
-    CGFloat tableY = headingY + 29;
+    CGFloat headingHeight = [self airportColumnHeaderHeight];
+    CGFloat tableY = headingY + headingHeight;
     CGFloat tableBottom = area.size.height - MAX(29, [profile[@"footerHeight"] doubleValue] + 3);
     CGFloat rowHeight = (tableBottom - tableY) / rowCount;
     CGFloat fontSize = MIN(36, MIN(rowHeight * .78, panelWidth / 34));
@@ -200,13 +191,21 @@ static void DrawAirlineLogo(NSImage *logo, NSRect bounds) {
 
     for (NSInteger panel = 0; panel < panels; panel++) {
         CGFloat left = margin + panel * (panelWidth + panelGap);
-        DBFillRect(NSMakeRect(left, headingY, panelWidth, 26), DBColor(profile[@"columnBand"]));
+        DBFillRect(NSMakeRect(left, headingY, panelWidth, headingHeight - 2), DBColor(profile[@"columnBand"]));
         CGFloat columnX = left;
         for (NSString *column in columns) {
             CGFloat width = panelWidth * [self weightFor:column] / totalWeight;
-            DBDrawTextWithFont([self columnLabel:column], NSMakeRect(columnX + 5, headingY, width - 8, 26),
-                               DBNamedFont(profile[@"bodyFont"], MIN(24, panelWidth / 37)),
-                               DBColor(profile[@"columnInk"]), NSTextAlignmentLeft);
+            NSArray *languages = profile[@"columnHeaderLanguages"];
+            NSUInteger lines = MAX(1, languages.count);
+            NSString *key = profile[@"columnLabels"][column] ?: [@"column." stringByAppendingString:column];
+            for (NSUInteger line = 0; line < lines; line++) {
+                NSString *label = languages.count ? DBBoardString(key, languages[line]) : [self columnLabel:column];
+                DBDrawTextWithFont(label,
+                    NSMakeRect(columnX + 5, headingY + line * headingHeight / lines, width - 8, headingHeight / lines - 2),
+                    DBNamedFont(profile[@"bodyFont"], lines > 1 ? 18 : MIN(24, panelWidth / 37)),
+                    DBColor(line ? profile[@"headerSecondaryInk"] ?: profile[@"columnInk"] : profile[@"columnInk"]),
+                    NSTextAlignmentLeft);
+            }
             columnX += width;
         }
         for (NSInteger index = 0; index < rowCount; index++) {
@@ -222,13 +221,19 @@ static void DrawAirlineLogo(NSImage *logo, NSRect bounds) {
             for (NSString *column in columns) {
                 CGFloat width = panelWidth * [self weightFor:column] / totalWeight;
                 NSRect cell = NSMakeRect(columnX + 5, top + 1, width - 9, rowHeight - 3);
+                NSString *columnFill = profile[@"columnFills"][column];
+                if (columnFill)
+                    DBFillRect(NSMakeRect(columnX, top, width - 1, rowHeight - 1), DBColor(columnFill));
+                if (profile[@"verticalRules"])
+                    DBFillRect(NSMakeRect(columnX + width - 1, top, 1, rowHeight), DBColor(profile[@"verticalRules"]));
                 [self drawAirportCell:row column:column rect:cell fontSize:fontSize];
                 columnX += width;
             }
         }
     }
     if (!self.rows.count) {
-        DBDrawText(DBUIString(@"data.unavailable"), NSMakeRect(100, tableY + 70, area.size.width - 200, 80),
+        DBDrawText(DBBoardString(self.emptyMessageKey ?: @"data.loading", self.currentLanguage),
+                   NSMakeRect(100, tableY + 70, area.size.width - 200, 80),
                    26, DBColor(@"b9c9d4"), NO, NSTextAlignmentCenter, NO);
     }
     [self footer:area text:DBBoardString(@"footer.airport", self.currentLanguage)];
@@ -246,17 +251,62 @@ static void DrawAirlineLogo(NSImage *logo, NSRect bounds) {
         value = DBLocalized(row[@"destination"], self.currentLanguage);
         if ([profile[@"uppercaseDestinations"] boolValue])
             value = value.uppercaseString;
+        ink = DBColor(profile[@"destinationColor"] ?: profile[@"textColor"]);
+        if ([profile[@"stackedDestination"] boolValue]) {
+            DBDrawTextWithFont(value, NSMakeRect(cell.origin.x, cell.origin.y, cell.size.width, cell.size.height * .57),
+                               DBNamedFont(profile[@"bodyFont"], size * .9), ink, NSTextAlignmentLeft);
+            DBDrawTextWithFont(row[@"flight"], NSMakeRect(cell.origin.x, cell.origin.y + cell.size.height * .57,
+                               cell.size.width, cell.size.height * .43),
+                               DBNamedFont(profile[@"bodyFont"], size * .62),
+                               DBColor(profile[@"textColor"]), NSTextAlignmentLeft);
+            return;
+        }
     } else if ([column isEqual:@"state"]) {
         value = DBStatusText(row[@"state"], self.currentLanguage);
         if ([profile[@"hideScheduledStatus"] boolValue] && [row[@"state"] isEqual:@"scheduled"])
             value = @"";
         if (![@[ @"scheduled", @"departed" ] containsObject:row[@"state"]])
             ink = DBStatusColor(row[@"state"]);
+        if (profile[@"statusColors"][row[@"state"]])
+            ink = DBColor(profile[@"statusColors"][row[@"state"]]);
+        NSString *fill = profile[@"statusFills"][row[@"state"]];
+        if (fill && value.length) {
+            DBFillRect(NSInsetRect(cell, -3, -1), DBColor(fill));
+            ink = DBColor(profile[@"statusFillInk"] ?: @"ffffff");
+        }
+        if ([profile[@"statusMarker"] boolValue] && value.length) {
+            CGFloat radius = MIN(10, cell.size.height * .24);
+            [ink setStroke];
+            NSBezierPath *marker = [NSBezierPath bezierPathWithOvalInRect:
+                NSMakeRect(cell.origin.x, NSMidY(cell) - radius, radius * 2, radius * 2)];
+            marker.lineWidth = 1.5;
+            [marker stroke];
+            cell.origin.x += radius * 2 + 6;
+            cell.size.width -= radius * 2 + 6;
+        }
         size *= .88;
     } else if ([column isEqual:@"time"]) {
         ink = DBColor(profile[@"timeColor"]);
     } else if ([column isEqual:@"expected"]) {
         ink = DBColor(@"ffd653");
+    }
+    if ([column isEqual:@"gate"] && [profile[@"gateIncludesTerminal"] boolValue]) {
+        NSString *terminal = row[@"terminal"] ?: @"";
+        if (terminal.length)
+            value = value.length ? [NSString stringWithFormat:@"%@ · %@", terminal, value] : terminal;
+    }
+
+    if (!value.length)
+        value = profile[@"emptyFields"][column] ?: @"";
+    if ([column isEqual:@"airline"]) {
+        NSString *carrier = [row[@"flight"] componentsSeparatedByString:@" "].firstObject;
+        NSImage *logo = [DBAirlineLogoStore imageForCarrier:carrier icao:row[@"airlineICAO"] name:row[@"airline"]];
+        if (logo)
+            DrawAirlineLogo(logo, NSInsetRect(cell, 4, 2));
+        else
+            DBDrawTextWithFont(row[@"airline"] ?: carrier, cell, DBNamedFont(profile[@"bodyFont"], size * .70),
+                               ink, NSTextAlignmentLeft);
+        return;
     }
 
     if ([column isEqual:@"flight"] && [profile[@"airlineBadge"] boolValue]) {
@@ -277,6 +327,8 @@ static void DrawAirlineLogo(NSImage *logo, NSRect bounds) {
         DBFillRect(NSInsetRect(cell, 1, 1), DBColor(@"f4ec7b"));
         ink = DBColor(@"17221a");
     }
+    if (profile[@"columnInkColors"][column])
+        ink = DBColor(profile[@"columnInkColors"][column]);
     // Numeric fields must stay complete: a truncated boarding time is misleading.
     if (numbers)
         size = MIN(size, cell.size.width / MAX(2.6, value.length * .60));

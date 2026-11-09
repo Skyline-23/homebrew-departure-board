@@ -125,7 +125,7 @@
     "panelCount": 3,
     "rowCount": 19,
     "headerHeight": 70,
-    "headerInk": "efe7ad",
+    "headerInk": "e9e6c9",
     "rowColors": [
       "090b0e",
       "090b0e"
@@ -142,7 +142,26 @@
     "headerVariant": "bilingual",
     "bodyFont": "Menlo-Bold",
     "headerFont": "Arial-BoldMT",
-    "uppercaseDestinations": true
+    "uppercaseDestinations": true,
+    "headerLayout": "inline",
+    "headerLanguages": [
+      "zh-Hans",
+      "en"
+    ],
+    "headerIcon": "none",
+    "titleKey": "heading.internationalDepartures",
+    "minimumHeaderHeight": 90,
+    "titleSize": 38,
+    "verticalRules": "3d3724",
+    "footerStyle": "brand-only",
+    "footerColor": "16201d",
+    "footerBrand": "上海浦东国际机场 · SHANGHAI PUDONG",
+    "statusColors": {
+      "boarding": "f1d16c",
+      "closing": "ec964f",
+      "delayed": "f4ac57"
+    },
+    "detailRevision": 2
   },
   "reference": {
     "source": "File:Departure board of Terminal 2 of Shanghai Pudong International Airport.JPG - Wikimedia Commons (https://commons.wikimedia.org/wiki/File%3ADeparture_board_of_Terminal_2_of_Shanghai_Pudong_International_Airport.JPG)",

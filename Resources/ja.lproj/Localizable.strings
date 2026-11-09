@@ -112,3 +112,15 @@
 "status.closed" = "搭乗締切";
 "status.diverted" = "目的地変更";
 "column.terminal" = "ターミナル";
+
+"data.loading" = "運航情報を読み込み中…";
+
+"data.noDepartures" = "この時間帯の出発便はありません";
+
+"data.unavailable" = "運航情報を一時的に表示できません";
+
+"data.configure" = "Departure Boardで運航情報を設定してください";
+
+"column.airline" = "航空会社";
+
+"heading.southWingDepartures" = "南ウイング出発便ご案内";

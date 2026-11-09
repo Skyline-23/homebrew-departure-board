@@ -263,7 +263,14 @@
     "bodyFont": "HelveticaNeue-Medium",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": false,
-    "hideScheduledStatus": true
+    "hideScheduledStatus": true,
+    "statusFills": {
+      "closing": "e37c2b",
+      "cancelled": "ad3343"
+    },
+    "statusFillInk": "ffffff",
+    "verticalRules": "17354e",
+    "detailRevision": 2
   },
   "reference": {
     "source": "ダナン旅行6日目：韓国仁川空港グルメ | むらさんの人生の楽園 (https://ameblo.jp/murasan2014/entry-12893821746.html)",

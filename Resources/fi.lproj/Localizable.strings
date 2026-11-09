@@ -17,3 +17,13 @@
 "status.checkin" = "Lähtöselvitys avoinna";
 "status.closed" = "Portti suljettu";
 "status.diverted" = "Ohjattu muualle";
+
+"data.loading" = "Ladataan lentotietoja…";
+
+"data.noDepartures" = "Ei lähtöjä tällä aikavälillä";
+
+"data.unavailable" = "Lentotiedot eivät ole tilapäisesti saatavilla";
+
+"data.configure" = "Määritä reaaliaikaiset lentotiedot Departure Boardissa";
+
+"column.airline" = "Lentoyhtiö";

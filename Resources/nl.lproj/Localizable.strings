@@ -17,3 +17,13 @@
 "status.checkin" = "Inchecken geopend";
 "status.closed" = "Gate gesloten";
 "status.diverted" = "Omgeleid";
+
+"data.loading" = "Vluchtinformatie laden…";
+
+"data.noDepartures" = "Geen vertrekkende vluchten in deze periode";
+
+"data.unavailable" = "Vluchtinformatie tijdelijk niet beschikbaar";
+
+"data.configure" = "Stel live vluchtgegevens in via Departure Board";
+
+"column.airline" = "Maatschappij";

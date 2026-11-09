@@ -7,7 +7,7 @@
   "preset": "copenhagen",
   "accent": "edf4f8",
   "bg": "101a2e",
-  "header": "253656",
+  "header": "263b43",
   "kind": "airport",
   "routes": [
     {
@@ -142,7 +142,22 @@
     "headerVariant": "bilingual",
     "bodyFont": "HelveticaNeue-Medium",
     "headerFont": "Arial-BoldMT",
-    "uppercaseDestinations": false
+    "uppercaseDestinations": false,
+    "headerLayout": "stacked",
+    "headerLanguages": [
+      "da",
+      "en"
+    ],
+    "headerIcon": "boxed",
+    "headerSecondaryInk": "ead333",
+    "minimumHeaderHeight": 112,
+    "titleSize": 42,
+    "clockStyle": "digital",
+    "clockColor": "ffcf47",
+    "footerStyle": "brand-only",
+    "footerColor": "153757",
+    "footerBrand": "COPENHAGEN AIRPORT",
+    "detailRevision": 2
   },
   "reference": {
     "source": "カストルップ国際空港 (CPH) クチコミ・アクセス・営業時間｜コペンハーゲンciteフォートラベル (https://4travel.jp/os_shisetsu/10264935)",

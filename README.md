@@ -59,7 +59,7 @@ The screen saver reads local flight data without opening Keychain prompts over
 the lock screen. Its **Options** button opens the companion settings editor. Keeping one editor
 avoids Keychain access and preference writes from the system screen-saver sandbox. The provider and retrieval time are shown in settings.
 
-Missing data is shown as unavailable. **Sample schedule** is for visual previews;
+Loading, an empty departure window, missing configuration and a failed request have separate localized messages. API authentication, subscription and rate-limit errors are explained in Settings. **Sample schedule** is for visual previews;
 the four railway profiles currently use sample timetables, not live railway feeds.
 
 Closing the preview keeps Departure Board running in the menu bar and removes
@@ -87,9 +87,8 @@ available independently.
 
 ## Visual profiles
 
-Each airport has its own palette, column order, row density and reference
-photograph. The default layout shows one physical panel per monitor: a long
-reference wall contributes one panel, with its rows adapted to the display size. Haneda includes its check-in area diagram; Changi uses
+All 40 airports have individual headers, column layouts, row rules, status treatments and reference photographs. The default layout shows one physical panel per monitor: a long
+reference wall contributes one panel, with its rows adapted to the display size. Haneda includes its check-in area diagram; Vienna has its analogue clock; Hong Kong has its blue check-in column; Changi uses
 highlighted gate cells; Heathrow uses its yellow header; Incheon uses blue
 rows and its multilingual header. Railway renderers have their own table and column layouts. A classic
 split-flap renderer is available as an alternative for airports.
@@ -150,3 +149,7 @@ Code: MIT.
 Live destination names are resolved from cached multilingual Wikidata labels,
 using provider airport codes rather than a manual city-alias table. See
 [the data notes](docs/destination-names.md).
+
+Development bundles stay in `work/Build.noindex` so Spotlight does not list test
+apps alongside the installed app. Release archives are written to
+`outputs/DepartureBoard/dist`.

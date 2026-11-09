@@ -17,3 +17,13 @@
 "status.checkin" = "Indtjekning åben";
 "status.closed" = "Gate lukket";
 "status.diverted" = "Omdirigeret";
+
+"data.loading" = "Indlæser flyoplysninger…";
+
+"data.noDepartures" = "Ingen afgange i dette tidsrum";
+
+"data.unavailable" = "Flyoplysninger er midlertidigt utilgængelige";
+
+"data.configure" = "Konfigurer flydata i realtid i Departure Board";
+
+"column.airline" = "Flyselskab";

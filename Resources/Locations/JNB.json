@@ -7,7 +7,7 @@
   "preset": "johannesburg",
   "accent": "e9c654",
   "bg": "0a263b",
-  "header": "138fc0",
+  "header": "0297db",
   "kind": "airport",
   "routes": [
     {
@@ -111,11 +111,13 @@
     "B21"
   ],
   "columns": [
-    "time",
+    "airline",
     "flight",
     "destination",
-    "gate",
-    "state"
+    "time",
+    "state",
+    "expected",
+    "counter"
   ],
   "twoPanels": false,
   "headerStyle": "dark",
@@ -127,22 +129,50 @@
     "headerHeight": 96,
     "headerInk": "ffffff",
     "rowColors": [
-      "2379a1",
-      "2b8aac"
+      "28546a",
+      "224152"
     ],
     "textColor": "ffffff",
     "timeColor": "ffffff",
-    "columnBand": "26516a",
+    "columnBand": "162d37",
     "columnInk": "ffffff",
     "gateHighlight": false,
-    "airlineBadge": true,
+    "airlineBadge": false,
     "footerHeight": 26,
     "referenceAspect": 1.62,
     "headerFraction": 0.1,
     "headerVariant": "left",
     "bodyFont": "HelveticaNeue-Medium",
     "headerFont": "Arial-BoldMT",
-    "uppercaseDestinations": false
+    "uppercaseDestinations": false,
+    "headerLayout": "stacked",
+    "headerIcon": "none",
+    "brand": "O. R. TAMBO",
+    "brandWidth": 260,
+    "titleKey": "heading.internationalDepartures",
+    "minimumHeaderHeight": 106,
+    "titleSize": 39,
+    "dateInHeader": true,
+    "statusMarker": true,
+    "verticalRules": "608492",
+    "footerStyle": "brand-only",
+    "footerColor": "126b93",
+    "statusColors": {
+      "departed": "78df7d",
+      "boarding": "a4e591",
+      "closing": "e66569",
+      "closed": "ef6668"
+    },
+    "columnWeights": {
+      "airline": 0.12,
+      "flight": 0.15,
+      "destination": 0.29,
+      "time": 0.1,
+      "state": 0.22,
+      "expected": 0.1,
+      "counter": 0.12
+    },
+    "detailRevision": 2
   },
   "reference": {
     "source": "UK, Germany and Italy detect Omicron variant cases, Israel closes borders | Nippon.com (https://www.nippon.com/en/news/reu20211127KBN2IC0A8/)",

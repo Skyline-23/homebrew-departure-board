@@ -112,10 +112,9 @@
   ],
   "columns": [
     "time",
-    "flight",
     "destination",
-    "gate",
-    "state"
+    "state",
+    "gate"
   ],
   "twoPanels": false,
   "headerStyle": "dark",
@@ -142,7 +141,28 @@
     "headerVariant": "left",
     "bodyFont": "HelveticaNeue",
     "headerFont": "Arial-BoldMT",
-    "uppercaseDestinations": false
+    "uppercaseDestinations": false,
+    "headerLayout": "inline",
+    "headerLanguages": [
+      "en",
+      "fr"
+    ],
+    "headerIcon": "circle",
+    "minimumHeaderHeight": 92,
+    "titleSize": 36,
+    "stackedDestination": true,
+    "clockColor": "e7db7a",
+    "verticalRules": "32509a",
+    "footerStyle": "brand-only",
+    "footerColor": "19255b",
+    "footerBrand": "Toronto Pearson",
+    "columnWeights": {
+      "time": 0.1,
+      "destination": 0.29,
+      "state": 0.22,
+      "gate": 0.08
+    },
+    "detailRevision": 2
   },
   "reference": {
     "source": "Review of Air Canada Rouge flight from Toronto to Bogota in Economy (https://flight-report.com/en/report/43443/air-canada-rouge-ac1944-toronto-yyz-bogota-bog/)",

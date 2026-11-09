@@ -253,7 +253,7 @@
 "data.live" = "Live flight data";
 "data.sample" = "Sample schedule · visual preview only";
 "data.cached" = "Cached data";
-"data.unavailable" = "No departure information";
+"data.unavailable" = "Flight information temporarily unavailable";
 "status.unknown" = "Status unavailable";
 "status.checkin" = "Check-in open";
 "status.closed" = "Gate closed";
@@ -299,3 +299,37 @@
 "settings.showAllSpaces" = "Show on all Spaces";
 
 "settings.boardScale" = "Board Scale";
+
+"data.loading" = "Loading flight information…";
+
+"data.noDepartures" = "No departures in this time period";
+
+"data.configure" = "Set up live flight data in Departure Board";
+
+"column.airline" = "Airline";
+
+"heading.southWingDepartures" = "South Wing Departures";
+
+"heading.checkin" = "Check-in";
+
+"heading.internationalDepartures" = "International Departures";
+
+"heading.flightInformation" = "Flight Information";
+
+"heading.allDepartures" = "All Departures";
+
+"notice.changi.welcome" = "Welcome to Changi Airport";
+
+"notice.manila.welcome" = "Welcome to Ninoy Aquino International Airport";
+
+"notice.boardingPass" = "Have your boarding pass ready";
+
+"notice.unattendedBags" = "Do not leave bags unattended";
+
+"settings.apiAuthenticationFailed" = "Flight data: check your API key and subscription.";
+
+"settings.apiSubscriptionRequired" = "Flight data: this airport is not available with the current subscription.";
+
+"settings.apiRateLimited" = "Flight API limit reached. The last received flights remain available.";
+
+"column.terminalGate" = "Terminal / Gate";

@@ -226,7 +226,27 @@
     "headerVariant": "left",
     "bodyFont": "HelveticaNeue-Medium",
     "headerFont": "Arial-BoldMT",
-    "uppercaseDestinations": false
+    "uppercaseDestinations": false,
+    "headerLayout": "single",
+    "headerIcon": "circle",
+    "headerRule": "a48d35",
+    "clockPosition": "footer",
+    "minimumHeaderHeight": 86,
+    "titleSize": 48,
+    "footerStyle": "date-clock",
+    "footerColor": "142e46",
+    "footerInk": "f6d853",
+    "statusColors": {
+      "boarding": "8ede9d",
+      "closing": "efca51",
+      "cancelled": "f66d70"
+    },
+    "verticalRules": "284153",
+    "detailRevision": 2,
+    "gateIncludesTerminal": true,
+    "columnLabels": {
+      "gate": "column.terminalGate"
+    }
   },
   "reference": {
     "source": "Heathrow Flight Information Displays - No-Nonsense Design (https://www.nononsensedesign.co.uk/portfolio/heathrow-flight-information-displays/)",

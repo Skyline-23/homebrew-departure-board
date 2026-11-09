@@ -142,7 +142,24 @@
     "headerVariant": "bilingual",
     "bodyFont": "HelveticaNeue-Medium",
     "headerFont": "Arial-BoldMT",
-    "uppercaseDestinations": true
+    "uppercaseDestinations": true,
+    "headerLayout": "single",
+    "headerIcon": "none",
+    "minimumHeaderHeight": 70,
+    "titleSize": 36,
+    "dateInHeader": true,
+    "clockColor": "ffffff",
+    "footerStyle": "pages",
+    "footerColor": "e9ede6",
+    "footerInk": "184365",
+    "verticalRules": "335a9b",
+    "statusColors": {
+      "boarding": "77ed7b",
+      "closed": "ee6090",
+      "closing": "f16caf",
+      "cancelled": "ff7474"
+    },
+    "detailRevision": 2
   },
   "reference": {
     "source": "Transport minister says new terminals, fourth runway for KLIA on the cards | Malay Mail (https://www.malaymail.com/news/malaysia/2024/12/12/transport-minister-says-new-terminals-fourth-runway-for-klia-on-the-cards/159603)",

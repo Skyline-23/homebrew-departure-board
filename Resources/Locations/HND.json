@@ -157,7 +157,7 @@
     "textColor": "ffffff",
     "timeColor": "ffffff",
     "columnBand": "101923",
-    "columnInk": "ffffff",
+    "columnInk": "ecf1f4",
     "gateHighlight": false,
     "airlineBadge": true,
     "footerHeight": 44,
@@ -178,7 +178,10 @@
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": true,
     "hideScheduledStatus": true,
-    "rowFontScale": 0.85
+    "rowFontScale": 0.85,
+    "minimumHeaderHeight": 170,
+    "verticalRules": "20384b",
+    "detailRevision": 2
   },
   "reference": {
     "source": "2.2023年9月14日　早朝の空港にて | Atsushiの飛行機修行旅日記 (https://ameblo.jp/atsushi2019/entry-12822662974.html)",

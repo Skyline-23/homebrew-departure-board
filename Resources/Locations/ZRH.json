@@ -7,7 +7,7 @@
   "preset": "zurich",
   "accent": "ef3846",
   "bg": "131717",
-  "header": "151b1a",
+  "header": "101613",
   "kind": "airport",
   "routes": [
     {
@@ -127,13 +127,13 @@
     "headerHeight": 96,
     "headerInk": "ffffff",
     "rowColors": [
-      "1948b6",
-      "285ac5"
+      "1c319c",
+      "263da8"
     ],
     "textColor": "ffffff",
     "timeColor": "ffffff",
-    "columnBand": "e5ecec",
-    "columnInk": "213449",
+    "columnBand": "d7dfd9",
+    "columnInk": "24352a",
     "gateHighlight": false,
     "airlineBadge": true,
     "footerHeight": 26,
@@ -142,7 +142,25 @@
     "headerVariant": "bilingual",
     "bodyFont": "HelveticaNeue-Medium",
     "headerFont": "Arial-BoldMT",
-    "uppercaseDestinations": true
+    "uppercaseDestinations": false,
+    "headerLayout": "inline",
+    "headerLanguages": [
+      "de",
+      "en"
+    ],
+    "headerIcon": "boxed",
+    "minimumHeaderHeight": 92,
+    "titleSize": 46,
+    "statusFills": {
+      "boarding": "b6d342",
+      "closing": "e6bc33"
+    },
+    "statusFillInk": "15230d",
+    "footerStyle": "date-clock",
+    "footerColor": "d7dfd9",
+    "footerInk": "213529",
+    "footerBrand": "Flughafen Zürich",
+    "detailRevision": 2
   },
   "reference": {
     "source": "Connexions et terminaux à l'aéroport de Zurich ZRH (https://www.cestee.fr/aeroport/zurich-zrh/terminal)",

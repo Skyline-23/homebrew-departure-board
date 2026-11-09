@@ -7,7 +7,7 @@
   "preset": "cairo",
   "accent": "f2ce7e",
   "bg": "232b32",
-  "header": "e6e7df",
+  "header": "c1d4db",
   "kind": "airport",
   "routes": [
     {
@@ -111,9 +111,11 @@
     "B21"
   ],
   "columns": [
+    "airline",
     "flight",
     "time",
     "destination",
+    "counter",
     "gate",
     "state"
   ],
@@ -125,24 +127,51 @@
     "panelCount": 1,
     "rowCount": 15,
     "headerHeight": 96,
-    "headerInk": "243441",
+    "headerInk": "203039",
     "rowColors": [
       "e1e6e5",
       "667886"
     ],
     "textColor": "1c2e3b",
     "timeColor": "1c2e3b",
-    "columnBand": "273b4f",
+    "columnBand": "192f3b",
     "columnInk": "ffffff",
     "gateHighlight": false,
-    "airlineBadge": true,
+    "airlineBadge": false,
     "footerHeight": 26,
     "referenceAspect": 1.7,
     "headerFraction": 0.14,
     "headerVariant": "left",
     "bodyFont": "Arial-BoldMT",
     "headerFont": "Arial-BoldMT",
-    "uppercaseDestinations": true
+    "uppercaseDestinations": true,
+    "headerLayout": "single",
+    "headerIcon": "boxed",
+    "minimumHeaderHeight": 104,
+    "titleSize": 48,
+    "verticalRules": "b4c0c5",
+    "footerStyle": "date-clock",
+    "footerColor": "cbd8de",
+    "footerInk": "20333e",
+    "statusColors": {
+      "departed": "ce403b",
+      "cancelled": "a82739",
+      "boarding": "256337",
+      "gate": "256337",
+      "closing": "895500",
+      "delayed": "895500",
+      "closed": "a82739"
+    },
+    "columnWeights": {
+      "airline": 0.12,
+      "flight": 0.15,
+      "time": 0.1,
+      "destination": 0.29,
+      "counter": 0.12,
+      "gate": 0.08,
+      "state": 0.22
+    },
+    "detailRevision": 2
   },
   "reference": {
     "source": "Two Surprisingly Easy And Pleasant Experiences At Cairo Airport - One Mile at a Time (https://onemileatatime.com/cairo-airport-experience/)",

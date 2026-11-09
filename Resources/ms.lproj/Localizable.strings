@@ -17,3 +17,13 @@
 "status.checkin" = "Daftar masuk dibuka";
 "status.closed" = "Pintu ditutup";
 "status.diverted" = "Dilencungkan";
+
+"data.loading" = "Memuatkan maklumat penerbangan…";
+
+"data.noDepartures" = "Tiada pelepasan dalam tempoh ini";
+
+"data.unavailable" = "Maklumat penerbangan tidak tersedia buat sementara waktu";
+
+"data.configure" = "Tetapkan data penerbangan langsung dalam Departure Board";
+
+"column.airline" = "Syarikat penerbangan";

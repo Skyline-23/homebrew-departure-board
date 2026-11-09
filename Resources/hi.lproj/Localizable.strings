@@ -17,3 +17,15 @@
 "status.checkin" = "चेक-इन खुला है";
 "status.closed" = "गेट बंद";
 "status.diverted" = "मार्ग परिवर्तित";
+
+"data.loading" = "उड़ान जानकारी लोड हो रही है…";
+
+"data.noDepartures" = "इस समयावधि में कोई प्रस्थान नहीं है";
+
+"data.unavailable" = "उड़ान जानकारी अस्थायी रूप से उपलब्ध नहीं है";
+
+"data.configure" = "Departure Board में लाइव उड़ान डेटा सेट करें";
+
+"column.airline" = "एयरलाइन";
+
+"heading.flightInformation" = "उड़ान की जानकारी";

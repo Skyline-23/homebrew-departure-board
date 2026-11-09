@@ -11,8 +11,8 @@ class DepartureBoard < Formula
   def install
     ENV["VERSION"] = version.to_s
     system "bash", "script/build.sh"
-    libexec.install "outputs/DepartureBoard/dist/Departure Board.app"
-    libexec.install "outputs/DepartureBoard/dist/Departure Board.saver"
+    libexec.install "work/Build.noindex/Bundles/Departure Board.app"
+    libexec.install "work/Build.noindex/Bundles/Departure Board.saver"
     libexec.install "script/sign-local.sh"
 
     (bin/"departure-board").write <<~SH

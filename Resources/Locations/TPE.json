@@ -107,9 +107,10 @@
   ],
   "columns": [
     "time",
+    "airline",
     "flight",
     "destination",
-    "gate",
+    "counter",
     "state"
   ],
   "twoPanels": false,
@@ -130,14 +131,45 @@
     "columnBand": "343d3e",
     "columnInk": "ffffff",
     "gateHighlight": false,
-    "airlineBadge": true,
+    "airlineBadge": false,
     "footerHeight": 26,
     "referenceAspect": 5.0,
     "headerFraction": 0.05,
     "headerVariant": "bilingual",
     "bodyFont": "HelveticaNeue-Medium",
     "headerFont": "Arial-BoldMT",
-    "uppercaseDestinations": true
+    "uppercaseDestinations": true,
+    "headerLayout": "inline",
+    "headerLanguages": [
+      "zh-Hant",
+      "en"
+    ],
+    "headerIcon": "plane",
+    "minimumHeaderHeight": 92,
+    "titleSize": 38,
+    "verticalRules": "687071",
+    "columnFills": {
+      "counter": "254eac"
+    },
+    "columnInkColors": {
+      "counter": "f8edaf"
+    },
+    "footerStyle": "date-clock",
+    "footerColor": "202a30",
+    "footerInk": "e7dab0",
+    "statusFills": {
+      "boarding": "7c513a",
+      "cancelled": "954d50"
+    },
+    "columnWeights": {
+      "time": 0.1,
+      "airline": 0.12,
+      "flight": 0.15,
+      "destination": 0.29,
+      "counter": 0.12,
+      "state": 0.22
+    },
+    "detailRevision": 2
   },
   "reference": {
     "source": "利用者数急上昇、桃園空港延べ1,000万人突破-ニュース-財団法人中央廣播電台(中央放送局)ニュース・番組制作、放送に関する規約 (https://www.rti.org.tw/jp/news?pid=52658&uid=3)",

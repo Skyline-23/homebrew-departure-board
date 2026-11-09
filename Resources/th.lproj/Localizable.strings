@@ -17,3 +17,13 @@
 "status.checkin" = "เปิดเช็กอิน";
 "status.closed" = "ปิดประตูขึ้นเครื่อง";
 "status.diverted" = "เปลี่ยนเส้นทาง";
+
+"data.loading" = "กำลังโหลดข้อมูลเที่ยวบิน…";
+
+"data.noDepartures" = "ไม่มีเที่ยวบินขาออกในช่วงเวลานี้";
+
+"data.unavailable" = "ข้อมูลเที่ยวบินไม่พร้อมใช้งานชั่วคราว";
+
+"data.configure" = "ตั้งค่าข้อมูลเที่ยวบินสดใน Departure Board";
+
+"column.airline" = "สายการบิน";

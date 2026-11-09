@@ -257,7 +257,17 @@
     "headerVariant": "left",
     "bodyFont": "HelveticaNeue",
     "headerFont": "Arial-BoldMT",
-    "uppercaseDestinations": false
+    "uppercaseDestinations": false,
+    "headerLayout": "single",
+    "headerIcon": "none",
+    "brand": "SFO",
+    "brandWidth": 160,
+    "minimumHeaderHeight": 88,
+    "headerRule": "f5f4d4",
+    "footerStyle": "date-clock",
+    "footerColor": "0b2848",
+    "verticalRules": "41677e",
+    "detailRevision": 2
   },
   "reference": {
     "source": "SFO terminal reopens after suspicious package investigation (https://sfstandard.com/2025/12/26/police-activity-closes-sfo-terminal/)",

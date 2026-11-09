@@ -354,6 +354,38 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
     return result;
 }
 
++ (NSInteger)refreshFailureStatusForAirport:(NSString *)airport {
+    NSString *path = [[self cacheURLForAirport:airport].path stringByAppendingString:@".retry.plist"];
+    return [[NSDictionary dictionaryWithContentsOfFile:path][@"status"] integerValue];
+}
+
++ (DBFlightAvailability)availabilityForAirport:(NSString *)airport {
+    NSString *path = [self cacheURLForAirport:airport].path;
+    int lock = open([path stringByAppendingString:@".lock"].fileSystemRepresentation, O_RDONLY);
+    if (lock >= 0) {
+        BOOL refreshing = flock(lock, LOCK_EX | LOCK_NB) != 0;
+        if (!refreshing)
+            flock(lock, LOCK_UN);
+        close(lock);
+        if (refreshing)
+            return DBFlightAvailabilityLoading;
+    }
+    NSDictionary *snapshot = [self cachedSnapshotForAirport:airport];
+    if (!snapshot && ![DBSettingsStore.settings[@"hasAPIKey"] boolValue])
+        return DBFlightAvailabilityConfigurationRequired;
+    NSDictionary *failure = [NSDictionary dictionaryWithContentsOfFile:
+                            [path stringByAppendingString:@".retry.plist"]];
+    if (failure)
+        return DBFlightAvailabilityUnavailable;
+    if (snapshot) {
+        NSDate *fetched = [self dateFromISO:snapshot[@"fetchedAt"]];
+        return fetched && -fetched.timeIntervalSinceNow < 86400
+                   ? DBFlightAvailabilityEmpty : DBFlightAvailabilityUnavailable;
+    }
+    return [DBSettingsStore.settings[@"hasAPIKey"] boolValue]
+               ? DBFlightAvailabilityLoading : DBFlightAvailabilityConfigurationRequired;
+}
+
 + (BOOL)refreshWithError:(NSError **)error {
     NSDictionary *settings = DBSettingsStore.settings;
     if ([settings[@"sampleData"] boolValue])
@@ -394,7 +426,8 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
         delay = 3600;
     if (retryAfter.doubleValue > 0)
         delay = MAX(delay, retryAfter.doubleValue);
-    [@{@"failures" : @(failures), @"retryAt" : [NSDate dateWithTimeIntervalSinceNow:delay]} writeToFile:path
+    [@{@"failures" : @(failures), @"status" : @(status),
+       @"retryAt" : [NSDate dateWithTimeIntervalSinceNow:delay]} writeToFile:path
                                                                                              atomically:YES];
 }
 
@@ -411,6 +444,7 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
         return YES;
     NSString *key = [self APIKey];
     if (!key.length) {
+        [self recordFailureForAirport:airport status:401 retryAfter:nil];
         if (error)
             *error = [NSError
                 errorWithDomain:DBDefaultsDomain

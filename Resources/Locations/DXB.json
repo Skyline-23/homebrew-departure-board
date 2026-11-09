@@ -7,7 +7,7 @@
   "preset": "dubai",
   "accent": "cdbcf9",
   "bg": "111538",
-  "header": "076dd3",
+  "header": "0871bf",
   "kind": "airport",
   "routes": [
     {
@@ -137,7 +137,22 @@
     "headerVariant": "bilingual",
     "bodyFont": "HelveticaNeue-Medium",
     "headerFont": "Arial-BoldMT",
-    "uppercaseDestinations": false
+    "uppercaseDestinations": false,
+    "headerLayout": "inline",
+    "headerLanguages": [
+      "en",
+      "ar"
+    ],
+    "headerIcon": "circle",
+    "brand": "Dubai Airports",
+    "brandWidth": 210,
+    "minimumHeaderHeight": 110,
+    "titleSize": 40,
+    "headerRule": "79badd",
+    "footerStyle": "date-clock",
+    "footerColor": "10478c",
+    "verticalRules": "1e5792",
+    "detailRevision": 2
   },
   "reference": {
     "source": "Delays, Cancellations at Dubai Airport After Crash-landing (https://www.voanews.com/a/delays-cancellations-at-dubai-airport-after-crash-landing/3448716.html)",

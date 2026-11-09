@@ -17,3 +17,13 @@
 "status.checkin" = "Incheckning öppen";
 "status.closed" = "Gate stängd";
 "status.diverted" = "Omdirigerat";
+
+"data.loading" = "Hämtar flyginformation…";
+
+"data.noDepartures" = "Inga avgångar under denna period";
+
+"data.unavailable" = "Flyginformationen är tillfälligt otillgänglig";
+
+"data.configure" = "Ställ in flygdata i realtid i Departure Board";
+
+"column.airline" = "Flygbolag";

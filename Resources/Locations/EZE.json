@@ -142,7 +142,23 @@
     "headerVariant": "bilingual",
     "bodyFont": "HelveticaNeue",
     "headerFont": "Arial-BoldMT",
-    "uppercaseDestinations": true
+    "uppercaseDestinations": true,
+    "headerLayout": "inline",
+    "headerLanguages": [
+      "es",
+      "en"
+    ],
+    "headerIcon": "plane",
+    "minimumHeaderHeight": 88,
+    "titleSize": 42,
+    "footerStyle": "brand-only",
+    "footerColor": "d62c31",
+    "footerBrand": "Aeropuertos Argentina",
+    "statusFills": {
+      "cancelled": "aa2430",
+      "delayed": "a97327"
+    },
+    "detailRevision": 2
   },
   "reference": {
     "source": "American Airlines 777-300ER Flagship First Review (2026): Buenos Aires to New York | AwardFares Blog (https://awardfares.com/blog/aa-777-300-eze-jfk/)",

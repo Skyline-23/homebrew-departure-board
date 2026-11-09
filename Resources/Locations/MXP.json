@@ -7,7 +7,7 @@
   "preset": "malpensa",
   "accent": "e7e1c5",
   "bg": "101214",
-  "header": "20384b",
+  "header": "557d9c",
   "kind": "airport",
   "routes": [
     {
@@ -161,8 +161,10 @@
   ],
   "columns": [
     "time",
-    "flight",
+    "expected",
     "destination",
+    "airline",
+    "flight",
     "gate",
     "state"
   ],
@@ -181,17 +183,45 @@
     ],
     "textColor": "1c2730",
     "timeColor": "1c2730",
-    "columnBand": "263f52",
-    "columnInk": "ffffff",
+    "columnBand": "dfe5e7",
+    "columnInk": "1a2934",
     "gateHighlight": false,
-    "airlineBadge": true,
+    "airlineBadge": false,
     "footerHeight": 26,
     "referenceAspect": 0.68,
     "headerFraction": 0.07,
     "headerVariant": "left",
     "bodyFont": "HelveticaNeue",
     "headerFont": "Arial-BoldMT",
-    "uppercaseDestinations": true
+    "uppercaseDestinations": true,
+    "headerLayout": "single",
+    "headerIcon": "plane",
+    "minimumHeaderHeight": 70,
+    "titleSize": 36,
+    "verticalRules": "a2adb4",
+    "footerStyle": "brand-only",
+    "footerColor": "244d8c",
+    "footerBrand": "Milano Malpensa",
+    "columnWeights": {
+      "time": 0.1,
+      "expected": 0.1,
+      "destination": 0.29,
+      "airline": 0.12,
+      "flight": 0.15,
+      "gate": 0.08,
+      "state": 0.22
+    },
+    "detailRevision": 2,
+    "statusColors": {
+      "boarding": "256337",
+      "gate": "256337",
+      "closing": "895500",
+      "delayed": "895500",
+      "cancelled": "a82739",
+      "closed": "a82739"
+    },
+    "terminalHeading": true,
+    "brandWidth": 210
   },
   "reference": {
     "source": "ミラノマルペンサ空港の荷物預かりサービスMilano Malpensa Left Luggage | 男が仕切る結婚式。 (https://ameblo.jp/kenjimovement/entry-12848568324.html)",

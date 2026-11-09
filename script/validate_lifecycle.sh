@@ -2,9 +2,9 @@
 set -euo pipefail
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$PROJECT_ROOT"
-TEST_APP="$PROJECT_ROOT/work/AppLifecycleTests.app"
+TEST_APP="$PROJECT_ROOT/work/Build.noindex/AppLifecycleTests.app"
 mkdir -p "$TEST_APP/Contents/MacOS"
-cp "outputs/DepartureBoard/dist/Departure Board.app/Contents/Info.plist" "$TEST_APP/Contents/Info.plist"
+cp "work/Build.noindex/Bundles/Departure Board.app/Contents/Info.plist" "$TEST_APP/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c 'Set :CFBundleExecutable AppLifecycleTests' "$TEST_APP/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c 'Set :CFBundleIdentifier com.skyline23.departureboard.lifecycle-tests' "$TEST_APP/Contents/Info.plist"
 ditto --noextattr --norsrc Resources "$TEST_APP/Contents/Resources"

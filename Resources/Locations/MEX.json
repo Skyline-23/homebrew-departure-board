@@ -7,7 +7,7 @@
   "preset": "mexico",
   "accent": "c5e7cf",
   "bg": "1a2c38",
-  "header": "49758c",
+  "header": "558697",
   "kind": "airport",
   "routes": [
     {
@@ -132,7 +132,7 @@
     ],
     "textColor": "f4f6ed",
     "timeColor": "f4f6ed",
-    "columnBand": "295667",
+    "columnBand": "245465",
     "columnInk": "ffffff",
     "gateHighlight": false,
     "airlineBadge": true,
@@ -142,7 +142,20 @@
     "headerVariant": "bilingual",
     "bodyFont": "HelveticaNeue-Medium",
     "headerFont": "Arial-BoldMT",
-    "uppercaseDestinations": false
+    "uppercaseDestinations": true,
+    "headerLayout": "inline",
+    "headerLanguages": [
+      "es",
+      "en"
+    ],
+    "headerIcon": "boxed",
+    "minimumHeaderHeight": 104,
+    "titleSize": 45,
+    "destinationColor": "f5d966",
+    "footerStyle": "date-clock",
+    "footerColor": "284f61",
+    "verticalRules": "789fac",
+    "detailRevision": 2
   },
   "reference": {
     "source": "『アエロメヒコ直行便にのってみる2023（帰り）』メキシコシティ(メキシコ)の旅行記・ブログ by めひかーのさんciteフォートラベル (https://4travel.jp/travelogue/11856471)",

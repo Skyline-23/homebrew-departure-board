@@ -7,7 +7,7 @@
   "preset": "madrid",
   "accent": "d2e25b",
   "bg": "121923",
-  "header": "161d23",
+  "header": "161b1c",
   "kind": "airport",
   "routes": [
     {
@@ -142,7 +142,22 @@
     "headerVariant": "bilingual",
     "bodyFont": "HelveticaNeue",
     "headerFont": "Arial-BoldMT",
-    "uppercaseDestinations": false
+    "uppercaseDestinations": false,
+    "headerLayout": "stacked",
+    "headerLanguages": [
+      "en",
+      "es"
+    ],
+    "headerIcon": "boxed",
+    "iconFill": "ead342",
+    "iconInk": "1b2328",
+    "minimumHeaderHeight": 110,
+    "titleSize": 42,
+    "verticalRules": "414d5a",
+    "footerStyle": "date-clock",
+    "footerColor": "111924",
+    "footerInk": "eeeadb",
+    "detailRevision": 2
   },
   "reference": {
     "source": "Aerolíneas españolas prolongan la suspensión de vuelos desde y hacia Venezuela (https://www.elespectador.com/mundo/venezuela/aerolineas-espanolas-prolongan-la-suspension-de-vuelos-desde-y-hacia-venezuela/)",

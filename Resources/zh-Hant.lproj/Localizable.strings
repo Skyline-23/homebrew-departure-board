@@ -84,3 +84,15 @@
 "status.closed" = "登機結束";
 "status.diverted" = "轉降";
 "column.terminal" = "客運大樓";
+
+"data.loading" = "正在載入航班資訊…";
+
+"data.noDepartures" = "此時段暫無出發航班";
+
+"data.unavailable" = "暫時無法取得航班資訊";
+
+"data.configure" = "請在 Departure Board 中設定即時航班資訊";
+
+"column.airline" = "航空公司";
+
+"heading.checkin" = "辦理登機手續";

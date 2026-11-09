@@ -1,11 +1,20 @@
 #import <Foundation/Foundation.h>
 
+typedef NS_ENUM(NSInteger, DBFlightAvailability) {
+    DBFlightAvailabilityLoading,
+    DBFlightAvailabilityEmpty,
+    DBFlightAvailabilityUnavailable,
+    DBFlightAvailabilityConfigurationRequired
+};
+
 // Only the companion app calls AeroDataBox directly. The screen saver reads a cache
 // and never opens a Keychain prompt over the user's lock screen.
 @interface LiveFlightStore : NSObject
 + (NSString *)userHome;
 + (NSArray<NSDictionary *> *)rowsForLocation:(NSDictionary *)location now:(NSDate *)now;
 + (NSDictionary *)cachedSnapshotForAirport:(NSString *)airport;
++ (DBFlightAvailability)availabilityForAirport:(NSString *)airport;
++ (NSInteger)refreshFailureStatusForAirport:(NSString *)airport;
 + (BOOL)refreshWithError:(NSError **)error;
 + (BOOL)refreshAirport:(NSString *)airport error:(NSError **)error;
 + (NSDictionary *)normalizeDepartures:(NSDictionary *)payload airport:(NSString *)airport;

@@ -7,7 +7,7 @@
   "preset": "venice",
   "accent": "f5d26a",
   "bg": "071127",
-  "header": "0645c2",
+  "header": "097bd5",
   "kind": "airport",
   "routes": [
     {
@@ -181,7 +181,27 @@
     "headerVariant": "bilingual",
     "bodyFont": "HelveticaNeue",
     "headerFont": "Arial-BoldMT",
-    "uppercaseDestinations": false
+    "uppercaseDestinations": false,
+    "headerLayout": "inline",
+    "headerLanguages": [
+      "en",
+      "it"
+    ],
+    "headerIcon": "boxed",
+    "minimumHeaderHeight": 92,
+    "titleSize": 38,
+    "headerRule": "96d3ed",
+    "columnFills": {
+      "counter": "2267a4"
+    },
+    "columnInkColors": {
+      "counter": "ffffff"
+    },
+    "footerStyle": "brand-only",
+    "footerColor": "0878c5",
+    "footerNoticeKey": "notice.boardingPass",
+    "verticalRules": "315b77",
+    "detailRevision": 2
   },
   "reference": {
     "source": "Accordi – L’aeroporto di Venezia si rinnova con le soluzioni L... (https://www.tecnelab.it/news/attualita/accordi--laeroporto-di-venezia-si-rinnova-con-le-soluzioni-lg-business-solutions)",

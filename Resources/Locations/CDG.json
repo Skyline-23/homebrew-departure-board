@@ -239,7 +239,26 @@
     "headerVariant": "centered",
     "bodyFont": "Arial-BoldMT",
     "headerFont": "Arial-BoldMT",
-    "uppercaseDestinations": false
+    "uppercaseDestinations": false,
+    "headerLayout": "centered",
+    "headerIcon": "none",
+    "brand": "PARIS\nAÉROPORT",
+    "brandWidth": 150,
+    "titleSize": 48,
+    "minimumHeaderHeight": 100,
+    "headerRule": "587ab4",
+    "footerStyle": "brand-only",
+    "footerColor": "17172a",
+    "verticalRules": "133575",
+    "statusFills": {
+      "boarding": "597b49",
+      "cancelled": "95264b"
+    },
+    "detailRevision": 2,
+    "gateIncludesTerminal": true,
+    "columnLabels": {
+      "gate": "column.terminalGate"
+    }
   },
   "reference": {
     "source": "Sosiri și plecări la Aeroportul Paris Charles de Gaulle (CDG) (https://www.cestee.ro/aeroport/paris-charles-de-gaulle-cdg/sosiri-plecari)",

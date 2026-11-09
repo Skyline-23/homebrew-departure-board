@@ -137,7 +137,25 @@
     "headerVariant": "left",
     "bodyFont": "HelveticaNeue",
     "headerFont": "Arial-BoldMT",
-    "uppercaseDestinations": false
+    "uppercaseDestinations": false,
+    "headerLayout": "single",
+    "headerIcon": "none",
+    "brand": "SYD",
+    "brandWidth": 135,
+    "minimumHeaderHeight": 84,
+    "titleSize": 40,
+    "headerRule": "e8e5cd",
+    "footerStyle": "date-clock",
+    "footerColor": "181d21",
+    "footerInk": "e9d166",
+    "columnFills": {
+      "gate": "624174"
+    },
+    "columnInkColors": {
+      "gate": "f2eddf"
+    },
+    "verticalRules": "3b4142",
+    "detailRevision": 2
   },
   "reference": {
     "source": "citeオーストラリア シドニーからゴールドコーストへ国内線移動 - 旅と暮らしと美味しいものと (https://fuwari-x.hatenablog.com/entry/2024/09/19/121500)",

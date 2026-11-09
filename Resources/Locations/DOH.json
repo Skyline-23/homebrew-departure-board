@@ -7,7 +7,7 @@
   "preset": "doha",
   "accent": "e6c6d7",
   "bg": "061a54",
-  "header": "d7e4ed",
+  "header": "e6eced",
   "kind": "airport",
   "routes": [
     {
@@ -125,14 +125,14 @@
     "panelCount": 2,
     "rowCount": 32,
     "headerHeight": 96,
-    "headerInk": "192b3c",
+    "headerInk": "1b2940",
     "rowColors": [
       "1033af",
       "1a43c2"
     ],
     "textColor": "ffffff",
     "timeColor": "ffffff",
-    "columnBand": "183c96",
+    "columnBand": "5367ac",
     "columnInk": "ffffff",
     "gateHighlight": false,
     "airlineBadge": true,
@@ -142,7 +142,23 @@
     "headerVariant": "bilingual",
     "bodyFont": "HelveticaNeue-Medium",
     "headerFont": "Arial-BoldMT",
-    "uppercaseDestinations": false
+    "uppercaseDestinations": false,
+    "headerLayout": "inline",
+    "headerLanguages": [
+      "en",
+      "ar"
+    ],
+    "titleKey": "heading.allDepartures",
+    "headerIcon": "plane",
+    "minimumHeaderHeight": 90,
+    "titleSize": 36,
+    "headerSecondaryInk": "1b2940",
+    "clockColor": "1b2940",
+    "footerStyle": "brand-only",
+    "footerColor": "8c275a",
+    "footerBrand": "HAMAD INTERNATIONAL AIRPORT",
+    "verticalRules": "354ba6",
+    "detailRevision": 2
   },
   "reference": {
     "source": "ドーハのハマド空港で乗り継ぎ時間をつぶす　トルコの旅(2) | 旅って楽しい！Amyのlet's enjoy life♪ (https://ameblo.jp/amy-2010/entry-12917062928.html)",

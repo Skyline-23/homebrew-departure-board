@@ -66,6 +66,8 @@
 
 - (void)footer:(NSRect)area text:(NSString *)message {
     BOOL airport = [self.location[@"kind"] isEqual:@"airport"];
+    if (airport && [self drawProfileFooter:area])
+        return;
     CGFloat height = airport ? MAX(26, [self.location[@"display"][@"footerHeight"] doubleValue]) : 40;
     CGFloat y = area.size.height - height;
     DBFillRect(NSMakeRect(0, y, area.size.width, height), DBColor(@"080d13"));

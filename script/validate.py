@@ -31,13 +31,22 @@ for code in codes:
         assert location["reference"]["source"]
         assert location["display"]["panelCount"] >= 1
         assert location["display"]["rowCount"] >= 8
+        assert location["display"]["detailRevision"] >= 2
+        assert (location["display"].get("headerLayout") or
+                location["display"].get("headerVariant") in {"icn", "haneda"})
+        title_key = location["display"].get("titleKey", location["titleKey"])
+        native_strings = (RESOURCES / f'{location["lang"]}.lproj' / "Localizable.strings").read_text()
+        assert f'"{title_key}"' in native_strings, f"Untranslated native heading for {code}"
+        assert set(location["columns"]) <= {"time", "expected", "airline", "flight", "destination",
+                                             "terminal", "counter", "gate", "state"}
         assert location["gates"]
 
 for language in RESOURCES.glob("*.lproj"):
     text = (language / "Localizable.strings").read_text()
     keys = re.findall(r'^"([^"]+)"\s*=', text, re.M)
     assert len(keys) == len(set(keys)), f"Duplicate localization key in {language.name}"
-    for required in ("heading.departures", "column.time", "status.boarding"):
+    for required in ("heading.departures", "column.time", "status.boarding", "data.loading",
+                     "data.unavailable", "data.noDepartures", "data.configure"):
         assert required in keys, (language.name, required)
 
 logo_folder = RESOURCES / "AirlineLogos"

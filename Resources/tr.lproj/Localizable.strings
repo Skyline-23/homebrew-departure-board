@@ -17,3 +17,15 @@
 "status.checkin" = "Check-in açık";
 "status.closed" = "Kapı kapandı";
 "status.diverted" = "Yönlendirildi";
+
+"data.loading" = "Uçuş bilgileri yükleniyor…";
+
+"data.noDepartures" = "Bu zaman aralığında kalkış yok";
+
+"data.unavailable" = "Uçuş bilgileri geçici olarak kullanılamıyor";
+
+"data.configure" = "Departure Board uygulamasında canlı uçuş verilerini ayarlayın";
+
+"column.airline" = "Havayolu";
+
+"heading.internationalDepartures" = "Dış Hatlar Gidiş";

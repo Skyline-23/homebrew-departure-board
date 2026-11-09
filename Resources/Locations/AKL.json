@@ -111,11 +111,10 @@
     "B21"
   ],
   "columns": [
-    "time",
     "destination",
-    "flight",
-    "gate",
-    "state"
+    "time",
+    "state",
+    "gate"
   ],
   "twoPanels": false,
   "headerStyle": "dark",
@@ -135,14 +134,37 @@
     "columnBand": "eaebe7",
     "columnInk": "213449",
     "gateHighlight": true,
-    "airlineBadge": true,
+    "airlineBadge": false,
     "footerHeight": 26,
     "referenceAspect": 2.05,
     "headerFraction": 0.08,
     "headerVariant": "left",
     "bodyFont": "HelveticaNeue",
     "headerFont": "Arial-BoldMT",
-    "uppercaseDestinations": false
+    "uppercaseDestinations": false,
+    "headerLayout": "single",
+    "titleKey": "heading.internationalDepartures",
+    "headerIcon": "plane",
+    "minimumHeaderHeight": 76,
+    "titleSize": 34,
+    "stackedDestination": true,
+    "destinationColor": "f0d552",
+    "footerStyle": "brand-only",
+    "footerColor": "e0e5dd",
+    "footerInk": "203249",
+    "footerNoticeKey": "notice.unattendedBags",
+    "statusColors": {
+      "boarding": "d5d642",
+      "closing": "f0bf3b",
+      "gate": "a1d761"
+    },
+    "columnWeights": {
+      "destination": 0.29,
+      "time": 0.1,
+      "state": 0.22,
+      "gate": 0.08
+    },
+    "detailRevision": 2
   },
   "reference": {
     "source": "Review of Air Tahiti Nui flight from Auckland to Papeete in Business (https://flight-report.com/en/report/9823/Air_Tahiti_Nui_TN102_Auckland_AKL_Papeete_PPT/)",

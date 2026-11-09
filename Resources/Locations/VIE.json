@@ -7,7 +7,7 @@
   "preset": "vienna",
   "accent": "eb6565",
   "bg": "14191b",
-  "header": "14191b",
+  "header": "090d0e",
   "kind": "airport",
   "routes": [
     {
@@ -132,17 +132,40 @@
     ],
     "textColor": "182e44",
     "timeColor": "182e44",
-    "columnBand": "9ebcd2",
-    "columnInk": "ffffff",
+    "columnBand": "c4d5df",
+    "columnInk": "253748",
     "gateHighlight": false,
-    "airlineBadge": true,
+    "airlineBadge": false,
     "footerHeight": 26,
     "referenceAspect": 1.65,
     "headerFraction": 0.13,
     "headerVariant": "bilingual",
     "bodyFont": "HelveticaNeue",
     "headerFont": "Arial-BoldMT",
-    "uppercaseDestinations": false
+    "uppercaseDestinations": false,
+    "headerLayout": "stacked",
+    "headerLanguages": [
+      "de",
+      "en"
+    ],
+    "headerIcon": "plane",
+    "clockStyle": "analog",
+    "minimumHeaderHeight": 132,
+    "titleSize": 45,
+    "headerRule": "d8e2e4",
+    "footerStyle": "clock",
+    "footerColor": "d1e0e7",
+    "footerInk": "26384b",
+    "verticalRules": "b0c4d0",
+    "detailRevision": 2,
+    "statusColors": {
+      "boarding": "256337",
+      "gate": "256337",
+      "closing": "895500",
+      "delayed": "895500",
+      "cancelled": "a82739",
+      "closed": "a82739"
+    }
   },
   "reference": {
     "source": "Review of easyJet flight from Vienna to Nápoli in Economy (https://flight-report.com/en/report/27875/EasyJet-EZY4852-Vienna-VIE-N-poli-NAP/)",

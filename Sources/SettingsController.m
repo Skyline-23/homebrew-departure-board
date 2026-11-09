@@ -119,10 +119,15 @@
     }
     if (date)
         updated = DBTime(date, self.location, @"dd MMM yyyy, HH:mm z");
+    NSInteger failure = [LiveFlightStore refreshFailureStatusForAirport:self.locationCode];
+    NSString *issue = failure == 401 ? @"settings.apiAuthenticationFailed"
+                      : failure == 403 ? @"settings.apiSubscriptionRequired"
+                      : failure == 429 ? @"settings.apiRateLimited" : nil;
     NSTextField *lastUpdate =
-        [NSTextField labelWithString:[NSString stringWithFormat:DBUIString(@"settings.lastUpdate"), updated]];
+        [NSTextField labelWithString:issue ? DBUIString(issue)
+                    : [NSString stringWithFormat:DBUIString(@"settings.lastUpdate"), updated]];
     lastUpdate.frame = NSMakeRect(161, 215, 497, 22);
-    lastUpdate.textColor = NSColor.secondaryLabelColor;
+    lastUpdate.textColor = issue ? NSColor.systemOrangeColor : NSColor.secondaryLabelColor;
     lastUpdate.font = DBFont(11, NO, NO);
     [v addSubview:lastUpdate];
     NSArray *extraLabels = @[ @"settings.data", @"settings.provider", @"settings.apiKey" ];

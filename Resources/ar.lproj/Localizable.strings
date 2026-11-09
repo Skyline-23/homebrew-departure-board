@@ -17,3 +17,15 @@
 "status.checkin" = "تسجيل الوصول مفتوح";
 "status.closed" = "أغلقت البوابة";
 "status.diverted" = "تم تغيير الوجهة";
+
+"data.loading" = "جارٍ تحميل معلومات الرحلات…";
+
+"data.noDepartures" = "لا توجد رحلات مغادرة في هذه الفترة";
+
+"data.unavailable" = "معلومات الرحلات غير متاحة مؤقتًا";
+
+"data.configure" = "يرجى إعداد بيانات الرحلات المباشرة في Departure Board";
+
+"column.airline" = "شركة الطيران";
+
+"heading.allDepartures" = "جميع المغادرين";

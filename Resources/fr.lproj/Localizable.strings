@@ -82,3 +82,15 @@
 "status.closed" = "Embarquement clos";
 "status.diverted" = "Dérouté";
 "column.terminal" = "Terminal";
+
+"data.loading" = "Chargement des informations de vol…";
+
+"data.noDepartures" = "Aucun départ sur cette période";
+
+"data.unavailable" = "Informations de vol temporairement indisponibles";
+
+"data.configure" = "Configurez les vols en direct dans Departure Board";
+
+"column.airline" = "Compagnie";
+
+"column.terminalGate" = "Terminal / Porte";

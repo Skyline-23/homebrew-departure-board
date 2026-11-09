@@ -17,3 +17,13 @@
 "status.checkin" = "Check-in aberto";
 "status.closed" = "Embarque encerrado";
 "status.diverted" = "Desviado";
+
+"data.loading" = "A carregar informações de voos…";
+
+"data.noDepartures" = "Sem partidas neste período";
+
+"data.unavailable" = "Informações de voos temporariamente indisponíveis";
+
+"data.configure" = "Configure os voos em tempo real no Departure Board";
+
+"column.airline" = "Companhia";

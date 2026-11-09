@@ -1,15 +1,15 @@
 #!/bin/bash
 set -euo pipefail
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-BUILD_DIR="$PROJECT_ROOT/work/build"
-DIST_DIR="$PROJECT_ROOT/outputs/DepartureBoard/dist"
+BUILD_DIR="$PROJECT_ROOT/work/Build.noindex"
+DIST_DIR="$BUILD_DIR/Bundles"
 APP_NAME="Departure Board"
 VERSION="${VERSION:-0.1.0}"
 mkdir -p "$BUILD_DIR" "$DIST_DIR"
 
 # Both bundles share the same drawing and timetable code. No WebView or network service.
 COMMON_SOURCES=()
-for source in DepartureSchedule Localization DestinationStore AirlineLogoStore BackgroundAgent LiveFlightStore SettingsStore UserInstallation BoardView DrawingSupport BoardChrome AirportRenderer SplitFlapRenderer RailwayRenderer SettingsController; do
+for source in DepartureSchedule Localization DestinationStore AirlineLogoStore BackgroundAgent LiveFlightStore SettingsStore UserInstallation BoardView DrawingSupport BoardChrome AirportChromeRenderer AirportRenderer SplitFlapRenderer RailwayRenderer SettingsController; do
   COMMON_SOURCES+=("$PROJECT_ROOT/Sources/$source.m")
 done
 COMMON_FLAGS=(-fobjc-arc -fmodules -O2 -Wall -Wextra -Wno-unused-parameter -mmacosx-version-min=12.0 -framework Cocoa -framework QuartzCore -framework CoreText -framework Security -framework LocalAuthentication)

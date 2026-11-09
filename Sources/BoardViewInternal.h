@@ -9,6 +9,7 @@
 @property(nonatomic) NSInteger currentPanelCount;
 @property(nonatomic, strong) NSArray *rows;
 @property(nonatomic, copy) NSString *currentLanguage;
+@property(nonatomic, copy) NSString *emptyMessageKey;
 @property(nonatomic) NSTimeInterval startTime;
 @property(nonatomic) NSTimeInterval lastRenderedSecond;
 @property(nonatomic) NSInteger languageCycle;
@@ -30,6 +31,7 @@
 @interface DBBoardView (AirportRenderer)
 - (void)drawAirportHeader:(NSRect)area;
 - (CGFloat)airportHeaderHeight:(NSRect)area;
+- (CGFloat)airportColumnHeaderHeight;
 - (NSInteger)airportRowCountForArea:(NSRect)area;
 - (void)drawHanedaCounters:(NSRect)area;
 - (void)drawAirportCell:(NSDictionary *)row
@@ -40,6 +42,11 @@
 - (CGFloat)weightFor:(NSString *)key;
 - (NSString *)columnLabel:(NSString *)key;
 - (void)drawAirport:(NSRect)area;
+@end
+
+@interface DBBoardView (AirportChromeRenderer)
+- (void)drawProfileHeader:(NSRect)area;
+- (BOOL)drawProfileFooter:(NSRect)area;
 @end
 
 @interface DBBoardView (SplitFlapRenderer)

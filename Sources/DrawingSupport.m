@@ -43,7 +43,10 @@ void DBDrawTextWithFont(NSString *text, NSRect rect, NSFont *font, NSColor *colo
     // making each destination or flight number a different visual size.
     CGFloat lineHeight = ceil(font.ascender - font.descender + font.leading);
     if (lineHeight > rect.size.height) {
-        font = [NSFont fontWithName:font.fontName size:size * rect.size.height / lineHeight];
+        // Private system font names cannot be resolved with fontWithName:.
+        // Reuse the descriptor so clocks retain their font when scaled down.
+        font = [NSFont fontWithDescriptor:font.fontDescriptor size:size * rect.size.height / lineHeight]
+                   ?: font;
         attrs[NSFontAttributeName] = font;
     }
     CGFloat h = ceil(font.ascender - font.descender + font.leading);

@@ -17,3 +17,13 @@
 "status.checkin" = "Check-in geöffnet";
 "status.closed" = "Gate geschlossen";
 "status.diverted" = "Umgeleitet";
+
+"data.loading" = "Fluginformationen werden geladen…";
+
+"data.noDepartures" = "Keine Abflüge in diesem Zeitraum";
+
+"data.unavailable" = "Fluginformationen vorübergehend nicht verfügbar";
+
+"data.configure" = "Live-Flugdaten in Departure Board einrichten";
+
+"column.airline" = "Fluggesellschaft";

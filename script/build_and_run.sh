@@ -4,7 +4,7 @@ PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 MODE="${1:-run}"
 pkill -x DepartureBoard >/dev/null 2>&1 || true
 "$PROJECT_ROOT/script/build.sh"
-APP="$PROJECT_ROOT/outputs/DepartureBoard/dist/Departure Board.app"
+APP="$PROJECT_ROOT/work/Build.noindex/Bundles/Departure Board.app"
 case "$MODE" in
   run) open -n "$APP" ;;
   --verify) open -n "$APP"; sleep 1; pgrep -x DepartureBoard >/dev/null ;;

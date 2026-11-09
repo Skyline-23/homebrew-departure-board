@@ -81,3 +81,15 @@
 "status.checkin" = "Check-in aperto";
 "status.closed" = "Imbarco chiuso";
 "status.diverted" = "Dirottato";
+
+"data.loading" = "Caricamento delle informazioni sui voli…";
+
+"data.noDepartures" = "Nessuna partenza in questa fascia oraria";
+
+"data.unavailable" = "Informazioni sui voli temporaneamente non disponibili";
+
+"data.configure" = "Configura i voli in tempo reale in Departure Board";
+
+"column.airline" = "Compagnia";
+
+"notice.boardingPass" = "Tenere pronta la carta d’imbarco";
