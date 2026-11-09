@@ -1,9 +1,9 @@
 class DepartureBoard < Formula
   desc "Airport and railway boards as a native macOS screen saver"
   homepage "https://github.com/Skyline-23/homebrew-departure-board"
-  url "https://github.com/Skyline-23/homebrew-departure-board/releases/download/v0.4.8/DepartureBoard-0.4.8-source.tar.gz"
-  sha256 "b99ae9b531482b373a6425a65affe81e246ce42cdcb7cb04e0837ebab679fca1"
-  version "0.4.8"
+  url "https://github.com/Skyline-23/homebrew-departure-board/releases/download/v0.5.0/DepartureBoard-0.5.0-source.tar.gz"
+  sha256 "0e4f04f00c616c96f712070adb1b5d2be2c423dd212cfa6baba97d2b2fce78e1"
+  version "0.5.0"
   license "MIT"
 
   depends_on macos: :monterey
@@ -11,8 +11,8 @@ class DepartureBoard < Formula
   def install
     ENV["VERSION"] = version.to_s
     system "bash", "script/build.sh"
-    libexec.install "outputs/DepartureBoard/dist/Departure Board.app"
-    libexec.install "outputs/DepartureBoard/dist/Departure Board.saver"
+    libexec.install "work/Build.noindex/Bundles/Departure Board.app"
+    libexec.install "work/Build.noindex/Bundles/Departure Board.saver"
     libexec.install "script/sign-local.sh"
 
     (bin/"departure-board").write <<~SH
