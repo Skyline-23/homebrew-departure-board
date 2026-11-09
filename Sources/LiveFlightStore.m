@@ -234,9 +234,20 @@ static NSString *const TokenService = @"io.skyline.departureboard.gateway";
                                              attributes:nil
                                                   error:NULL];
     NSString *path = [folder stringByAppendingPathComponent:@"io.skyline.departureboard.refresh.plist"];
+    NSString *executable = NSBundle.mainBundle.executablePath;
+    for (NSString *application in @[
+             [[self userHome] stringByAppendingPathComponent:@"Applications/Departure Board.app"],
+             @"/Applications/Departure Board.app"
+         ]) {
+        NSBundle *bundle = [NSBundle bundleWithPath:application];
+        if ([bundle.bundleIdentifier isEqual:@"io.skyline.departureboard.preview"]) {
+            executable = [application stringByAppendingPathComponent:@"Contents/MacOS/DepartureBoard"];
+            break;
+        }
+    }
     NSDictionary *job = @{
         @"Label" : @"io.skyline.departureboard.refresh",
-        @"ProgramArguments" : @[ NSBundle.mainBundle.executablePath, @"--refresh-data" ],
+        @"ProgramArguments" : @[ executable, @"--refresh-data" ],
         @"StartInterval" : @900,
         @"RunAtLoad" : @YES,
         @"ProcessType" : @"Background"

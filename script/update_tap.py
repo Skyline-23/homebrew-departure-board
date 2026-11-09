@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Write the tap definition from the release artifact, without hand-edited hashes."""
+"""Write the formula and cask from release artifacts, without hand-edited hashes."""
 import hashlib
 import os
 from pathlib import Path
@@ -49,3 +49,11 @@ end
 '''
 (root / "Casks/departure-board.rb").write_text(text)
 print(f"Cask updated for {version} ({checksum[:12]}…).")
+
+source_archive = root / "outputs/DepartureBoard/dist" / f"DepartureBoard-{version}-source.tar.gz"
+source_checksum = hashlib.sha256(source_archive.read_bytes()).hexdigest()
+formula = (root / "script/departure-board.formula.rb.in").read_text()
+formula = formula.replace("@VERSION@", version).replace("@SHA256@", source_checksum).replace("@REPOSITORY@", repository)
+(root / "Formula").mkdir(exist_ok=True)
+(root / "Formula/departure-board.rb").write_text(formula)
+print(f"Source formula updated for {version} ({source_checksum[:12]}…).")

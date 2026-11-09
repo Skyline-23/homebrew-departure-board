@@ -9,13 +9,16 @@ alternate with the selected location's language every 12 seconds.
 
 ```sh
 brew tap Skyline-23/departure-board
-brew install --cask departure-board
+brew install --formula skyline-23/departure-board/departure-board
 ```
+
+Homebrew compiles the app on your Mac and links it into `~/Applications` and
+`~/Library/Screen Savers`. This avoids relying on an unnotarized downloaded binary.
 
 Choose **Departure Board** in **System Settings → Screen Saver**. Open the
 **Departure Board** app to change location, display style, language, density,
 brightness and the live-data gateway. Requires macOS 12 or later; release
-artifacts contain Apple Silicon and Intel binaries.
+builds target the current Mac. Binary release ZIPs also contain Apple Silicon and Intel architectures.
 
 ## Live flight information
 

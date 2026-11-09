@@ -3,13 +3,14 @@
 ## macOS app and screen saver
 
 The `Release macOS screen saver` workflow runs for `v*` tags. It builds a universal
-binary, runs validation, uploads the release ZIP and commits the corresponding
-SHA-256 to `Casks/departure-board.rb`. No provider secret is passed to this job.
+binary, runs validation, uploads binary and source archives, and commits their corresponding
+SHA-256 values to `Casks/departure-board.rb` and `Formula/departure-board.rb`. No provider secret is passed to this job.
 
 Local builds and the initial workflow use ad-hoc code signing. Developer ID
 signing and notarization require an Apple Developer distribution identity; an
 Apple Development certificate is not a substitute. Do not describe an ad-hoc
-artifact as notarized.
+artifact as notarized. The recommended formula compiles locally; it does not
+install the unnotarized release binary.
 
 ## Flight-data gateway
 

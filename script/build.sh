@@ -21,17 +21,19 @@ make_bundle() {
   rm -rf "$bundle"
   mkdir -p "$bundle/Contents/MacOS" "$bundle/Contents/Resources"
   cp -R "$PROJECT_ROOT/Resources/." "$bundle/Contents/Resources/"
-  /usr/libexec/PlistBuddy -c Clear "$bundle/Contents/Info.plist" >/dev/null 2>&1 || true
-  python3 - "$bundle/Contents/Info.plist" "$executable" "$identifier" "$package" "$principal" "$VERSION" <<'PY'
-import plistlib,sys
-path,executable,identifier,package,principal,version=sys.argv[1:]
-info=dict(CFBundleName='Departure Board',CFBundleDisplayName='Departure Board',CFBundleExecutable=executable,
-          CFBundleIdentifier=identifier,CFBundlePackageType=package,CFBundleVersion=version,
-          CFBundleShortVersionString=version,LSMinimumSystemVersion='12.0',NSPrincipalClass=principal,
-          NSHighResolutionCapable=True,NSHumanReadableCopyright='Departure Board contributors. MIT License.')
-if package=='BNDL': info['LSUIElement']=True
-with open(path,'wb') as f: plistlib.dump(info,f)
-PY
+  local plist="$bundle/Contents/Info.plist"
+  /usr/libexec/PlistBuddy -c "Add :CFBundleName string Departure Board" "$plist" >/dev/null
+  /usr/libexec/PlistBuddy -c "Add :CFBundleDisplayName string Departure Board" "$plist"
+  /usr/libexec/PlistBuddy -c "Add :CFBundleExecutable string $executable" "$plist"
+  /usr/libexec/PlistBuddy -c "Add :CFBundleIdentifier string $identifier" "$plist"
+  /usr/libexec/PlistBuddy -c "Add :CFBundlePackageType string $package" "$plist"
+  /usr/libexec/PlistBuddy -c "Add :CFBundleVersion string $VERSION" "$plist"
+  /usr/libexec/PlistBuddy -c "Add :CFBundleShortVersionString string $VERSION" "$plist"
+  /usr/libexec/PlistBuddy -c "Add :LSMinimumSystemVersion string 12.0" "$plist"
+  /usr/libexec/PlistBuddy -c "Add :NSPrincipalClass string $principal" "$plist"
+  /usr/libexec/PlistBuddy -c "Add :NSHighResolutionCapable bool true" "$plist"
+  /usr/libexec/PlistBuddy -c "Add :NSHumanReadableCopyright string Departure Board contributors. MIT License." "$plist"
+
 }
 
 APP_BUNDLE="$DIST_DIR/$APP_NAME.app"

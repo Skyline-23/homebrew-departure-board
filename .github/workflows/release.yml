@@ -25,15 +25,17 @@ jobs:
         run: |
           gh release create "$GITHUB_REF_NAME" \
             "outputs/DepartureBoard/dist/DepartureBoard-$VERSION-universal.zip" \
+            "outputs/DepartureBoard/dist/DepartureBoard-$VERSION-source.tar.gz" \
             --title "Departure Board $VERSION" --generate-notes
       - name: Update Homebrew tap
         run: |
           git fetch origin main
           git checkout -B update-cask origin/main
-          python3 script/update_cask.py
+          python3 script/update_tap.py
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add Casks/departure-board.rb
+          git add Formula/departure-board.rb
           git diff --cached --quiet && exit 0
           git commit -m "Update departure-board cask to $VERSION"
           git push origin HEAD:main

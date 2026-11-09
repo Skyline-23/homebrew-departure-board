@@ -10,3 +10,5 @@ ditto --noextattr --norsrc "$DIST/Departure Board.saver" "$STAGING/Departure Boa
 cp "$PROJECT_ROOT/LICENSE" "$STAGING/LICENSE"
 COPYFILE_DISABLE=1 ditto -c -k --norsrc --noextattr "$STAGING" "$DIST/DepartureBoard-$VERSION-universal.zip"
 shasum -a 256 "$DIST/DepartureBoard-$VERSION-universal.zip"
+git -C "$PROJECT_ROOT" archive --format=tar.gz --prefix="departure-board-$VERSION/" HEAD > "$DIST/DepartureBoard-$VERSION-source.tar.gz"
+shasum -a 256 "$DIST/DepartureBoard-$VERSION-source.tar.gz"

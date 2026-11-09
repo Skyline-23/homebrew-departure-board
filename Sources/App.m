@@ -73,7 +73,8 @@
                                                        [self.board tick];
                                                    }];
     [LiveFlightStore refreshInBackground];
-    NSDictionary *savedSettings=[NSUserDefaults.standardUserDefaults persistentDomainForName:DBDefaultsDomain];
+    NSDictionary *savedSettings =
+        [NSUserDefaults.standardUserDefaults persistentDomainForName:DBDefaultsDomain];
     if ([savedSettings[@"gatewayURL"] length] && !self.board.useSampleData) {
         [LiveFlightStore configureBackgroundRefresh];
     }
@@ -158,6 +159,13 @@
 
 int main(int argc, const char *argv[]) {
     @autoreleasepool {
+        if (argc > 1 && strcmp(argv[1], "--version") == 0) {
+            puts([NSBundle.mainBundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"]
+                     ? [[NSBundle.mainBundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"]
+                           UTF8String]
+                     : "development");
+            return 0;
+        }
         if (argc > 1 && strcmp(argv[1], "--refresh-data") == 0) {
             return [LiveFlightStore refreshWithError:NULL] ? 0 : 1;
         }
