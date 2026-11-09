@@ -268,7 +268,7 @@ static void DrawAirlineLogo(NSImage *logo, NSRect bounds) {
         if ([profile[@"hideScheduledStatus"] boolValue] && [row[@"state"] isEqual:@"scheduled"])
             value = @"";
         if (![profile[@"statusUsesRowInk"] boolValue] &&
-            ![@[ @"scheduled", @"departed" ] containsObject:row[@"state"]])
+            ![@[ @"scheduled", @"departed", @"unknown" ] containsObject:row[@"state"]])
             ink = DBStatusColor(row[@"state"]);
         if (profile[@"statusColors"][row[@"state"]])
             ink = DBColor(profile[@"statusColors"][row[@"state"]]);
