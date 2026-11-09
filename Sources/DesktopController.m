@@ -15,6 +15,8 @@
 @property(nonatomic, strong) NSMutableArray *wallpaperCompletions;
 @property(nonatomic) BOOL wallpaperPending;
 @property(nonatomic) BOOL userWasIdle;
+@property(nonatomic, strong) NSDictionary *screenLayout;
+@property(nonatomic) NSUInteger screenChangeGeneration;
 @end
 
 @implementation DBDesktopController
@@ -165,12 +167,32 @@
     self.wallpaperPending = NO;
     [self.wallpaperCompletions removeAllObjects];
 }
-- (void)screensChanged:(NSNotification *)notification {
-    for (NSWindow *window in self.windows)
-        [window close];
-    [self.windows removeAllObjects];
-    [self refresh];
+- (NSDictionary *)currentScreenLayout {
+    NSMutableDictionary *layout = NSMutableDictionary.new;
+    for (NSScreen *screen in NSScreen.screens)
+        layout[[self identifierForScreen:screen]] =
+            @{@"frame" : NSStringFromRect(screen.frame), @"scale" : @(screen.backingScaleFactor)};
+    return layout;
 }
+- (void)screensChanged:(NSNotification *)notification {
+    // AppKit also posts this for Dock/Space changes. Recreating every Retina
+    // surface in response causes flicker, allocation spikes and more notifications.
+    if (!self.windows.count || [[self currentScreenLayout] isEqual:self.screenLayout])
+        return;
+    NSUInteger generation = ++self.screenChangeGeneration;
+    __weak DBDesktopController *weakSelf = self;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC / 4), dispatch_get_main_queue(), ^{
+        DBDesktopController *controller = weakSelf;
+        if (!controller || controller.screenChangeGeneration != generation ||
+            [[controller currentScreenLayout] isEqual:controller.screenLayout])
+            return;
+        for (NSWindow *window in controller.windows)
+            [window close];
+        [controller.windows removeAllObjects];
+        [controller refresh];
+    });
+}
+
 - (void)refresh {
     NSDictionary *settings = DBSettingsStore.settings;
     BOOL enabled = [settings[@"desktopEnabled"] boolValue];
@@ -191,6 +213,7 @@
     }
     if (self.windows.count)
         return;
+    self.screenLayout = [self currentScreenLayout];
     NSTimeInterval cycleStart = NSProcessInfo.processInfo.systemUptime;
     for (NSScreen *screen in NSScreen.screens) {
         NSWindow *window = [[NSWindow alloc] initWithContentRect:screen.frame

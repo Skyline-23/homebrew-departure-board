@@ -3,6 +3,8 @@
 
 @interface DBDesktopController (SettingsTests)
 - (void)configureWindow:(NSWindow *)window;
+- (NSDictionary *)currentScreenLayout;
+- (void)screensChanged:(NSNotification *)notification;
 @end
 
 int main(int argc, const char *argv[]) {
@@ -34,12 +36,19 @@ int main(int argc, const char *argv[]) {
                 [controller closeSettings];
             }
             DBDesktopController *desktop = DBDesktopController.new;
-            [desktop setValue:@{ @"showAllSpaces" : @NO } forKey:@"appliedSettings"];
+            [desktop setValue:@{@"showAllSpaces" : @NO} forKey:@"appliedSettings"];
             [desktop configureWindow:controller.window];
             passed &= !(controller.window.collectionBehavior & NSWindowCollectionBehaviorCanJoinAllSpaces);
-            [desktop setValue:@{ @"showAllSpaces" : @YES } forKey:@"appliedSettings"];
+            [desktop setValue:@{@"showAllSpaces" : @YES} forKey:@"appliedSettings"];
             [desktop configureWindow:controller.window];
-            passed &= (controller.window.collectionBehavior & NSWindowCollectionBehaviorCanJoinAllSpaces) != 0;
+            passed &=
+                (controller.window.collectionBehavior & NSWindowCollectionBehaviorCanJoinAllSpaces) != 0;
+            NSMutableArray *desktopWindows = [NSMutableArray arrayWithObject:controller.window];
+            [desktop setValue:desktopWindows forKey:@"windows"];
+            [desktop setValue:[desktop currentScreenLayout] forKey:@"screenLayout"];
+            for (NSUInteger event = 0; event < 50; event++)
+                [desktop screensChanged:nil];
+            passed &= desktopWindows.count == 1 && desktopWindows.firstObject == controller.window;
             [controller.window close];
             passed &= ![DBBackgroundAgent shouldStartForSettings:@{
                 @"launchAtLogin" : @NO
