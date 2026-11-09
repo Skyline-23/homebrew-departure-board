@@ -5,10 +5,8 @@ using System.Text;
 
 namespace DepartureBoard.Windows.Platform;
 
-internal sealed class CredentialStore
+internal sealed class CredentialStore(string target = "com.skyline23.departureboard/AeroDataBox")
 {
-    private const string Target = "com.skyline23.departureboard/AeroDataBox";
-
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     private struct Credential
     {
@@ -29,7 +27,7 @@ internal sealed class CredentialStore
     public string Read()
     {
 
-        if (!CredRead(Target, 1, 0, out var pointer))
+        if (!CredRead(target, 1, 0, out var pointer))
         {
             return "";
         }
@@ -56,7 +54,7 @@ internal sealed class CredentialStore
         }
 
         var bytes = Encoding.UTF8.GetBytes(value.Trim());
-        var target = Marshal.StringToCoTaskMemUni(Target);
+        var targetPointer = Marshal.StringToCoTaskMemUni(target);
         var blob = Marshal.AllocHGlobal(bytes.Length);
 
         try
@@ -65,7 +63,7 @@ internal sealed class CredentialStore
             var credential = new Credential
             {
                 Type = 1,
-                TargetName = target,
+                TargetName = targetPointer,
                 BlobSize = (uint)bytes.Length,
                 Blob = blob,
                 Persist = 2,
@@ -80,9 +78,27 @@ internal sealed class CredentialStore
         {
             Array.Clear(bytes);
             Marshal.FreeHGlobal(blob);
-            Marshal.FreeCoTaskMem(target);
+            Marshal.FreeCoTaskMem(targetPointer);
         }
     }
+
+    public void Delete()
+    {
+
+        if (!CredDelete(target, 1, 0) && Marshal.GetLastWin32Error() != 1168)
+        {
+            throw new Win32Exception(Marshal.GetLastWin32Error());
+        }
+    }
+
+    [DllImport(
+        "advapi32.dll",
+        EntryPoint = "CredDeleteW",
+        CharSet = CharSet.Unicode,
+        SetLastError = true
+    )]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool CredDelete(string target, uint type, uint flags);
 
     [DllImport(
         "advapi32.dll",

@@ -23,6 +23,7 @@ internal static class WindowsSmokeTest
         var count = RenderAirports(services, outputDirectory);
         CheckSettings(services);
         CheckPreviewEmbedding(services);
+        CheckCredentials();
         File.WriteAllText(
             Path.Combine(outputDirectory, "result.txt"),
             $"Rendered {count} airport images; settings and native preview embedding passed."
@@ -124,6 +125,27 @@ internal static class WindowsSmokeTest
             throw new InvalidOperationException(
                 "The native screen saver preview was not embedded."
             );
+        }
+    }
+
+    private static void CheckCredentials()
+    {
+
+        var credentials = new CredentialStore("DepartureBoard.SmokeTest." + Guid.NewGuid());
+
+        try
+        {
+            credentials.Save("test-value");
+            credentials.Save("");
+
+            if (credentials.Read() != "test-value")
+            {
+                throw new InvalidOperationException("Credential Manager round trip failed.");
+            }
+        }
+        finally
+        {
+            credentials.Delete();
         }
     }
 }
