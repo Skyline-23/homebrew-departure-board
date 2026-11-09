@@ -14,4 +14,5 @@
 + (NSString *)APIKey;
 + (void)configureBackgroundRefresh;
 + (BOOL)shouldRefreshInBackground;
++ (BOOL)screenSaverIsActive;
 @end

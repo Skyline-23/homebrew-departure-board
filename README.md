@@ -72,7 +72,14 @@ requests still follow the configured refresh interval.
 LCD boards repaint when displayed content changes. The 30 fps timer is reserved
 for visible split-flap animation; covered windows and sleeping displays stop
 rendering. Wallpaper snapshots render into a separate bitmap without resizing
-the live desktop windows.
+the live desktop windows. Image generation runs in a short-lived helper, so its
+buffers are released after export. Exports pause during idle time and while the
+screen saver runs. The registered photo uses a stable filename per display, and
+old Departure Board frame entries are removed from wallpaper photo history.
+
+**Show on all Spaces** controls whether the live board follows you between
+Spaces. It is enabled by default; turning it off keeps the board on its current
+Space.
 
 ## Visual profiles
 

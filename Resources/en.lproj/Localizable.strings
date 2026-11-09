@@ -295,3 +295,5 @@
 "menu.showBoard" = "Show Departure Board";
 "menu.window" = "Window";
 "menu.closeWindow" = "Close Window";
+
+"settings.showAllSpaces" = "Show on all Spaces";

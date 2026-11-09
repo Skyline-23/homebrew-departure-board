@@ -7,14 +7,16 @@ static NSImage *AirportAirlineLogo(NSString *carrier) {
     dispatch_once(&once, ^{
         logos = NSCache.new;
     });
-    NSImage *logo = [logos objectForKey:carrier];
-    if (!logo && carrier.length) {
+    id cached = [logos objectForKey:carrier];
+    if (cached)
+        return cached == NSNull.null ? nil : cached;
+    NSImage *logo = nil;
+    if (carrier.length) {
         NSURL *url = [[NSBundle bundleForClass:DBBoardView.class] URLForResource:carrier
                                                                    withExtension:@"png"
                                                                     subdirectory:@"AirlineLogos"];
         logo = url ? [[NSImage alloc] initWithContentsOfURL:url] : nil;
-        if (logo)
-            [logos setObject:logo forKey:carrier];
+        [logos setObject:logo ?: NSNull.null forKey:carrier];
     }
     return logo;
 }

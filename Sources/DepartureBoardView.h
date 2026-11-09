@@ -23,6 +23,8 @@ FOUNDATION_EXPORT NSString *DBUIString(NSString *key);
 - (NSTimeInterval)preferredAnimationInterval;
 - (void)reloadSettings;
 - (void)saveSettings;
+- (NSDictionary *)snapshotConfiguration;
+- (void)applySnapshotConfiguration:(NSDictionary *)configuration;
 - (BOOL)writeSnapshot:(NSString *)path size:(NSSize)size;
 @end
 

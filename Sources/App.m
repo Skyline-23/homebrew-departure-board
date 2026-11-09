@@ -4,6 +4,7 @@
 #import "LiveFlightStore.h"
 #import "SettingsStore.h"
 #import "UserInstallation.h"
+#import "WallpaperRenderer.h"
 #import <errno.h>
 #import <signal.h>
 #import <unistd.h>
@@ -90,8 +91,9 @@
     NSMutableDictionary *currentSettings = [DBSettingsStore.settings mutableCopy];
     currentSettings[@"companionPath"] = NSBundle.mainBundle.bundlePath;
     [DBSettingsStore saveSettings:currentSettings replacementAPIKey:nil error:NULL];
-    [self createMainWindow];
     BOOL background = [arguments containsObject:@"--background"];
+    if (!background)
+        [self createMainWindow];
     [self buildMenus];
     [self buildStatusMenu];
     if (!background)
@@ -138,8 +140,11 @@
                                     styleMask:NSWindowStyleMaskTitled | NSWindowStyleMaskClosable |
                                               NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable
                                       backing:NSBackingStoreBuffered
-                                        defer:NO];
+                                        defer:YES];
     self.window.title = @"Departure Board";
+    self.window.colorSpace = NSColorSpace.sRGBColorSpace;
+    [self.window setDynamicDepthLimit:NO];
+    self.window.depthLimit = NSWindowDepthTwentyfourBitRGB;
     // ARC owns this window across close/reopen cycles.
     self.window.releasedWhenClosed = NO;
     self.window.minSize = NSMakeSize(900, 580);
@@ -157,6 +162,7 @@
 }
 - (void)applicationWillTerminate:(NSNotification *)notification {
     [self.timer invalidate];
+    [self.desktop stop];
     [NSDistributedNotificationCenter.defaultCenter removeObserver:self];
     if (self.runtimeRegistered)
         [DBBackgroundAgent recordApplicationQuit];
@@ -166,6 +172,14 @@
         return;
     [self closeSettings];
     [NSApp setActivationPolicy:NSApplicationActivationPolicyAccessory];
+    NSWindow *closed = self.window;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.window == closed && !closed.visible) {
+            closed.contentView = nil;
+            self.board.wantsLayer = NO;
+            self.window = nil;
+        }
+    });
 }
 - (void)showBoard:(id)sender {
     [self createMainWindow];
@@ -298,16 +312,17 @@
 }
 - (void)applyWallpaper:(id)sender {
     void (^apply)(void) = ^{
-        BOOL success = [self.desktop applyWallpaper];
-        if ([sender isKindOfClass:NSButton.class]) {
-            NSButton *button = sender;
+        NSButton *button = [sender isKindOfClass:NSButton.class] ? sender : nil;
+        button.enabled = NO;
+        [self.desktop applyWallpaperWithCompletion:^(BOOL success) {
+            button.enabled = YES;
             button.title = DBUIString(success ? @"settings.wallpaperApplied" : @"settings.setWallpaper");
-        }
-        if (!success) {
-            NSAlert *alert = NSAlert.new;
-            alert.messageText = DBUIString(@"settings.wallpaperFailed");
-            [alert runModal];
-        }
+            if (!success) {
+                NSAlert *alert = NSAlert.new;
+                alert.messageText = DBUIString(@"settings.wallpaperFailed");
+                [alert runModal];
+            }
+        }];
     };
     if (self.options) {
         [(NSButton *)[self.options.contentView viewWithTag:204] setState:NSControlStateValueOn];
@@ -373,6 +388,19 @@ int main(int argc, const char *argv[]) {
             NSString *key = [[NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:NULL]
                 stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
             return [LiveFlightStore saveAPIKey:key error:NULL] ? 0 : 1;
+        }
+        if (argc == 3 && strcmp(argv[1], "--render-wallpapers") == 0) {
+            NSData *data = [[NSString stringWithUTF8String:argv[2]] dataUsingEncoding:NSUTF8StringEncoding];
+            NSDictionary *request = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+            if (![request isKindOfClass:NSDictionary.class])
+                return 1;
+            if (![request[@"force"] boolValue] &&
+                ([LiveFlightStore screenSaverIsActive] ||
+                 CGEventSourceSecondsSinceLastEventType(kCGEventSourceStateCombinedSessionState,
+                                                        kCGAnyInputEventType) >= 30))
+                return 0;
+            [NSApplication.sharedApplication setActivationPolicy:NSApplicationActivationPolicyProhibited];
+            return [DBWallpaperRenderer renderRequest:request] ? 0 : 1;
         }
         if (argc > 1 && strcmp(argv[1], "--version") == 0) {
             puts([NSBundle.mainBundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"]

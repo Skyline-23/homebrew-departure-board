@@ -3,6 +3,7 @@
 #import "LiveFlightStore.h"
 #import "SettingsStore.h"
 #import <CoreText/CoreText.h>
+#import <QuartzCore/QuartzCore.h>
 
 @implementation DBBoardView
 
@@ -31,6 +32,15 @@
         [self reloadSettings];
     }
     return self;
+}
+
+- (void)viewDidMoveToWindow {
+    [super viewDidMoveToWindow];
+    if (self.window) {
+        self.wantsLayer = YES;
+        self.layer.contentsFormat = kCAContentsFormatRGBA8Uint;
+        self.layer.opaque = YES;
+    }
 }
 
 - (void)reloadSettings {
@@ -175,6 +185,31 @@
             DBFillRect(area, [NSColor colorWithWhite:0 alpha:darkness]);
         [NSGraphicsContext restoreGraphicsState];
     }
+}
+
+- (NSDictionary *)snapshotConfiguration {
+    return @{
+        @"location" : self.locationCode ?: @"ICN",
+        @"style" : self.displayStyle ?: @"auto",
+        @"language" : self.languageMode ?: @"alternate",
+        @"reduceMotion" : @(self.reducedMotion),
+        @"density" : @(self.density),
+        @"brightness" : @(self.brightness),
+        @"sampleData" : @(self.useSampleData),
+        @"startTime" : @(self.startTime)
+    };
+}
+
+- (void)applySnapshotConfiguration:(NSDictionary *)configuration {
+    self.locationCode = configuration[@"location"] ?: self.locationCode;
+    self.displayStyle = configuration[@"style"] ?: self.displayStyle;
+    self.languageMode = configuration[@"language"] ?: self.languageMode;
+    self.reducedMotion = [configuration[@"reduceMotion"] boolValue];
+    self.density = [configuration[@"density"] integerValue];
+    self.brightness = [configuration[@"brightness"] doubleValue];
+    self.useSampleData = [configuration[@"sampleData"] boolValue];
+    self.startTime = [configuration[@"startTime"] doubleValue];
+    self.lastRenderedSecond = -1;
 }
 
 - (BOOL)writeSnapshot:(NSString *)path size:(NSSize)size {

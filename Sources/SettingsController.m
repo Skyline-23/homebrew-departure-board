@@ -8,7 +8,7 @@
 @implementation DBBoardView (SettingsController)
 
 - (NSWindow *)settingsWindowWithTarget:(id)target action:(SEL)action {
-    NSWindow *window = [[NSPanel alloc] initWithContentRect:NSMakeRect(0, 0, 700, 710)
+    NSWindow *window = [[NSPanel alloc] initWithContentRect:NSMakeRect(0, 0, 700, 754)
                                                   styleMask:NSWindowStyleMaskTitled
                                                     backing:NSBackingStoreBuffered
                                                       defer:NO];
@@ -161,7 +161,7 @@
     for (NSView *view in v.subviews) {
         if (view.frame.origin.y >= 278) {
             NSRect frame = view.frame;
-            frame.origin.y += 48;
+            frame.origin.y += 92;
             view.frame = frame;
         }
     }
@@ -170,8 +170,14 @@
                                            action:NULL];
     login.tag = 208;
     login.state = [saved[@"launchAtLogin"] boolValue];
-    login.frame = NSMakeRect(161, 284, 497, 24);
+    login.frame = NSMakeRect(161, 328, 497, 24);
     [v addSubview:login];
+    NSButton *spaces = [NSButton checkboxWithTitle:DBUIString(@"settings.showAllSpaces") target:nil action:NULL];
+    spaces.tag = 209;
+    spaces.state = (!saved[@"showAllSpaces"] || [saved[@"showAllSpaces"] boolValue])
+                       ? NSControlStateValueOn : NSControlStateValueOff;
+    spaces.frame = NSMakeRect(161, 284, 497, 24);
+    [v addSubview:spaces];
     self.optionsWindow = window;
     return window;
 }
@@ -189,6 +195,7 @@
     saved[@"desktopEnabled"] = @([(NSButton *)[v viewWithTag:204] state] == NSControlStateValueOn);
     saved[@"refreshInterval"] = [(NSPopUpButton *)[v viewWithTag:206] selectedItem].representedObject;
     saved[@"launchAtLogin"] = @([(NSButton *)[v viewWithTag:208] state] == NSControlStateValueOn);
+    saved[@"showAllSpaces"] = @([(NSButton *)[v viewWithTag:209] state] == NSControlStateValueOn);
     NSButton *button = (NSButton *)[v viewWithTag:205];
     button.enabled = NO;
     button.title = DBUIString(@"settings.saving");

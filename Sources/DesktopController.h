@@ -4,5 +4,6 @@
 - (void)tick;
 - (NSTimeInterval)preferredAnimationInterval;
 - (void)refresh;
-- (BOOL)applyWallpaper;
+- (void)applyWallpaperWithCompletion:(void (^)(BOOL success))completion;
+- (void)stop;
 @end

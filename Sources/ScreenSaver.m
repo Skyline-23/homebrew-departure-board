@@ -22,6 +22,7 @@
 }
 - (void)startAnimation {
     [self.board reloadSettings];
+    [self updateHeartbeat];
     [super startAnimation];
 }
 - (void)stopAnimation {
@@ -36,7 +37,11 @@
 - (void)animateOneFrame {
     [self.board tick];
     self.animationTimeInterval = self.board.preferredAnimationInterval;
-    if (!self.isPreview && NSDate.timeIntervalSinceReferenceDate - self.lastHeartbeat > 30) {
+    if (NSDate.timeIntervalSinceReferenceDate - self.lastHeartbeat > 30)
+        [self updateHeartbeat];
+}
+- (void)updateHeartbeat {
+    if (!self.isPreview) {
         NSString *folder =
             [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES).firstObject
                 stringByAppendingPathComponent:@"DepartureBoard"];

@@ -36,6 +36,48 @@ static BOOL VerifyContentDrivenRendering(DBBoardView *board, Class store) {
     return unchanged && codeshare && pageChanged;
 }
 
+static BOOL VerifySharedRowsCache(Class store) {
+    NSDictionary *flight = @{
+        @"number" : @"NH 100", @"status" : @"Expected", @"scheduledUtc" : @"2026-11-09T06:00:00Z",
+        @"destinationCode" : @"HKG", @"destinationName" : @"Hong Kong", @"gate" : @"101",
+        @"variants" : @[
+            @{ @"number" : @"NH 100", @"airline" : @"ANA" },
+            @{ @"number" : @"UA 7000", @"airline" : @"United" }
+        ]
+    };
+    __block NSDictionary *snapshot = @{
+        @"fetchedAt" : @"2026-11-09T05:00:00Z", @"flights" : @[ flight ]
+    };
+    Method method = class_getClassMethod(store, @selector(cachedSnapshotForAirport:));
+    IMP original = method_getImplementation(method);
+    IMP mock = imp_implementationWithBlock(^NSDictionary *(id receiver, NSString *airport) {
+        return snapshot;
+    });
+    method_setImplementation(method, mock);
+    NSDictionary *location = @{ @"code" : @"HND", @"zone" : @"Asia/Tokyo" };
+    NSDate *now = [NSISO8601DateFormatter.new dateFromString:@"2026-11-09T05:00:05Z"];
+    NSArray *first = [store rowsForLocation:location now:now];
+    NSArray *same = [store rowsForLocation:location now:[now dateByAddingTimeInterval:.5]];
+    NSArray *rotated = [store rowsForLocation:location now:[now dateByAddingTimeInterval:4]];
+    BOOL shared = first == same && first.count == 1;
+    BOOL cycles = ![first[0][@"flight"] isEqual:rotated[0][@"flight"]];
+    NSMutableDictionary *updated = [flight mutableCopy];
+    updated[@"gate"] = @"102";
+    snapshot = @{ @"fetchedAt" : @"2026-11-09T05:00:00Z", @"flights" : @[ updated ] };
+    NSArray *fresh = [store rowsForLocation:location now:now];
+    BOOL invalidated = [fresh[0][@"gate"] isEqual:@"102"];
+    method_setImplementation(method, original);
+    imp_removeBlock(mock);
+    return shared && cycles && invalidated;
+}
+
+static BOOL VerifySnapshotConfiguration(DBBoardView *board) {
+    NSDictionary *configuration = board.snapshotConfiguration;
+    DBBoardView *copy = [[board.class alloc] initWithFrame:NSMakeRect(0, 0, 640, 360)];
+    [copy applySnapshotConfiguration:configuration];
+    return [copy.snapshotConfiguration isEqual:configuration];
+}
+
 static BOOL VerifySharedRefreshLock(Class store) {
     NSString *directory = [NSTemporaryDirectory() stringByAppendingPathComponent:NSUUID.UUID.UUIDString];
     [NSFileManager.defaultManager createDirectoryAtPath:directory
@@ -176,7 +218,8 @@ int main(int argc, const char *argv[]) {
                                       airport:@"ICN"];
         if ([snapshot[@"flights"] count] != 2)
             return 1;
-        if (!VerifyContentDrivenRendering(board, store) || !VerifySharedRefreshLock(store))
+        if (!VerifySnapshotConfiguration(board) || !VerifySharedRowsCache(store) ||
+            !VerifyContentDrivenRendering(board, store) || !VerifySharedRefreshLock(store))
             return 1;
         [preview stopAnimation];
         puts("The native screen saver loads, animates and creates its settings sheet.");

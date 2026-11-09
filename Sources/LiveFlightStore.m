@@ -249,7 +249,7 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
     static dispatch_once_t once;
     dispatch_once(&once, ^{
         snapshots = NSCache.new;
-        snapshots.countLimit = 44;
+        snapshots.countLimit = 4;
     });
     NSURL *url = [self cacheURLForAirport:airport];
     NSDate *modified = [NSFileManager.defaultManager attributesOfItemAtPath:url.path
@@ -271,7 +271,18 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
 }
 
 + (NSArray<NSDictionary *> *)rowsForLocation:(NSDictionary *)location now:(NSDate *)now {
+    static NSCache *renderedRows;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        renderedRows = NSCache.new;
+        renderedRows.countLimit = 4;
+    });
     NSDictionary *snapshot = [self cachedSnapshotForAirport:location[@"code"]];
+    NSNumber *second = @(floor(now.timeIntervalSince1970));
+    NSDictionary *previous = [renderedRows objectForKey:location[@"code"]];
+    if (previous[@"snapshot"] == snapshot && [previous[@"second"] isEqual:second] &&
+        [previous[@"location"] isEqual:location])
+        return previous[@"rows"];
     NSDate *fetched = [self dateFromISO:snapshot[@"fetchedAt"]];
     if (!fetched || [now timeIntervalSinceDate:fetched] > 86400)
         return @[];
@@ -331,7 +342,11 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
             @"identity" : @((NSInteger)scheduled.timeIntervalSince1970)
         }];
     }
-    return rows;
+    NSArray *result = [rows copy];
+    [renderedRows setObject:@{
+        @"snapshot" : snapshot, @"second" : second, @"location" : location, @"rows" : result
+    } forKey:location[@"code"]];
+    return result;
 }
 
 + (BOOL)refreshWithError:(NSError **)error {
@@ -480,6 +495,10 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
          [NSRunningApplication runningApplicationsWithBundleIdentifier:@"com.skyline23.departureboard"])
         if (app.processIdentifier != getpid() && !app.terminated)
             return YES;
+    return [self screenSaverIsActive];
+}
+
++ (BOOL)screenSaverIsActive {
     for (NSString *container in @[
              @"com.apple.ScreenSaver.Engine.legacyScreenSaver",
              @"com.apple.ScreenSaver.Engine.legacyScreenSaver.x86-64"

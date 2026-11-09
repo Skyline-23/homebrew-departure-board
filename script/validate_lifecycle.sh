@@ -14,7 +14,7 @@ for source in Sources/*.m; do
   SOURCES+=("$source")
 done
 xcrun clang -fobjc-arc -fmodules -O2 -mmacosx-version-min=12.0 \
-  -framework Cocoa -framework CoreText -framework Security -framework LocalAuthentication \
+  -framework Cocoa -framework QuartzCore -framework CoreText -framework Security -framework LocalAuthentication \
   "${SOURCES[@]}" Tests/AppLifecycle.m -o "$TEST_APP/Contents/MacOS/AppLifecycleTests"
 RESULT="$(mktemp "${TMPDIR:-/tmp}/departure-lifecycle.XXXXXX")"
 trap 'unlink "$RESULT"' EXIT

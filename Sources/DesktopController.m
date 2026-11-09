@@ -2,6 +2,7 @@
 #import "DepartureBoardView.h"
 #import "LiveFlightStore.h"
 #import "SettingsStore.h"
+#import "WallpaperRenderer.h"
 #import <CoreGraphics/CoreGraphics.h>
 
 @interface DBDesktopController ()
@@ -10,13 +11,17 @@
 @property(nonatomic) NSTimeInterval nextWallpaperUpdate;
 @property(nonatomic, strong) NSDictionary *appliedSettings;
 @property(nonatomic) BOOL sessionInactive;
-@property(nonatomic) NSUInteger wallpaperFrame;
+@property(nonatomic, strong) NSTask *wallpaperTask;
+@property(nonatomic, strong) NSMutableArray *wallpaperCompletions;
+@property(nonatomic) BOOL wallpaperPending;
+@property(nonatomic) BOOL userWasIdle;
 @end
 
 @implementation DBDesktopController
 - (instancetype)init {
     if ((self = [super init])) {
         self.windows = NSMutableArray.new;
+        self.wallpaperCompletions = NSMutableArray.new;
         [NSNotificationCenter.defaultCenter addObserver:self
                                                selector:@selector(screensChanged:)
                                                    name:NSApplicationDidChangeScreenParametersNotification
@@ -48,20 +53,20 @@
 }
 - (void)sessionActivated:(NSNotification *)notification {
     self.sessionInactive = NO;
-    self.nextWallpaperUpdate = 0;
+    if ([self showOnAllSpaces])
+        self.nextWallpaperUpdate = 0;
 }
-- (NSString *)wallpaperRoot {
-    return [[LiveFlightStore userHome]
-        stringByAppendingPathComponent:@"Library/Application Support/DepartureBoard/Wallpapers"];
+- (BOOL)showOnAllSpaces {
+    return !self.appliedSettings[@"showAllSpaces"] || [self.appliedSettings[@"showAllSpaces"] boolValue];
 }
+- (BOOL)userIsIdle {
+    return [LiveFlightStore screenSaverIsActive] ||
+           CGEventSourceSecondsSinceLastEventType(kCGEventSourceStateCombinedSessionState,
+                                                  kCGAnyInputEventType) >= 30;
+}
+- (NSString *)wallpaperRoot { return DBWallpaperRenderer.rootPath; }
 - (NSString *)identifierForScreen:(NSScreen *)screen {
-    CGDirectDisplayID display = [screen.deviceDescription[@"NSScreenNumber"] unsignedIntValue];
-    CFUUIDRef uuid = CGDisplayCreateUUIDFromDisplayID(display);
-    NSString *identifier =
-        uuid ? CFBridgingRelease(CFUUIDCreateString(NULL, uuid)) : [NSString stringWithFormat:@"%u", display];
-    if (uuid)
-        CFRelease(uuid);
-    return identifier;
+    return [DBWallpaperRenderer identifierForScreen:screen];
 }
 - (void)restoreSystemWallpapers {
     NSString *path = [self.wallpaperRoot stringByAppendingPathComponent:@"Originals.plist"];
@@ -82,64 +87,82 @@
         }
     }
 }
-- (BOOL)updateSystemWallpapers {
-    if (self.sessionInactive || !self.windows.count)
-        return NO;
-    BOOL applied = YES;
-    NSFileManager *files = NSFileManager.defaultManager;
-    NSString *frames = [self.wallpaperRoot stringByAppendingPathComponent:@"Frames"];
-    [files createDirectoryAtPath:frames withIntermediateDirectories:YES attributes:nil error:NULL];
-    NSString *originalsPath = [self.wallpaperRoot stringByAppendingPathComponent:@"Originals.plist"];
-    NSMutableDictionary *originals =
-        [[NSDictionary dictionaryWithContentsOfFile:originalsPath] mutableCopy] ?: NSMutableDictionary.new;
+- (void)updateSystemWallpapersWithCompletion:(void (^)(BOOL))completion {
+    if (self.sessionInactive || !self.windows.count || (!completion && [self userIsIdle])) {
+        if (completion)
+            completion(NO);
+        return;
+    }
+    if (completion)
+        [self.wallpaperCompletions addObject:[completion copy]];
+    if (self.wallpaperTask) {
+        self.wallpaperPending = YES;
+        return;
+    }
+    NSArray *completions = [self.wallpaperCompletions copy];
+    [self.wallpaperCompletions removeAllObjects];
+    NSMutableArray *screens = NSMutableArray.new;
     for (NSWindow *window in self.windows) {
         NSScreen *screen = window.screen;
-        if (!screen)
+        if (!screen || (![self showOnAllSpaces] &&
+                        !(window.occlusionState & NSWindowOcclusionStateVisible)))
             continue;
-        NSString *identifier = [self identifierForScreen:screen];
-        NSURL *current = [NSWorkspace.sharedWorkspace desktopImageURLForScreen:screen];
-        if (!originals[identifier] && current && ![current.path hasPrefix:self.wallpaperRoot]) {
-            NSDictionary *options = [NSWorkspace.sharedWorkspace desktopImageOptionsForScreen:screen];
-            originals[identifier] = @{
-                @"url" : current.absoluteString,
-                @"scaling" : options[NSWorkspaceDesktopImageScalingKey]
-                    ?: @(NSImageScaleProportionallyUpOrDown),
-                @"clipping" : options[NSWorkspaceDesktopImageAllowClippingKey] ?: @YES
-            };
-            [originals writeToFile:originalsPath atomically:YES];
-        }
-        NSString *filename =
-            [NSString stringWithFormat:@"%@-%lu.png", identifier, (unsigned long)(self.wallpaperFrame % 2)];
-        NSString *path = [frames stringByAppendingPathComponent:filename];
-        DBBoardView *board = (DBBoardView *)window.contentView;
-        NSSize pixels = NSMakeSize(screen.frame.size.width * screen.backingScaleFactor,
-                                   screen.frame.size.height * screen.backingScaleFactor);
-        if (![board writeSnapshot:path size:pixels]) {
-            applied = NO;
-            continue;
-        }
-        NSError *error = nil;
-        if (![NSWorkspace.sharedWorkspace
-                setDesktopImageURL:[NSURL fileURLWithPath:path]
-                         forScreen:screen
-                           options:@{
-                               NSWorkspaceDesktopImageScalingKey : @(NSImageScaleProportionallyUpOrDown),
-                               NSWorkspaceDesktopImageAllowClippingKey : @YES
-                           }
-                             error:&error]) {
-            applied = NO;
-            NSLog(@"Could not update the system wallpaper: %@", error.localizedDescription);
-        }
+        [screens addObject:@{
+            @"identifier" : [self identifierForScreen:screen],
+            @"board" : [(DBBoardView *)window.contentView snapshotConfiguration]
+        }];
     }
-    self.wallpaperFrame++;
-    return applied;
+    NSData *json = [NSJSONSerialization dataWithJSONObject:@{
+        @"screens" : screens, @"force" : @(completions.count > 0)
+    } options:0 error:NULL];
+    NSTask *task = NSTask.new;
+    task.executableURL = NSBundle.mainBundle.executableURL;
+    task.arguments = @[
+        @"--render-wallpapers", [[NSString alloc] initWithData:json encoding:NSUTF8StringEncoding]
+    ];
+    task.qualityOfService = NSQualityOfServiceUtility;
+    task.standardOutput = NSFileHandle.fileHandleWithNullDevice;
+    task.standardError = NSFileHandle.fileHandleWithNullDevice;
+    __weak DBDesktopController *weakSelf = self;
+    task.terminationHandler = ^(NSTask *finished) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            DBDesktopController *controller = weakSelf;
+            if (controller.wallpaperTask != finished)
+                return;
+            controller.wallpaperTask = nil;
+            if (finished.terminationStatus != 0)
+                NSLog(@"Wallpaper rendering failed with status %d", finished.terminationStatus);
+            for (void (^callback)(BOOL) in completions)
+                callback(finished.terminationStatus == 0);
+            if (controller.wallpaperPending) {
+                controller.wallpaperPending = NO;
+                [controller updateSystemWallpapersWithCompletion:nil];
+            }
+        });
+    };
+    self.wallpaperTask = task;
+    if (![task launchAndReturnError:NULL]) {
+        self.wallpaperTask = nil;
+        for (void (^callback)(BOOL) in completions)
+            callback(NO);
+        return;
+    }
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 30 * NSEC_PER_SEC),
+                   dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
+        if (task.running)
+            [task terminate];
+    });
 }
-- (BOOL)applyWallpaper {
+- (void)applyWallpaperWithCompletion:(void (^)(BOOL))completion {
     [self refresh];
-    for (NSWindow *window in self.windows)
-        [(DBBoardView *)window.contentView tick];
     self.nextWallpaperUpdate = NSProcessInfo.processInfo.systemUptime + 60;
-    return [self updateSystemWallpapers];
+    [self updateSystemWallpapersWithCompletion:completion];
+}
+- (void)stop {
+    [self.wallpaperTask terminate];
+    self.wallpaperTask = nil;
+    self.wallpaperPending = NO;
+    [self.wallpaperCompletions removeAllObjects];
 }
 - (void)screensChanged:(NSNotification *)notification {
     for (NSWindow *window in self.windows)
@@ -153,8 +176,11 @@
     if (![self.appliedSettings isEqual:settings]) {
         self.appliedSettings = settings;
         self.nextWallpaperUpdate = 0;
+        for (NSWindow *window in self.windows)
+            [self configureWindow:window];
     }
     if (!enabled) {
+        [self stop];
         if (self.windows.count)
             [self restoreSystemWallpapers];
         for (NSWindow *window in self.windows)
@@ -168,15 +194,13 @@
         NSWindow *window = [[NSWindow alloc] initWithContentRect:screen.frame
                                                        styleMask:NSWindowStyleMaskBorderless
                                                          backing:NSBackingStoreBuffered
-                                                           defer:NO
+                                                           defer:YES
                                                           screen:screen];
         window.releasedWhenClosed = NO;
         window.title = [@"Departure Board — " stringByAppendingString:screen.localizedName];
         [window setFrame:screen.frame display:NO];
         window.level = CGWindowLevelForKey(kCGDesktopWindowLevelKey) + 1;
-        window.collectionBehavior = NSWindowCollectionBehaviorCanJoinAllSpaces |
-                                    NSWindowCollectionBehaviorStationary |
-                                    NSWindowCollectionBehaviorIgnoresCycle;
+        [self configureWindow:window];
         window.ignoresMouseEvents = YES;
         window.hidesOnDeactivate = NO;
         window.hasShadow = NO;
@@ -188,6 +212,14 @@
         [window orderFrontRegardless];
         [self.windows addObject:window];
     }
+}
+- (void)configureWindow:(NSWindow *)window {
+    window.colorSpace = NSColorSpace.sRGBColorSpace;
+    [window setDynamicDepthLimit:NO];
+    window.depthLimit = NSWindowDepthTwentyfourBitRGB;
+    window.collectionBehavior = NSWindowCollectionBehaviorStationary |
+                                NSWindowCollectionBehaviorIgnoresCycle |
+                                ([self showOnAllSpaces] ? NSWindowCollectionBehaviorCanJoinAllSpaces : 0);
 }
 - (BOOL)shouldUpdateWindow:(NSWindow *)window {
     CGDirectDisplayID display = [window.screen.deviceDescription[@"NSScreenNumber"] unsignedIntValue];
@@ -203,6 +235,10 @@
 }
 - (void)tick {
     NSTimeInterval now = NSProcessInfo.processInfo.systemUptime;
+    BOOL idle = [self userIsIdle];
+    if (self.userWasIdle && !idle)
+        self.nextWallpaperUpdate = 0;
+    self.userWasIdle = idle;
     if (now >= self.nextSettingsCheck) {
         self.nextSettingsCheck = now + 1;
         [self refresh];
@@ -210,9 +246,9 @@
     for (NSWindow *window in self.windows)
         if ([self shouldUpdateWindow:window])
             [(DBBoardView *)window.contentView tick];
-    if (self.windows.count && now >= self.nextWallpaperUpdate && !self.sessionInactive) {
+    if (self.windows.count && now >= self.nextWallpaperUpdate && !self.sessionInactive && !idle) {
         self.nextWallpaperUpdate = now + 60;
-        [self updateSystemWallpapers];
+        [self updateSystemWallpapersWithCompletion:nil];
     }
 }
 @end

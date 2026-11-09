@@ -1,6 +1,10 @@
 #define DB_APP_TEST 1
 #import "../Sources/App.m"
 
+@interface DBDesktopController (SettingsTests)
+- (void)configureWindow:(NSWindow *)window;
+@end
+
 int main(int argc, const char *argv[]) {
     @autoreleasepool {
         if (argc != 2)
@@ -29,6 +33,13 @@ int main(int argc, const char *argv[]) {
                           application.activationPolicy == NSApplicationActivationPolicyRegular;
                 [controller closeSettings];
             }
+            DBDesktopController *desktop = DBDesktopController.new;
+            [desktop setValue:@{ @"showAllSpaces" : @NO } forKey:@"appliedSettings"];
+            [desktop configureWindow:controller.window];
+            passed &= !(controller.window.collectionBehavior & NSWindowCollectionBehaviorCanJoinAllSpaces);
+            [desktop setValue:@{ @"showAllSpaces" : @YES } forKey:@"appliedSettings"];
+            [desktop configureWindow:controller.window];
+            passed &= (controller.window.collectionBehavior & NSWindowCollectionBehaviorCanJoinAllSpaces) != 0;
             [controller.window close];
             passed &= ![DBBackgroundAgent shouldStartForSettings:@{
                 @"launchAtLogin" : @NO
