@@ -114,16 +114,20 @@ internal static class WindowsSmokeTest
         var preview = displays.ShowPreview(parent.Handle, false);
         var handle = new WindowInteropHelper(preview).Handle;
         var embedded = NativeMethods.GetParent(handle) == parent.Handle;
+        var parentMeasured = NativeMethods.GetClientRect(parent.Handle, out var expected);
+        var childMeasured = NativeMethods.GetClientRect(handle, out var bounds);
         var sized =
-            NativeMethods.GetClientRect(handle, out var bounds)
-            && bounds.Right == 640
-            && bounds.Bottom == 360;
+            parentMeasured
+            && childMeasured
+            && bounds.Right == expected.Right
+            && bounds.Bottom == expected.Bottom;
         preview.Close();
 
         if (!embedded || !sized)
         {
             throw new InvalidOperationException(
-                $"Preview parent matched: {embedded}; size: {bounds.Right} x {bounds.Bottom}."
+                $"Preview parent matched: {embedded}; child: {bounds.Right} x {bounds.Bottom}; "
+                    + $"parent: {expected.Right} x {expected.Bottom}."
             );
         }
     }
