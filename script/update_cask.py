@@ -18,7 +18,7 @@ text = f'''cask "departure-board" do
   desc "Airport and railway departure boards as a native macOS screen saver"
   homepage "https://github.com/{repository}"
 
-  depends_on macos: ">= :monterey"
+  depends_on macos: :monterey
 
   app "Departure Board.app"
   screen_saver "Departure Board.saver"

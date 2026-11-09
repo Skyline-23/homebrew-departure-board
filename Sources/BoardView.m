@@ -67,6 +67,7 @@
 - (void)setLocationCode:(NSString *)locationCode {
     _locationCode = [locationCode copy];
     self.location = DBLocation(locationCode);
+    self.startTime = NSProcessInfo.processInfo.systemUptime;
     self.lastRenderedSecond = -1;
     self.languageCycle = -1;
     [self.flapStates removeAllObjects];
