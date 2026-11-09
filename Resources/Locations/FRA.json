@@ -7,7 +7,7 @@
   "preset": "frankfurt",
   "accent": "f8d93f",
   "bg": "141714",
-  "header": "f3dc52",
+  "header": "101714",
   "kind": "airport",
   "routes": [
     {
@@ -150,7 +150,8 @@
     "footerColor": "6643a5",
     "footerBrand": "FRANKFURT AIRPORT",
     "verticalRules": "252c25",
-    "detailRevision": 2
+    "detailRevision": 2,
+    "clockColor": "e3dca8"
   },
   "reference": {
     "source": "Temen que este popular aeropuerto sea la puerta de entrada a Europa del nuevo virus que sacude a China (https://www.huffingtonpost.es/sociedad/temen-popular-aeropuerto-sea-puerta-entrada-europa-nuevo-virus-sacude-china.html)",

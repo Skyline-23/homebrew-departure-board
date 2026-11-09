@@ -171,7 +171,12 @@
       "gate": 0.08,
       "state": 0.22
     },
-    "detailRevision": 2
+    "detailRevision": 2,
+    "rowInkColors": [
+      "1c2e3b",
+      "ffffff"
+    ],
+    "statusUsesRowInk": true
   },
   "reference": {
     "source": "Two Surprisingly Easy And Pleasant Experiences At Cairo Airport - One Mile at a Time (https://onemileatatime.com/cairo-airport-experience/)",

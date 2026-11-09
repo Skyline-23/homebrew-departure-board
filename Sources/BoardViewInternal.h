@@ -37,7 +37,8 @@
 - (void)drawAirportCell:(NSDictionary *)row
                  column:(NSString *)column
                    rect:(NSRect)cell
-               fontSize:(CGFloat)size;
+               fontSize:(CGFloat)size
+               rowIndex:(NSInteger)rowIndex;
 - (NSArray *)airportColumns;
 - (CGFloat)weightFor:(NSString *)key;
 - (NSString *)columnLabel:(NSString *)key;

@@ -226,7 +226,7 @@ static void DrawAirlineLogo(NSImage *logo, NSRect bounds) {
                     DBFillRect(NSMakeRect(columnX, top, width - 1, rowHeight - 1), DBColor(columnFill));
                 if (profile[@"verticalRules"])
                     DBFillRect(NSMakeRect(columnX + width - 1, top, 1, rowHeight), DBColor(profile[@"verticalRules"]));
-                [self drawAirportCell:row column:column rect:cell fontSize:fontSize];
+                [self drawAirportCell:row column:column rect:cell fontSize:fontSize rowIndex:index];
                 columnX += width;
             }
         }
@@ -242,16 +242,19 @@ static void DrawAirlineLogo(NSImage *logo, NSRect bounds) {
 - (void)drawAirportCell:(NSDictionary *)row
                  column:(NSString *)column
                    rect:(NSRect)cell
-               fontSize:(CGFloat)size {
+               fontSize:(CGFloat)size
+               rowIndex:(NSInteger)rowIndex {
     NSDictionary *profile = self.location[@"display"];
     NSString *value = row[column] ?: @"";
-    NSColor *ink = DBColor(profile[@"textColor"]);
+    NSArray *rowInks = profile[@"rowInkColors"];
+    NSColor *baseInk = DBColor(rowInks.count ? rowInks[rowIndex % rowInks.count] : profile[@"textColor"]);
+    NSColor *ink = baseInk;
     BOOL numbers = [@[ @"time", @"expected", @"gate", @"flight" ] containsObject:column];
     if ([column isEqual:@"destination"]) {
         value = DBLocalized(row[@"destination"], self.currentLanguage);
         if ([profile[@"uppercaseDestinations"] boolValue])
             value = value.uppercaseString;
-        ink = DBColor(profile[@"destinationColor"] ?: profile[@"textColor"]);
+        ink = profile[@"destinationColor"] ? DBColor(profile[@"destinationColor"]) : baseInk;
         if ([profile[@"stackedDestination"] boolValue]) {
             DBDrawTextWithFont(value, NSMakeRect(cell.origin.x, cell.origin.y, cell.size.width, cell.size.height * .57),
                                DBNamedFont(profile[@"bodyFont"], size * .9), ink, NSTextAlignmentLeft);
@@ -265,7 +268,8 @@ static void DrawAirlineLogo(NSImage *logo, NSRect bounds) {
         value = DBStatusText(row[@"state"], self.currentLanguage);
         if ([profile[@"hideScheduledStatus"] boolValue] && [row[@"state"] isEqual:@"scheduled"])
             value = @"";
-        if (![@[ @"scheduled", @"departed" ] containsObject:row[@"state"]])
+        if (![profile[@"statusUsesRowInk"] boolValue] &&
+            ![@[ @"scheduled", @"departed" ] containsObject:row[@"state"]])
             ink = DBStatusColor(row[@"state"]);
         if (profile[@"statusColors"][row[@"state"]])
             ink = DBColor(profile[@"statusColors"][row[@"state"]]);
@@ -286,7 +290,7 @@ static void DrawAirlineLogo(NSImage *logo, NSRect bounds) {
         }
         size *= .88;
     } else if ([column isEqual:@"time"]) {
-        ink = DBColor(profile[@"timeColor"]);
+        ink = rowInks.count ? baseInk : DBColor(profile[@"timeColor"]);
     } else if ([column isEqual:@"expected"]) {
         ink = DBColor(@"ffd653");
     }
