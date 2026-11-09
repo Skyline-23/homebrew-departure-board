@@ -9,7 +9,7 @@ mkdir -p "$BUILD_DIR" "$DIST_DIR"
 
 # Both bundles share the same drawing and timetable code. No WebView or network service.
 COMMON_SOURCES=()
-for source in DepartureSchedule Localization LiveFlightStore BoardView DrawingSupport BoardChrome AirportRenderer SplitFlapRenderer RailwayRenderer SettingsController; do
+for source in DepartureSchedule Localization LiveFlightStore UserInstallation BoardView DrawingSupport BoardChrome AirportRenderer SplitFlapRenderer RailwayRenderer SettingsController; do
   COMMON_SOURCES+=("$PROJECT_ROOT/Sources/$source.m")
 done
 COMMON_FLAGS=(-fobjc-arc -fmodules -O2 -Wall -Wextra -Wno-unused-parameter -mmacosx-version-min=12.0 -framework Cocoa -framework CoreText -framework Security -framework LocalAuthentication)

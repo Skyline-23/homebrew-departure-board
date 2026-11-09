@@ -10,10 +10,12 @@ alternate with the selected location's language every 12 seconds.
 ```sh
 brew tap Skyline-23/departure-board
 brew install --formula skyline-23/departure-board/departure-board
+departure-board
 ```
 
-Homebrew compiles the app on your Mac and links it into `~/Applications` and
-`~/Library/Screen Savers`. This avoids relying on an unnotarized downloaded binary.
+Homebrew compiles the app on your Mac. Its first launch registers it in
+`~/Applications` and `~/Library/Screen Savers`, outside Homebrew's isolated build
+environment. This avoids relying on an unnotarized downloaded binary.
 
 Choose **Departure Board** in **System Settings → Screen Saver**. Open the
 **Departure Board** app to change location, display style, language, density,

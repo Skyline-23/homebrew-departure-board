@@ -1,5 +1,6 @@
 #import "DepartureBoardView.h"
 #import "LiveFlightStore.h"
+#import "UserInstallation.h"
 
 @interface DepartureBoardApp : NSObject <NSApplicationDelegate, NSWindowDelegate>
 @property(nonatomic, strong) NSWindow *window;
@@ -11,6 +12,14 @@
 @implementation DepartureBoardApp
 - (void)applicationDidFinishLaunching:(NSNotification *)notification {
     NSArray<NSString *> *arguments = NSProcessInfo.processInfo.arguments;
+    NSUInteger registration = [arguments indexOfObject:@"--register-bundles"];
+    if (registration != NSNotFound && registration + 1 < arguments.count) {
+        NSError *error = nil;
+        if (!RegisterUserInstallation(arguments[registration + 1], &error)) {
+            NSLog(@"Screen saver registration failed: %@",
+                  error.localizedDescription ?: @"Invalid installation root");
+        }
+    }
     self.board = [[DBBoardView alloc] initWithFrame:NSMakeRect(0, 0, 1440, 900)];
     NSUInteger index = [arguments indexOfObject:@"--location"];
     if (index != NSNotFound && index + 1 < arguments.count)
