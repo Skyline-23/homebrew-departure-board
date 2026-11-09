@@ -7,15 +7,35 @@ permissions:
 jobs:
   release:
     runs-on: macos-15
+    environment: macos-release
+    timeout-minutes: 45
+    env:
+      APPLE_TEAM_ID: ${{ vars.APPLE_TEAM_ID }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Read version
         run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
-      - run: ./script/build.sh
-      - run: ./script/validate.sh
-      - run: ./script/package.sh
+      - name: Import Developer ID certificate
+        env:
+          APPLE_CERTIFICATE_P12_BASE64: ${{ secrets.APPLE_CERTIFICATE_P12_BASE64 }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+        run: ./script/import-signing-certificate.sh
+      - name: Build and sign
+        run: ./script/build.sh
+      - name: Validate application and screen saver
+        run: ./script/validate.sh
+      - name: Notarize and staple
+        env:
+          APP_STORE_CONNECT_KEY_P8_BASE64: ${{ secrets.APP_STORE_CONNECT_KEY_P8_BASE64 }}
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: ./script/notarize.sh
+      - name: Package notarized bundles
+        run: ./script/package.sh
+      - name: Verify the final download
+        run: ./script/validate-distribution.sh
       - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -32,8 +52,13 @@ jobs:
           python3 script/update_tap.py
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add Casks/departure-board.rb
-          git add Formula/departure-board.rb
+          git add Casks/departure-board.rb Formula/departure-board.rb
           git diff --cached --quiet && exit 0
           git commit -m "Update departure-board cask to $VERSION"
           git push origin HEAD:main
+      - name: Remove temporary signing keychain
+        if: always()
+        run: |
+          if [[ -n "${CODE_SIGN_KEYCHAIN:-}" ]]; then
+            security delete-keychain "$CODE_SIGN_KEYCHAIN"
+          fi

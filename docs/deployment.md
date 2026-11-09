@@ -1,22 +1,56 @@
 # GitHub Actions deployment
 
-## macOS app and screen saver
+## Release requirements
 
-The `Release macOS screen saver` workflow runs for `v*` tags. It builds a universal
-binary, runs validation, uploads binary and source archives, and commits their corresponding
-SHA-256 values to `Casks/departure-board.rb` and `Formula/departure-board.rb`. No provider secret is passed to this job.
+The tag-triggered `Release macOS screen saver` workflow uses the `macos-release`
+environment. It must have these encrypted secrets:
 
-Local builds and the initial workflow use ad-hoc code signing. Developer ID
-signing and notarization require an Apple Developer distribution identity; an
-Apple Development certificate is not a substitute. Do not describe an ad-hoc
-artifact as notarized. The recommended formula compiles locally; it does not
-install the unnotarized release binary.
+| Secret | Contents |
+| --- | --- |
+| `APPLE_CERTIFICATE_P12_BASE64` | Base64-encoded P12 containing the Developer ID Application certificate and its private key |
+| `APPLE_CERTIFICATE_PASSWORD` | Password protecting that P12 |
+| `APP_STORE_CONNECT_KEY_P8_BASE64` | Base64-encoded App Store Connect API private key |
+| `APP_STORE_CONNECT_KEY_ID` | ID of the API key |
+| `APP_STORE_CONNECT_ISSUER_ID` | Issuer UUID for a team API key; leave unset for an individual key |
 
-## API credentials
+Set the repository or environment variable `APPLE_TEAM_ID` to the signing team.
+An Apple Development certificate is for development and cannot replace a
+Developer ID Application certificate for notarization.
 
-No API credential is needed by GitHub Actions. Each user saves their own
-AeroDataBox RapidAPI key in the companion app. The key remains in their Mac's
-Keychain and is sent only to the official AeroDataBox RapidAPI endpoint.
+The workflow imports the certificate into an isolated temporary keychain, signs
+both universal bundles with hardened runtime and a secure timestamp, and runs
+the application tests. It submits the app and screen saver together to Apple's
+notary service and attaches a ticket to each bundle.
 
-The previous gateway source and deployment workflow have been removed. Older
-0.2.x installations using that gateway must upgrade and enter a personal key.
+Only after acceptance does it package the download, extract it again, verify
+both signatures and tickets, and check the app with Gatekeeper. A failed check
+stops the release before publishing or updating Homebrew. The temporary
+keychain and decoded credential files are removed after use.
+
+Build validation on branches and pull requests needs no signing secrets and may
+use ad-hoc signatures. Local source builds are also distinct from notarized
+release downloads. Releases through **0.6.1** were not notarized.
+
+## Local notarization
+
+Build with a Developer ID identity and the same `APPLE_TEAM_ID`. Use a validated
+`NOTARY_KEYCHAIN_PROFILE` or the API-key environment variables above with:
+
+```sh
+./script/notarize.sh
+./script/package.sh
+./script/validate-distribution.sh
+```
+
+`VERSION` must match the built bundles. Do not re-sign an accepted bundle: a new
+signature requires a new notarization. The Homebrew launcher preserves valid
+Developer ID signatures rather than replacing them with local development signatures.
+
+References: [Apple notarization requirements](https://developer.apple.com/documentation/security/notarizing-macos-software-before-distribution),
+[Developer ID certificates](https://developer.apple.com/help/account/certificates/create-developer-id-certificates).
+
+## Flight API credentials
+
+No flight-provider credential is needed by GitHub Actions. Each user saves their
+own AeroDataBox RapidAPI key in the companion app. It remains in that user's Mac
+Keychain and is sent only to the provider's RapidAPI endpoint.

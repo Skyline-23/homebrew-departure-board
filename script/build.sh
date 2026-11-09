@@ -62,7 +62,10 @@ for bundle in "$APP_BUNDLE" "$SAVER_BUNDLE"; do
   # Sign outside synced Documents: File Provider can attach FinderInfo during a build.
   clean_bundle="$SIGNING_DIR/$(basename "$bundle")"
   ditto --noextattr --norsrc "$bundle" "$clean_bundle"
-  codesign --force --sign "$SIGN_IDENTITY" --options runtime "$clean_bundle"
+  SIGN_FLAGS=(--force --sign "$SIGN_IDENTITY" --options runtime)
+  if [[ "$SIGN_IDENTITY" != "-" ]]; then SIGN_FLAGS+=(--timestamp); fi
+  if [[ -n "${CODE_SIGN_KEYCHAIN:-}" ]]; then SIGN_FLAGS+=(--keychain "$CODE_SIGN_KEYCHAIN"); fi
+  codesign "${SIGN_FLAGS[@]}" "$clean_bundle"
   codesign --verify --strict "$clean_bundle"
   rm -rf "$bundle"
   ditto --noextattr --norsrc "$clean_bundle" "$bundle"
