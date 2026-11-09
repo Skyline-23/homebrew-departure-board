@@ -3,6 +3,7 @@
 #import <sys/xattr.h>
 
 static void WriteBundle(NSString *path, NSString *identifier, NSString *revision) {
+
     NSFileManager *files = NSFileManager.defaultManager;
     [files createDirectoryAtPath:[path stringByAppendingPathComponent:@"Contents/MacOS"]
         withIntermediateDirectories:YES
@@ -31,7 +32,9 @@ static void WriteBundle(NSString *path, NSString *identifier, NSString *revision
 }
 
 int main(void) {
+
     @autoreleasepool {
+
         NSFileManager *files = NSFileManager.defaultManager;
         NSString *root =
             [NSTemporaryDirectory() stringByAppendingPathComponent:NSUUID.UUID.UUIDString];

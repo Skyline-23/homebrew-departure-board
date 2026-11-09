@@ -11,6 +11,7 @@ SIGNING_KEYCHAIN="$TEMP_ROOT/departure-signing-$(uuidgen).keychain-db"
 KEYCHAIN_PASSWORD="$(openssl rand -hex 32)"
 IMPORTED=0
 cleanup() {
+
   rm -f "$CERTIFICATE_FILE"
   if [[ "$IMPORTED" != 1 ]]; then security delete-keychain "$SIGNING_KEYCHAIN" >/dev/null 2>&1 || true; fi
 }

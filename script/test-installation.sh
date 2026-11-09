@@ -18,6 +18,7 @@ EXPECTED_VERSION="${EXPECTED_VERSION:-}"
 EXPECTED_VERSION="${EXPECTED_VERSION#v}"
 [[ -z "$EXPECTED_VERSION" || "$VERSION" == "$EXPECTED_VERSION" ]]
 validate_ticket() {
+
   for attempt in 1 2 3; do
     if xcrun stapler validate "$1"; then return 0; fi
     [[ "$attempt" == 3 ]] || sleep 5

@@ -13,7 +13,9 @@
 @implementation DepartureBoardSaver
 
 - (instancetype)initWithFrame:(NSRect)frame isPreview:(BOOL)preview {
+
     if ((self = [super initWithFrame:frame isPreview:preview])) {
+
         self.animationTimeInterval = 1.0;
         self.board = [[DBBoardView alloc] initWithFrame:self.bounds];
         self.board.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
@@ -23,33 +25,41 @@
 }
 
 - (void)startAnimation {
+
     [self.board reloadSettings];
     [self updateHeartbeat];
     [super startAnimation];
 }
 
 - (void)stopAnimation {
+
     if (self.heartbeatPath.length) {
+
         [NSFileManager.defaultManager removeItemAtPath:self.heartbeatPath error:NULL];
     }
     [super stopAnimation];
 }
 
 - (void)setFrameSize:(NSSize)size {
+
     [super setFrameSize:size];
     self.board.frame = self.bounds;
 }
 
 - (void)animateOneFrame {
+
     [self.board tick];
     self.animationTimeInterval = self.board.preferredAnimationInterval;
     if (NSDate.timeIntervalSinceReferenceDate - self.lastHeartbeat > 30) {
+
         [self updateHeartbeat];
     }
 }
 
 - (void)updateHeartbeat {
+
     if (!self.isPreview) {
+
         NSString *folder =
             [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)
                     .firstObject stringByAppendingPathComponent:@"DepartureBoard"];
@@ -67,11 +77,14 @@
 }
 
 - (BOOL)hasConfigureSheet {
+
     return YES;
 }
 
 - (NSWindow *)configureSheet {
+
     if (!self.options) {
+
         self.options = [[NSPanel alloc] initWithContentRect:NSMakeRect(0, 0, 500, 164)
                                                   styleMask:NSWindowStyleMaskTitled
                                                     backing:NSBackingStoreBuffered
@@ -100,8 +113,10 @@
 }
 
 - (void)openCompanion:(id)sender {
+
     NSString *path = DBSettingsStore.settings[@"companionPath"];
     if (!path.length) {
+
         path =
             [NSHomeDirectory() stringByAppendingPathComponent:@"Applications/Departure Board.app"];
     }
@@ -114,6 +129,7 @@
 }
 
 - (void)closeOptions:(id)sender {
+
     [NSApp endSheet:self.options];
     [self.options orderOut:nil];
     self.options = nil;

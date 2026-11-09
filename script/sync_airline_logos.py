@@ -18,12 +18,14 @@ CATALOG_URL = ("https://raw.githubusercontent.com/imgmongelli/airlines-logos-dat
 
 
 def download(url):
+
     request = urllib.request.Request(url, headers={"User-Agent": "DepartureBoard-asset-sync"})
     with urllib.request.urlopen(request, timeout=90) as response:
         return response.read()
 
 
 def main():
+
     excluded = set(json.loads((DESTINATION / "ExcludedAssets.json").read_text())["sha256"])
     # The archive avoids thousands of individual network requests. Builds never
     # run this script; the reviewed assets are committed and available offline.

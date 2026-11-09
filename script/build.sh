@@ -14,6 +14,7 @@ ARCH_FLAGS=(-arch arm64 -arch x86_64)
 if [[ "${BUILD_ARCH:-universal}" != "universal" ]]; then ARCH_FLAGS=(-arch "$BUILD_ARCH"); fi
 
 make_bundle() {
+
   local bundle="$1" executable="$2" identifier="$3" package="$4" principal="$5"
   rm -rf "$bundle"
   mkdir -p "$bundle/Contents/MacOS" "$bundle/Contents/Resources"

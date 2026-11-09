@@ -5,6 +5,7 @@
 @implementation DBIncheonAirportAdapter
 
 - (void)drawHeaderInBounds:(NSRect)area context:(DBAirportRenderContext *)context {
+
     CGFloat height = [self headerHeightForBounds:area scale:context.scale];
     NSColor *ink = DBColor(self.display[@"headerInk"]);
     DBFillRect(NSMakeRect(0, 0, area.size.width, height), DBColor(self.location[@"header"]));
@@ -33,6 +34,7 @@
 }
 
 - (void)drawFooterInBounds:(NSRect)area context:(DBAirportRenderContext *)context {
+
     [super drawFooterInBounds:area context:context];
     CGFloat height = MAX(26, [self.display[@"footerHeight"] doubleValue]);
     CGFloat y = area.size.height - height;

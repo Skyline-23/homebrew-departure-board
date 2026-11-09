@@ -1,0 +1,11 @@
+{
+  "indentation": { "spaces": 4 },
+  "lineLength": 100,
+  "maximumBlankLines": 1,
+  "lineBreakBeforeEachArgument": true,
+  "lineBreakBeforeEachGenericRequirement": true,
+  "rules": {
+    "NoEmptyLinesOpeningClosingBraces": false,
+    "OrderedImports": true
+  }
+}

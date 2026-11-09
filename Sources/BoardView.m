@@ -7,15 +7,19 @@
 @implementation DBBoardView
 
 - (BOOL)isFlipped {
+
     return YES;
 }
 
 - (BOOL)isOpaque {
+
     return YES;
 }
 
 - (instancetype)initWithFrame:(NSRect)frame {
+
     if ((self = [super initWithFrame:frame])) {
+
         self.startTime = NSProcessInfo.processInfo.systemUptime;
         self.lastRenderedSecond = -1;
         self.pageCycle = -1;
@@ -26,8 +30,10 @@
 }
 
 - (void)viewDidMoveToWindow {
+
     [super viewDidMoveToWindow];
     if (self.window) {
+
         self.wantsLayer = YES;
         self.layer.contentsFormat = kCAContentsFormatRGBA8Uint;
         self.layer.opaque = YES;
@@ -35,6 +41,7 @@
 }
 
 - (void)reloadSettings {
+
     NSDictionary *prefs = DBSettingsStore.settings;
     self.loadedSettings = prefs;
     self.locationCode = prefs[@"location"] ?: @"ICN";
@@ -53,6 +60,7 @@
 }
 
 - (void)saveSettings {
+
     NSMutableDictionary *settings = [DBSettingsStore.settings mutableCopy];
     [settings addEntriesFromDictionary:@{
         @"location" : self.locationCode ?: @"ICN",
@@ -69,12 +77,14 @@
 }
 
 - (void)setBoardScale:(double)scale {
+
     _boardScale = isfinite(scale) ? MAX(.5, MIN(1, scale)) : .75;
     self.lastRenderedSecond = -1;
     self.needsDisplay = YES;
 }
 
 - (void)setLocationCode:(NSString *)locationCode {
+
     _locationCode = [locationCode copy];
     self.location = DBLocation(locationCode);
     self.airportAdapter = DBAirportAdapterForLocation(self.location);
@@ -85,18 +95,24 @@
 }
 
 - (NSString *)effectiveStyle {
+
     if ([self.location[@"kind"] isEqual:@"rail"]) {
+
         return self.location[@"preset"];
     }
     if ([self.displayStyle isEqual:@"flap"]) {
+
         return @"flap";
     }
     return self.location[@"preset"];
 }
 
 - (BOOL)hasActiveFlapAnimationAt:(NSTimeInterval)uptime {
+
     for (NSDictionary *cell in self.flapStates.objectEnumerator) {
+
         if (uptime - [cell[@"start"] doubleValue] < DBFlapTransitionDuration) {
+
             return YES;
         }
     }
@@ -104,8 +120,10 @@
 }
 
 - (NSTimeInterval)preferredAnimationInterval {
+
     BOOL flap = [[self effectiveStyle] isEqual:@"flap"] && !self.reducedMotion;
     if (!flap) {
+
         return 1;
     }
     BOOL moving =
@@ -114,19 +132,23 @@
 }
 
 - (void)tick {
+
     [self updateAtDate:self.referenceDate ?: NSDate.date
                 uptime:NSProcessInfo.processInfo.systemUptime];
 }
 
 - (BOOL)updateAtDate:(NSDate *)now uptime:(NSTimeInterval)uptime {
+
     NSTimeInterval second = floor(now.timeIntervalSince1970);
     BOOL flap = [[self effectiveStyle] isEqual:@"flap"];
     BOOL animating = flap && !self.reducedMotion && [self hasActiveFlapAnimationAt:uptime];
     BOOL finishedAnimation = self.flapWasAnimating && !animating;
     self.flapWasAnimating = animating;
     if (second != self.lastRenderedSecond || animating || finishedAnimation || self.referenceDate) {
+
         if (!self.referenceDate && second != self.lastRenderedSecond &&
             ![DBSettingsStore.settings isEqual:self.loadedSettings]) {
+
             [self reloadSettings];
             return YES;
         }
@@ -138,13 +160,16 @@
                                                                      : @"en";
         NSArray *rows = self.rows;
         if (second != self.lastRenderedSecond || self.referenceDate || !rows) {
+
             rows = self.referenceDate || self.useSampleData
                        ? DBDepartures(self.location, now, 128)
                        : [LiveFlightStore rowsForLocation:self.location now:now];
         }
         NSString *emptyMessage = @"data.noDepartures";
         if (!rows.count && !self.referenceDate && !self.useSampleData) {
+
             switch ([LiveFlightStore availabilityForAirport:self.locationCode]) {
+
             case DBFlightAvailabilityLoading:
                 emptyMessage = @"data.loading";
                 break;
@@ -174,6 +199,7 @@
         self.rows = rows;
         self.pageCycle = page;
         if (changed) {
+
             self.needsDisplay = YES;
         }
         return changed;
@@ -182,15 +208,19 @@
 }
 
 - (void)drawRect:(NSRect)dirtyRect {
+
     [self drawBoardInRect:self.bounds];
 }
 
 - (void)drawBoardInRect:(NSRect)bounds {
+
     if (!self.boardDate) {
+
         [self tick];
     }
     DBFillRect(bounds, DBColor(@"030508"));
     if (bounds.size.width < 1 || bounds.size.height < 1) {
+
         return;
     }
     NSString *style = [self effectiveStyle];
@@ -206,16 +236,21 @@
         NSRect area = NSMakeRect(0, 0, w, h);
         DBFillRect(area, DBColor(self.location[@"bg"]));
         if ([style isEqual:@"flap"]) {
+
             [self drawFlapBoard:area];
         } else if ([style isEqual:@"victoria"] || [style isEqual:@"sydney"]) {
+
             [self drawRailCards:area];
         } else if ([self.location[@"kind"] isEqual:@"rail"]) {
+
             [self drawRailTable:area];
         } else {
+
             [self drawAirport:area];
         }
         CGFloat darkness = 1 - MAX(.35, MIN(1, self.brightness));
         if (darkness > 0) {
+
             DBFillRect(area, [NSColor colorWithWhite:0 alpha:darkness]);
         }
         [NSGraphicsContext restoreGraphicsState];
@@ -223,6 +258,7 @@
 }
 
 - (NSDictionary *)snapshotConfiguration {
+
     return @{
         @"location" : self.locationCode ?: @"ICN",
         @"style" : self.displayStyle ?: @"auto",
@@ -237,6 +273,7 @@
 }
 
 - (void)applySnapshotConfiguration:(NSDictionary *)configuration {
+
     self.locationCode = configuration[@"location"] ?: self.locationCode;
     self.displayStyle = configuration[@"style"] ?: self.displayStyle;
     self.languageMode = configuration[@"language"] ?: self.languageMode;
@@ -251,7 +288,9 @@
 }
 
 - (BOOL)writeSnapshot:(NSString *)path size:(NSSize)size {
+
     @autoreleasepool {
+
         [self tick];
         NSBitmapImageRep *rep =
             [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL

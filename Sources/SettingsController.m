@@ -7,6 +7,7 @@
 @implementation DBBoardView (SettingsController)
 
 - (NSWindow *)settingsWindowWithTarget:(id)target action:(SEL)action {
+
     NSWindow *window = [[NSPanel alloc] initWithContentRect:NSMakeRect(0, 0, 700, 798)
                                                   styleMask:NSWindowStyleMaskTitled
                                                     backing:NSBackingStoreBuffered
@@ -24,6 +25,7 @@
         DBUIString(@"settings.brightness")
     ];
     for (NSInteger i = 0; i < 5; i++) {
+
         NSTextField *label = [NSTextField labelWithString:labels[i]];
         label.frame = NSMakeRect(29, 341 - i * 48, 130, 25);
         [v addSubview:label];
@@ -32,9 +34,11 @@
                                                           pullsDown:NO];
     locations.tag = 101;
     for (NSDictionary *l in DBLocations()) {
+
         [locations addItemWithTitle:DBUIString(l[@"displayNameKey"])];
         locations.lastItem.representedObject = l[@"code"];
         if ([l[@"code"] isEqual:self.locationCode]) {
+
             [locations selectItem:locations.lastItem];
         }
     }
@@ -56,14 +60,17 @@
     ];
     NSArray *current = @[ self.displayStyle, self.languageMode, @(self.density) ];
     for (NSInteger i = 0; i < 3; i++) {
+
         NSPopUpButton *popup =
             [[NSPopUpButton alloc] initWithFrame:NSMakeRect(161, 291 - i * 48, 397, 29)
                                        pullsDown:NO];
         popup.tag = 102 + i;
         [popup addItemsWithTitles:options[i]];
         for (NSInteger j = 0; j < (NSInteger)popup.numberOfItems; j++) {
+
             [popup itemAtIndex:j].representedObject = values[i][j];
             if ([values[i][j] isEqual:current[i]]) {
+
                 [popup selectItemAtIndex:j];
             }
         }
@@ -85,6 +92,7 @@
     motion.frame = NSMakeRect(161, 107, 397, 24);
     [v addSubview:motion];
     for (NSView *view in v.subviews) {
+
         NSRect frame = view.frame;
         frame.origin.y += 220;
         view.frame = frame;
@@ -111,10 +119,12 @@
                                                         pullsDown:NO];
     refresh.tag = 206;
     for (NSNumber *interval in @[ @60, @300, @900, @3600, @21600 ]) {
+
         [refresh addItemWithTitle:DBUIString([NSString stringWithFormat:@"refresh.%@", interval])];
         refresh.lastItem.representedObject = interval;
         if (interval.integerValue ==
             (saved[@"refreshInterval"] ? [saved[@"refreshInterval"] integerValue] : 60)) {
+
             [refresh selectItem:refresh.lastItem];
         }
     }
@@ -123,11 +133,13 @@
     NSString *updated = snapshot[@"fetchedAt"] ?: DBUIString(@"settings.neverUpdated");
     NSDate *date = [NSISO8601DateFormatter.new dateFromString:updated];
     if (!date) {
+
         NSISO8601DateFormatter *formatter = NSISO8601DateFormatter.new;
         formatter.formatOptions |= NSISO8601DateFormatWithFractionalSeconds;
         date = [formatter dateFromString:updated];
     }
     if (date) {
+
         updated = DBTime(date, self.location, @"dd MMM yyyy, HH:mm z");
     }
     NSInteger failure = [LiveFlightStore refreshFailureStatusForAirport:self.locationCode];
@@ -145,6 +157,7 @@
     [v addSubview:lastUpdate];
     NSArray *extraLabels = @[ @"settings.data", @"settings.provider", @"settings.apiKey" ];
     for (NSInteger index = 0; index < 3; index++) {
+
         NSTextField *label = [NSTextField labelWithString:DBUIString(extraLabels[index])];
         label.frame = NSMakeRect(29, 181 - index * 44, 130, 25);
         [v addSubview:label];
@@ -164,6 +177,7 @@
     apiKey.placeholderString = DBUIString(@"settings.apiKeyHint");
     BOOL keySaved = [saved[@"hasAPIKey"] boolValue];
     if (keySaved) {
+
         apiKey.stringValue = DBStoredAPIKeyMask;
     }
     [v addSubview:apiKey];
@@ -182,7 +196,9 @@
     done.frame = NSMakeRect(468, 24, 92, 32);
     [v addSubview:done];
     for (NSView *view in v.subviews) {
+
         if (view.frame.origin.y >= 278) {
+
             NSRect frame = view.frame;
             frame.origin.y += 136;
             view.frame = frame;
@@ -211,9 +227,11 @@
                                                       pullsDown:NO];
     scale.tag = 210;
     for (NSNumber *value in @[ @.5, @.65, @.75, @.85, @1.0 ]) {
+
         [scale addItemWithTitle:[NSString stringWithFormat:@"%.0f%%", value.doubleValue * 100]];
         scale.lastItem.representedObject = value;
         if (fabs(value.doubleValue - self.boardScale) < .001) {
+
             [scale selectItem:scale.lastItem];
         }
     }
@@ -223,6 +241,7 @@
 }
 
 - (void)applySettingsFromWindow:(NSWindow *)window completion:(void (^)(BOOL saved))completion {
+
     NSView *v = window.contentView;
     NSMutableDictionary *saved = [DBSettingsStore.settings mutableCopy];
     saved[@"location"] = [(NSPopUpButton *)[v viewWithTag:101] selectedItem].representedObject;
@@ -247,6 +266,7 @@
                              button.enabled = YES;
                              button.title = DBUIString(@"settings.apply");
                              if (error) {
+
                                  NSAlert *alert = NSAlert.new;
                                  alert.messageText = DBUIString(@"settings.saveFailed");
                                  alert.informativeText = error.localizedDescription;
@@ -257,9 +277,11 @@
                              [self reloadSettings];
                              if ([NSBundle.mainBundle.bundleIdentifier
                                      isEqual:@"com.skyline23.departureboard"]) {
+
                                  [DBBackgroundAgent configure];
                                  if ([DBSettingsStore.settings[@"hasAPIKey"] boolValue] &&
                                      !self.useSampleData) {
+
                                      [LiveFlightStore refreshInBackground];
                                  }
                              }

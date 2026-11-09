@@ -9,7 +9,9 @@
                        scale:(CGFloat)scale
                      density:(NSInteger)density
              emptyMessageKey:(NSString *)emptyMessageKey {
+
     if ((self = [super init])) {
+
         _date = date;
         _language = [language copy];
         _rows = [rows copy];
@@ -24,7 +26,9 @@
 @end
 
 id<DBAirportAdapter> DBAirportAdapterForLocation(NSDictionary *location) {
+
     if (![location[@"kind"] isEqual:@"airport"]) {
+
         return nil;
     }
     static NSDictionary<NSString *, Class> *adapters;

@@ -2,6 +2,7 @@
 #import "DepartureBoardView.h"
 
 static NSString *NormalizedName(NSString *name) {
+
     NSString *folded =
         [(name ?: @"") stringByFoldingWithOptions:NSDiacriticInsensitiveSearch
                                            locale:[NSLocale localeWithLocaleIdentifier:@"en"]];
@@ -11,17 +12,21 @@ static NSString *NormalizedName(NSString *name) {
 }
 
 static BOOL IsWhite(const unsigned char *pixel) {
+
     return pixel[3] >= 240 && MIN(pixel[0], MIN(pixel[1], pixel[2])) >= 240;
 }
 
 static NSImage *PreparedLogo(NSData *data) {
+
     NSBitmapImageRep *source = [[NSBitmapImageRep alloc] initWithData:data];
     CGImageRef image = source.CGImage;
     if (!image) {
+
         return nil;
     }
     size_t width = CGImageGetWidth(image), height = CGImageGetHeight(image);
     if (!width || !height || width > 2048 || height > 2048) {
+
         return nil;
     }
     size_t count = width * height;
@@ -33,6 +38,7 @@ static NSImage *PreparedLogo(NSData *data) {
                               kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
     CGColorSpaceRelease(space);
     if (!context) {
+
         return nil;
     }
     CGContextDrawImage(context, CGRectMake(0, 0, width, height), image);
@@ -42,8 +48,11 @@ static NSImage *PreparedLogo(NSData *data) {
     // and transparent logos containing white lettering.
     size_t edgeCount = 0, whiteCount = 0;
     for (size_t y = 0; y < height; y++) {
+
         for (size_t x = 0; x < width; x++) {
+
             if (x && y && x + 1 < width && y + 1 < height) {
+
                 continue;
             }
             edgeCount++;
@@ -51,26 +60,33 @@ static NSImage *PreparedLogo(NSData *data) {
         }
     }
     if (whiteCount * 4 >= edgeCount * 3) {
+
         NSMutableData *storage = [NSMutableData dataWithLength:count * sizeof(size_t)];
         size_t *queue = storage.mutableBytes, head = 0, tail = 0;
         for (size_t y = 0; y < height; y++) {
+
             for (size_t x = 0; x < width; x++) {
+
                 size_t index = y * width + x;
                 if ((x == 0 || y == 0 || x + 1 == width || y + 1 == height) &&
                     IsWhite(pixels + index * 4)) {
+
                     memset(pixels + index * 4, 0, 4);
                     queue[tail++] = index;
                 }
             }
         }
         while (head < tail) {
+
             size_t index = queue[head++], x = index % width, y = index / width;
             size_t neighbors[] = {x ? index - 1 : index, x + 1 < width ? index + 1 : index,
                                   y ? index - width : index,
                                   y + 1 < height ? index + width : index};
             for (NSUInteger side = 0; side < 4; side++) {
+
                 size_t next = neighbors[side];
                 if (IsWhite(pixels + next * 4)) {
+
                     memset(pixels + next * 4, 0, 4);
                     queue[tail++] = next;
                 }
@@ -79,8 +95,11 @@ static NSImage *PreparedLogo(NSData *data) {
     }
     size_t left = width, top = height, right = 0, bottom = 0;
     for (size_t y = 0; y < height; y++) {
+
         for (size_t x = 0; x < width; x++) {
+
             if (pixels[(y * width + x) * 4 + 3] <= 8) {
+
                 continue;
             }
             left = MIN(left, x);
@@ -91,6 +110,7 @@ static NSImage *PreparedLogo(NSData *data) {
     }
     NSImage *result = nil;
     if (left < width && top < height) {
+
         CGImageRef rendered = CGBitmapContextCreateImage(context);
         CGImageRef cropped = CGImageCreateWithImageInRect(
             rendered, CGRectMake(left, top, right - left + 1, bottom - top + 1));
@@ -105,6 +125,7 @@ static NSImage *PreparedLogo(NSData *data) {
                                   kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
         CGColorSpaceRelease(logoSpace);
         if (compact) {
+
             CGContextSetInterpolationQuality(compact, kCGInterpolationHigh);
             CGContextDrawImage(compact, CGRectMake(0, 0, logoWidth, logoHeight), cropped);
             CGImageRef bitmap = CGBitmapContextCreateImage(compact);
@@ -122,6 +143,7 @@ static NSImage *PreparedLogo(NSData *data) {
 @implementation DBAirlineLogoStore
 
 + (NSImage *)imageForCarrier:(NSString *)iata icao:(NSString *)icao name:(NSString *)name {
+
     static NSDictionary *catalog;
     static NSCache *images;
     static dispatch_once_t once;
@@ -141,14 +163,18 @@ static NSImage *PreparedLogo(NSData *data) {
     NSString *asset = icao.length == 3 ? icao : nil;
     NSArray *candidates = catalog[iata];
     if (!asset) {
+
         NSString *normalized = NormalizedName(name);
         for (NSDictionary *candidate in candidates) {
+
             if (normalized.length && [NormalizedName(candidate[@"name"]) isEqual:normalized]) {
+
                 asset = candidate[@"icao"];
                 break;
             }
         }
         if (!asset && candidates.count == 1) {
+
             asset = candidates.firstObject[@"icao"];
         }
         // For ambiguous IATA codes, the IATA-specific asset is safer than
@@ -158,14 +184,17 @@ static NSImage *PreparedLogo(NSData *data) {
     if (!asset.length ||
         [asset rangeOfCharacterFromSet:NSCharacterSet.alphanumericCharacterSet.invertedSet]
                 .location != NSNotFound) {
+
         return nil;
     }
     id cached = [images objectForKey:asset];
     if (cached) {
+
         return cached == NSNull.null ? nil : cached;
     }
     NSURL *url = [bundle URLForResource:asset withExtension:@"png" subdirectory:@"AirlineLogos"];
     if (!url && ![asset isEqual:iata]) {
+
         url = [bundle URLForResource:iata withExtension:@"png" subdirectory:@"AirlineLogos"];
     }
     NSImage *logo = url ? PreparedLogo([NSData dataWithContentsOfURL:url]) : nil;

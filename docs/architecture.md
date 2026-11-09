@@ -54,12 +54,19 @@ perform network requests or start timers.
 ## Formatting and verification
 
 Source files use four-space indentation, explicit control-flow braces and a
-100-column limit. Format Objective-C with the checked-in `.clang-format`:
+100-column limit. Leave a blank line after function and control-flow openings.
+Format Objective-C and Swift with the checked-in configurations:
 
 ```sh
 ./script/format.sh
 ./script/format.sh --check
+./script/lint.sh
 ```
+
+Install SwiftLint with `brew install swiftlint`. CI treats warnings as errors,
+including invalid linter configuration. SwiftLint checks function size,
+complexity, argument count, line length and explicit spacing rules. Compressed
+single-line control flow is rejected.
 
 `script/common-sources.sh` is the shared source manifest. Files added under
 `Sources/Airports` and `Sources/Airports/Adapters` are included in both bundles

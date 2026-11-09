@@ -8,44 +8,55 @@
 }
 
 - (instancetype)initWithLocation:(NSDictionary *)location {
+
     if ((self = [super init])) {
+
         _location = [location copy];
     }
     return self;
 }
 
 - (NSDictionary *)location {
+
     return _location;
 }
 
 - (NSDictionary *)display {
+
     return self.location[@"display"];
 }
 
 - (NSString *)compactTitleLanguage {
+
     return self.display[@"compactHeader"][@"titleLanguage"];
 }
 
 - (void)drawCompactHeaderDecorationInRect:(NSRect)rect {
+
     NSDictionary *style = self.display[@"compactHeader"];
     if (style[@"bottomRuleColor"]) {
+
         DBFillRect(NSMakeRect(0, NSMaxY(rect) - [style[@"bottomRuleHeight"] doubleValue],
                               rect.size.width, [style[@"bottomRuleHeight"] doubleValue]),
                    DBColor(style[@"bottomRuleColor"]));
     }
     if (style[@"leftRuleColor"]) {
+
         DBFillRect(NSMakeRect(0, 0, [style[@"leftRuleWidth"] doubleValue], rect.size.height),
                    DBColor(style[@"leftRuleColor"]));
     }
 }
 
 - (NSArray *)columns {
+
     return self.location[@"columns"] ?: @[ @"time", @"flight", @"destination", @"gate", @"state" ];
 }
 
 - (CGFloat)weightForColumn:(NSString *)column {
+
     NSDictionary *weights = self.location[@"display"][@"columnWeights"];
     if (weights[column]) {
+
         return [weights[column] doubleValue];
     }
     NSDictionary *defaults = @{
@@ -63,6 +74,7 @@
 }
 
 - (CGFloat)headerHeightForBounds:(NSRect)area scale:(CGFloat)scale {
+
     CGFloat fraction = [self.location[@"display"][@"headerFraction"] doubleValue];
     CGFloat height = fraction > 0 ? area.size.height * fraction * scale
                                   : [self.location[@"display"][@"headerHeight"] doubleValue];
@@ -70,11 +82,14 @@
 }
 
 - (CGFloat)columnHeaderHeight {
+
     return [self.location[@"display"][@"columnHeaderLanguages"] count] > 1 ? 46 : 30;
 }
 
 - (NSInteger)rowCountForBounds:(NSRect)area scale:(CGFloat)scale density:(NSInteger)density {
+
     if (density > 0) {
+
         return MAX(8, MIN(64, density));
     }
     NSDictionary *profile = self.location[@"display"];
@@ -90,10 +105,12 @@
 }
 
 - (void)drawHeaderInBounds:(NSRect)bounds context:(DBAirportRenderContext *)context {
+
     DBDrawProfileAirportHeader(bounds, self, context);
 }
 
 - (void)drawFooterInBounds:(NSRect)bounds context:(DBAirportRenderContext *)context {
+
     DBDrawProfileAirportFooter(bounds, self, context);
 }
 

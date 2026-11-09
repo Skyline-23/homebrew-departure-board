@@ -5,10 +5,12 @@
 @implementation DBBoardView (BoardChrome)
 
 - (void)planeAt:(NSPoint)point size:(CGFloat)size color:(NSColor *)color {
+
     DBDrawDepartureIcon(point, size, color);
 }
 
 - (void)header:(NSRect)area compact:(BOOL)compact {
+
     NSColor *white = DBColor(@"f6f7f4");
     BOOL light = [self.location[@"headerStyle"] isEqual:@"light"];
     NSColor *ink = light ? DBColor(@"111a20") : white;
@@ -35,7 +37,9 @@
 }
 
 - (void)footer:(NSRect)area text:(NSString *)message {
+
     if (self.airportAdapter) {
+
         [self.airportAdapter drawFooterInBounds:area context:[self airportRenderContext]];
         return;
     }
@@ -43,6 +47,7 @@
     CGFloat y = area.size.height - height;
     DBFillRect(NSMakeRect(0, y, area.size.width, height), DBColor(@"080d13"));
     if (message.length) {
+
         DBDrawText(message, NSMakeRect(24, y + 2, 1450, height - 3), height * .57,
                    NSColor.whiteColor, NO, NSTextAlignmentLeft, NO);
     }

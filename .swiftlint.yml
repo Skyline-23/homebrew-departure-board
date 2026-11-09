@@ -1,0 +1,72 @@
+included:
+  - Sources
+  - Tests
+excluded:
+  - work
+  - outputs
+
+opt_in_rules:
+  - closure_spacing
+  - collection_alignment
+  - contains_over_filter_count
+  - empty_count
+  - empty_string
+  - explicit_init
+  - fatal_error_message
+  - first_where
+  - force_unwrapping
+  - implicitly_unwrapped_optional
+  - last_where
+  - multiline_arguments
+  - multiline_parameters
+  - operator_usage_whitespace
+  - redundant_nil_coalescing
+  - sorted_imports
+  - toggle_bool
+  - trailing_closure
+  - unneeded_parentheses_in_closure_argument
+  - vertical_parameter_alignment_on_call
+  - yoda_condition
+
+disabled_rules:
+  # A blank line after each function opening is intentional in this project.
+  - vertical_whitespace_opening_braces
+
+line_length:
+  warning: 100
+  error: 100
+function_body_length:
+  warning: 40
+  error: 40
+function_parameter_count:
+  warning: 5
+  error: 5
+cyclomatic_complexity:
+  warning: 8
+  error: 8
+type_body_length:
+  warning: 200
+  error: 200
+file_length:
+  warning: 300
+  error: 300
+nesting:
+  type_level: 2
+  function_level: 3
+
+custom_rules:
+  multiline_control_flow:
+    name: Multiline control flow
+    regex: '\b(?:if|guard|else)\b[^\n]*\{[^\n}]+\}'
+    message: Expand control-flow bodies onto separate lines.
+    severity: error
+  function_opening_blank_line:
+    name: Function opening blank line
+    regex: '(?m)^[ \t]*(?:(?:private|fileprivate|public|internal|static|class|mutating|override|final)\s+)*func\b[^{}]*\{[ \t]*\n(?![ \t]*\n)'
+    message: Leave one blank line after a function opening brace.
+    severity: error
+  control_opening_blank_line:
+    name: Control-flow opening blank line
+    regex: '(?m)^[ \t]*(?:\}\s*)?(?:if|else|guard|for|while|switch|do|catch|defer)\b[^{}]*\{[ \t]*\n(?![ \t]*\n)'
+    message: Leave one blank line after a control-flow opening brace.
+    severity: error

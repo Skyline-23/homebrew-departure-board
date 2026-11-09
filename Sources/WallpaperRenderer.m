@@ -6,22 +6,26 @@
 @implementation DBWallpaperRenderer
 
 + (NSString *)rootPath {
+
     return [[LiveFlightStore userHome]
         stringByAppendingPathComponent:@"Library/Application Support/DepartureBoard/Wallpapers"];
 }
 
 + (NSString *)identifierForScreen:(NSScreen *)screen {
+
     CGDirectDisplayID display = [screen.deviceDescription[@"NSScreenNumber"] unsignedIntValue];
     CFUUIDRef uuid = CGDisplayCreateUUIDFromDisplayID(display);
     NSString *identifier = uuid ? CFBridgingRelease(CFUUIDCreateString(NULL, uuid))
                                 : [NSString stringWithFormat:@"%u", display];
     if (uuid) {
+
         CFRelease(uuid);
     }
     return identifier;
 }
 
 + (void)removeLegacyHistory {
+
     NSString *domain = [[LiveFlightStore userHome]
         stringByAppendingPathComponent:
             @"Library/Containers/com.apple.wallpaper.extension.image/Data/Library/Preferences/"
@@ -29,11 +33,13 @@
     NSArray *entries = CFBridgingRelease(CFPreferencesCopyAppValue(
         CFSTR("ChoiceRequests.ImageFiles"), (__bridge CFStringRef)domain));
     if (![entries isKindOfClass:NSArray.class]) {
+
         return;
     }
     NSString *legacyRoot = [self.rootPath stringByAppendingString:@"/Frames/"];
     NSMutableArray *retained = NSMutableArray.new;
     for (id entry in entries) {
+
         NSDictionary *record = [entry isKindOfClass:NSData.class]
                                    ? [NSPropertyListSerialization propertyListWithData:entry
                                                                                options:0
@@ -46,15 +52,19 @@
         NSURL *url =
             [urlString isKindOfClass:NSString.class] ? [NSURL URLWithString:urlString] : nil;
         if (![url.path hasPrefix:legacyRoot]) {
+
             [retained addObject:entry];
         }
     }
     if (retained.count == entries.count) {
+
         return;
     }
     NSString *backup = [self.rootPath stringByAppendingPathComponent:@"LegacyHistoryBackup.plist"];
     if (![NSFileManager.defaultManager fileExistsAtPath:backup]) {
+
         if (![entries writeToFile:backup atomically:YES]) {
+
             return;
         }
         [NSFileManager.defaultManager setAttributes:@{NSFilePosixPermissions : @0600}
@@ -67,8 +77,10 @@
 }
 
 + (BOOL)renderRequest:(NSDictionary *)request {
+
     if (![request isKindOfClass:NSDictionary.class] ||
         ![request[@"screens"] isKindOfClass:NSArray.class]) {
+
         return NO;
     }
     NSFileManager *files = NSFileManager.defaultManager;
@@ -77,6 +89,7 @@
             withIntermediateDirectories:YES
                              attributes:nil
                                   error:NULL]) {
+
         return NO;
     }
     NSString *originalsPath = [self.rootPath stringByAppendingPathComponent:@"Originals.plist"];
@@ -86,25 +99,32 @@
     BOOL success = YES;
     NSMutableDictionary<NSDictionary *, NSString *> *renderedScreens = NSMutableDictionary.new;
     for (NSDictionary *item in request[@"screens"]) {
+
         @autoreleasepool {
+
             if (![item isKindOfClass:NSDictionary.class] ||
                 ![item[@"identifier"] isKindOfClass:NSString.class] ||
                 ![item[@"board"] isKindOfClass:NSDictionary.class]) {
+
                 return NO;
             }
             NSScreen *screen = nil;
             for (NSScreen *candidate in NSScreen.screens) {
+
                 if ([[self identifierForScreen:candidate] isEqual:item[@"identifier"]]) {
+
                     screen = candidate;
                     break;
                 }
             }
             if (!screen) {
+
                 continue;
             }
             NSString *identifier = item[@"identifier"];
             NSURL *current = [NSWorkspace.sharedWorkspace desktopImageURLForScreen:screen];
             if (!originals[identifier] && current && ![current.path hasPrefix:self.rootPath]) {
+
                 NSDictionary *options =
                     [NSWorkspace.sharedWorkspace desktopImageOptionsForScreen:screen];
                 originals[identifier] = @{
@@ -128,21 +148,25 @@
             NSString *rendered = renderedScreens[renderKey];
             BOOL written;
             if (rendered) {
+
                 // Equal Retina displays share one render and PNG encoding.
                 NSData *png = [NSData dataWithContentsOfFile:rendered
                                                      options:NSDataReadingMappedIfSafe
                                                        error:NULL];
                 written = [png writeToFile:path atomically:YES];
             } else {
+
                 DBBoardView *board = [[DBBoardView alloc]
                     initWithFrame:NSMakeRect(0, 0, pixels.width, pixels.height)];
                 [board applySnapshotConfiguration:item[@"board"]];
                 written = [board writeSnapshot:path size:pixels];
                 if (written) {
+
                     renderedScreens[renderKey] = path;
                 }
             }
             if (!written) {
+
                 success = NO;
                 continue;
             }
@@ -158,6 +182,7 @@
         }
     }
     if (success) {
+
         [self removeLegacyHistory];
     }
     return success;
