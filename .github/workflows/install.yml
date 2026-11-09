@@ -1,0 +1,33 @@
+name: Test Homebrew installation
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Expected published version (empty means latest)
+        required: false
+        type: string
+  workflow_run:
+    workflows: [Release macOS screen saver]
+    types: [completed]
+permissions:
+  contents: read
+jobs:
+  install:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [macos-15, macos-15-intel]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install published cask and exercise first launch
+        env:
+          EXPECTED_VERSION: ${{ inputs.version }}
+        run: ./script/test-installation.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: installation-${{ matrix.runner }}
+          path: work/installation-checks/
