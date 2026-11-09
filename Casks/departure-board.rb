@@ -1,6 +1,6 @@
 cask "departure-board" do
-  version "0.2.2"
-  sha256 "75e21c9260bb72625078ea386703d354e2ef268e0bc0786cd01180f347251493"
+  version "0.3.0"
+  sha256 "74c13444e2a4a52eeef37a2ea4af04a917ff4b2421c075b8722140bc8ce09808"
 
   url "https://github.com/Skyline-23/homebrew-departure-board/releases/download/v#{version}/DepartureBoard-#{version}-universal.zip"
   name "Departure Board"
@@ -17,8 +17,8 @@ cask "departure-board" do
     args: [
       "-c",
       <<~EOS,
-        /bin/launchctl bootout "gui/$(id -u)/io.skyline.departureboard.refresh" >/dev/null 2>&1 || true
-        /bin/rm -f "$HOME/Library/LaunchAgents/io.skyline.departureboard.refresh.plist"
+        /bin/launchctl bootout "gui/$(id -u)/com.skyline23.departureboard.refresh" >/dev/null 2>&1 || true
+        /bin/rm -f "$HOME/Library/LaunchAgents/com.skyline23.departureboard.refresh.plist"
       EOS
     ],
     sudo: false,
@@ -26,12 +26,12 @@ cask "departure-board" do
 
   zap trash: [
     "~/Library/Application Support/DepartureBoard",
-    "~/Library/LaunchAgents/io.skyline.departureboard.refresh.plist",
-    "~/Library/Preferences/io.skyline.departureboard.plist",
+    "~/Library/LaunchAgents/com.skyline23.departureboard.refresh.plist",
+    "~/Library/Preferences/com.skyline23.departureboard.plist",
   ]
 
   caveats <<~EOS
     Choose Departure Board in System Settings > Screen Saver.
-    Use the companion app to configure the live-data gateway.
+    Use the companion app to enter your own AeroDataBox RapidAPI key.
   EOS
 end

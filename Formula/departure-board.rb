@@ -1,16 +1,15 @@
 class DepartureBoard < Formula
   desc "Airport and railway boards as a native macOS screen saver"
   homepage "https://github.com/Skyline-23/homebrew-departure-board"
-  url "https://github.com/Skyline-23/homebrew-departure-board/releases/download/v0.2.2/DepartureBoard-0.2.2-source.tar.gz"
-  sha256 "b4fda2494bb3df92e971cd9a719e65dba4629aacaec9bed38611551431e42bba"
-  version "0.2.2"
+  url "https://github.com/Skyline-23/homebrew-departure-board/releases/download/v0.3.0/DepartureBoard-0.3.0-source.tar.gz"
+  sha256 "5174fae6bcaa5c3da4af30241c5a97c1185e042cca336ec4ce73f15a66c83f3b"
+  version "0.3.0"
   license "MIT"
 
   depends_on macos: :monterey
 
   def install
     ENV["VERSION"] = version.to_s
-    ENV["BUILD_ARCH"] = Hardware::CPU.arch.to_s
     system "bash", "script/build.sh"
     libexec.install "outputs/DepartureBoard/dist/Departure Board.app"
     libexec.install "outputs/DepartureBoard/dist/Departure Board.saver"
@@ -28,8 +27,8 @@ class DepartureBoard < Formula
     <<~EOS
       Built locally from source; no Gatekeeper bypass is needed.
       Run departure-board once to register it in Applications and Screen Savers.
-      Select Departure Board in System Settings > Screen Saver.
-      Configure the live-data gateway in the companion app.
+      Select Departure Board in System Settings > Wallpaper > Screen Saver.
+      Enter your personal AeroDataBox RapidAPI key in Options or the companion app.
     EOS
   end
 
