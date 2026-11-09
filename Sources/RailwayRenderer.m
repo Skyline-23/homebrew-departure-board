@@ -1,6 +1,5 @@
 #import "BoardViewInternal.h"
 #import "DrawingSupport.h"
-#import <CoreText/CoreText.h>
 
 @implementation DBBoardView (RailwayRenderer)
 

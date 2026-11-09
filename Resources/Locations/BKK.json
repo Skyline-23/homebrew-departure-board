@@ -112,12 +112,10 @@
     "gate",
     "state"
   ],
-  "twoPanels": false,
   "headerStyle": "dark",
   "displayNameKey": "location.BKK",
   "titleKey": "heading.departures",
   "display": {
-    "panelCount": 4,
     "rowCount": 27,
     "headerHeight": 96,
     "headerInk": "efd555",

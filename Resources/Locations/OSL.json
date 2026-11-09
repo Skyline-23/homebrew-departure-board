@@ -118,12 +118,10 @@
     "counter",
     "state"
   ],
-  "twoPanels": false,
   "headerStyle": "dark",
   "displayNameKey": "location.OSL",
   "titleKey": "heading.departures",
   "display": {
-    "panelCount": 2,
     "rowCount": 24,
     "headerHeight": 96,
     "headerInk": "ffffff",

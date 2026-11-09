@@ -1,10 +1,9 @@
 #import "BackgroundAgent.h"
+#import "CommandLine.h"
 #import "DepartureBoardView.h"
 #import "DesktopController.h"
 #import "LiveFlightStore.h"
 #import "SettingsStore.h"
-#import "UserInstallation.h"
-#import "WallpaperRenderer.h"
 #import <errno.h>
 #import <signal.h>
 #import <unistd.h>
@@ -22,75 +21,8 @@
 @implementation DepartureBoardApp
 - (void)applicationDidFinishLaunching:(NSNotification *)notification {
     NSArray<NSString *> *arguments = NSProcessInfo.processInfo.arguments;
-    NSUInteger registration = [arguments indexOfObject:@"--register-bundles"];
-    if (registration != NSNotFound && registration + 1 < arguments.count) {
-        NSError *error = nil;
-        if (!RegisterUserInstallation(arguments[registration + 1], &error)) {
-            NSLog(@"Screen saver registration failed: %@",
-                  error.localizedDescription ?: @"Invalid installation root");
-        }
-    }
-    BOOL needsPreview = ![arguments containsObject:@"--background"] ||
-                        [arguments containsObject:@"--snapshot"] ||
-                        [arguments containsObject:@"--snapshot-all"];
-    if (!self.board && needsPreview)
-        self.board = [[DBBoardView alloc] initWithFrame:NSMakeRect(0, 0, 1440, 900)];
-    NSUInteger index = [arguments indexOfObject:@"--location"];
-    if (index != NSNotFound && index + 1 < arguments.count)
-        self.board.locationCode = arguments[index + 1];
-    index = [arguments indexOfObject:@"--style"];
-    if (index != NSNotFound && index + 1 < arguments.count)
-        self.board.displayStyle = arguments[index + 1];
-    index = [arguments indexOfObject:@"--language"];
-    if (index != NSNotFound && index + 1 < arguments.count)
-        self.board.languageMode = arguments[index + 1];
-    index = [arguments indexOfObject:@"--snapshot"];
-    if (index != NSNotFound && index + 1 < arguments.count) {
-        // A fixed instant makes design review and regression snapshots reproducible.
-        if ([arguments containsObject:@"--live-data"])
-            self.board.useSampleData = NO;
-        else
-            self.board.referenceDate = [NSDate dateWithTimeIntervalSince1970:1794214800];
-        NSSize size = NSMakeSize(1920, 1080);
-        NSUInteger dimensions = [arguments indexOfObject:@"--snapshot-size"];
-        if (dimensions != NSNotFound && dimensions + 1 < arguments.count) {
-            NSArray *parts = [arguments[dimensions + 1] componentsSeparatedByString:@"x"];
-            if (parts.count == 2 && [parts[0] doubleValue] > 0 && [parts[1] doubleValue] > 0)
-                size = NSMakeSize([parts[0] doubleValue], [parts[1] doubleValue]);
-        }
-        BOOL result = [self.board writeSnapshot:arguments[index + 1] size:size];
-        fprintf(result ? stdout : stderr, "Snapshot %s: %s\n", result ? "saved" : "failed",
-                arguments[index + 1].UTF8String);
-        [NSApp terminate:nil];
-        return;
-    }
-    index = [arguments indexOfObject:@"--snapshot-all"];
-    if (index != NSNotFound && index + 1 < arguments.count) {
-        NSString *directory = arguments[index + 1];
-        [NSFileManager.defaultManager createDirectoryAtPath:directory
-                                withIntermediateDirectories:YES
-                                                 attributes:nil
-                                                      error:NULL];
-        self.board.referenceDate = [NSDate dateWithTimeIntervalSince1970:1794214800];
-        self.board.languageMode = @"native";
-        BOOL success = YES;
-        for (NSDictionary *location in DBLocations()) {
-            self.board.locationCode = location[@"code"];
-            NSString *path = [directory
-                stringByAppendingPathComponent:[location[@"code"] stringByAppendingString:@".png"]];
-            NSSize size = NSMakeSize(1920, 1080);
-            if ([arguments containsObject:@"--reference-size"] && location[@"display"][@"referenceAspect"]) {
-                CGFloat aspect = [location[@"display"][@"referenceAspect"] doubleValue];
-                size = aspect >= 1 ? NSMakeSize(1600, round(1600 / aspect))
-                                   : NSMakeSize(round(1200 * aspect), 1200);
-            }
-            success &= [self.board writeSnapshot:path size:size];
-        }
-        fprintf(success ? stdout : stderr, "Rendered %lu board snapshots: %s\n",
-                (unsigned long)DBLocations().count, directory.UTF8String);
-        [NSApp terminate:nil];
-        return;
-    }
+    if (!self.board && ![arguments containsObject:@"--background"])
+        self.board = [DBCommandLine boardWithArguments:arguments];
     NSMutableDictionary *currentSettings = [DBSettingsStore.settings mutableCopy];
     currentSettings[@"companionPath"] = NSBundle.mainBundle.bundlePath;
     [DBSettingsStore saveSettings:currentSettings replacementAPIKey:nil error:NULL];
@@ -394,67 +326,16 @@ static BOOL HandleRunningApplication(NSArray<NSString *> *arguments) {
 
 int main(int argc, const char *argv[]) {
     @autoreleasepool {
-        if (argc == 3 && strcmp(argv[1], "--install-bundles") == 0) {
-            NSError *error = nil;
-            BOOL installed = RegisterUserInstallation([NSString stringWithUTF8String:argv[2]], &error);
-            if (!installed)
-                fprintf(stderr, "%s\n",
-                        error.localizedDescription.UTF8String ?: "Invalid installation root.");
-            return installed ? 0 : 1;
-        }
-        if (argc > 2 && strcmp(argv[1], "--import-api-key") == 0) {
-            NSString *path = [NSString stringWithUTF8String:argv[2]];
-            NSDictionary *attributes = [NSFileManager.defaultManager attributesOfItemAtPath:path error:NULL];
-            if ([attributes[NSFileOwnerAccountID] unsignedIntValue] != getuid() ||
-                ([attributes[NSFilePosixPermissions] unsignedIntValue] & 0077) != 0)
-                return 1;
-            NSString *key = [[NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:NULL]
-                stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
-            return [LiveFlightStore saveAPIKey:key error:NULL] ? 0 : 1;
-        }
-        if (argc == 3 && strcmp(argv[1], "--render-wallpapers") == 0) {
-            NSData *data = [[NSString stringWithUTF8String:argv[2]] dataUsingEncoding:NSUTF8StringEncoding];
-            NSDictionary *request = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
-            if (![request isKindOfClass:NSDictionary.class])
-                return 1;
-            if (![request[@"force"] boolValue] &&
-                ([LiveFlightStore screenSaverIsActive] ||
-                 CGEventSourceSecondsSinceLastEventType(kCGEventSourceStateCombinedSessionState,
-                                                        kCGAnyInputEventType) >= 30))
-                return 0;
-            [NSApplication.sharedApplication setActivationPolicy:NSApplicationActivationPolicyProhibited];
-            return [DBWallpaperRenderer renderRequest:request] ? 0 : 1;
-        }
-        if (argc > 1 && strcmp(argv[1], "--version") == 0) {
-            puts([NSBundle.mainBundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"]
-                     ? [[NSBundle.mainBundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"]
-                           UTF8String]
-                     : "development");
-            return 0;
-        }
-        if (argc > 1 &&
-            (strcmp(argv[1], "--refresh-data") == 0 || strcmp(argv[1], "--maintain-background") == 0)) {
-            [DBBackgroundAgent performMaintenance];
-            return 0;
-        }
-        if (argc > 2 && strcmp(argv[1], "--refresh-airport") == 0) {
-            NSError *error = nil;
-            BOOL refreshed = [LiveFlightStore refreshAirport:[NSString stringWithUTF8String:argv[2]]
-                                                       error:&error];
-            if (!refreshed)
-                fprintf(stderr, "%s\n",
-                        error.localizedDescription.UTF8String ?: "Could not refresh flights.");
-            return refreshed ? 0 : 1;
-        }
+        NSArray<NSString *> *arguments = NSProcessInfo.processInfo.arguments;
+        NSNumber *commandResult = [DBCommandLine runWithArguments:arguments];
+        if (commandResult)
+            return commandResult.intValue;
         if (!DBSettingsStore.settings[@"hasAPIKey"])
             [DBSettingsStore saveSettings:DBSettingsStore.settings replacementAPIKey:nil error:NULL];
-        NSArray<NSString *> *arguments = NSProcessInfo.processInfo.arguments;
-        BOOL snapshot =
-            [arguments containsObject:@"--snapshot"] || [arguments containsObject:@"--snapshot-all"];
-        if (!snapshot && HandleRunningApplication(arguments))
+        if (HandleRunningApplication(arguments))
             return 0;
         NSApplication *app = NSApplication.sharedApplication;
-        [app setActivationPolicy:snapshot || [arguments containsObject:@"--background"]
+        [app setActivationPolicy:[arguments containsObject:@"--background"]
                                      ? NSApplicationActivationPolicyAccessory
                                      : NSApplicationActivationPolicyRegular];
         __attribute__((objc_precise_lifetime)) DepartureBoardApp *delegate = DepartureBoardApp.new;

@@ -117,12 +117,10 @@
     "gate",
     "state"
   ],
-  "twoPanels": true,
   "headerStyle": "dark",
   "displayNameKey": "location.PVG",
   "titleKey": "heading.departures",
   "display": {
-    "panelCount": 3,
     "rowCount": 19,
     "headerHeight": 70,
     "headerInk": "e9e6c9",

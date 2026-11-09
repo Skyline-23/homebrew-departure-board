@@ -228,12 +228,10 @@
     "gate",
     "state"
   ],
-  "twoPanels": true,
   "headerStyle": "dark",
   "displayNameKey": "location.ICN",
   "titleKey": "heading.departures",
   "display": {
-    "panelCount": 2,
     "rowCount": 33,
     "headerHeight": 96,
     "headerInk": "ffffff",

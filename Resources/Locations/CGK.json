@@ -118,12 +118,10 @@
     "gate",
     "state"
   ],
-  "twoPanels": false,
   "headerStyle": "dark",
   "displayNameKey": "location.CGK",
   "titleKey": "heading.departures",
   "display": {
-    "panelCount": 2,
     "rowCount": 30,
     "headerHeight": 96,
     "headerInk": "ffffff",

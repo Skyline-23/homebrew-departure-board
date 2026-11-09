@@ -5,6 +5,18 @@
 #import <sys/sysctl.h>
 #import <unistd.h>
 
+static BOOL RunLaunchctl(NSArray<NSString *> *arguments) {
+    NSTask *task = NSTask.new;
+    task.executableURL = [NSURL fileURLWithPath:@"/bin/launchctl"];
+    task.arguments = arguments;
+    task.standardOutput = NSFileHandle.fileHandleWithNullDevice;
+    task.standardError = NSFileHandle.fileHandleWithNullDevice;
+    if (![task launchAndReturnError:NULL])
+        return NO;
+    [task waitUntilExit];
+    return task.terminationStatus == 0;
+}
+
 @implementation DBBackgroundAgent
 + (NSString *)sessionIdentifier {
     char value[128] = {0};
@@ -107,15 +119,9 @@
     NSString *legacyPath = [folder stringByAppendingPathComponent:@"io.skyline.departureboard.refresh.plist"];
     NSDictionary *legacyJob = [NSDictionary dictionaryWithContentsOfFile:legacyPath];
     if ([legacyJob[@"Label"] isEqual:@"io.skyline.departureboard.refresh"]) {
-        NSTask *stopLegacy = NSTask.new;
-        stopLegacy.executableURL = [NSURL fileURLWithPath:@"/bin/launchctl"];
-        stopLegacy.arguments = @[
+        RunLaunchctl(@[
             @"bootout", [NSString stringWithFormat:@"gui/%u/io.skyline.departureboard.refresh", getuid()]
-        ];
-        stopLegacy.standardOutput = NSFileHandle.fileHandleWithNullDevice;
-        stopLegacy.standardError = NSFileHandle.fileHandleWithNullDevice;
-        [stopLegacy launchAndReturnError:NULL];
-        [stopLegacy waitUntilExit];
+        ]);
         [NSFileManager.defaultManager removeItemAtPath:legacyPath error:NULL];
     }
     NSString *path = [folder stringByAppendingPathComponent:@"com.skyline23.departureboard.refresh.plist"];
@@ -141,28 +147,14 @@
         @"ProcessType" : @"Background"
     };
     BOOL unchanged = [[NSDictionary dictionaryWithContentsOfFile:path] isEqual:job];
-    [job writeToFile:path atomically:YES];
     NSString *service = [NSString stringWithFormat:@"gui/%u/com.skyline23.departureboard.refresh", getuid()];
-    NSTask *check = NSTask.new;
-    check.executableURL = [NSURL fileURLWithPath:@"/bin/launchctl"];
-    check.arguments = @[ @"print", service ];
-    check.standardOutput = NSFileHandle.fileHandleWithNullDevice;
-    check.standardError = NSFileHandle.fileHandleWithNullDevice;
-    [check launchAndReturnError:NULL];
-    [check waitUntilExit];
-    if (unchanged && check.terminationStatus == 0)
+    BOOL registered = RunLaunchctl(@[ @"print", service ]);
+    if (unchanged && registered)
         return;
-    if (check.terminationStatus == 0) {
-        NSTask *stop = NSTask.new;
-        stop.executableURL = check.executableURL;
-        stop.arguments = @[ @"bootout", service ];
-        stop.standardError = NSFileHandle.fileHandleWithNullDevice;
-        [stop launchAndReturnError:NULL];
-        [stop waitUntilExit];
-    }
-    NSTask *task = NSTask.new;
-    task.executableURL = [NSURL fileURLWithPath:@"/bin/launchctl"];
-    task.arguments = @[ @"bootstrap", [NSString stringWithFormat:@"gui/%u", getuid()], path ];
-    [task launchAndReturnError:NULL];
+    if (![job writeToFile:path atomically:YES])
+        return;
+    if (registered)
+        RunLaunchctl(@[ @"bootout", service ]);
+    RunLaunchctl(@[ @"bootstrap", [NSString stringWithFormat:@"gui/%u", getuid()], path ]);
 }
 @end

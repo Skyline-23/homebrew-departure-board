@@ -1,6 +1,5 @@
 #import "DrawingSupport.h"
 #import "DepartureBoardView.h"
-#import <CoreText/CoreText.h>
 
 NSColor *DBColor(NSString *hex) {
     unsigned value = 0;

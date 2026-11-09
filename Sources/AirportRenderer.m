@@ -185,14 +185,11 @@ static void DrawAirlineLogo(NSImage *logo, NSRect bounds) {
     [self drawAirportHeader:area];
     // A physical display gets one panel. Long reference walls are cropped to
     // that panel instead of being shrunk or repeated across the desktop.
-    NSInteger panels = 1;
     NSInteger rowCount = [self airportRowCountForArea:area];
-    NSInteger pages = MAX(1, (self.rows.count + rowCount * panels - 1) / (rowCount * panels));
+    NSInteger pages = MAX(1, (self.rows.count + rowCount - 1) / rowCount);
     self.currentPage = (NSInteger)((NSProcessInfo.processInfo.systemUptime - self.startTime) / 15) % pages;
-    self.currentPanelCount = panels;
-    CGFloat panelGap = panels > 1 ? 12 : 0;
     CGFloat margin = 20;
-    CGFloat panelWidth = (area.size.width - 2 * margin - panelGap * (panels - 1)) / panels;
+    CGFloat panelWidth = area.size.width - 2 * margin;
     CGFloat headingY = [self airportHeaderHeight:area] + 4;
     CGFloat headingHeight = [self airportColumnHeaderHeight];
     CGFloat tableY = headingY + headingHeight;
@@ -206,52 +203,47 @@ static void DrawAirlineLogo(NSImage *logo, NSRect bounds) {
     for (NSString *column in columns)
         totalWeight += [self weightFor:column];
 
-    for (NSInteger panel = 0; panel < panels; panel++) {
-        CGFloat left = margin + panel * (panelWidth + panelGap);
-        DBFillRect(NSMakeRect(left, headingY, panelWidth, headingHeight - 2),
-                   DBColor(profile[@"columnBand"]));
-        CGFloat columnX = left;
+    CGFloat left = margin;
+    DBFillRect(NSMakeRect(left, headingY, panelWidth, headingHeight - 2), DBColor(profile[@"columnBand"]));
+    CGFloat columnX = left;
+    for (NSString *column in columns) {
+        CGFloat width = panelWidth * [self weightFor:column] / totalWeight;
+        NSArray *languages = profile[@"columnHeaderLanguages"];
+        NSUInteger lines = MAX(1, languages.count);
+        NSString *key = profile[@"columnLabels"][column] ?: [@"column." stringByAppendingString:column];
+        for (NSUInteger line = 0; line < lines; line++) {
+            NSString *label =
+                languages.count ? DBBoardString(key, languages[line]) : [self columnLabel:column];
+            DBDrawTextWithFont(label,
+                               NSMakeRect(columnX + 5, headingY + line * headingHeight / lines, width - 8,
+                                          headingHeight / lines - 2),
+                               DBNamedFont(profile[@"bodyFont"], lines > 1 ? 18 : MIN(24, panelWidth / 37)),
+                               DBColor(line ? profile[@"headerSecondaryInk"] ?: profile[@"columnInk"]
+                                            : profile[@"columnInk"]),
+                               NSTextAlignmentLeft);
+        }
+        columnX += width;
+    }
+    for (NSInteger index = 0; index < rowCount; index++) {
+        NSUInteger rowIndex = (NSUInteger)(self.currentPage * rowCount + index);
+        if (rowIndex >= self.rows.count)
+            break;
+        NSDictionary *row = self.rows[rowIndex];
+        CGFloat top = tableY + index * rowHeight;
+        NSArray *rowColors = profile[@"rowColors"];
+        DBFillRect(NSMakeRect(left, top, panelWidth, rowHeight - 1), DBColor(rowColors[index % 2]));
+        columnX = left;
         for (NSString *column in columns) {
             CGFloat width = panelWidth * [self weightFor:column] / totalWeight;
-            NSArray *languages = profile[@"columnHeaderLanguages"];
-            NSUInteger lines = MAX(1, languages.count);
-            NSString *key = profile[@"columnLabels"][column] ?: [@"column." stringByAppendingString:column];
-            for (NSUInteger line = 0; line < lines; line++) {
-                NSString *label =
-                    languages.count ? DBBoardString(key, languages[line]) : [self columnLabel:column];
-                DBDrawTextWithFont(
-                    label,
-                    NSMakeRect(columnX + 5, headingY + line * headingHeight / lines, width - 8,
-                               headingHeight / lines - 2),
-                    DBNamedFont(profile[@"bodyFont"], lines > 1 ? 18 : MIN(24, panelWidth / 37)),
-                    DBColor(line ? profile[@"headerSecondaryInk"] ?: profile[@"columnInk"]
-                                 : profile[@"columnInk"]),
-                    NSTextAlignmentLeft);
-            }
+            NSRect cell = NSMakeRect(columnX + 5, top + 1, width - 9, rowHeight - 3);
+            NSString *columnFill = profile[@"columnFills"][column];
+            if (columnFill)
+                DBFillRect(NSMakeRect(columnX, top, width - 1, rowHeight - 1), DBColor(columnFill));
+            if (profile[@"verticalRules"])
+                DBFillRect(NSMakeRect(columnX + width - 1, top, 1, rowHeight),
+                           DBColor(profile[@"verticalRules"]));
+            [self drawAirportCell:row column:column rect:cell fontSize:fontSize rowIndex:index];
             columnX += width;
-        }
-        for (NSInteger index = 0; index < rowCount; index++) {
-            NSUInteger rowIndex =
-                (NSUInteger)(self.currentPage * rowCount * panels + index + panel * rowCount);
-            if (rowIndex >= self.rows.count)
-                break;
-            NSDictionary *row = self.rows[rowIndex];
-            CGFloat top = tableY + index * rowHeight;
-            NSArray *rowColors = profile[@"rowColors"];
-            DBFillRect(NSMakeRect(left, top, panelWidth, rowHeight - 1), DBColor(rowColors[index % 2]));
-            columnX = left;
-            for (NSString *column in columns) {
-                CGFloat width = panelWidth * [self weightFor:column] / totalWeight;
-                NSRect cell = NSMakeRect(columnX + 5, top + 1, width - 9, rowHeight - 3);
-                NSString *columnFill = profile[@"columnFills"][column];
-                if (columnFill)
-                    DBFillRect(NSMakeRect(columnX, top, width - 1, rowHeight - 1), DBColor(columnFill));
-                if (profile[@"verticalRules"])
-                    DBFillRect(NSMakeRect(columnX + width - 1, top, 1, rowHeight),
-                               DBColor(profile[@"verticalRules"]));
-                [self drawAirportCell:row column:column rect:cell fontSize:fontSize rowIndex:index];
-                columnX += width;
-            }
         }
     }
     if (!self.rows.count) {

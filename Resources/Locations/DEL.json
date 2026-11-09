@@ -119,12 +119,10 @@
     "gate",
     "state"
   ],
-  "twoPanels": false,
   "headerStyle": "dark",
   "displayNameKey": "location.DEL",
   "titleKey": "heading.departures",
   "display": {
-    "panelCount": 2,
     "rowCount": 17,
     "headerHeight": 96,
     "headerInk": "d9b737",

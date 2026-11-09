@@ -112,12 +112,10 @@
     "gate",
     "state"
   ],
-  "twoPanels": false,
   "headerStyle": "dark",
   "displayNameKey": "location.DXB",
   "titleKey": "heading.departures",
   "display": {
-    "panelCount": 2,
     "rowCount": 26,
     "headerHeight": 96,
     "headerInk": "ffffff",

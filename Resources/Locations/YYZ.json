@@ -116,12 +116,10 @@
     "state",
     "gate"
   ],
-  "twoPanels": false,
   "headerStyle": "dark",
   "displayNameKey": "location.YYZ",
   "titleKey": "heading.departures",
   "display": {
-    "panelCount": 2,
     "rowCount": 18,
     "headerHeight": 96,
     "headerInk": "ffffff",

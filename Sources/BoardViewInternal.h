@@ -6,13 +6,11 @@
 @property(nonatomic, strong) NSDictionary *location;
 @property(nonatomic, strong) NSDictionary *loadedSettings;
 @property(nonatomic) NSInteger currentPage;
-@property(nonatomic) NSInteger currentPanelCount;
 @property(nonatomic, strong) NSArray *rows;
 @property(nonatomic, copy) NSString *currentLanguage;
 @property(nonatomic, copy) NSString *emptyMessageKey;
 @property(nonatomic) NSTimeInterval startTime;
 @property(nonatomic) NSTimeInterval lastRenderedSecond;
-@property(nonatomic) NSInteger languageCycle;
 @property(nonatomic) NSInteger pageCycle;
 @property(nonatomic, strong) NSMutableDictionary *flapStates;
 @property(nonatomic, strong) NSWindow *optionsWindow;

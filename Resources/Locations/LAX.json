@@ -112,12 +112,10 @@
     "gate",
     "state"
   ],
-  "twoPanels": false,
   "headerStyle": "dark",
   "displayNameKey": "location.LAX",
   "titleKey": "heading.departures",
   "display": {
-    "panelCount": 2,
     "rowCount": 25,
     "headerHeight": 96,
     "headerInk": "dfdccb",

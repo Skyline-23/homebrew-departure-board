@@ -1,5 +1,4 @@
 #import "LiveFlightStore.h"
-#import "BackgroundAgent.h"
 #import "DepartureBoardView.h"
 #import "DestinationStore.h"
 #import "SettingsStore.h"
@@ -583,7 +582,4 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
     return NO;
 }
 
-+ (void)configureBackgroundRefresh {
-    [DBBackgroundAgent configure];
-}
 @end

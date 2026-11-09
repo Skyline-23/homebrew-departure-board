@@ -116,12 +116,10 @@
     "state",
     "gate"
   ],
-  "twoPanels": false,
   "headerStyle": "dark",
   "displayNameKey": "location.AKL",
   "titleKey": "heading.departures",
   "display": {
-    "panelCount": 2,
     "rowCount": 25,
     "headerHeight": 96,
     "headerInk": "ffffff",

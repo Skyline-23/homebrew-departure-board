@@ -117,12 +117,10 @@
     "gate",
     "state"
   ],
-  "twoPanels": false,
   "headerStyle": "dark",
   "displayNameKey": "location.GRU",
   "titleKey": "heading.departures",
   "display": {
-    "panelCount": 3,
     "rowCount": 29,
     "headerHeight": 96,
     "headerInk": "14292b",

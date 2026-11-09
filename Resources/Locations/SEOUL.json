@@ -122,7 +122,6 @@
     "gate",
     "state"
   ],
-  "twoPanels": false,
   "headerStyle": "dark",
   "displayNameKey": "location.SEOUL",
   "titleKey": "heading.train"

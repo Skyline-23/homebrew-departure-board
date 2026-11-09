@@ -29,7 +29,6 @@ for code in codes:
     assert location["routes"]
     if location["kind"] == "airport":
         assert location["reference"]["source"]
-        assert location["display"]["panelCount"] >= 1
         assert location["display"]["rowCount"] >= 8
         assert location["display"]["detailRevision"] >= 2
         assert (location["display"].get("headerLayout") or

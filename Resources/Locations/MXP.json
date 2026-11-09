@@ -168,12 +168,10 @@
     "gate",
     "state"
   ],
-  "twoPanels": false,
   "headerStyle": "dark",
   "displayNameKey": "location.MXP",
   "titleKey": "heading.departures",
   "display": {
-    "panelCount": 2,
     "rowCount": 36,
     "headerHeight": 96,
     "headerInk": "ffffff",

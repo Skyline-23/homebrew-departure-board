@@ -212,12 +212,10 @@
     "gate",
     "state"
   ],
-  "twoPanels": false,
   "headerStyle": "dark",
   "displayNameKey": "location.NRT",
   "titleKey": "heading.departures",
   "display": {
-    "panelCount": 2,
     "rowCount": 20,
     "headerHeight": 70,
     "headerInk": "ffffff",

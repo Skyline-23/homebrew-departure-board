@@ -217,12 +217,10 @@
     "counter",
     "state"
   ],
-  "twoPanels": true,
   "headerStyle": "dark",
   "displayNameKey": "location.HKG",
   "titleKey": "heading.departures",
   "display": {
-    "panelCount": 3,
     "rowCount": 27,
     "headerHeight": 96,
     "headerInk": "ffffff",

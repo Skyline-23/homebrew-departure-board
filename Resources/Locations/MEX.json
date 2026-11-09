@@ -117,12 +117,10 @@
     "gate",
     "state"
   ],
-  "twoPanels": false,
   "headerStyle": "dark",
   "displayNameKey": "location.MEX",
   "titleKey": "heading.departures",
   "display": {
-    "panelCount": 2,
     "rowCount": 25,
     "headerHeight": 96,
     "headerInk": "ffffff",

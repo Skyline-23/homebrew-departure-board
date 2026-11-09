@@ -96,7 +96,6 @@
     "gate",
     "state"
   ],
-  "twoPanels": false,
   "headerStyle": "dark",
   "displayNameKey": "location.SYDNEY",
   "titleKey": "heading.train"

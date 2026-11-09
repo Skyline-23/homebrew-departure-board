@@ -3,7 +3,6 @@
 #import "DrawingSupport.h"
 #import "LiveFlightStore.h"
 #import "SettingsStore.h"
-#import <CoreText/CoreText.h>
 
 @implementation DBBoardView (SettingsController)
 

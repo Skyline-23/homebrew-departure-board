@@ -117,12 +117,10 @@
     "gate",
     "state"
   ],
-  "twoPanels": false,
   "headerStyle": "dark",
   "displayNameKey": "location.VIE",
   "titleKey": "heading.departures",
   "display": {
-    "panelCount": 3,
     "rowCount": 28,
     "headerHeight": 96,
     "headerInk": "ffffff",

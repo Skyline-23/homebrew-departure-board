@@ -15,12 +15,24 @@ int main(int argc, const char *argv[]) {
         NSApplication *application = NSApplication.sharedApplication;
         [application setActivationPolicy:NSApplicationActivationPolicyAccessory];
         dispatch_async(dispatch_get_main_queue(), ^{
+            BOOL commandLinePassed =
+                [DBCommandLine runWithArguments:@[ @"DepartureBoard", @"--background" ]] == nil;
+            commandLinePassed &=
+                [[DBCommandLine
+                    runWithArguments:@[ @"DepartureBoard", @"--render-wallpapers", @"invalid-json" ]]
+                    intValue] == 1;
+            DBBoardView *configured = [DBCommandLine boardWithArguments:@[
+                @"DepartureBoard", @"--location", @"HND", @"--style", @"lcd", @"--language", @"english"
+            ]];
+            commandLinePassed &= [configured.locationCode isEqual:@"HND"] &&
+                                 [configured.displayStyle isEqual:@"lcd"] &&
+                                 [configured.languageMode isEqual:@"english"];
             DepartureBoardApp *controller = DepartureBoardApp.new;
             [controller createMainWindow];
             [controller buildMenus];
             [controller buildStatusMenu];
             [controller.window setFrameOrigin:NSMakePoint(-10000, -10000)];
-            BOOL passed = !controller.window.releasedWhenClosed &&
+            BOOL passed = commandLinePassed && !controller.window.releasedWhenClosed &&
                           ![controller applicationShouldTerminateAfterLastWindowClosed:application];
             for (NSInteger attempt = 0; attempt < 12; attempt++) {
                 [controller showBoard:nil];

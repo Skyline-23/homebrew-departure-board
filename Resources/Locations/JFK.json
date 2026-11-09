@@ -203,12 +203,10 @@
     "gate",
     "state"
   ],
-  "twoPanels": false,
   "headerStyle": "light",
   "displayNameKey": "location.JFK",
   "titleKey": "heading.departures",
   "display": {
-    "panelCount": 1,
     "rowCount": 20,
     "headerHeight": 96,
     "headerInk": "ffffff",

@@ -2,7 +2,6 @@
 #import "DrawingSupport.h"
 #import "LiveFlightStore.h"
 #import "SettingsStore.h"
-#import <CoreText/CoreText.h>
 #import <QuartzCore/QuartzCore.h>
 
 @implementation DBBoardView
@@ -19,16 +18,8 @@
     if ((self = [super initWithFrame:frame])) {
         self.startTime = NSProcessInfo.processInfo.systemUptime;
         self.lastRenderedSecond = -1;
-        self.languageCycle = -1;
         self.pageCycle = -1;
         self.flapStates = NSMutableDictionary.new;
-        static dispatch_once_t once;
-        dispatch_once(&once, ^{
-            NSURL *font = [[NSBundle bundleForClass:self.class] URLForResource:@"texgyreheroscn-bold"
-                                                                 withExtension:@"otf"];
-            if (font)
-                CTFontManagerRegisterFontsForURL((__bridge CFURLRef)font, kCTFontManagerScopeProcess, NULL);
-        });
         [self reloadSettings];
     }
     return self;
@@ -55,7 +46,6 @@
     self.boardScale = prefs[@"boardScale"] ? [prefs[@"boardScale"] doubleValue] : .75;
     self.useSampleData = [prefs[@"sampleData"] boolValue];
     self.lastRenderedSecond = -1;
-    self.languageCycle = -1;
     self.pageCycle = -1;
     self.startTime = NSProcessInfo.processInfo.systemUptime;
     [self.flapStates removeAllObjects];
@@ -89,7 +79,6 @@
     self.location = DBLocation(locationCode);
     self.startTime = NSProcessInfo.processInfo.systemUptime;
     self.lastRenderedSecond = -1;
-    self.languageCycle = -1;
     self.pageCycle = -1;
     [self.flapStates removeAllObjects];
 }
@@ -131,9 +120,10 @@
         }
         NSString *native = self.location[@"lang"] ?: @"en";
         NSInteger cycle = (NSInteger)floor((uptime - self.startTime) / 12.0);
-        NSString *language = [self.languageMode isEqual:@"english"] ? @"en"
+        NSString *language = [self.languageMode isEqual:@"english"]  ? @"en"
                              : [self.languageMode isEqual:@"native"] ? native
-                             : cycle % 2 ? native : @"en";
+                             : cycle % 2                             ? native
+                                                                     : @"en";
         NSArray *rows = self.rows;
         if (second != self.lastRenderedSecond || self.referenceDate || !rows)
             rows = self.referenceDate || self.useSampleData
@@ -142,10 +132,17 @@
         NSString *emptyMessage = @"data.noDepartures";
         if (!rows.count && !self.referenceDate && !self.useSampleData) {
             switch ([LiveFlightStore availabilityForAirport:self.locationCode]) {
-                case DBFlightAvailabilityLoading: emptyMessage = @"data.loading"; break;
-                case DBFlightAvailabilityUnavailable: emptyMessage = @"data.unavailable"; break;
-                case DBFlightAvailabilityConfigurationRequired: emptyMessage = @"data.configure"; break;
-                case DBFlightAvailabilityEmpty: break;
+            case DBFlightAvailabilityLoading:
+                emptyMessage = @"data.loading";
+                break;
+            case DBFlightAvailabilityUnavailable:
+                emptyMessage = @"data.unavailable";
+                break;
+            case DBFlightAvailabilityConfigurationRequired:
+                emptyMessage = @"data.configure";
+                break;
+            case DBFlightAvailabilityEmpty:
+                break;
             }
         }
         NSInteger page = (NSInteger)floor((uptime - self.startTime) / 15.0);
@@ -161,7 +158,6 @@
         self.currentLanguage = language;
         self.emptyMessageKey = emptyMessage;
         self.rows = rows;
-        self.languageCycle = cycle;
         self.pageCycle = page;
         if (changed)
             self.needsDisplay = YES;
@@ -249,8 +245,8 @@
                                                                       bitsPerPixel:0];
         [NSGraphicsContext saveGraphicsState];
         NSGraphicsContext *bitmapContext = [NSGraphicsContext graphicsContextWithBitmapImageRep:rep];
-        NSGraphicsContext.currentContext = [NSGraphicsContext graphicsContextWithCGContext:bitmapContext.CGContext
-                                                                                   flipped:YES];
+        NSGraphicsContext.currentContext =
+            [NSGraphicsContext graphicsContextWithCGContext:bitmapContext.CGContext flipped:YES];
         NSAffineTransform *flip = NSAffineTransform.transform;
         [flip translateXBy:0 yBy:size.height];
         [flip scaleXBy:1 yBy:-1];

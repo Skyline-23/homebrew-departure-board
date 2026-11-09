@@ -141,12 +141,10 @@
     "counter",
     "state"
   ],
-  "twoPanels": false,
   "headerStyle": "dark",
   "displayNameKey": "location.HND",
   "titleKey": "heading.departures",
   "display": {
-    "panelCount": 1,
     "rowCount": 34,
     "headerHeight": 228,
     "headerInk": "ffffff",

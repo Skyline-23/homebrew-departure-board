@@ -117,12 +117,10 @@
     "gate",
     "state"
   ],
-  "twoPanels": false,
   "headerStyle": "dark",
   "displayNameKey": "location.CPH",
   "titleKey": "heading.departures",
   "display": {
-    "panelCount": 3,
     "rowCount": 21,
     "headerHeight": 96,
     "headerInk": "f8db43",

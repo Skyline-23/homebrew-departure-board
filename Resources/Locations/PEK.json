@@ -118,12 +118,10 @@
     "expected",
     "state"
   ],
-  "twoPanels": true,
   "headerStyle": "dark",
   "displayNameKey": "location.PEK",
   "titleKey": "heading.departures",
   "display": {
-    "panelCount": 2,
     "rowCount": 19,
     "headerHeight": 70,
     "headerInk": "ffffff",

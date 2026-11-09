@@ -119,12 +119,10 @@
     "expected",
     "counter"
   ],
-  "twoPanels": false,
   "headerStyle": "dark",
   "displayNameKey": "location.JNB",
   "titleKey": "heading.departures",
   "display": {
-    "panelCount": 1,
     "rowCount": 19,
     "headerHeight": 96,
     "headerInk": "ffffff",

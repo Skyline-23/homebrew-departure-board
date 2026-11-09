@@ -156,12 +156,10 @@
     "gate",
     "state"
   ],
-  "twoPanels": false,
   "headerStyle": "dark",
   "displayNameKey": "location.VCE",
   "titleKey": "heading.departures",
   "display": {
-    "panelCount": 2,
     "rowCount": 26,
     "headerHeight": 96,
     "headerInk": "ffffff",

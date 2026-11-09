@@ -1,6 +1,4 @@
 work/
 outputs/
-server/node_modules/
-server/.wrangler/
 .DS_Store
 __pycache__/

@@ -214,12 +214,10 @@
     "gate",
     "state"
   ],
-  "twoPanels": false,
   "headerStyle": "dark",
   "displayNameKey": "location.CDG",
   "titleKey": "heading.departures",
   "display": {
-    "panelCount": 3,
     "rowCount": 31,
     "headerHeight": 96,
     "headerInk": "ffffff",

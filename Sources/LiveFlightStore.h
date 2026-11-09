@@ -21,7 +21,6 @@ typedef NS_ENUM(NSInteger, DBFlightAvailability) {
 + (void)refreshInBackground;
 + (BOOL)saveAPIKey:(NSString *)apiKey error:(NSError **)error;
 + (NSString *)APIKey;
-+ (void)configureBackgroundRefresh;
 + (BOOL)shouldRefreshInBackground;
 + (BOOL)screenSaverIsActive;
 @end

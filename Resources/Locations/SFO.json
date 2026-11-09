@@ -232,12 +232,10 @@
     "gate",
     "state"
   ],
-  "twoPanels": false,
   "headerStyle": "dark",
   "displayNameKey": "location.SFO",
   "titleKey": "heading.departures",
   "display": {
-    "panelCount": 2,
     "rowCount": 29,
     "headerHeight": 96,
     "headerInk": "ffffff",

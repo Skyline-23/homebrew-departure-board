@@ -1,7 +1,6 @@
 #import "BoardViewInternal.h"
 #import "DrawingSupport.h"
 #import "LiveFlightStore.h"
-#import <CoreText/CoreText.h>
 
 @implementation DBBoardView (BoardChrome)
 
@@ -14,19 +13,28 @@
         icons.totalCostLimit = 2 * 1024 * 1024;
     });
     NSColor *rgb = [color colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
-    NSString *key = [NSString stringWithFormat:@"%.3f/%.3f/%.3f/%.3f",
-                     rgb.redComponent, rgb.greenComponent, rgb.blueComponent, rgb.alphaComponent];
+    NSString *key = [NSString stringWithFormat:@"%.3f/%.3f/%.3f/%.3f", rgb.redComponent, rgb.greenComponent,
+                                               rgb.blueComponent, rgb.alphaComponent];
     NSImage *icon = [icons objectForKey:key];
     if (!icon) {
-        NSImage *symbol = [[NSImage imageWithSystemSymbolName:@"airplane.departure" accessibilityDescription:nil]
-            imageWithSymbolConfiguration:[NSImageSymbolConfiguration configurationWithPointSize:128
-                                                                                         weight:NSFontWeightRegular]];
+        NSImage *symbol = [[NSImage imageWithSystemSymbolName:@"airplane.departure"
+                                     accessibilityDescription:nil]
+            imageWithSymbolConfiguration:[NSImageSymbolConfiguration
+                                             configurationWithPointSize:128
+                                                                 weight:NSFontWeightRegular]];
         if (!symbol)
             return;
         NSSize resolution = NSMakeSize(ceil(symbol.size.width), ceil(symbol.size.height));
         NSBitmapImageRep *bitmap = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL
-            pixelsWide:resolution.width pixelsHigh:resolution.height bitsPerSample:8 samplesPerPixel:4
-            hasAlpha:YES isPlanar:NO colorSpaceName:NSDeviceRGBColorSpace bytesPerRow:0 bitsPerPixel:0];
+                                                                           pixelsWide:resolution.width
+                                                                           pixelsHigh:resolution.height
+                                                                        bitsPerSample:8
+                                                                      samplesPerPixel:4
+                                                                             hasAlpha:YES
+                                                                             isPlanar:NO
+                                                                       colorSpaceName:NSDeviceRGBColorSpace
+                                                                          bytesPerRow:0
+                                                                         bitsPerPixel:0];
         [NSGraphicsContext saveGraphicsState];
         NSGraphicsContext.currentContext = [NSGraphicsContext graphicsContextWithBitmapImageRep:bitmap];
         NSRect rect = NSMakeRect(0, 0, resolution.width, resolution.height);
@@ -44,13 +52,17 @@
     NSRect destination = NSMakeRect(point.x + (size - icon.size.width * factor) / 2,
                                     point.y + (size - icon.size.height * factor) / 2,
                                     icon.size.width * factor, icon.size.height * factor);
-    [icon drawInRect:destination fromRect:NSZeroRect operation:NSCompositingOperationSourceOver
-           fraction:1 respectFlipped:YES hints:nil];
+    [icon drawInRect:destination
+              fromRect:NSZeroRect
+             operation:NSCompositingOperationSourceOver
+              fraction:1
+        respectFlipped:YES
+                 hints:nil];
 }
 
 - (void)header:(NSRect)area compact:(BOOL)compact {
     NSString *preset = self.location[@"preset"];
-    NSColor *accent = DBColor(self.location[@"accent"]), *white = DBColor(@"f6f7f4");
+    NSColor *white = DBColor(@"f6f7f4");
     BOOL light = [self.location[@"headerStyle"] isEqual:@"light"];
     NSColor *ink = light ? DBColor(@"111a20") : white;
     CGFloat height = compact ? 112 : 144;
@@ -77,7 +89,6 @@
     DBDrawText(DBTime(self.boardDate, self.location, @"EEE, dd MMM yyyy"),
                NSMakeRect(area.size.width - 325, compact ? 78 : 96, 289, 24), 17,
                [ink colorWithAlphaComponent:.8], NO, NSTextAlignmentRight, NO);
-    (void)accent;
 }
 
 - (void)footer:(NSRect)area text:(NSString *)message {
@@ -92,20 +103,15 @@
         NSString *notice = self.location[@"display"][@"footerNoticeKey"];
         message = notice ? DBBoardString(notice, self.currentLanguage) : @"";
         if ([self.locationCode isEqual:@"ICN"]) {
-            NSInteger panels = self.currentPanelCount;
-            CGFloat width = area.size.width / MAX(1, panels);
-            for (NSInteger panel = 0; panel < panels; panel++) {
-                CGFloat x = panel * width;
-                DBDrawText(DBTime(self.boardDate, self.location, @"yyyy. MM. dd."),
-                           NSMakeRect(x + 24, y + 2, 280, height - 4), height * .60, NSColor.whiteColor, YES,
-                           NSTextAlignmentLeft, YES);
-                DBDrawText([NSString stringWithFormat:@"%ld", (long)(self.currentPage * panels + panel + 1)],
-                           NSMakeRect(x + width / 2 - 20, y + 2, 40, height - 4), height * .60,
-                           NSColor.whiteColor, YES, NSTextAlignmentCenter, YES);
-                DBDrawText(DBTime(self.boardDate, self.location, @"HH:mm"),
-                           NSMakeRect(x + width - 140, y + 2, 115, height - 4), height * .60,
-                           DBColor(@"ffea83"), YES, NSTextAlignmentRight, YES);
-            }
+            DBDrawText(DBTime(self.boardDate, self.location, @"yyyy. MM. dd."),
+                       NSMakeRect(24, y + 2, 280, height - 4), height * .60, NSColor.whiteColor, YES,
+                       NSTextAlignmentLeft, YES);
+            DBDrawText([NSString stringWithFormat:@"%ld", (long)(self.currentPage + 1)],
+                       NSMakeRect(area.size.width / 2 - 20, y + 2, 40, height - 4), height * .60,
+                       NSColor.whiteColor, YES, NSTextAlignmentCenter, YES);
+            DBDrawText(DBTime(self.boardDate, self.location, @"HH:mm"),
+                       NSMakeRect(area.size.width - 140, y + 2, 115, height - 4), height * .60,
+                       DBColor(@"ffea83"), YES, NSTextAlignmentRight, YES);
         }
     }
     if (message.length)

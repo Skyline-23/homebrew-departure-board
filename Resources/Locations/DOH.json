@@ -117,12 +117,10 @@
     "gate",
     "state"
   ],
-  "twoPanels": false,
   "headerStyle": "dark",
   "displayNameKey": "location.DOH",
   "titleKey": "heading.departures",
   "display": {
-    "panelCount": 2,
     "rowCount": 32,
     "headerHeight": 96,
     "headerInk": "1b2940",

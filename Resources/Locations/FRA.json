@@ -112,12 +112,10 @@
     "gate",
     "state"
   ],
-  "twoPanels": false,
   "headerStyle": "dark",
   "displayNameKey": "location.FRA",
   "titleKey": "heading.departures",
   "display": {
-    "panelCount": 4,
     "rowCount": 30,
     "headerHeight": 96,
     "headerInk": "e8e7d8",

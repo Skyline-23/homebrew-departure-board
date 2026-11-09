@@ -201,12 +201,10 @@
     "gate",
     "state"
   ],
-  "twoPanels": false,
   "headerStyle": "light",
   "displayNameKey": "location.LHR",
   "titleKey": "heading.departures",
   "display": {
-    "panelCount": 3,
     "rowCount": 24,
     "headerHeight": 96,
     "headerInk": "111a1f",

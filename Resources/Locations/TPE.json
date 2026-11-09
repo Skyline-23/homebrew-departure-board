@@ -113,12 +113,10 @@
     "counter",
     "state"
   ],
-  "twoPanels": false,
   "headerStyle": "dark",
   "displayNameKey": "location.TPE",
   "titleKey": "heading.departures",
   "display": {
-    "panelCount": 3,
     "rowCount": 16,
     "headerHeight": 96,
     "headerInk": "e4d6b3",

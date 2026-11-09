@@ -193,12 +193,10 @@
     "gate",
     "state"
   ],
-  "twoPanels": false,
   "headerStyle": "dark",
   "displayNameKey": "location.SIN",
   "titleKey": "heading.departures",
   "display": {
-    "panelCount": 2,
     "rowCount": 16,
     "headerHeight": 96,
     "headerInk": "f8db58",
