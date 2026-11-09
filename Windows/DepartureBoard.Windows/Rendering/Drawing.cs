@@ -54,13 +54,15 @@ internal sealed class Drawing(DrawingContext context)
             Math.Max(6, size),
             Brush(color),
             1
-        )
-        {
-            MaxTextWidth = rectangle.Width,
-            MaxTextHeight = rectangle.Height,
-            Trimming = TextTrimming.CharacterEllipsis,
-            TextAlignment = alignment,
-        };
+        );
+        var heightRatio = rectangle.Height / Math.Max(1, formatted.Height);
+        var widthRatio = rectangle.Width / Math.Max(1, formatted.WidthIncludingTrailingWhitespace);
+        var fit = Math.Min(1, Math.Min(heightRatio, Math.Max(0.65, widthRatio)));
+        formatted.SetFontSize(Math.Max(1, size * fit));
+        formatted.MaxTextWidth = rectangle.Width;
+        formatted.MaxLineCount = 1;
+        formatted.Trimming = TextTrimming.CharacterEllipsis;
+        formatted.TextAlignment = alignment;
         var y = rectangle.Y + Math.Max(0, (rectangle.Height - formatted.Height) / 2);
         context.PushClip(new RectangleGeometry(rectangle));
         context.DrawText(formatted, new Point(rectangle.X, y));

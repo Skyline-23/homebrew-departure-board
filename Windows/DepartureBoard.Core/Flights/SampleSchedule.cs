@@ -24,7 +24,7 @@ public static class SampleSchedule
             var slot = firstSlot + index;
             var routeIndex = (int)(slot % routes.Length);
             var route = routes[routeIndex];
-            var seed = Math.Abs(slot * 31 + routeIndex * 17);
+            var seed = StableSeed(slot, routeIndex);
             var departure = DateTimeOffset.FromUnixTimeSeconds(slot * 300);
             var delay = seed % 23 == 0 ? 15 : 0;
             var minutes = Math.Ceiling((departure - now).TotalMinutes) + delay;
@@ -56,6 +56,14 @@ public static class SampleSchedule
         }
 
         return rows.ToArray();
+    }
+
+    private static uint StableSeed(long slot, int routeIndex)
+    {
+
+        // Mix adjacent slots to avoid repeating gates when route and gate counts share a factor.
+        var mixed = unchecked((uint)slot * 2654435761U);
+        return mixed ^ (mixed >> 16) ^ ((uint)routeIndex * 397U);
     }
 
     private static string Status(long seed, int delay, double minutes)

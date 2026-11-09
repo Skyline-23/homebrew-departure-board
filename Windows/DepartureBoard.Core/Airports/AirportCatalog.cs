@@ -53,7 +53,8 @@ public sealed class AirportCatalog
     {
 
         var record = cities.Child(code);
-        return record.Text(language, record.Text("en", code));
+        var key = record.Text("key");
+        return key.Length > 0 ? Strings.Get(key, language) : code;
     }
 
     public string Airline(string code)

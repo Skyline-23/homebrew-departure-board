@@ -20,8 +20,7 @@ internal sealed class DisplayWindows(AppServices services) : IDisposable
         foreach (var screen in Screen.AllScreens)
         {
             var window = new BoardWindow(services, true);
-            PlaceOnScreen(window, screen);
-            window.Show();
+            ShowOnScreen(window, screen);
             windows.Add(window);
         }
 
@@ -62,6 +61,7 @@ internal sealed class DisplayWindows(AppServices services) : IDisposable
 
         window.SourceInitialized += (_, _) => Resize();
         window.Show();
+        Resize();
         var timer = new DispatcherTimer(
             TimeSpan.FromSeconds(1),
             DispatcherPriority.Background,
@@ -106,6 +106,7 @@ internal sealed class DisplayWindows(AppServices services) : IDisposable
             window.SourceInitialized += (_, _) =>
                 WindowEmbedding.Attach(window, host, point.X, point.Y, bounds.Width, bounds.Height);
             window.Show();
+            WindowEmbedding.Attach(window, host, point.X, point.Y, bounds.Width, bounds.Height);
             wallpaperWindows.Add(window);
         }
 
@@ -130,14 +131,15 @@ internal sealed class DisplayWindows(AppServices services) : IDisposable
         return EmbeddedWindow(services);
     }
 
-    private static void PlaceOnScreen(Window window, Screen screen)
+    private static void ShowOnScreen(Window window, Screen screen)
     {
 
         // Screen bounds are physical pixels, while WPF uses device-independent units.
         // Position the HWND directly so mixed-DPI monitors keep their correct bounds.
         var bounds = screen.Bounds;
-        window.SourceInitialized += (_, _) =>
+        void Position()
         {
+
             var handle = new WindowInteropHelper(window).Handle;
             NativeMethods.SetWindowPos(
                 handle,
@@ -148,7 +150,11 @@ internal sealed class DisplayWindows(AppServices services) : IDisposable
                 bounds.Height,
                 0x0010
             );
-        };
+        }
+
+        window.SourceInitialized += (_, _) => Position();
+        window.Show();
+        Position();
     }
 
     public void Dispose()

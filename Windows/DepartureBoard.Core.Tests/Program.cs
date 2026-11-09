@@ -55,6 +55,15 @@ Check(LaunchOptions.Parse(["/p", "123"]).PreviewParent == 123, "Separate preview
 Check(LaunchOptions.Parse(["/P:123"]).PreviewParent == 123, "Inline preview handle.");
 Reject(() => LaunchOptions.Parse(["/p", "0"]), "Reject an invalid preview parent.");
 
+Check(catalog.City("TYO", "en") == "TOKYO", "Resolve sample city strings.");
+Check(catalog.City("TYO", "ko") == "도쿄", "Translate sample city strings.");
+var sampleGates = SampleSchedule
+    .Rows(catalog, catalog.Get("ICN"), now, "en")
+    .Select(row => row.Gate)
+    .Distinct()
+    .Count();
+Check(sampleGates > 1, "Sample gates must vary between departures.");
+
 var normalized = new BoardSettings
 {
     Scale = 0,

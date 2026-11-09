@@ -41,6 +41,11 @@ try {
     Get-Content "$OutputDirectory/result.txt"
     $executable = Join-Path $installed 'DepartureBoard.exe'
     $resident = Start-Process $executable -ArgumentList '--background' -PassThru
+
+    if (!$resident.WaitForInputIdle(15000)) {
+        throw 'The resident application did not finish startup.'
+    }
+
     $settings = Start-Process $executable -ArgumentList '/c' -PassThru
 
     if (!$settings.WaitForExit(15000)) {

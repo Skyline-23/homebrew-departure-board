@@ -123,7 +123,7 @@ internal static class WindowsSmokeTest
         if (!embedded || !sized)
         {
             throw new InvalidOperationException(
-                "The native screen saver preview was not embedded."
+                $"Preview parent matched: {embedded}; size: {bounds.Right} x {bounds.Bottom}."
             );
         }
     }
