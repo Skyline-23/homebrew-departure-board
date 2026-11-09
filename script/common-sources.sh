@@ -1,6 +1,7 @@
 #!/bin/bash
 # One source list for the app, screen saver and native tests.
 COMMON_SOURCES=()
+
 for name in DepartureSchedule Localization DestinationStore AirlineLogoStore BackgroundAgent \
             LiveFlightStore SettingsStore UserInstallation BoardView DrawingSupport BoardChrome \
             AirportRenderer SplitFlapRenderer RailwayRenderer SettingsController; do

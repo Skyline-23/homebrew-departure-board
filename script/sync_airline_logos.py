@@ -32,22 +32,29 @@ def main():
     archive_url = f"https://codeload.github.com/Jxck-S/airline-logos/tar.gz/{LOGO_REVISION}"
     cache = ROOT / "work" / "logo-sources" / f"{LOGO_REVISION}.tar.gz"
     cache.parent.mkdir(parents=True, exist_ok=True)
+
     if not cache.exists():
         cache.write_bytes(download(archive_url))
     with tarfile.open(fileobj=io.BytesIO(cache.read_bytes())) as archive:
         files = {"/".join(member.name.split("/")[1:]): member
+
                  for member in archive.getmembers() if member.isfile()}
         codes = {Path(path).stem for path in files
+
                  if path.split("/")[0] in ("flightaware_logos", "radarbox_logos", "custom_logos")
                  and re.fullmatch(r"[A-Z0-9]{3}", Path(path).stem)}
         sources = {}
         DESTINATION.mkdir(parents=True, exist_ok=True)
+
         for code in sorted(codes):
+
             for folder in ("custom_logos", "flightaware_logos", "radarbox_logos"):
                 path = f"{folder}/{code}.png"
+
                 if path not in files:
                     continue
                 data = archive.extractfile(files[path]).read()
+
                 if (not data.startswith(b"\x89PNG\r\n\x1a\n") or
                         hashlib.sha256(data).hexdigest() in excluded):
                     continue
@@ -56,25 +63,32 @@ def main():
                 break
     entries = json.loads(download(CATALOG_URL))["data"]
     catalog = {}
+
     for entry in entries:
         iata, icao = entry.get("iata_code"), entry.get("icao_code")
+
         if not iata or icao not in sources:
             continue
         record = {"icao": icao, "name": entry["name"]}
+
         if record not in catalog.setdefault(iata, []):
             catalog[iata].append(record)
     # Retain the existing IATA assets as a fallback for carriers without an ICAO
     # match. ICAO + airline name disambiguate reused IATA codes when available.
     additions = json.loads((DESTINATION / "AdditionalSources.json").read_text())
+
     for code, url in additions.items():
         target = DESTINATION / f"{code}.png"
         data = target.read_bytes() if target.exists() else download(url)
+
         if hashlib.sha256(data).hexdigest() in excluded:
             continue
+
         if not target.exists():
             target.write_bytes(data)
         sources[code] = url
     identities = json.loads((DESTINATION / "Additions.json").read_text())
+
     for iata, records in identities.items():
         catalog.setdefault(iata, []).extend(records)
     (DESTINATION / "Sources.json").write_text(json.dumps(sources, indent=2, sort_keys=True) + "\n")

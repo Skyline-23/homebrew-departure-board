@@ -10,6 +10,7 @@ mkdir -p "$BUNDLES"
 
 # Synced folders can add FinderInfo after signing. Submit clean copies outside
 # that folder, just as packaging does, without changing the signed contents.
+
 for name in 'Departure Board.app' 'Departure Board.saver'; do
   ditto --noextattr --norsrc "$SOURCE_BUNDLES/$name" "$BUNDLES/$name"
 done
@@ -17,6 +18,7 @@ done
 for bundle in "$BUNDLES/Departure Board.app" "$BUNDLES/Departure Board.saver"; do
   codesign --verify --strict "$bundle"
   METADATA="$(codesign -dv --verbose=4 "$bundle" 2>&1)"
+
   if ! grep -q '^Authority=Developer ID Application:' <<< "$METADATA" || \
      ! grep -q "^TeamIdentifier=$APPLE_TEAM_ID$" <<< "$METADATA" || \
      ! grep -q '^Timestamp=' <<< "$METADATA" || \
@@ -27,6 +29,7 @@ for bundle in "$BUNDLES/Departure Board.app" "$BUNDLES/Departure Board.saver"; d
 done
 
 AUTH=()
+
 if [[ -n "${NOTARY_KEYCHAIN_PROFILE:-}" ]]; then
   AUTH=(--keychain-profile "$NOTARY_KEYCHAIN_PROFILE")
 else
@@ -36,6 +39,7 @@ else
   printf '%s' "$APP_STORE_CONNECT_KEY_P8_BASE64" | base64 --decode > "$KEY_FILE"
   chmod 600 "$KEY_FILE"
   AUTH=(--key "$KEY_FILE" --key-id "$APP_STORE_CONNECT_KEY_ID")
+
   if [[ -n "${APP_STORE_CONNECT_ISSUER_ID:-}" ]]; then AUTH+=(--issuer "$APP_STORE_CONNECT_ISSUER_ID"); fi
 fi
 
@@ -65,10 +69,12 @@ except (ValueError,OSError):
     pass
 PYID
 )"
+
 if [[ -n "$SUBMISSION_ID" ]]; then
   xcrun notarytool log "$SUBMISSION_ID" "${AUTH[@]}" \
     "$PROJECT_ROOT/work/notarization-log.json" || true
 fi
+
 if [[ "$SUBMIT_STATUS" != 0 || "$STATUS" != Accepted ]]; then
   python3 - "$TEMP_ROOT/result.json" <<'PY'
 import json,sys
@@ -78,16 +84,19 @@ except (ValueError,OSError):
     result={}
 print('Notarization did not succeed:',result.get('status','Unknown'),result.get('id',''))
 PY
+
   if [[ -f "$PROJECT_ROOT/work/notarization-log.json" ]]; then
     cat "$PROJECT_ROOT/work/notarization-log.json" >&2
   fi
   exit 1
 fi
+
 for bundle in "$BUNDLES/Departure Board.app" "$BUNDLES/Departure Board.saver"; do
   xcrun stapler staple "$bundle"
   xcrun stapler validate "$bundle"
 done
 spctl --assess --type execute --verbose=4 "$BUNDLES/Departure Board.app"
+
 for name in 'Departure Board.app' 'Departure Board.saver'; do
   rm -rf "$SOURCE_BUNDLES/$name"
   ditto --noextattr --norsrc "$BUNDLES/$name" "$SOURCE_BUNDLES/$name"

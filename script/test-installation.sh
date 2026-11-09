@@ -9,6 +9,7 @@ mkdir -p "$REPORT"
 test ! -e "$APP"
 test ! -e "$SAVER"
 brew tap Skyline-23/departure-board
+
 if brew command trust >/dev/null 2>&1; then
   brew trust --cask skyline-23/departure-board/departure-board
 fi
@@ -20,11 +21,13 @@ EXPECTED_VERSION="${EXPECTED_VERSION#v}"
 validate_ticket() {
 
   for attempt in 1 2 3; do
+
     if xcrun stapler validate "$1"; then return 0; fi
     [[ "$attempt" == 3 ]] || sleep 5
   done
   return 1
 }
+
 for bundle in "$APP" "$SAVER"; do
   codesign --verify --strict "$bundle"
   validate_ticket "$bundle"

@@ -11,6 +11,7 @@ mkdir -p "$BUILD_DIR" "$DIST_DIR"
 source "$PROJECT_ROOT/script/common-sources.sh"
 COMMON_FLAGS=(-I "$PROJECT_ROOT/Sources" -fobjc-arc -fmodules -O2 -Wall -Wextra -Wno-unused-parameter -mmacosx-version-min=12.0 -framework Cocoa -framework QuartzCore -framework Security -framework LocalAuthentication)
 ARCH_FLAGS=(-arch arm64 -arch x86_64)
+
 if [[ "${BUILD_ARCH:-universal}" != "universal" ]]; then ARCH_FLAGS=(-arch "$BUILD_ARCH"); fi
 
 make_bundle() {
@@ -26,6 +27,7 @@ make_bundle() {
   /usr/libexec/PlistBuddy -c "Add :CFBundleIconFile string AppIcon" "$plist"
   /usr/libexec/PlistBuddy -c "Add :CFBundleIdentifier string $identifier" "$plist"
   /usr/libexec/PlistBuddy -c "Add :CFBundlePackageType string $package" "$plist"
+
   if [[ "$package" == "APPL" ]]; then
     # Agent status takes effect before main(), including wallpaper/maintenance helpers.
     /usr/libexec/PlistBuddy -c "Add :LSUIElement bool true" "$plist"
@@ -49,6 +51,7 @@ xcrun clang "${COMMON_FLAGS[@]}" "${ARCH_FLAGS[@]}" -bundle -framework ScreenSav
 
 # Local builds use an ad-hoc signature. Release signing is opt-in and uses the caller's identity.
 SIGN_IDENTITY="${CODE_SIGN_IDENTITY:-}"
+
 if [[ -z "$SIGN_IDENTITY" ]]; then
   # A stable local signing identity keeps Keychain approvals valid across builds.
   SIGN_IDENTITY="$(security find-identity -v -p codesigning | awk '/Developer ID Application:|Apple Development:/ { print $2; exit }')"
@@ -56,12 +59,15 @@ if [[ -z "$SIGN_IDENTITY" ]]; then
 fi
 SIGNING_DIR="$(mktemp -d "${TMPDIR:-/tmp}/departure-board-sign.XXXXXX")"
 trap 'rm -rf "$SIGNING_DIR"' EXIT
+
 for bundle in "$APP_BUNDLE" "$SAVER_BUNDLE"; do
   # Sign outside synced Documents: File Provider can attach FinderInfo during a build.
   clean_bundle="$SIGNING_DIR/$(basename "$bundle")"
   ditto --noextattr --norsrc "$bundle" "$clean_bundle"
   SIGN_FLAGS=(--force --sign "$SIGN_IDENTITY" --options runtime)
+
   if [[ "$SIGN_IDENTITY" != "-" ]]; then SIGN_FLAGS+=(--timestamp); fi
+
   if [[ -n "${CODE_SIGN_KEYCHAIN:-}" ]]; then SIGN_FLAGS+=(--keychain "$CODE_SIGN_KEYCHAIN"); fi
   codesign "${SIGN_FLAGS[@]}" "$clean_bundle"
   codesign --verify --strict "$clean_bundle"

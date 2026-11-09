@@ -7,6 +7,7 @@ set -euo pipefail
 INSTALLATION_ROOT="${1:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 IDENTITIES="$(security find-identity -v -p codesigning)"
 LOCAL_IDENTITY="$(printf '%s\n' "$IDENTITIES" | awk '/Developer ID Application:/ { print $2; exit }')"
+
 if [[ -z "$LOCAL_IDENTITY" ]]; then
   LOCAL_IDENTITY="$(printf '%s\n' "$IDENTITIES" | awk '/Apple Development:/ { print $2; exit }')"
 fi
@@ -14,12 +15,15 @@ fi
 
 for bundle in "$INSTALLATION_ROOT/Departure Board.app" "$INSTALLATION_ROOT/Departure Board.saver"; do
   # Re-signing a notarized download would invalidate its ticket.
+
   if codesign --verify --strict "$bundle" 2>/dev/null; then
     SIGNATURE="$(codesign -dvv "$bundle" 2>&1)"
+
     if [[ "$SIGNATURE" == *'Authority=Developer ID Application:'* ]]; then
       continue
     fi
   fi
+
   if codesign --verify --strict --test-requirement "=certificate leaf = H\"$LOCAL_IDENTITY\"" "$bundle" 2>/dev/null; then
     continue
   fi

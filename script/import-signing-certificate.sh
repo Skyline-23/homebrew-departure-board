@@ -13,6 +13,7 @@ IMPORTED=0
 cleanup() {
 
   rm -f "$CERTIFICATE_FILE"
+
   if [[ "$IMPORTED" != 1 ]]; then security delete-keychain "$SIGNING_KEYCHAIN" >/dev/null 2>&1 || true; fi
 }
 trap cleanup EXIT
@@ -28,6 +29,7 @@ security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN
 # codesign on CI also resolves private keys through the user's search list,
 # even when --keychain selects the certificate explicitly.
 EXISTING_KEYCHAINS=()
+
 while IFS= read -r keychain; do
   keychain="${keychain#*\"}"
   keychain="${keychain%\"*}"
@@ -36,6 +38,7 @@ done < <(security list-keychains -d user)
 security list-keychains -d user -s "$SIGNING_KEYCHAIN" "${EXISTING_KEYCHAINS[@]}"
 IDENTITY="$(security find-identity -v -p codesigning "$SIGNING_KEYCHAIN" | \
   awk -v team="$APPLE_TEAM_ID" '/Developer ID Application:/ && index($0, "(" team ")") {print $2; exit}')"
+
 if [[ -z "$IDENTITY" ]]; then
   printf 'The P12 does not contain a valid Developer ID Application identity for the configured team.\n' >&2
   exit 1
