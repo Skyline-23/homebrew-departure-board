@@ -136,7 +136,8 @@ internal sealed class DisplayWindows(AppServices services) : IDisposable
                 host,
                 after,
                 new System.Drawing.Rectangle(point.X, point.Y, bounds.Width, bounds.Height),
-                layered
+                layered,
+                DesktopGeometry.ContentBounds(screen.Bounds, screen.WorkingArea)
             );
             window.Show();
             wallpaperWindows.Add(window);
@@ -148,7 +149,10 @@ internal sealed class DisplayWindows(AppServices services) : IDisposable
     private static string CurrentDisplayLayout()
     {
 
-        return string.Join(";", Screen.AllScreens.Select(screen => screen.Bounds.ToString()));
+        return string.Join(
+            ";",
+            Screen.AllScreens.Select(screen => screen.Bounds + ":" + screen.WorkingArea)
+        );
     }
 
     private void MaintainWallpaper()

@@ -216,6 +216,22 @@ internal static class WindowsSmokeTest
     private static void CheckDesktop(AppServices services, string outputDirectory)
     {
 
+        var screenBounds = new System.Drawing.Rectangle(-1920, 0, 1920, 1080);
+        var workingArea = new System.Drawing.Rectangle(-1920, 0, 1920, 1032);
+        var content = DesktopGeometry.ContentBounds(screenBounds, workingArea);
+
+        if (
+            content.X < 0
+            || content.Y < 0
+            || content.Right > screenBounds.Width
+            || content.Bottom >= workingArea.Height
+        )
+        {
+            throw new InvalidOperationException(
+                "Wallpaper content must fit above the taskbar on offset monitors."
+            );
+        }
+
         using var desktop = new DesktopVisibility();
 
         if (!desktop.IsCurrent)

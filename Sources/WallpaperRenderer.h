@@ -4,5 +4,6 @@
 @interface DBWallpaperRenderer : NSObject
 + (NSString *)rootPath;
 + (NSString *)identifierForScreen:(NSScreen *)screen;
++ (NSEdgeInsets)contentInsetsForScreen:(NSScreen *)screen;
 + (BOOL)renderRequest:(NSDictionary *)request;
 @end

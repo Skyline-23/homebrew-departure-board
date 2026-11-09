@@ -18,6 +18,8 @@ FOUNDATION_EXPORT NSString *DBUIString(NSString *key);
 @property(nonatomic) NSInteger density;
 @property(nonatomic) double brightness;
 @property(nonatomic) double boardScale;
+// Fractions of the full canvas; only desktop surfaces reserve system UI space.
+@property(nonatomic) NSEdgeInsets contentInsets;
 @property(nonatomic) BOOL useSampleData;
 @property(nonatomic, strong) NSDate *referenceDate;
 - (void)tick;

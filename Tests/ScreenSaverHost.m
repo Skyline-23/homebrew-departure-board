@@ -187,10 +187,14 @@ static BOOL VerifySharedRowsCache(Class store) {
 
 static BOOL VerifySnapshotConfiguration(DBBoardView *board) {
 
+    NSEdgeInsets original = board.contentInsets;
+    board.contentInsets = NSEdgeInsetsMake(.04, .01, .08, .01);
     NSDictionary *configuration = board.snapshotConfiguration;
     DBBoardView *copy = [[board.class alloc] initWithFrame:NSMakeRect(0, 0, 640, 360)];
     [copy applySnapshotConfiguration:configuration];
-    return [copy.snapshotConfiguration isEqual:configuration];
+    BOOL matched = [copy.snapshotConfiguration isEqual:configuration];
+    board.contentInsets = original;
+    return matched;
 }
 
 static BOOL VerifyCompactScale(DBBoardView *board) {

@@ -37,7 +37,9 @@ internal sealed class SettingsWindow : Window
     private readonly TextBlock status = new()
     {
         TextWrapping = TextWrapping.Wrap,
-        Margin = new Thickness(0, 12, 0, 0),
+        Margin = new Thickness(0, 16, 0, 0),
+        Foreground = SystemColors.GrayTextBrush,
+        FontSize = 12,
     };
     private readonly Action preview;
     private readonly Func<bool> applyWallpaper;
@@ -51,7 +53,7 @@ internal sealed class SettingsWindow : Window
         this.applyWallpaper = applyWallpaper;
         Title = "Departure Board Settings";
         Width = 640;
-        Height = Math.Min(940, SystemParameters.WorkArea.Height - 50);
+        Height = Math.Min(860, SystemParameters.WorkArea.Height - 50);
         ResizeMode = ResizeMode.CanMinimize;
         WindowStartupLocation = WindowStartupLocation.CenterScreen;
         Background = Brushes.White;
@@ -62,7 +64,7 @@ internal sealed class SettingsWindow : Window
             new TextBlock
             {
                 Text = "Departure Board",
-                FontSize = 26,
+                FontSize = 24,
                 FontWeight = FontWeights.SemiBold,
                 Margin = new Thickness(0, 0, 0, 20),
             }
@@ -76,6 +78,15 @@ internal sealed class SettingsWindow : Window
         AddRow(panel, "Airport", airport);
         AddRow(panel, "Language", language);
         AddRow(panel, "Board style", style);
+        AddRow(panel, "Row density", density);
+        AddRow(panel, "Board scale", scale);
+        AddRow(panel, "Brightness", brightness);
+        panel.Children.Add(reduceMotion);
+        panel.Children.Add(Separator());
+        panel.Children.Add(wallpaper);
+        panel.Children.Add(allDesktops);
+        panel.Children.Add(startup);
+        panel.Children.Add(Separator());
         AddRow(panel, "Timetable source", source);
         AddRow(panel, "API key", apiKey);
         AddRow(panel, "Data refresh", refresh);
@@ -90,13 +101,6 @@ internal sealed class SettingsWindow : Window
             }
         );
         panel.Children.Add(dataStatus);
-        AddRow(panel, "Row density", density);
-        AddRow(panel, "Board scale", scale);
-        AddRow(panel, "Brightness", brightness);
-        panel.Children.Add(reduceMotion);
-        panel.Children.Add(wallpaper);
-        panel.Children.Add(allDesktops);
-        panel.Children.Add(startup);
         panel.Children.Add(Buttons());
         panel.Children.Add(status);
         status.Text = services.HasApiKey
@@ -197,7 +201,14 @@ internal sealed class SettingsWindow : Window
             Orientation = Orientation.Horizontal,
             Margin = new Thickness(0, 22, 0, 0),
         };
-        var save = new Button { Content = "Apply", Padding = new Thickness(18, 7, 18, 7) };
+        var save = new Button
+        {
+            Content = "Apply",
+            Padding = new Thickness(18, 7, 18, 7),
+            IsDefault = true,
+            Background = SystemColors.HighlightBrush,
+            Foreground = SystemColors.HighlightTextBrush,
+        };
         save.Click += (_, _) => Save();
         panel.Children.Add(save);
         var show = new Button
@@ -219,7 +230,7 @@ internal sealed class SettingsWindow : Window
         var still = new Button
         {
             Content = "Set as wallpaper",
-            Margin = new Thickness(10, 8, 0, 0),
+            Margin = new Thickness(10, 0, 0, 0),
             Padding = new Thickness(12, 7, 12, 7),
         };
         still.Click += (_, _) => SetStillWallpaper();
@@ -333,16 +344,32 @@ internal sealed class SettingsWindow : Window
     private static void AddRow(Panel panel, string label, Control control)
     {
 
-        var row = new Grid { Margin = new Thickness(0, 0, 0, 14) };
+        var row = new Grid { Margin = new Thickness(0, 0, 0, 12) };
         row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(130) });
         row.ColumnDefinitions.Add(new ColumnDefinition());
         row.Children.Add(
-            new TextBlock { Text = label, VerticalAlignment = VerticalAlignment.Center }
+            new TextBlock
+            {
+                Text = label,
+                VerticalAlignment = VerticalAlignment.Center,
+                Foreground = SystemColors.GrayTextBrush,
+            }
         );
         control.MinHeight = 30;
         Grid.SetColumn(control, 1);
         row.Children.Add(control);
         panel.Children.Add(row);
+    }
+
+    private static Border Separator()
+    {
+
+        return new Border
+        {
+            Height = 1,
+            Background = new SolidColorBrush(Color.FromRgb(230, 232, 235)),
+            Margin = new Thickness(0, 6, 0, 20),
+        };
     }
 
     private static void SetChoices(ItemsControl control, IEnumerable<Choice> choices)

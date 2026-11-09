@@ -31,16 +31,22 @@ internal static class WallpaperSnapshot
         var visual = new DrawingVisual();
         using (var drawing = visual.RenderOpen())
         {
+            drawing.DrawRectangle(
+                Rendering.Drawing.Brush("030508"),
+                null,
+                new Rect(0, 0, bounds.Width, bounds.Height)
+            );
+
             foreach (var screen in System.Windows.Forms.Screen.AllScreens)
             {
+                var content = DesktopGeometry.ContentBounds(screen.Bounds, screen.WorkingArea);
                 drawing.PushTransform(
-                    new TranslateTransform(screen.Bounds.X - bounds.X, screen.Bounds.Y - bounds.Y)
+                    new TranslateTransform(
+                        screen.Bounds.X - bounds.X + content.X,
+                        screen.Bounds.Y - bounds.Y + content.Y
+                    )
                 );
-                renderer.Draw(
-                    drawing,
-                    new Size(screen.Bounds.Width, screen.Bounds.Height),
-                    session.Frame!
-                );
+                renderer.Draw(drawing, new Size(content.Width, content.Height), session.Frame!);
                 drawing.Pop();
             }
         }

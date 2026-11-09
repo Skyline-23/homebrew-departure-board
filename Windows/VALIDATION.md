@@ -48,6 +48,8 @@ reparenting alone did not produce visible wallpaper on this host. Windows App
 confirmed the live board behind desktop icons, page/language changes, and
 Explorer's desktop context menu remaining usable. Windows App also
 showed full-screen output at 6016 × 3384 with language and page changes.
+The final 4012 × 2192 desktop check confirmed that the still/live board footer
+fits above the taskbar. Offset-monitor geometry is covered by the native tests.
 
 Run the reproducible checks from the repository:
 

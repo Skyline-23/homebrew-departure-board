@@ -21,6 +21,7 @@ internal sealed class WallpaperWindow : Forms.Form
     private readonly nint host;
     private readonly nint after;
     private readonly Rectangle bounds;
+    private readonly Rectangle contentBounds;
     private readonly bool layered;
     private Bitmap? pixels;
     private RenderTargetBitmap? target;
@@ -39,7 +40,8 @@ internal sealed class WallpaperWindow : Forms.Form
         nint host,
         nint after,
         Rectangle bounds,
-        bool layered
+        bool layered,
+        Rectangle contentBounds
     )
     {
 
@@ -47,6 +49,7 @@ internal sealed class WallpaperWindow : Forms.Form
         this.host = host;
         this.after = after;
         this.bounds = bounds;
+        this.contentBounds = contentBounds;
         this.layered = layered;
         session = new BoardSession(services.Catalog, services.Flights);
         renderer = new BoardRenderer(services.Catalog);
@@ -146,7 +149,18 @@ internal sealed class WallpaperWindow : Forms.Form
         var visual = new DrawingVisual();
         using (var drawing = visual.RenderOpen())
         {
-            renderer.Draw(drawing, new System.Windows.Size(width, height), session.Frame!);
+            drawing.DrawRectangle(
+                Rendering.Drawing.Brush("030508"),
+                null,
+                new System.Windows.Rect(0, 0, width, height)
+            );
+            drawing.PushTransform(new TranslateTransform(contentBounds.X, contentBounds.Y));
+            renderer.Draw(
+                drawing,
+                new System.Windows.Size(contentBounds.Width, contentBounds.Height),
+                session.Frame!
+            );
+            drawing.Pop();
         }
         target.Clear();
         target.Render(visual);
