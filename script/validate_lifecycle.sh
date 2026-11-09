@@ -21,4 +21,4 @@ trap 'unlink "$RESULT"' EXIT
 printf 'pending' > "$RESULT"
 open -g -n -W "$TEST_APP" --args "$RESULT"
 test "$(cat "$RESULT")" = passed
-printf 'Passed 12 close/reopen cycles, Dock transitions and startup/recovery decisions.\n'
+printf 'Passed 12 close/reopen cycles, agent-only Dock policy and startup/recovery decisions.\n'

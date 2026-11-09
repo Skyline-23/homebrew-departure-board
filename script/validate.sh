@@ -3,6 +3,7 @@ set -euo pipefail
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$PROJECT_ROOT"
 python3 script/validate.py
+test "$(/usr/libexec/PlistBuddy -c 'Print :LSUIElement' 'work/Build.noindex/Bundles/Departure Board.app/Contents/Info.plist')" = true
 for strings in Resources/*.lproj/Localizable.strings; do plutil -lint "$strings" >/dev/null; done
 mkdir -p work
 xcrun clang -fobjc-arc -framework Foundation Tests/UserInstallation.m -o work/UserInstallationTests

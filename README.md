@@ -49,7 +49,7 @@ The key stays in your Mac's Keychain. It is not included in the app or shared wi
 
 - **Screen saver:** open **System Settings → Wallpaper → Screen Saver** and choose **Departure Board**. Older macOS versions have a separate **Screen Saver** settings pane.
 - **Live wallpaper:** select **Set as Wallpaper** in Departure Board Settings. The app registers the board automatically and creates one live board per monitor.
-- **Background use:** close the preview to keep it running in the menu bar. Enable **Launch in background at login** if you want it to start when you sign in.
+- **Menu bar app:** Departure Board stays out of the Dock, including when settings or the preview are open. Close the preview to keep it running in the menu bar. Enable **Launch in background at login** if you want it to start when you sign in.
 
 The app, screen saver and wallpaper share their settings. **Show on all Spaces** controls whether the wallpaper appears across your Spaces.
 

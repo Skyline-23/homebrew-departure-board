@@ -108,7 +108,6 @@
     if (notification.object != self.window)
         return;
     [self closeSettings];
-    [NSApp setActivationPolicy:NSApplicationActivationPolicyAccessory];
     NSWindow *closed = self.window;
     dispatch_async(dispatch_get_main_queue(), ^{
         if (self.window == closed && !closed.visible) {
@@ -120,7 +119,6 @@
 }
 - (void)showBoard:(id)sender {
     [self createMainWindow];
-    [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
     [self.window makeKeyAndOrderFront:nil];
     [NSApp activateIgnoringOtherApps:YES];
 }
@@ -335,9 +333,7 @@ int main(int argc, const char *argv[]) {
         if (HandleRunningApplication(arguments))
             return 0;
         NSApplication *app = NSApplication.sharedApplication;
-        [app setActivationPolicy:[arguments containsObject:@"--background"]
-                                     ? NSApplicationActivationPolicyAccessory
-                                     : NSApplicationActivationPolicyRegular];
+        [app setActivationPolicy:NSApplicationActivationPolicyAccessory];
         __attribute__((objc_precise_lifetime)) DepartureBoardApp *delegate = DepartureBoardApp.new;
         app.delegate = delegate;
         [app run];

@@ -13,7 +13,7 @@ int main(int argc, const char *argv[]) {
             return 2;
         NSString *resultPath = [NSString stringWithUTF8String:argv[1]];
         NSApplication *application = NSApplication.sharedApplication;
-        [application setActivationPolicy:NSApplicationActivationPolicyAccessory];
+        BOOL launchedAsAgent = application.activationPolicy == NSApplicationActivationPolicyAccessory;
         dispatch_async(dispatch_get_main_queue(), ^{
             BOOL commandLinePassed =
                 [DBCommandLine runWithArguments:@[ @"DepartureBoard", @"--background" ]] == nil;
@@ -32,7 +32,7 @@ int main(int argc, const char *argv[]) {
             [controller buildMenus];
             [controller buildStatusMenu];
             [controller.window setFrameOrigin:NSMakePoint(-10000, -10000)];
-            BOOL passed = commandLinePassed && !controller.window.releasedWhenClosed &&
+            BOOL passed = launchedAsAgent && commandLinePassed && !controller.window.releasedWhenClosed &&
                           ![controller applicationShouldTerminateAfterLastWindowClosed:application];
             for (NSInteger attempt = 0; attempt < 12; attempt++) {
                 [controller showBoard:nil];
@@ -44,7 +44,7 @@ int main(int argc, const char *argv[]) {
                           application.activationPolicy == NSApplicationActivationPolicyAccessory;
                 [controller applicationShouldHandleReopen:application hasVisibleWindows:NO];
                 passed &= controller.window.visible && controller.options != nil &&
-                          application.activationPolicy == NSApplicationActivationPolicyRegular;
+                          application.activationPolicy == NSApplicationActivationPolicyAccessory;
                 [controller closeSettings];
             }
             DBDesktopController *desktop = DBDesktopController.new;

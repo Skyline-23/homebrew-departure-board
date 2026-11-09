@@ -28,6 +28,10 @@ make_bundle() {
   /usr/libexec/PlistBuddy -c "Add :CFBundleIconFile string AppIcon" "$plist"
   /usr/libexec/PlistBuddy -c "Add :CFBundleIdentifier string $identifier" "$plist"
   /usr/libexec/PlistBuddy -c "Add :CFBundlePackageType string $package" "$plist"
+  if [[ "$package" == "APPL" ]]; then
+    # Agent status takes effect before main(), including wallpaper/maintenance helpers.
+    /usr/libexec/PlistBuddy -c "Add :LSUIElement bool true" "$plist"
+  fi
   /usr/libexec/PlistBuddy -c "Add :CFBundleVersion string $VERSION" "$plist"
   /usr/libexec/PlistBuddy -c "Add :CFBundleShortVersionString string $VERSION" "$plist"
   /usr/libexec/PlistBuddy -c "Add :LSMinimumSystemVersion string 12.0" "$plist"
