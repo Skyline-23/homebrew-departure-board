@@ -24,6 +24,15 @@ security import "$CERTIFICATE_FILE" -f pkcs12 -k "$SIGNING_KEYCHAIN" -P "$APPLE_
   -T /usr/bin/codesign -T /usr/bin/security >/dev/null
 security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" \
   "$SIGNING_KEYCHAIN" >/dev/null
+# codesign on CI also resolves private keys through the user's search list,
+# even when --keychain selects the certificate explicitly.
+EXISTING_KEYCHAINS=()
+while IFS= read -r keychain; do
+  keychain="${keychain#*\"}"
+  keychain="${keychain%\"*}"
+  [[ -n "$keychain" ]] && EXISTING_KEYCHAINS+=("$keychain")
+done < <(security list-keychains -d user)
+security list-keychains -d user -s "$SIGNING_KEYCHAIN" "${EXISTING_KEYCHAINS[@]}"
 IDENTITY="$(security find-identity -v -p codesigning "$SIGNING_KEYCHAIN" | \
   awk -v team="$APPLE_TEAM_ID" '/Developer ID Application:/ && index($0, "(" team ")") {print $2; exit}')"
 if [[ -z "$IDENTITY" ]]; then

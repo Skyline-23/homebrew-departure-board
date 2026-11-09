@@ -19,7 +19,7 @@ open -a "Departure Board"
 
 Homebrew가 없다면 [brew.sh](https://brew.sh/)의 안내에 따라 먼저 설치해 주세요.
 
-Homebrew가 **Departure Board.app**을 `/Applications`에 설치하고 화면 보호기를 등록합니다. 앱을 열어 공항을 고르고 API 키를 입력하면 됩니다. **0.6.2부터 배포되는 바이너리에는 Developer ID 서명과 Apple 공증이 적용됩니다.**
+Homebrew가 **Departure Board.app**을 `/Applications`에 설치하고 화면 보호기를 등록합니다. 앱을 열어 공항을 고르고 API 키를 입력하면 됩니다. **0.6.3부터 배포되는 바이너리에는 Developer ID 서명과 Apple 공증이 적용됩니다.**
 
 <details>
 <summary>이미 설치했다면 업데이트하기</summary>
@@ -105,4 +105,4 @@ macOS와 Xcode 명령줄 도구, Python 3가 필요합니다.
 
 코드와 프로젝트 로고는 **[MIT 라이선스](LICENSE)**로 배포합니다. 항공사 이미지는 각 권리자의 권리를 따르며, 자세한 내용은 [제3자 자료 안내](THIRD_PARTY_NOTICES.md)에 정리했습니다.
 
-원본의 MIT 고지는 [Resources/Data-LICENSE](Resources/Data-LICENSE)에 보존되어 있습니다. 기여하거나 CI를 실행할 때 API 키를 제출할 필요는 없습니다. 보안 문제는 [비공개 제보 안내](SECURITY.md)를 이용해 주세요.
+원본의 MIT 고지는 [Resources/Data-LICENSE](Resources/Data-LICENSE)에 보존되어 있습니다. 기여하거나 빌드를 검사할 때 항공 API 키를 제출할 필요는 없습니다. 보안 문제는 [비공개 제보 안내](SECURITY.md)를 이용해 주세요.

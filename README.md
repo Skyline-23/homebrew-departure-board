@@ -19,7 +19,7 @@ open -a "Departure Board"
 
 Need Homebrew first? Follow the instructions at [brew.sh](https://brew.sh/).
 
-Homebrew installs **Departure Board.app** in `/Applications` and registers the screen saver. Open the app to choose an airport and add your API key. Binary releases from **0.6.2** are signed with Developer ID and notarized by Apple.
+Homebrew installs **Departure Board.app** in `/Applications` and registers the screen saver. Open the app to choose an airport and add your API key. Binary releases from **0.6.3** are signed with Developer ID and notarized by Apple.
 
 <details>
 <summary>Updating an existing installation</summary>
@@ -105,4 +105,4 @@ See [Contributing](CONTRIBUTING.md) for the source layout, visual changes and te
 
 Code and project branding: **[MIT](LICENSE)**. Airline artwork retains its own rights; see [Third-party notices](THIRD_PARTY_NOTICES.md).
 
-The original MIT notice is preserved in [Resources/Data-LICENSE](Resources/Data-LICENSE). API credentials are never required for contributions or CI. Please use [private reporting](SECURITY.md) for security issues.
+The original MIT notice is preserved in [Resources/Data-LICENSE](Resources/Data-LICENSE). Flight API credentials are never required for contributions or build checks. Please use [private reporting](SECURITY.md) for security issues.
