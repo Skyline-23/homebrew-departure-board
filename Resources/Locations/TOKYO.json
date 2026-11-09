@@ -1,0 +1,103 @@
+{
+  "code": "TOKYO",
+  "name": "東京駅",
+  "subtitle": "TOKYO STATION · JR",
+  "zone": "Asia/Tokyo",
+  "lang": "ja",
+  "preset": "tokyo",
+  "accent": "f6cb57",
+  "bg": "0d1316",
+  "header": "1a272d",
+  "kind": "rail",
+  "routes": [
+    {
+      "service": {
+        "key": "route.TOKYO.0.service"
+      },
+      "destination": {
+        "key": "route.TOKYO.0.destination"
+      },
+      "stops": {
+        "key": "route.TOKYO.0.stops"
+      },
+      "color": "df8e20",
+      "platform": "16"
+    },
+    {
+      "service": {
+        "key": "route.TOKYO.1.service"
+      },
+      "destination": {
+        "key": "route.TOKYO.1.destination"
+      },
+      "stops": {
+        "key": "route.TOKYO.1.stops"
+      },
+      "color": "d5424a",
+      "platform": "18"
+    },
+    {
+      "service": {
+        "key": "route.TOKYO.2.service"
+      },
+      "destination": {
+        "key": "route.TOKYO.2.destination"
+      },
+      "stops": {
+        "key": "route.TOKYO.2.stops"
+      },
+      "color": "267ac2",
+      "platform": "15"
+    },
+    {
+      "service": {
+        "key": "route.TOKYO.3.service"
+      },
+      "destination": {
+        "key": "route.TOKYO.3.destination"
+      },
+      "stops": {
+        "key": "route.TOKYO.3.stops"
+      },
+      "color": "189568",
+      "platform": "21"
+    },
+    {
+      "service": {
+        "key": "route.TOKYO.4.service"
+      },
+      "destination": {
+        "key": "route.TOKYO.4.destination"
+      },
+      "stops": {
+        "key": "route.TOKYO.4.stops"
+      },
+      "color": "c43268",
+      "platform": "22"
+    },
+    {
+      "service": {
+        "key": "route.TOKYO.5.service"
+      },
+      "destination": {
+        "key": "route.TOKYO.5.destination"
+      },
+      "stops": {
+        "key": "route.TOKYO.5.stops"
+      },
+      "color": "3e79ac",
+      "platform": "20"
+    }
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "dark",
+  "displayNameKey": "location.TOKYO",
+  "titleKey": "heading.train"
+}

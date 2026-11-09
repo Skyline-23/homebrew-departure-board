@@ -1,0 +1,15 @@
+/* Display strings. Keys are shared across all location renderers. */
+"column.destination" = "Bestemming";
+"column.expected" = "Verwacht";
+"column.flight" = "Vlucht";
+"column.gate" = "Gate";
+"column.state" = "Opmerkingen";
+"column.time" = "Tijd";
+"heading.departures" = "Vertrek";
+"status.boarding" = "Instappen";
+"status.cancelled" = "Geannuleerd";
+"status.closing" = "Laatste oproep";
+"status.delayed" = "Vertraagd";
+"status.departed" = "Vertrokken";
+"status.gate" = "Naar gate";
+"status.scheduled" = "Op tijd";

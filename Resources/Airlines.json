@@ -1,0 +1,222 @@
+{
+  "KE": {
+    "name": "KOREAN AIR",
+    "color": "009edb"
+  },
+  "OZ": {
+    "name": "ASIANA",
+    "color": "ac1a2f"
+  },
+  "7C": {
+    "name": "JEJU AIR",
+    "color": "ff5a00"
+  },
+  "LJ": {
+    "name": "JIN AIR",
+    "color": "8cbe1e"
+  },
+  "JL": {
+    "name": "JAL",
+    "color": "cc0000"
+  },
+  "NH": {
+    "name": "ANA",
+    "color": "13448f"
+  },
+  "GK": {
+    "name": "JETSTAR",
+    "color": "ff7800"
+  },
+  "MM": {
+    "name": "PEACH",
+    "color": "d2328c"
+  },
+  "CA": {
+    "name": "AIR CHINA",
+    "color": "c8102e"
+  },
+  "MU": {
+    "name": "CHINA EASTERN",
+    "color": "003e7e"
+  },
+  "CX": {
+    "name": "CATHAY",
+    "color": "006564"
+  },
+  "BR": {
+    "name": "EVA AIR",
+    "color": "00703c"
+  },
+  "CI": {
+    "name": "CHINA AIRLINES",
+    "color": "d7006c"
+  },
+  "SQ": {
+    "name": "SINGAPORE",
+    "color": "f99f1c"
+  },
+  "TG": {
+    "name": "THAI",
+    "color": "5a1e78"
+  },
+  "PR": {
+    "name": "PHILIPPINE",
+    "color": "003b95"
+  },
+  "VN": {
+    "name": "VIETNAM AIR",
+    "color": "00677f"
+  },
+  "OM": {
+    "name": "MIAT",
+    "color": "00468c"
+  },
+  "UA": {
+    "name": "UNITED",
+    "color": "005daa"
+  },
+  "DL": {
+    "name": "DELTA",
+    "color": "003a70"
+  },
+  "AA": {
+    "name": "AMERICAN",
+    "color": "96a0aa"
+  },
+  "B6": {
+    "name": "JETBLUE",
+    "color": "003876"
+  },
+  "AS": {
+    "name": "ALASKA",
+    "color": "01426a"
+  },
+  "WN": {
+    "name": "SOUTHWEST",
+    "color": "304cb2"
+  },
+  "AC": {
+    "name": "AIR CANADA",
+    "color": "f01428"
+  },
+  "BA": {
+    "name": "BRITISH AIRWAYS",
+    "color": "07346e"
+  },
+  "VS": {
+    "name": "VIRGIN",
+    "color": "e1163c"
+  },
+  "AF": {
+    "name": "AIR FRANCE",
+    "color": "00205b"
+  },
+  "LH": {
+    "name": "LUFTHANSA",
+    "color": "f9ba00"
+  },
+  "KL": {
+    "name": "KLM",
+    "color": "00a1de"
+  },
+  "IB": {
+    "name": "IBERIA",
+    "color": "d7192d"
+  },
+  "TP": {
+    "name": "TAP",
+    "color": "00963c"
+  },
+  "EI": {
+    "name": "AER LINGUS",
+    "color": "006272"
+  },
+  "TK": {
+    "name": "TURKISH",
+    "color": "c70a0c"
+  },
+  "LX": {
+    "name": "SWISS",
+    "color": "e1000f"
+  },
+  "OS": {
+    "name": "AUSTRIAN",
+    "color": "d2001e"
+  },
+  "SK": {
+    "name": "SAS",
+    "color": "002864"
+  },
+  "A3": {
+    "name": "AEGEAN",
+    "color": "003278"
+  },
+  "AZ": {
+    "name": "ITA AIRWAYS",
+    "color": "0047bb"
+  },
+  "U2": {
+    "name": "EASYJET",
+    "color": "ff6600"
+  },
+  "VY": {
+    "name": "VUELING",
+    "color": "ffc800"
+  },
+  "EK": {
+    "name": "EMIRATES",
+    "color": "d71921"
+  },
+  "QR": {
+    "name": "QATAR",
+    "color": "5c0632"
+  },
+  "QF": {
+    "name": "QANTAS",
+    "color": "e40000"
+  },
+  "NZ": {
+    "name": "AIR NZ",
+    "color": "464646"
+  },
+  "AM": {
+    "name": "AEROMEXICO",
+    "color": "0b2343"
+  },
+  "UO": {
+    "name": "HK EXPRESS",
+    "color": "5b2c83"
+  },
+  "MH": {
+    "name": "MALAYSIA AIRLINES",
+    "color": "183d7d"
+  },
+  "GA": {
+    "name": "GARUDA INDONESIA",
+    "color": "228b99"
+  },
+  "AI": {
+    "name": "AIR INDIA",
+    "color": "b72f3b"
+  },
+  "AY": {
+    "name": "FINNAIR",
+    "color": "304c7b"
+  },
+  "LA": {
+    "name": "LATAM",
+    "color": "963672"
+  },
+  "AR": {
+    "name": "AEROLÍNEAS ARGENTINAS",
+    "color": "3a9ed8"
+  },
+  "SA": {
+    "name": "SOUTH AFRICAN",
+    "color": "476692"
+  },
+  "MS": {
+    "name": "EGYPTAIR",
+    "color": "314b7c"
+  }
+}

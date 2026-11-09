@@ -1,0 +1,146 @@
+{
+  "code": "PEK",
+  "name": "北京首都国际机场",
+  "subtitle": "BEIJING CAPITAL",
+  "zone": "Asia/Shanghai",
+  "lang": "zh-Hans",
+  "preset": "capital",
+  "accent": "bb3438",
+  "bg": "101010",
+  "header": "101010",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "LON",
+      "carrier": "CA",
+      "number": 101
+    },
+    {
+      "city": "PAR",
+      "carrier": "CA",
+      "number": 118
+    },
+    {
+      "city": "FRA",
+      "carrier": "CA",
+      "number": 135
+    },
+    {
+      "city": "AMS",
+      "carrier": "CA",
+      "number": 152
+    },
+    {
+      "city": "ROM",
+      "carrier": "CA",
+      "number": 169
+    },
+    {
+      "city": "TYO",
+      "carrier": "CA",
+      "number": 186
+    },
+    {
+      "city": "SEL",
+      "carrier": "CA",
+      "number": 203
+    },
+    {
+      "city": "SIN",
+      "carrier": "CA",
+      "number": 220
+    },
+    {
+      "city": "BKK",
+      "carrier": "CA",
+      "number": 237
+    },
+    {
+      "city": "DXB",
+      "carrier": "CA",
+      "number": 254
+    },
+    {
+      "city": "NYC",
+      "carrier": "CA",
+      "number": 271
+    },
+    {
+      "city": "LAX",
+      "carrier": "CA",
+      "number": 288
+    },
+    {
+      "city": "SYD",
+      "carrier": "CA",
+      "number": 305
+    },
+    {
+      "city": "HKG",
+      "carrier": "CA",
+      "number": 322
+    },
+    {
+      "city": "TPE",
+      "carrier": "CA",
+      "number": 339
+    }
+  ],
+  "gates": [
+    "A1",
+    "A3",
+    "A5",
+    "A7",
+    "A9",
+    "A11",
+    "A13",
+    "A15",
+    "A17",
+    "A19",
+    "A21",
+    "B1",
+    "B3",
+    "B5",
+    "B7",
+    "B9",
+    "B11",
+    "B13",
+    "B15",
+    "B17",
+    "B19",
+    "B21"
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": true,
+  "headerStyle": "dark",
+  "displayNameKey": "location.PEK",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 2,
+    "rowCount": 22,
+    "headerHeight": 70,
+    "headerInk": "ffffff",
+    "rowColors": [
+      "111111",
+      "191919"
+    ],
+    "textColor": "ffffff",
+    "timeColor": "ffffff",
+    "columnBand": "191919",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": true,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "File:中国北京首都国际机场 China Beijing Capital International Airport - panoramio (14).jpg - Wikimedia Commons (https://commons.wikimedia.org/wiki/File%3A%E4%B8%AD%E5%9B%BD%E5%8C%97%E4%BA%AC%E9%A6%96%E9%83%BD%E5%9B%BD%E9%99%85%E6%9C%BA%E5%9C%BA_China_Beijing_Capital_International_Airport_-_panoramio_%2814%29.jpg)",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/c/c4/%E4%B8%AD%E5%9B%BD%E5%8C%97%E4%BA%AC%E9%A6%96%E9%83%BD%E5%9B%BD%E9%99%85%E6%9C%BA%E5%9C%BA_China_Beijing_Capital_International_Airport_-_panoramio_%2814%29.jpg",
+    "accessed": "2026-11-09"
+  }
+}

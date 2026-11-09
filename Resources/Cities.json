@@ -1,0 +1,218 @@
+{
+  "TYO": {
+    "key": "city.TYO"
+  },
+  "OSA": {
+    "key": "city.OSA"
+  },
+  "FUK": {
+    "key": "city.FUK"
+  },
+  "SPK": {
+    "key": "city.SPK"
+  },
+  "OKA": {
+    "key": "city.OKA"
+  },
+  "SEL": {
+    "key": "city.SEL"
+  },
+  "BJS": {
+    "key": "city.BJS"
+  },
+  "SHA": {
+    "key": "city.SHA"
+  },
+  "HKG": {
+    "key": "city.HKG"
+  },
+  "TPE": {
+    "key": "city.TPE"
+  },
+  "SIN": {
+    "key": "city.SIN"
+  },
+  "BKK": {
+    "key": "city.BKK"
+  },
+  "MNL": {
+    "key": "city.MNL"
+  },
+  "CEB": {
+    "key": "city.CEB"
+  },
+  "SGN": {
+    "key": "city.SGN"
+  },
+  "HAN": {
+    "key": "city.HAN"
+  },
+  "DPS": {
+    "key": "city.DPS"
+  },
+  "KUL": {
+    "key": "city.KUL"
+  },
+  "ULN": {
+    "key": "city.ULN"
+  },
+  "SYD": {
+    "key": "city.SYD"
+  },
+  "AKL": {
+    "key": "city.AKL"
+  },
+  "LAX": {
+    "key": "city.LAX"
+  },
+  "SFO": {
+    "key": "city.SFO"
+  },
+  "NYC": {
+    "key": "city.NYC"
+  },
+  "SEA": {
+    "key": "city.SEA"
+  },
+  "HNL": {
+    "key": "city.HNL"
+  },
+  "CHI": {
+    "key": "city.CHI"
+  },
+  "BOS": {
+    "key": "city.BOS"
+  },
+  "MIA": {
+    "key": "city.MIA"
+  },
+  "LAS": {
+    "key": "city.LAS"
+  },
+  "DEN": {
+    "key": "city.DEN"
+  },
+  "YVR": {
+    "key": "city.YVR"
+  },
+  "YYZ": {
+    "key": "city.YYZ"
+  },
+  "YUL": {
+    "key": "city.YUL"
+  },
+  "MEX": {
+    "key": "city.MEX"
+  },
+  "CUN": {
+    "key": "city.CUN"
+  },
+  "GRU": {
+    "key": "city.GRU"
+  },
+  "LON": {
+    "key": "city.LON"
+  },
+  "EDI": {
+    "key": "city.EDI"
+  },
+  "DUB": {
+    "key": "city.DUB"
+  },
+  "PAR": {
+    "key": "city.PAR"
+  },
+  "NCE": {
+    "key": "city.NCE"
+  },
+  "MRS": {
+    "key": "city.MRS"
+  },
+  "TLS": {
+    "key": "city.TLS"
+  },
+  "MIL": {
+    "key": "city.MIL"
+  },
+  "ROM": {
+    "key": "city.ROM"
+  },
+  "NAP": {
+    "key": "city.NAP"
+  },
+  "PMO": {
+    "key": "city.PMO"
+  },
+  "VCE": {
+    "key": "city.VCE"
+  },
+  "CTA": {
+    "key": "city.CTA"
+  },
+  "FRA": {
+    "key": "city.FRA"
+  },
+  "MUC": {
+    "key": "city.MUC"
+  },
+  "BER": {
+    "key": "city.BER"
+  },
+  "ZRH": {
+    "key": "city.ZRH"
+  },
+  "VIE": {
+    "key": "city.VIE"
+  },
+  "AMS": {
+    "key": "city.AMS"
+  },
+  "CPH": {
+    "key": "city.CPH"
+  },
+  "MAD": {
+    "key": "city.MAD"
+  },
+  "BCN": {
+    "key": "city.BCN"
+  },
+  "LIS": {
+    "key": "city.LIS"
+  },
+  "ATH": {
+    "key": "city.ATH"
+  },
+  "IST": {
+    "key": "city.IST"
+  },
+  "DXB": {
+    "key": "city.DXB"
+  },
+  "DOH": {
+    "key": "city.DOH"
+  },
+  "JKT": {
+    "key": "city.JKT"
+  },
+  "DEL": {
+    "key": "city.DEL"
+  },
+  "HEL": {
+    "key": "city.HEL"
+  },
+  "OSL": {
+    "key": "city.OSL"
+  },
+  "ARN": {
+    "key": "city.ARN"
+  },
+  "BUE": {
+    "key": "city.BUE"
+  },
+  "JNB": {
+    "key": "city.JNB"
+  },
+  "CAI": {
+    "key": "city.CAI"
+  }
+}

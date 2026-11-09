@@ -1,0 +1,15 @@
+/* Display strings. Keys are shared across all location renderers. */
+"column.destination" = "गंतव्य";
+"column.expected" = "नया समय";
+"column.flight" = "उड़ान";
+"column.gate" = "द्वार";
+"column.state" = "स्थिति";
+"column.time" = "समय";
+"heading.departures" = "प्रस्थान";
+"status.boarding" = "बोर्डिंग";
+"status.cancelled" = "रद्द";
+"status.closing" = "अंतिम घोषणा";
+"status.delayed" = "विलंबित";
+"status.departed" = "प्रस्थान किया";
+"status.gate" = "द्वार पर जाएँ";
+"status.scheduled" = "समय पर";

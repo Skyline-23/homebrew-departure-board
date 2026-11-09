@@ -1,0 +1,241 @@
+{
+  "code": "NRT",
+  "name": "成田国際空港",
+  "subtitle": "NARITA INTERNATIONAL AIRPORT",
+  "zone": "Asia/Tokyo",
+  "lang": "ja",
+  "preset": "narita",
+  "accent": "f5d84d",
+  "bg": "151b18",
+  "header": "151b18",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "SEL",
+      "carrier": "KE",
+      "number": 702
+    },
+    {
+      "city": "SEL",
+      "carrier": "JL",
+      "number": 951
+    },
+    {
+      "city": "SEL",
+      "carrier": "7C",
+      "number": 1101
+    },
+    {
+      "city": "BJS",
+      "carrier": "NH",
+      "number": 955
+    },
+    {
+      "city": "SHA",
+      "carrier": "JL",
+      "number": 877
+    },
+    {
+      "city": "HKG",
+      "carrier": "CX",
+      "number": 509
+    },
+    {
+      "city": "TPE",
+      "carrier": "BR",
+      "number": 197
+    },
+    {
+      "city": "TPE",
+      "carrier": "CI",
+      "number": 107
+    },
+    {
+      "city": "SIN",
+      "carrier": "SQ",
+      "number": 637
+    },
+    {
+      "city": "SIN",
+      "carrier": "JL",
+      "number": 711
+    },
+    {
+      "city": "BKK",
+      "carrier": "NH",
+      "number": 805
+    },
+    {
+      "city": "MNL",
+      "carrier": "PR",
+      "number": 431
+    },
+    {
+      "city": "SGN",
+      "carrier": "VN",
+      "number": 301
+    },
+    {
+      "city": "HAN",
+      "carrier": "JL",
+      "number": 751
+    },
+    {
+      "city": "ULN",
+      "carrier": "OM",
+      "number": 502
+    },
+    {
+      "city": "KUL",
+      "carrier": "JL",
+      "number": 723
+    },
+    {
+      "city": "LAX",
+      "carrier": "JL",
+      "number": 62
+    },
+    {
+      "city": "SFO",
+      "carrier": "UA",
+      "number": 838
+    },
+    {
+      "city": "NYC",
+      "carrier": "JL",
+      "number": 4
+    },
+    {
+      "city": "CHI",
+      "carrier": "NH",
+      "number": 12
+    },
+    {
+      "city": "HNL",
+      "carrier": "NH",
+      "number": 182
+    },
+    {
+      "city": "HNL",
+      "carrier": "JL",
+      "number": 784
+    },
+    {
+      "city": "YVR",
+      "carrier": "AC",
+      "number": 4
+    },
+    {
+      "city": "LON",
+      "carrier": "BA",
+      "number": 6
+    },
+    {
+      "city": "PAR",
+      "carrier": "AF",
+      "number": 275
+    },
+    {
+      "city": "FRA",
+      "carrier": "LH",
+      "number": 711
+    },
+    {
+      "city": "AMS",
+      "carrier": "KL",
+      "number": 862
+    },
+    {
+      "city": "DXB",
+      "carrier": "EK",
+      "number": 319
+    },
+    {
+      "city": "IST",
+      "carrier": "TK",
+      "number": 53
+    },
+    {
+      "city": "SPK",
+      "carrier": "GK",
+      "number": 101
+    },
+    {
+      "city": "OSA",
+      "carrier": "GK",
+      "number": 201
+    },
+    {
+      "city": "FUK",
+      "carrier": "GK",
+      "number": 501
+    },
+    {
+      "city": "OKA",
+      "carrier": "MM",
+      "number": 507
+    }
+  ],
+  "gates": [
+    "11",
+    "14",
+    "17",
+    "20",
+    "23",
+    "26",
+    "29",
+    "32",
+    "35",
+    "38",
+    "41",
+    "44",
+    "47",
+    "50",
+    "53",
+    "56",
+    "59",
+    "62",
+    "65",
+    "68",
+    "71",
+    "74",
+    "77",
+    "80",
+    "83",
+    "86",
+    "89"
+  ],
+  "columns": [
+    "time",
+    "destination",
+    "flight",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "dark",
+  "displayNameKey": "location.NRT",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 2,
+    "rowCount": 20,
+    "headerHeight": 70,
+    "headerInk": "ffffff",
+    "rowColors": [
+      "111915",
+      "1a221d"
+    ],
+    "textColor": "f0efe0",
+    "timeColor": "f0efe0",
+    "columnBand": "151b18",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": false,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "成田機場第一航廈出入境設施、交通搭車處、免稅店 @來一球叭噗 (https://gototravel.tw/tokyo-narita-airport-terminal-1/)",
+    "image": "https://img.gototravel.tw/2019/tokyo/transport/narita-terminal1/narita-terminal1-6.jpg",
+    "accessed": "2026-11-09"
+  }
+}

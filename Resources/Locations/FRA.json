@@ -1,0 +1,141 @@
+{
+  "code": "FRA",
+  "name": "Frankfurt Airport",
+  "subtitle": "FRANKFURT AIRPORT",
+  "zone": "Europe/Berlin",
+  "lang": "de",
+  "preset": "frankfurt",
+  "accent": "f8d93f",
+  "bg": "141714",
+  "header": "f3dc52",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "LON",
+      "carrier": "LH",
+      "number": 101
+    },
+    {
+      "city": "PAR",
+      "carrier": "LH",
+      "number": 118
+    },
+    {
+      "city": "AMS",
+      "carrier": "LH",
+      "number": 152
+    },
+    {
+      "city": "ROM",
+      "carrier": "LH",
+      "number": 169
+    },
+    {
+      "city": "TYO",
+      "carrier": "LH",
+      "number": 186
+    },
+    {
+      "city": "SEL",
+      "carrier": "LH",
+      "number": 203
+    },
+    {
+      "city": "SIN",
+      "carrier": "LH",
+      "number": 220
+    },
+    {
+      "city": "BKK",
+      "carrier": "LH",
+      "number": 237
+    },
+    {
+      "city": "DXB",
+      "carrier": "LH",
+      "number": 254
+    },
+    {
+      "city": "NYC",
+      "carrier": "LH",
+      "number": 271
+    },
+    {
+      "city": "LAX",
+      "carrier": "LH",
+      "number": 288
+    },
+    {
+      "city": "SYD",
+      "carrier": "LH",
+      "number": 305
+    },
+    {
+      "city": "HKG",
+      "carrier": "LH",
+      "number": 322
+    },
+    {
+      "city": "TPE",
+      "carrier": "LH",
+      "number": 339
+    }
+  ],
+  "gates": [
+    "A1",
+    "A3",
+    "A5",
+    "A7",
+    "A9",
+    "A11",
+    "A13",
+    "A15",
+    "A17",
+    "A19",
+    "A21",
+    "B1",
+    "B3",
+    "B5",
+    "B7",
+    "B9",
+    "B11",
+    "B13",
+    "B15",
+    "B17",
+    "B19",
+    "B21"
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "dark",
+  "displayNameKey": "location.FRA",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 4,
+    "rowCount": 25,
+    "headerHeight": 96,
+    "headerInk": "172027",
+    "rowColors": [
+      "101713",
+      "19211a"
+    ],
+    "textColor": "f0f0de",
+    "timeColor": "f0f0de",
+    "columnBand": "212721",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": true,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "Temen que este popular aeropuerto sea la puerta de entrada a Europa del nuevo virus que sacude a China (https://www.huffingtonpost.es/sociedad/temen-popular-aeropuerto-sea-puerta-entrada-europa-nuevo-virus-sacude-china.html)",
+    "image": "https://img2.huffingtonpost.es/files/og_thumbnail/uploads/2025/01/21/terminal-del-aeropuerto-de-frankfurt-alemania.jpeg",
+    "accessed": "2026-11-09"
+  }
+}

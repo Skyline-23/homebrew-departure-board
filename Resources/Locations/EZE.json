@@ -1,0 +1,146 @@
+{
+  "code": "EZE",
+  "name": "Buenos Aires Ezeiza",
+  "subtitle": "BUENOS AIRES EZEIZA",
+  "zone": "America/Argentina/Buenos_Aires",
+  "lang": "es",
+  "preset": "ezeiza",
+  "accent": "98ccf4",
+  "bg": "142e29",
+  "header": "264d3d",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "LON",
+      "carrier": "AR",
+      "number": 101
+    },
+    {
+      "city": "PAR",
+      "carrier": "AR",
+      "number": 118
+    },
+    {
+      "city": "FRA",
+      "carrier": "AR",
+      "number": 135
+    },
+    {
+      "city": "AMS",
+      "carrier": "AR",
+      "number": 152
+    },
+    {
+      "city": "ROM",
+      "carrier": "AR",
+      "number": 169
+    },
+    {
+      "city": "TYO",
+      "carrier": "AR",
+      "number": 186
+    },
+    {
+      "city": "SEL",
+      "carrier": "AR",
+      "number": 203
+    },
+    {
+      "city": "SIN",
+      "carrier": "AR",
+      "number": 220
+    },
+    {
+      "city": "BKK",
+      "carrier": "AR",
+      "number": 237
+    },
+    {
+      "city": "DXB",
+      "carrier": "AR",
+      "number": 254
+    },
+    {
+      "city": "NYC",
+      "carrier": "AR",
+      "number": 271
+    },
+    {
+      "city": "LAX",
+      "carrier": "AR",
+      "number": 288
+    },
+    {
+      "city": "SYD",
+      "carrier": "AR",
+      "number": 305
+    },
+    {
+      "city": "HKG",
+      "carrier": "AR",
+      "number": 322
+    },
+    {
+      "city": "TPE",
+      "carrier": "AR",
+      "number": 339
+    }
+  ],
+  "gates": [
+    "A1",
+    "A3",
+    "A5",
+    "A7",
+    "A9",
+    "A11",
+    "A13",
+    "A15",
+    "A17",
+    "A19",
+    "A21",
+    "B1",
+    "B3",
+    "B5",
+    "B7",
+    "B9",
+    "B11",
+    "B13",
+    "B15",
+    "B17",
+    "B19",
+    "B21"
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "dark",
+  "displayNameKey": "location.EZE",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 2,
+    "rowCount": 18,
+    "headerHeight": 96,
+    "headerInk": "ffffff",
+    "rowColors": [
+      "316947",
+      "407f59"
+    ],
+    "textColor": "ffffff",
+    "timeColor": "ffffff",
+    "columnBand": "4c8d63",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": true,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "American Airlines 777-300ER Flagship First Review (2026): Buenos Aires to New York | AwardFares Blog (https://awardfares.com/blog/aa-777-300-eze-jfk/)",
+    "image": "https://blog.awardfaresstatic.com/images/original/aa-eze-jfk-review-2026/009-eze-departure-gates-sign.jpeg",
+    "accessed": "2026-11-09"
+  }
+}

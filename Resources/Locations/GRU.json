@@ -1,0 +1,146 @@
+{
+  "code": "GRU",
+  "name": "São Paulo Guarulhos",
+  "subtitle": "SÃO PAULO GUARULHOS",
+  "zone": "America/Sao_Paulo",
+  "lang": "pt",
+  "preset": "guarulhos",
+  "accent": "74d0ce",
+  "bg": "151a1a",
+  "header": "dfcf53",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "LON",
+      "carrier": "LA",
+      "number": 101
+    },
+    {
+      "city": "PAR",
+      "carrier": "LA",
+      "number": 118
+    },
+    {
+      "city": "FRA",
+      "carrier": "LA",
+      "number": 135
+    },
+    {
+      "city": "AMS",
+      "carrier": "LA",
+      "number": 152
+    },
+    {
+      "city": "ROM",
+      "carrier": "LA",
+      "number": 169
+    },
+    {
+      "city": "TYO",
+      "carrier": "LA",
+      "number": 186
+    },
+    {
+      "city": "SEL",
+      "carrier": "LA",
+      "number": 203
+    },
+    {
+      "city": "SIN",
+      "carrier": "LA",
+      "number": 220
+    },
+    {
+      "city": "BKK",
+      "carrier": "LA",
+      "number": 237
+    },
+    {
+      "city": "DXB",
+      "carrier": "LA",
+      "number": 254
+    },
+    {
+      "city": "NYC",
+      "carrier": "LA",
+      "number": 271
+    },
+    {
+      "city": "LAX",
+      "carrier": "LA",
+      "number": 288
+    },
+    {
+      "city": "SYD",
+      "carrier": "LA",
+      "number": 305
+    },
+    {
+      "city": "HKG",
+      "carrier": "LA",
+      "number": 322
+    },
+    {
+      "city": "TPE",
+      "carrier": "LA",
+      "number": 339
+    }
+  ],
+  "gates": [
+    "A1",
+    "A3",
+    "A5",
+    "A7",
+    "A9",
+    "A11",
+    "A13",
+    "A15",
+    "A17",
+    "A19",
+    "A21",
+    "B1",
+    "B3",
+    "B5",
+    "B7",
+    "B9",
+    "B11",
+    "B13",
+    "B15",
+    "B17",
+    "B19",
+    "B21"
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "dark",
+  "displayNameKey": "location.GRU",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 3,
+    "rowCount": 24,
+    "headerHeight": 96,
+    "headerInk": "202a2d",
+    "rowColors": [
+      "f2f2e8",
+      "e3e6df"
+    ],
+    "textColor": "193540",
+    "timeColor": "193540",
+    "columnBand": "cddbd9",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": true,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "GRU Airport - Aeroporto Internacional de São Paulo - Guarulhos, Terminal 3 (https://br.pinterest.com/pin/97038566950293468/)",
+    "image": "https://i.pinimg.com/originals/b1/f2/65/b1f265ae67192629a99122f714896900.jpg",
+    "accessed": "2026-11-09"
+  }
+}

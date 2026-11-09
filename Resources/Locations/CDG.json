@@ -1,0 +1,243 @@
+{
+  "code": "CDG",
+  "name": "Paris–Charles de Gaulle",
+  "subtitle": "PARIS AÉROPORT",
+  "zone": "Europe/Paris",
+  "lang": "fr",
+  "preset": "paris",
+  "accent": "fff14b",
+  "bg": "091538",
+  "header": "17172b",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "LON",
+      "carrier": "AF",
+      "number": 1680
+    },
+    {
+      "city": "MIL",
+      "carrier": "AF",
+      "number": 1612
+    },
+    {
+      "city": "ROM",
+      "carrier": "AF",
+      "number": 1104
+    },
+    {
+      "city": "VCE",
+      "carrier": "AF",
+      "number": 1526
+    },
+    {
+      "city": "FRA",
+      "carrier": "LH",
+      "number": 1029
+    },
+    {
+      "city": "MUC",
+      "carrier": "LH",
+      "number": 2229
+    },
+    {
+      "city": "AMS",
+      "carrier": "KL",
+      "number": 1224
+    },
+    {
+      "city": "MAD",
+      "carrier": "AF",
+      "number": 1300
+    },
+    {
+      "city": "BCN",
+      "carrier": "AF",
+      "number": 1148
+    },
+    {
+      "city": "LIS",
+      "carrier": "TP",
+      "number": 433
+    },
+    {
+      "city": "ATH",
+      "carrier": "AF",
+      "number": 1832
+    },
+    {
+      "city": "IST",
+      "carrier": "TK",
+      "number": 1824
+    },
+    {
+      "city": "NCE",
+      "carrier": "AF",
+      "number": 7700
+    },
+    {
+      "city": "NCE",
+      "carrier": "U2",
+      "number": 4013
+    },
+    {
+      "city": "MRS",
+      "carrier": "AF",
+      "number": 7660
+    },
+    {
+      "city": "TLS",
+      "carrier": "AF",
+      "number": 6120
+    },
+    {
+      "city": "ZRH",
+      "carrier": "LX",
+      "number": 633
+    },
+    {
+      "city": "CPH",
+      "carrier": "AF",
+      "number": 1350
+    },
+    {
+      "city": "YUL",
+      "carrier": "AF",
+      "number": 346
+    },
+    {
+      "city": "NYC",
+      "carrier": "AF",
+      "number": 6
+    },
+    {
+      "city": "NYC",
+      "carrier": "DL",
+      "number": 265
+    },
+    {
+      "city": "LAX",
+      "carrier": "AF",
+      "number": 22
+    },
+    {
+      "city": "SFO",
+      "carrier": "AF",
+      "number": 84
+    },
+    {
+      "city": "MEX",
+      "carrier": "AF",
+      "number": 178
+    },
+    {
+      "city": "GRU",
+      "carrier": "AF",
+      "number": 456
+    },
+    {
+      "city": "DXB",
+      "carrier": "EK",
+      "number": 76
+    },
+    {
+      "city": "DOH",
+      "carrier": "QR",
+      "number": 42
+    },
+    {
+      "city": "SIN",
+      "carrier": "AF",
+      "number": 256
+    },
+    {
+      "city": "HKG",
+      "carrier": "CX",
+      "number": 260
+    },
+    {
+      "city": "TYO",
+      "carrier": "AF",
+      "number": 274
+    },
+    {
+      "city": "TYO",
+      "carrier": "JL",
+      "number": 46
+    },
+    {
+      "city": "SEL",
+      "carrier": "KE",
+      "number": 902
+    },
+    {
+      "city": "BJS",
+      "carrier": "AF",
+      "number": 128
+    },
+    {
+      "city": "SHA",
+      "carrier": "MU",
+      "number": 554
+    }
+  ],
+  "gates": [
+    "K2",
+    "K5",
+    "K8",
+    "K11",
+    "K14",
+    "K17",
+    "K20",
+    "K23",
+    "L2",
+    "L5",
+    "L8",
+    "L11",
+    "L14",
+    "L17",
+    "L20",
+    "L23",
+    "M2",
+    "M5",
+    "M8",
+    "M11",
+    "M14",
+    "M17",
+    "M20",
+    "M23"
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "dark",
+  "displayNameKey": "location.CDG",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 3,
+    "rowCount": 24,
+    "headerHeight": 96,
+    "headerInk": "ffffff",
+    "rowColors": [
+      "183f9f",
+      "204cae"
+    ],
+    "textColor": "ffffff",
+    "timeColor": "ffffff",
+    "columnBand": "071d4e",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": true,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "Sosiri și plecări la Aeroportul Paris Charles de Gaulle (CDG) (https://www.cestee.ro/aeroport/paris-charles-de-gaulle-cdg/sosiri-plecari)",
+    "image": "https://www.cestee.ro/images/38/43/163843-2560.jpeg",
+    "accessed": "2026-11-09"
+  }
+}

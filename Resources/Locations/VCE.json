@@ -1,0 +1,185 @@
+{
+  "code": "VCE",
+  "name": "Venezia Marco Polo",
+  "subtitle": "VENICE MARCO POLO AIRPORT",
+  "zone": "Europe/Rome",
+  "lang": "it",
+  "preset": "venice",
+  "accent": "f5d26a",
+  "bg": "071127",
+  "header": "0645c2",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "ROM",
+      "carrier": "AZ",
+      "number": 1462
+    },
+    {
+      "city": "NAP",
+      "carrier": "U2",
+      "number": 2721
+    },
+    {
+      "city": "PMO",
+      "carrier": "U2",
+      "number": 2769
+    },
+    {
+      "city": "CTA",
+      "carrier": "U2",
+      "number": 2765
+    },
+    {
+      "city": "PAR",
+      "carrier": "AF",
+      "number": 1427
+    },
+    {
+      "city": "PAR",
+      "carrier": "U2",
+      "number": 4642
+    },
+    {
+      "city": "LON",
+      "carrier": "BA",
+      "number": 2585
+    },
+    {
+      "city": "LON",
+      "carrier": "U2",
+      "number": 8642
+    },
+    {
+      "city": "FRA",
+      "carrier": "LH",
+      "number": 327
+    },
+    {
+      "city": "MUC",
+      "carrier": "LH",
+      "number": 1975
+    },
+    {
+      "city": "AMS",
+      "carrier": "KL",
+      "number": 1660
+    },
+    {
+      "city": "MAD",
+      "carrier": "IB",
+      "number": 3237
+    },
+    {
+      "city": "BCN",
+      "carrier": "VY",
+      "number": 6409
+    },
+    {
+      "city": "LIS",
+      "carrier": "TP",
+      "number": 841
+    },
+    {
+      "city": "ATH",
+      "carrier": "A3",
+      "number": 661
+    },
+    {
+      "city": "IST",
+      "carrier": "TK",
+      "number": 1868
+    },
+    {
+      "city": "ZRH",
+      "carrier": "LX",
+      "number": 1671
+    },
+    {
+      "city": "VIE",
+      "carrier": "OS",
+      "number": 534
+    },
+    {
+      "city": "CPH",
+      "carrier": "SK",
+      "number": 1690
+    },
+    {
+      "city": "BER",
+      "carrier": "U2",
+      "number": 5016
+    },
+    {
+      "city": "DXB",
+      "carrier": "EK",
+      "number": 136
+    },
+    {
+      "city": "DOH",
+      "carrier": "QR",
+      "number": 132
+    },
+    {
+      "city": "NYC",
+      "carrier": "DL",
+      "number": 205
+    },
+    {
+      "city": "NYC",
+      "carrier": "UA",
+      "number": 169
+    }
+  ],
+  "gates": [
+    "A2",
+    "A5",
+    "A8",
+    "A11",
+    "A14",
+    "A17",
+    "A20",
+    "A23",
+    "B2",
+    "B5",
+    "B8",
+    "B11",
+    "B14",
+    "B17",
+    "B20",
+    "B23"
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "dark",
+  "displayNameKey": "location.VCE",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 2,
+    "rowCount": 25,
+    "headerHeight": 96,
+    "headerInk": "ffffff",
+    "rowColors": [
+      "0b2150",
+      "10295b"
+    ],
+    "textColor": "f5f8ff",
+    "timeColor": "f5f8ff",
+    "columnBand": "006ac9",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": true,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "Accordi – L’aeroporto di Venezia si rinnova con le soluzioni L... (https://www.tecnelab.it/news/attualita/accordi--laeroporto-di-venezia-si-rinnova-con-le-soluzioni-lg-business-solutions)",
+    "image": "https://www.tecnelab.it/public/tecnelab/2018/NOVEMBRE%202018/tecne_LG_A_21.11.2018.jpg",
+    "accessed": "2026-11-09"
+  }
+}

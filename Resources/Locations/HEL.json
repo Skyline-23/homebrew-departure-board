@@ -1,0 +1,146 @@
+{
+  "code": "HEL",
+  "name": "Helsinki Airport",
+  "subtitle": "HELSINKI AIRPORT",
+  "zone": "Europe/Helsinki",
+  "lang": "fi",
+  "preset": "helsinki",
+  "accent": "73bce6",
+  "bg": "09182f",
+  "header": "174678",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "LON",
+      "carrier": "AY",
+      "number": 101
+    },
+    {
+      "city": "PAR",
+      "carrier": "AY",
+      "number": 118
+    },
+    {
+      "city": "FRA",
+      "carrier": "AY",
+      "number": 135
+    },
+    {
+      "city": "AMS",
+      "carrier": "AY",
+      "number": 152
+    },
+    {
+      "city": "ROM",
+      "carrier": "AY",
+      "number": 169
+    },
+    {
+      "city": "TYO",
+      "carrier": "AY",
+      "number": 186
+    },
+    {
+      "city": "SEL",
+      "carrier": "AY",
+      "number": 203
+    },
+    {
+      "city": "SIN",
+      "carrier": "AY",
+      "number": 220
+    },
+    {
+      "city": "BKK",
+      "carrier": "AY",
+      "number": 237
+    },
+    {
+      "city": "DXB",
+      "carrier": "AY",
+      "number": 254
+    },
+    {
+      "city": "NYC",
+      "carrier": "AY",
+      "number": 271
+    },
+    {
+      "city": "LAX",
+      "carrier": "AY",
+      "number": 288
+    },
+    {
+      "city": "SYD",
+      "carrier": "AY",
+      "number": 305
+    },
+    {
+      "city": "HKG",
+      "carrier": "AY",
+      "number": 322
+    },
+    {
+      "city": "TPE",
+      "carrier": "AY",
+      "number": 339
+    }
+  ],
+  "gates": [
+    "A1",
+    "A3",
+    "A5",
+    "A7",
+    "A9",
+    "A11",
+    "A13",
+    "A15",
+    "A17",
+    "A19",
+    "A21",
+    "B1",
+    "B3",
+    "B5",
+    "B7",
+    "B9",
+    "B11",
+    "B13",
+    "B15",
+    "B17",
+    "B19",
+    "B21"
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "light",
+  "displayNameKey": "location.HEL",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 3,
+    "rowCount": 25,
+    "headerHeight": 96,
+    "headerInk": "ffffff",
+    "rowColors": [
+      "1c4caa",
+      "2a5abb"
+    ],
+    "textColor": "ffffff",
+    "timeColor": "ffffff",
+    "columnBand": "0c3a6a",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": true,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "Finns prioritize travel frequency over international travel expenses, survey reveals - Helsinki Times (https://www.helsinkitimes.fi/themes/themes/travel/24302-finns-prioritize-travel-frequency-over-international-travel-expenses-survey-reveals.html)",
+    "image": "https://www.helsinkitimes.fi/images/2023/10/travel_frequency.jpg",
+    "accessed": "2026-11-09"
+  }
+}

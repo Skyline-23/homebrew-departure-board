@@ -1,0 +1,146 @@
+{
+  "code": "MEX",
+  "name": "Ciudad de México",
+  "subtitle": "MEXICO CITY INTERNATIONAL",
+  "zone": "America/Mexico_City",
+  "lang": "es",
+  "preset": "mexico",
+  "accent": "c5e7cf",
+  "bg": "1a2c38",
+  "header": "49758c",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "LON",
+      "carrier": "AM",
+      "number": 101
+    },
+    {
+      "city": "PAR",
+      "carrier": "AM",
+      "number": 118
+    },
+    {
+      "city": "FRA",
+      "carrier": "AM",
+      "number": 135
+    },
+    {
+      "city": "AMS",
+      "carrier": "AM",
+      "number": 152
+    },
+    {
+      "city": "ROM",
+      "carrier": "AM",
+      "number": 169
+    },
+    {
+      "city": "TYO",
+      "carrier": "AM",
+      "number": 186
+    },
+    {
+      "city": "SEL",
+      "carrier": "AM",
+      "number": 203
+    },
+    {
+      "city": "SIN",
+      "carrier": "AM",
+      "number": 220
+    },
+    {
+      "city": "BKK",
+      "carrier": "AM",
+      "number": 237
+    },
+    {
+      "city": "DXB",
+      "carrier": "AM",
+      "number": 254
+    },
+    {
+      "city": "NYC",
+      "carrier": "AM",
+      "number": 271
+    },
+    {
+      "city": "LAX",
+      "carrier": "AM",
+      "number": 288
+    },
+    {
+      "city": "SYD",
+      "carrier": "AM",
+      "number": 305
+    },
+    {
+      "city": "HKG",
+      "carrier": "AM",
+      "number": 322
+    },
+    {
+      "city": "TPE",
+      "carrier": "AM",
+      "number": 339
+    }
+  ],
+  "gates": [
+    "A1",
+    "A3",
+    "A5",
+    "A7",
+    "A9",
+    "A11",
+    "A13",
+    "A15",
+    "A17",
+    "A19",
+    "A21",
+    "B1",
+    "B3",
+    "B5",
+    "B7",
+    "B9",
+    "B11",
+    "B13",
+    "B15",
+    "B17",
+    "B19",
+    "B21"
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "dark",
+  "displayNameKey": "location.MEX",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 2,
+    "rowCount": 23,
+    "headerHeight": 96,
+    "headerInk": "ffffff",
+    "rowColors": [
+      "366b83",
+      "477f93"
+    ],
+    "textColor": "f4f6ed",
+    "timeColor": "f4f6ed",
+    "columnBand": "295667",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": true,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "『アエロメヒコ直行便にのってみる2023（帰り）』メキシコシティ(メキシコ)の旅行記・ブログ by めひかーのさんciteフォートラベル (https://4travel.jp/travelogue/11856471)",
+    "image": "https://cdn.4travel.jp/img/thumbnails/imk/travelogue_pict/78/96/16/650x_78961687.jpg?updated_at=1696040458",
+    "accessed": "2026-11-09"
+  }
+}

@@ -1,0 +1,15 @@
+/* Display strings. Keys are shared across all location renderers. */
+"column.destination" = "Destination";
+"column.expected" = "Ny tid";
+"column.flight" = "Flyg";
+"column.gate" = "Gate";
+"column.state" = "Anmärkning";
+"column.time" = "Tid";
+"heading.departures" = "Avgångar";
+"status.boarding" = "Ombordstigning";
+"status.cancelled" = "Inställt";
+"status.closing" = "Sista utrop";
+"status.delayed" = "Försenat";
+"status.departed" = "Avgått";
+"status.gate" = "Gå till gate";
+"status.scheduled" = "I tid";

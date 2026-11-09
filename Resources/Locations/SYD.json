@@ -1,0 +1,141 @@
+{
+  "code": "SYD",
+  "name": "Sydney Airport",
+  "subtitle": "SYDNEY KINGSFORD SMITH",
+  "zone": "Australia/Sydney",
+  "lang": "en",
+  "preset": "sydney-airport",
+  "accent": "ffd452",
+  "bg": "141316",
+  "header": "171819",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "LON",
+      "carrier": "QF",
+      "number": 101
+    },
+    {
+      "city": "PAR",
+      "carrier": "QF",
+      "number": 118
+    },
+    {
+      "city": "FRA",
+      "carrier": "QF",
+      "number": 135
+    },
+    {
+      "city": "AMS",
+      "carrier": "QF",
+      "number": 152
+    },
+    {
+      "city": "ROM",
+      "carrier": "QF",
+      "number": 169
+    },
+    {
+      "city": "TYO",
+      "carrier": "QF",
+      "number": 186
+    },
+    {
+      "city": "SEL",
+      "carrier": "QF",
+      "number": 203
+    },
+    {
+      "city": "SIN",
+      "carrier": "QF",
+      "number": 220
+    },
+    {
+      "city": "BKK",
+      "carrier": "QF",
+      "number": 237
+    },
+    {
+      "city": "DXB",
+      "carrier": "QF",
+      "number": 254
+    },
+    {
+      "city": "NYC",
+      "carrier": "QF",
+      "number": 271
+    },
+    {
+      "city": "LAX",
+      "carrier": "QF",
+      "number": 288
+    },
+    {
+      "city": "HKG",
+      "carrier": "QF",
+      "number": 322
+    },
+    {
+      "city": "TPE",
+      "carrier": "QF",
+      "number": 339
+    }
+  ],
+  "gates": [
+    "A1",
+    "A3",
+    "A5",
+    "A7",
+    "A9",
+    "A11",
+    "A13",
+    "A15",
+    "A17",
+    "A19",
+    "A21",
+    "B1",
+    "B3",
+    "B5",
+    "B7",
+    "B9",
+    "B11",
+    "B13",
+    "B15",
+    "B17",
+    "B19",
+    "B21"
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "dark",
+  "displayNameKey": "location.SYD",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 2,
+    "rowCount": 21,
+    "headerHeight": 96,
+    "headerInk": "ffffff",
+    "rowColors": [
+      "171919",
+      "222323"
+    ],
+    "textColor": "f7d65e",
+    "timeColor": "f7d65e",
+    "columnBand": "292c2d",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": true,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "citeオーストラリア シドニーからゴールドコーストへ国内線移動 - 旅と暮らしと美味しいものと (https://fuwari-x.hatenablog.com/entry/2024/09/19/121500)",
+    "image": "https://cdn-ak.f.st-hatena.com/images/fotolife/f/fuwari-x/20240815/20240815100452.jpg",
+    "accessed": "2026-11-09"
+  }
+}

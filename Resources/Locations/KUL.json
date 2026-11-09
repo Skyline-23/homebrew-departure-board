@@ -1,0 +1,146 @@
+{
+  "code": "KUL",
+  "name": "Kuala Lumpur",
+  "subtitle": "KUALA LUMPUR INTERNATIONAL",
+  "zone": "Asia/Kuala_Lumpur",
+  "lang": "ms",
+  "preset": "kuala",
+  "accent": "dfc765",
+  "bg": "0a1c42",
+  "header": "194295",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "LON",
+      "carrier": "MH",
+      "number": 101
+    },
+    {
+      "city": "PAR",
+      "carrier": "MH",
+      "number": 118
+    },
+    {
+      "city": "FRA",
+      "carrier": "MH",
+      "number": 135
+    },
+    {
+      "city": "AMS",
+      "carrier": "MH",
+      "number": 152
+    },
+    {
+      "city": "ROM",
+      "carrier": "MH",
+      "number": 169
+    },
+    {
+      "city": "TYO",
+      "carrier": "MH",
+      "number": 186
+    },
+    {
+      "city": "SEL",
+      "carrier": "MH",
+      "number": 203
+    },
+    {
+      "city": "SIN",
+      "carrier": "MH",
+      "number": 220
+    },
+    {
+      "city": "BKK",
+      "carrier": "MH",
+      "number": 237
+    },
+    {
+      "city": "DXB",
+      "carrier": "MH",
+      "number": 254
+    },
+    {
+      "city": "NYC",
+      "carrier": "MH",
+      "number": 271
+    },
+    {
+      "city": "LAX",
+      "carrier": "MH",
+      "number": 288
+    },
+    {
+      "city": "SYD",
+      "carrier": "MH",
+      "number": 305
+    },
+    {
+      "city": "HKG",
+      "carrier": "MH",
+      "number": 322
+    },
+    {
+      "city": "TPE",
+      "carrier": "MH",
+      "number": 339
+    }
+  ],
+  "gates": [
+    "A1",
+    "A3",
+    "A5",
+    "A7",
+    "A9",
+    "A11",
+    "A13",
+    "A15",
+    "A17",
+    "A19",
+    "A21",
+    "B1",
+    "B3",
+    "B5",
+    "B7",
+    "B9",
+    "B11",
+    "B13",
+    "B15",
+    "B17",
+    "B19",
+    "B21"
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "dark",
+  "displayNameKey": "location.KUL",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 2,
+    "rowCount": 24,
+    "headerHeight": 96,
+    "headerInk": "ffffff",
+    "rowColors": [
+      "284dc1",
+      "335cc9"
+    ],
+    "textColor": "ffffff",
+    "timeColor": "ffffff",
+    "columnBand": "193b85",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": true,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "Transport minister says new terminals, fourth runway for KLIA on the cards | Malay Mail (https://www.malaymail.com/news/malaysia/2024/12/12/transport-minister-says-new-terminals-fourth-runway-for-klia-on-the-cards/159603)",
+    "image": "https://cdnx.premiumread.com/?f=jpg&q=100&t=6&url=https%3A%2F%2Fwww.malaymail.com%2Fmalaymail%2Fuploads%2Fimages%2F2024%2F12%2F12%2F249441.jpeg&w=1000",
+    "accessed": "2026-11-09"
+  }
+}

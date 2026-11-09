@@ -1,0 +1,15 @@
+/* Display strings. Keys are shared across all location renderers. */
+"column.destination" = "الوجهة";
+"column.expected" = "الوقت الجديد";
+"column.flight" = "الرحلة";
+"column.gate" = "البوابة";
+"column.state" = "الحالة";
+"column.time" = "الوقت";
+"heading.departures" = "المغادرون";
+"status.boarding" = "صعود الطائرة";
+"status.cancelled" = "ملغاة";
+"status.closing" = "النداء الأخير";
+"status.delayed" = "متأخرة";
+"status.departed" = "غادرت";
+"status.gate" = "إلى البوابة";
+"status.scheduled" = "في الموعد";

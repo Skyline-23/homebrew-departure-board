@@ -1,0 +1,141 @@
+{
+  "code": "LAX",
+  "name": "Los Angeles International",
+  "subtitle": "LOS ANGELES INTERNATIONAL",
+  "zone": "America/Los_Angeles",
+  "lang": "en",
+  "preset": "losangeles",
+  "accent": "88bafa",
+  "bg": "111512",
+  "header": "131914",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "LON",
+      "carrier": "UA",
+      "number": 101
+    },
+    {
+      "city": "PAR",
+      "carrier": "UA",
+      "number": 118
+    },
+    {
+      "city": "FRA",
+      "carrier": "UA",
+      "number": 135
+    },
+    {
+      "city": "AMS",
+      "carrier": "UA",
+      "number": 152
+    },
+    {
+      "city": "ROM",
+      "carrier": "UA",
+      "number": 169
+    },
+    {
+      "city": "TYO",
+      "carrier": "UA",
+      "number": 186
+    },
+    {
+      "city": "SEL",
+      "carrier": "UA",
+      "number": 203
+    },
+    {
+      "city": "SIN",
+      "carrier": "UA",
+      "number": 220
+    },
+    {
+      "city": "BKK",
+      "carrier": "UA",
+      "number": 237
+    },
+    {
+      "city": "DXB",
+      "carrier": "UA",
+      "number": 254
+    },
+    {
+      "city": "NYC",
+      "carrier": "UA",
+      "number": 271
+    },
+    {
+      "city": "SYD",
+      "carrier": "UA",
+      "number": 305
+    },
+    {
+      "city": "HKG",
+      "carrier": "UA",
+      "number": 322
+    },
+    {
+      "city": "TPE",
+      "carrier": "UA",
+      "number": 339
+    }
+  ],
+  "gates": [
+    "A1",
+    "A3",
+    "A5",
+    "A7",
+    "A9",
+    "A11",
+    "A13",
+    "A15",
+    "A17",
+    "A19",
+    "A21",
+    "B1",
+    "B3",
+    "B5",
+    "B7",
+    "B9",
+    "B11",
+    "B13",
+    "B15",
+    "B17",
+    "B19",
+    "B21"
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "dark",
+  "displayNameKey": "location.LAX",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 2,
+    "rowCount": 21,
+    "headerHeight": 96,
+    "headerInk": "f1d06d",
+    "rowColors": [
+      "141a14",
+      "1c241c"
+    ],
+    "textColor": "e2c46c",
+    "timeColor": "e2c46c",
+    "columnBand": "252a21",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": false,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "Review of Emirates flight from Los Angeles to Dubai in Business (https://flight-report.com/en/report/10503/Emirates_EK216_Los_Angeles_LAX_Dubai_DXB/)",
+    "image": "https://static.flight-report.com/media/photos/fGcBjIbCqQ/IMG_3072.JPG",
+    "accessed": "2026-11-09"
+  }
+}

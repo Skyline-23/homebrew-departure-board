@@ -1,0 +1,256 @@
+{
+  "code": "ICN",
+  "name": "인천국제공항",
+  "subtitle": "INCHEON INTERNATIONAL AIRPORT",
+  "zone": "Asia/Seoul",
+  "lang": "ko",
+  "preset": "icn",
+  "accent": "67baff",
+  "bg": "081323",
+  "header": "164980",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "TYO",
+      "carrier": "KE",
+      "number": 703
+    },
+    {
+      "city": "TYO",
+      "carrier": "OZ",
+      "number": 102
+    },
+    {
+      "city": "TYO",
+      "carrier": "7C",
+      "number": 1102
+    },
+    {
+      "city": "OSA",
+      "carrier": "KE",
+      "number": 721
+    },
+    {
+      "city": "OSA",
+      "carrier": "LJ",
+      "number": 221
+    },
+    {
+      "city": "FUK",
+      "carrier": "OZ",
+      "number": 132
+    },
+    {
+      "city": "SPK",
+      "carrier": "KE",
+      "number": 765
+    },
+    {
+      "city": "OKA",
+      "carrier": "LJ",
+      "number": 231
+    },
+    {
+      "city": "BJS",
+      "carrier": "KE",
+      "number": 851
+    },
+    {
+      "city": "BJS",
+      "carrier": "CA",
+      "number": 124
+    },
+    {
+      "city": "SHA",
+      "carrier": "OZ",
+      "number": 361
+    },
+    {
+      "city": "SHA",
+      "carrier": "MU",
+      "number": 5042
+    },
+    {
+      "city": "HKG",
+      "carrier": "CX",
+      "number": 411
+    },
+    {
+      "city": "HKG",
+      "carrier": "KE",
+      "number": 607
+    },
+    {
+      "city": "TPE",
+      "carrier": "BR",
+      "number": 169
+    },
+    {
+      "city": "TPE",
+      "carrier": "CI",
+      "number": 163
+    },
+    {
+      "city": "SIN",
+      "carrier": "SQ",
+      "number": 607
+    },
+    {
+      "city": "BKK",
+      "carrier": "TG",
+      "number": 659
+    },
+    {
+      "city": "MNL",
+      "carrier": "PR",
+      "number": 467
+    },
+    {
+      "city": "CEB",
+      "carrier": "7C",
+      "number": 2405
+    },
+    {
+      "city": "SGN",
+      "carrier": "VN",
+      "number": 409
+    },
+    {
+      "city": "HAN",
+      "carrier": "KE",
+      "number": 679
+    },
+    {
+      "city": "DPS",
+      "carrier": "KE",
+      "number": 629
+    },
+    {
+      "city": "ULN",
+      "carrier": "OM",
+      "number": 302
+    },
+    {
+      "city": "LAX",
+      "carrier": "KE",
+      "number": 17
+    },
+    {
+      "city": "SFO",
+      "carrier": "UA",
+      "number": 892
+    },
+    {
+      "city": "NYC",
+      "carrier": "KE",
+      "number": 81
+    },
+    {
+      "city": "SEA",
+      "carrier": "DL",
+      "number": 196
+    },
+    {
+      "city": "HNL",
+      "carrier": "KE",
+      "number": 53
+    },
+    {
+      "city": "YVR",
+      "carrier": "AC",
+      "number": 64
+    },
+    {
+      "city": "LON",
+      "carrier": "BA",
+      "number": 18
+    },
+    {
+      "city": "PAR",
+      "carrier": "AF",
+      "number": 267
+    },
+    {
+      "city": "FRA",
+      "carrier": "LH",
+      "number": 713
+    },
+    {
+      "city": "MIL",
+      "carrier": "KE",
+      "number": 927
+    },
+    {
+      "city": "SYD",
+      "carrier": "QF",
+      "number": 88
+    },
+    {
+      "city": "DXB",
+      "carrier": "EK",
+      "number": 323
+    },
+    {
+      "city": "IST",
+      "carrier": "TK",
+      "number": 91
+    },
+    {
+      "city": "AMS",
+      "carrier": "KL",
+      "number": 856
+    }
+  ],
+  "gates": [
+    "12",
+    "16",
+    "22",
+    "27",
+    "31",
+    "36",
+    "41",
+    "45",
+    "109",
+    "112",
+    "125",
+    "231",
+    "249",
+    "252",
+    "265",
+    "268"
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "expected",
+    "gate",
+    "state"
+  ],
+  "twoPanels": true,
+  "headerStyle": "dark",
+  "displayNameKey": "location.ICN",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 2,
+    "rowCount": 24,
+    "headerHeight": 96,
+    "headerInk": "ffffff",
+    "rowColors": [
+      "103e7c",
+      "174886"
+    ],
+    "textColor": "ffffff",
+    "timeColor": "ffffff",
+    "columnBand": "0a111b",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": true,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "ダナン旅行6日目：韓国仁川空港グルメ | むらさんの人生の楽園 (https://ameblo.jp/murasan2014/entry-12893821746.html)",
+    "image": "https://stat.ameba.jp/user_images/20250414/11/murasan2014/dd/10/j/o1036112715566303161.jpg?caw=800",
+    "accessed": "2026-11-09"
+  }
+}

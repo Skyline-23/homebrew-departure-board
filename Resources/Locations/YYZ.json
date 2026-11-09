@@ -1,0 +1,146 @@
+{
+  "code": "YYZ",
+  "name": "Toronto Pearson",
+  "subtitle": "TORONTO PEARSON INTERNATIONAL",
+  "zone": "America/Toronto",
+  "lang": "fr",
+  "preset": "toronto",
+  "accent": "f4d356",
+  "bg": "0c1a2e",
+  "header": "142c48",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "LON",
+      "carrier": "AC",
+      "number": 101
+    },
+    {
+      "city": "PAR",
+      "carrier": "AC",
+      "number": 118
+    },
+    {
+      "city": "FRA",
+      "carrier": "AC",
+      "number": 135
+    },
+    {
+      "city": "AMS",
+      "carrier": "AC",
+      "number": 152
+    },
+    {
+      "city": "ROM",
+      "carrier": "AC",
+      "number": 169
+    },
+    {
+      "city": "TYO",
+      "carrier": "AC",
+      "number": 186
+    },
+    {
+      "city": "SEL",
+      "carrier": "AC",
+      "number": 203
+    },
+    {
+      "city": "SIN",
+      "carrier": "AC",
+      "number": 220
+    },
+    {
+      "city": "BKK",
+      "carrier": "AC",
+      "number": 237
+    },
+    {
+      "city": "DXB",
+      "carrier": "AC",
+      "number": 254
+    },
+    {
+      "city": "NYC",
+      "carrier": "AC",
+      "number": 271
+    },
+    {
+      "city": "LAX",
+      "carrier": "AC",
+      "number": 288
+    },
+    {
+      "city": "SYD",
+      "carrier": "AC",
+      "number": 305
+    },
+    {
+      "city": "HKG",
+      "carrier": "AC",
+      "number": 322
+    },
+    {
+      "city": "TPE",
+      "carrier": "AC",
+      "number": 339
+    }
+  ],
+  "gates": [
+    "A1",
+    "A3",
+    "A5",
+    "A7",
+    "A9",
+    "A11",
+    "A13",
+    "A15",
+    "A17",
+    "A19",
+    "A21",
+    "B1",
+    "B3",
+    "B5",
+    "B7",
+    "B9",
+    "B11",
+    "B13",
+    "B15",
+    "B17",
+    "B19",
+    "B21"
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "dark",
+  "displayNameKey": "location.YYZ",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 2,
+    "rowCount": 24,
+    "headerHeight": 96,
+    "headerInk": "ffffff",
+    "rowColors": [
+      "1e478b",
+      "29559a"
+    ],
+    "textColor": "ffffff",
+    "timeColor": "ffffff",
+    "columnBand": "20466d",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": true,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "Review of Air Canada Rouge flight from Toronto to Bogota in Economy (https://flight-report.com/en/report/43443/air-canada-rouge-ac1944-toronto-yyz-bogota-bog/)",
+    "image": "https://static.flight-report.com/media/photos/8903/1564354211ODPS/20190717_145446.jpg",
+    "accessed": "2026-11-09"
+  }
+}

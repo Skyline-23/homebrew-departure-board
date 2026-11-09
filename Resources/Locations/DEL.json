@@ -1,0 +1,146 @@
+{
+  "code": "DEL",
+  "name": "Indira Gandhi",
+  "subtitle": "DELHI INDIRA GANDHI",
+  "zone": "Asia/Kolkata",
+  "lang": "hi",
+  "preset": "delhi",
+  "accent": "f6d783",
+  "bg": "1b1c1b",
+  "header": "1c1f1f",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "LON",
+      "carrier": "AI",
+      "number": 101
+    },
+    {
+      "city": "PAR",
+      "carrier": "AI",
+      "number": 118
+    },
+    {
+      "city": "FRA",
+      "carrier": "AI",
+      "number": 135
+    },
+    {
+      "city": "AMS",
+      "carrier": "AI",
+      "number": 152
+    },
+    {
+      "city": "ROM",
+      "carrier": "AI",
+      "number": 169
+    },
+    {
+      "city": "TYO",
+      "carrier": "AI",
+      "number": 186
+    },
+    {
+      "city": "SEL",
+      "carrier": "AI",
+      "number": 203
+    },
+    {
+      "city": "SIN",
+      "carrier": "AI",
+      "number": 220
+    },
+    {
+      "city": "BKK",
+      "carrier": "AI",
+      "number": 237
+    },
+    {
+      "city": "DXB",
+      "carrier": "AI",
+      "number": 254
+    },
+    {
+      "city": "NYC",
+      "carrier": "AI",
+      "number": 271
+    },
+    {
+      "city": "LAX",
+      "carrier": "AI",
+      "number": 288
+    },
+    {
+      "city": "SYD",
+      "carrier": "AI",
+      "number": 305
+    },
+    {
+      "city": "HKG",
+      "carrier": "AI",
+      "number": 322
+    },
+    {
+      "city": "TPE",
+      "carrier": "AI",
+      "number": 339
+    }
+  ],
+  "gates": [
+    "A1",
+    "A3",
+    "A5",
+    "A7",
+    "A9",
+    "A11",
+    "A13",
+    "A15",
+    "A17",
+    "A19",
+    "A21",
+    "B1",
+    "B3",
+    "B5",
+    "B7",
+    "B9",
+    "B11",
+    "B13",
+    "B15",
+    "B17",
+    "B19",
+    "B21"
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "dark",
+  "displayNameKey": "location.DEL",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 2,
+    "rowCount": 20,
+    "headerHeight": 96,
+    "headerInk": "d9b954",
+    "rowColors": [
+      "f1f0ea",
+      "d8dcd9"
+    ],
+    "textColor": "1b2124",
+    "timeColor": "1b2124",
+    "columnBand": "232a2e",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": true,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "Air India to Thailand Review – Layovers, Service & Concerns (https://mysakonnakhon.com/air-india-from-bangkok-review-layovers-service-concerns/)",
+    "image": "https://mysakonnakhon.com/wp-content/uploads/2024/11/Deli-International-Airport-Review-1125x704.jpg.webp",
+    "accessed": "2026-11-09"
+  }
+}

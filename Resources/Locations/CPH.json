@@ -1,0 +1,146 @@
+{
+  "code": "CPH",
+  "name": "Københavns Lufthavn",
+  "subtitle": "COPENHAGEN AIRPORT",
+  "zone": "Europe/Copenhagen",
+  "lang": "da",
+  "preset": "copenhagen",
+  "accent": "edf4f8",
+  "bg": "101a2e",
+  "header": "253656",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "LON",
+      "carrier": "SK",
+      "number": 101
+    },
+    {
+      "city": "PAR",
+      "carrier": "SK",
+      "number": 118
+    },
+    {
+      "city": "FRA",
+      "carrier": "SK",
+      "number": 135
+    },
+    {
+      "city": "AMS",
+      "carrier": "SK",
+      "number": 152
+    },
+    {
+      "city": "ROM",
+      "carrier": "SK",
+      "number": 169
+    },
+    {
+      "city": "TYO",
+      "carrier": "SK",
+      "number": 186
+    },
+    {
+      "city": "SEL",
+      "carrier": "SK",
+      "number": 203
+    },
+    {
+      "city": "SIN",
+      "carrier": "SK",
+      "number": 220
+    },
+    {
+      "city": "BKK",
+      "carrier": "SK",
+      "number": 237
+    },
+    {
+      "city": "DXB",
+      "carrier": "SK",
+      "number": 254
+    },
+    {
+      "city": "NYC",
+      "carrier": "SK",
+      "number": 271
+    },
+    {
+      "city": "LAX",
+      "carrier": "SK",
+      "number": 288
+    },
+    {
+      "city": "SYD",
+      "carrier": "SK",
+      "number": 305
+    },
+    {
+      "city": "HKG",
+      "carrier": "SK",
+      "number": 322
+    },
+    {
+      "city": "TPE",
+      "carrier": "SK",
+      "number": 339
+    }
+  ],
+  "gates": [
+    "A1",
+    "A3",
+    "A5",
+    "A7",
+    "A9",
+    "A11",
+    "A13",
+    "A15",
+    "A17",
+    "A19",
+    "A21",
+    "B1",
+    "B3",
+    "B5",
+    "B7",
+    "B9",
+    "B11",
+    "B13",
+    "B15",
+    "B17",
+    "B19",
+    "B21"
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "dark",
+  "displayNameKey": "location.CPH",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 3,
+    "rowCount": 23,
+    "headerHeight": 96,
+    "headerInk": "f8db43",
+    "rowColors": [
+      "18339a",
+      "2245b0"
+    ],
+    "textColor": "ffffff",
+    "timeColor": "ffffff",
+    "columnBand": "1c3f84",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": true,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "カストルップ国際空港 (CPH) クチコミ・アクセス・営業時間｜コペンハーゲンciteフォートラベル (https://4travel.jp/os_shisetsu/10264935)",
+    "image": "https://cdn.4travel.jp/img/thumbnails/imk/tips_pict/19/76/61/650x450_19766125.jpg?updated_at=1724188797",
+    "accessed": "2026-11-09"
+  }
+}

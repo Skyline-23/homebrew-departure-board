@@ -1,0 +1,195 @@
+{
+  "code": "MXP",
+  "name": "Milano Malpensa",
+  "subtitle": "MILAN MALPENSA AIRPORT",
+  "zone": "Europe/Rome",
+  "lang": "it",
+  "preset": "malpensa",
+  "accent": "e7e1c5",
+  "bg": "101214",
+  "header": "20384b",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "ROM",
+      "carrier": "AZ",
+      "number": 2071
+    },
+    {
+      "city": "NAP",
+      "carrier": "U2",
+      "number": 2853
+    },
+    {
+      "city": "PMO",
+      "carrier": "U2",
+      "number": 2903
+    },
+    {
+      "city": "CTA",
+      "carrier": "U2",
+      "number": 2869
+    },
+    {
+      "city": "PAR",
+      "carrier": "AF",
+      "number": 1531
+    },
+    {
+      "city": "PAR",
+      "carrier": "U2",
+      "number": 3871
+    },
+    {
+      "city": "LON",
+      "carrier": "BA",
+      "number": 571
+    },
+    {
+      "city": "LON",
+      "carrier": "U2",
+      "number": 8022
+    },
+    {
+      "city": "FRA",
+      "carrier": "LH",
+      "number": 251
+    },
+    {
+      "city": "MUC",
+      "carrier": "LH",
+      "number": 1863
+    },
+    {
+      "city": "AMS",
+      "carrier": "KL",
+      "number": 1622
+    },
+    {
+      "city": "MAD",
+      "carrier": "IB",
+      "number": 3251
+    },
+    {
+      "city": "BCN",
+      "carrier": "VY",
+      "number": 6313
+    },
+    {
+      "city": "LIS",
+      "carrier": "TP",
+      "number": 827
+    },
+    {
+      "city": "ATH",
+      "carrier": "A3",
+      "number": 665
+    },
+    {
+      "city": "IST",
+      "carrier": "TK",
+      "number": 1874
+    },
+    {
+      "city": "DXB",
+      "carrier": "EK",
+      "number": 206
+    },
+    {
+      "city": "DOH",
+      "carrier": "QR",
+      "number": 128
+    },
+    {
+      "city": "NYC",
+      "carrier": "DL",
+      "number": 185
+    },
+    {
+      "city": "NYC",
+      "carrier": "AA",
+      "number": 199
+    },
+    {
+      "city": "NYC",
+      "carrier": "EK",
+      "number": 205
+    },
+    {
+      "city": "SEL",
+      "carrier": "KE",
+      "number": 928
+    },
+    {
+      "city": "SIN",
+      "carrier": "SQ",
+      "number": 377
+    },
+    {
+      "city": "SHA",
+      "carrier": "MU",
+      "number": 784
+    },
+    {
+      "city": "BER",
+      "carrier": "U2",
+      "number": 4572
+    },
+    {
+      "city": "CPH",
+      "carrier": "SK",
+      "number": 688
+    }
+  ],
+  "gates": [
+    "A2",
+    "A5",
+    "A8",
+    "A11",
+    "A14",
+    "A17",
+    "A20",
+    "A23",
+    "B2",
+    "B5",
+    "B8",
+    "B11",
+    "B14",
+    "B17",
+    "B20",
+    "B23"
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "dark",
+  "displayNameKey": "location.MXP",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 2,
+    "rowCount": 24,
+    "headerHeight": 96,
+    "headerInk": "ffffff",
+    "rowColors": [
+      "eaedef",
+      "d5dfe5"
+    ],
+    "textColor": "1c2730",
+    "timeColor": "1c2730",
+    "columnBand": "263f52",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": true,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "ミラノマルペンサ空港の荷物預かりサービスMilano Malpensa Left Luggage | 男が仕切る結婚式。 (https://ameblo.jp/kenjimovement/entry-12848568324.html)",
+    "image": "https://stat.ameba.jp/user_images/20240415/23/kenjimovement/4f/6b/j/o1000133315426411564.jpg",
+    "accessed": "2026-11-09"
+  }
+}

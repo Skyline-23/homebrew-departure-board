@@ -1,0 +1,146 @@
+{
+  "code": "ARN",
+  "name": "Stockholm Arlanda",
+  "subtitle": "STOCKHOLM ARLANDA",
+  "zone": "Europe/Stockholm",
+  "lang": "sv",
+  "preset": "arlanda",
+  "accent": "f8ce55",
+  "bg": "122038",
+  "header": "152e4e",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "LON",
+      "carrier": "SK",
+      "number": 101
+    },
+    {
+      "city": "PAR",
+      "carrier": "SK",
+      "number": 118
+    },
+    {
+      "city": "FRA",
+      "carrier": "SK",
+      "number": 135
+    },
+    {
+      "city": "AMS",
+      "carrier": "SK",
+      "number": 152
+    },
+    {
+      "city": "ROM",
+      "carrier": "SK",
+      "number": 169
+    },
+    {
+      "city": "TYO",
+      "carrier": "SK",
+      "number": 186
+    },
+    {
+      "city": "SEL",
+      "carrier": "SK",
+      "number": 203
+    },
+    {
+      "city": "SIN",
+      "carrier": "SK",
+      "number": 220
+    },
+    {
+      "city": "BKK",
+      "carrier": "SK",
+      "number": 237
+    },
+    {
+      "city": "DXB",
+      "carrier": "SK",
+      "number": 254
+    },
+    {
+      "city": "NYC",
+      "carrier": "SK",
+      "number": 271
+    },
+    {
+      "city": "LAX",
+      "carrier": "SK",
+      "number": 288
+    },
+    {
+      "city": "SYD",
+      "carrier": "SK",
+      "number": 305
+    },
+    {
+      "city": "HKG",
+      "carrier": "SK",
+      "number": 322
+    },
+    {
+      "city": "TPE",
+      "carrier": "SK",
+      "number": 339
+    }
+  ],
+  "gates": [
+    "A1",
+    "A3",
+    "A5",
+    "A7",
+    "A9",
+    "A11",
+    "A13",
+    "A15",
+    "A17",
+    "A19",
+    "A21",
+    "B1",
+    "B3",
+    "B5",
+    "B7",
+    "B9",
+    "B11",
+    "B13",
+    "B15",
+    "B17",
+    "B19",
+    "B21"
+  ],
+  "columns": [
+    "time",
+    "destination",
+    "flight",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "dark",
+  "displayNameKey": "location.ARN",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 2,
+    "rowCount": 22,
+    "headerHeight": 96,
+    "headerInk": "ffffff",
+    "rowColors": [
+      "233a51",
+      "2c4559"
+    ],
+    "textColor": "e8edf2",
+    "timeColor": "e8edf2",
+    "columnBand": "163552",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": false,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "Nytt larm om drönare på Arlanda (https://www.epochtimes.se/nytt-larm-om-dronare-pa-arlanda-815075)",
+    "image": "https://cdn.epochtimes.se/uploads/2024/08/240909-flygplatsdronareuv2-8a52d64b-a001normalhires-31745416-8022.jpg",
+    "accessed": "2026-11-09"
+  }
+}

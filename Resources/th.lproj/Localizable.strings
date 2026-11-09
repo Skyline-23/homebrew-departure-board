@@ -1,0 +1,15 @@
+/* Display strings. Keys are shared across all location renderers. */
+"column.destination" = "ปลายทาง";
+"column.expected" = "เวลาใหม่";
+"column.flight" = "เที่ยวบิน";
+"column.gate" = "ประตู";
+"column.state" = "สถานะ";
+"column.time" = "เวลา";
+"heading.departures" = "เที่ยวบินขาออก";
+"status.boarding" = "กำลังขึ้นเครื่อง";
+"status.cancelled" = "ยกเลิก";
+"status.closing" = "เรียกครั้งสุดท้าย";
+"status.delayed" = "ล่าช้า";
+"status.departed" = "ออกเดินทางแล้ว";
+"status.gate" = "ไปที่ประตู";
+"status.scheduled" = "ตรงเวลา";

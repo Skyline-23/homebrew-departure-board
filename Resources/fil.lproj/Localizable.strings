@@ -1,0 +1,15 @@
+/* Display strings. Keys are shared across all location renderers. */
+"column.destination" = "Destinasyon";
+"column.expected" = "Bagong oras";
+"column.flight" = "Paglipad";
+"column.gate" = "Gate";
+"column.state" = "Katayuan";
+"column.time" = "Oras";
+"heading.departures" = "Mga pag-alis";
+"status.boarding" = "Pagsakay";
+"status.cancelled" = "Kinansela";
+"status.closing" = "Huling tawag";
+"status.delayed" = "Naantala";
+"status.departed" = "Umalis na";
+"status.gate" = "Pumunta sa gate";
+"status.scheduled" = "Nasa oras";

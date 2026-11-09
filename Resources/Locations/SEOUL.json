@@ -1,0 +1,129 @@
+{
+  "code": "SEOUL",
+  "name": "서울역",
+  "subtitle": "SEOUL STATION · KORAIL",
+  "zone": "Asia/Seoul",
+  "lang": "ko",
+  "preset": "seoul",
+  "accent": "73bcff",
+  "bg": "0c1830",
+  "header": "174b96",
+  "kind": "rail",
+  "routes": [
+    {
+      "service": {
+        "key": "route.SEOUL.0.service"
+      },
+      "destination": {
+        "key": "route.SEOUL.0.destination"
+      },
+      "stops": {
+        "key": "route.SEOUL.0.stops"
+      },
+      "color": "1269a9",
+      "platform": "7"
+    },
+    {
+      "service": {
+        "key": "route.SEOUL.1.service"
+      },
+      "destination": {
+        "key": "route.SEOUL.1.destination"
+      },
+      "stops": {
+        "key": "route.SEOUL.1.stops"
+      },
+      "color": "55439e",
+      "platform": "9"
+    },
+    {
+      "service": {
+        "key": "route.SEOUL.2.service"
+      },
+      "destination": {
+        "key": "route.SEOUL.2.destination"
+      },
+      "stops": {
+        "key": "route.SEOUL.2.stops"
+      },
+      "color": "237b8b",
+      "platform": "6"
+    },
+    {
+      "service": {
+        "key": "route.SEOUL.3.service"
+      },
+      "destination": {
+        "key": "route.SEOUL.3.destination"
+      },
+      "stops": {
+        "key": "route.SEOUL.3.stops"
+      },
+      "color": "bb263e",
+      "platform": "4"
+    },
+    {
+      "service": {
+        "key": "route.SEOUL.4.service"
+      },
+      "destination": {
+        "key": "route.SEOUL.4.destination"
+      },
+      "stops": {
+        "key": "route.SEOUL.4.stops"
+      },
+      "color": "1269a9",
+      "platform": "8"
+    },
+    {
+      "service": {
+        "key": "route.SEOUL.5.service"
+      },
+      "destination": {
+        "key": "route.SEOUL.5.destination"
+      },
+      "stops": {
+        "key": "route.SEOUL.5.stops"
+      },
+      "color": "df7c28",
+      "platform": "3"
+    },
+    {
+      "service": {
+        "key": "route.SEOUL.6.service"
+      },
+      "destination": {
+        "key": "route.SEOUL.6.destination"
+      },
+      "stops": {
+        "key": "route.SEOUL.6.stops"
+      },
+      "color": "1269a9",
+      "platform": "10"
+    },
+    {
+      "service": {
+        "key": "route.SEOUL.7.service"
+      },
+      "destination": {
+        "key": "route.SEOUL.7.destination"
+      },
+      "stops": {
+        "key": "route.SEOUL.7.stops"
+      },
+      "color": "55439e",
+      "platform": "11"
+    }
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "dark",
+  "displayNameKey": "location.SEOUL",
+  "titleKey": "heading.train"
+}

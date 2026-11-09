@@ -1,0 +1,15 @@
+/* Display strings. Keys are shared across all location renderers. */
+"column.destination" = "Varış noktası";
+"column.expected" = "Yeni saat";
+"column.flight" = "Uçuş";
+"column.gate" = "Kapı";
+"column.state" = "Durum";
+"column.time" = "Saat";
+"heading.departures" = "Gidiş";
+"status.boarding" = "Uçağa alım";
+"status.cancelled" = "İptal";
+"status.closing" = "Son çağrı";
+"status.delayed" = "Gecikmeli";
+"status.departed" = "Kalktı";
+"status.gate" = "Kapıya gidiniz";
+"status.scheduled" = "Zamanında";

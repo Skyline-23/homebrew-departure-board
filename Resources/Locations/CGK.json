@@ -1,0 +1,146 @@
+{
+  "code": "CGK",
+  "name": "Soekarno–Hatta",
+  "subtitle": "JAKARTA SOEKARNO–HATTA",
+  "zone": "Asia/Jakarta",
+  "lang": "id",
+  "preset": "jakarta",
+  "accent": "68d6d1",
+  "bg": "103a59",
+  "header": "194c72",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "LON",
+      "carrier": "GA",
+      "number": 101
+    },
+    {
+      "city": "PAR",
+      "carrier": "GA",
+      "number": 118
+    },
+    {
+      "city": "FRA",
+      "carrier": "GA",
+      "number": 135
+    },
+    {
+      "city": "AMS",
+      "carrier": "GA",
+      "number": 152
+    },
+    {
+      "city": "ROM",
+      "carrier": "GA",
+      "number": 169
+    },
+    {
+      "city": "TYO",
+      "carrier": "GA",
+      "number": 186
+    },
+    {
+      "city": "SEL",
+      "carrier": "GA",
+      "number": 203
+    },
+    {
+      "city": "SIN",
+      "carrier": "GA",
+      "number": 220
+    },
+    {
+      "city": "BKK",
+      "carrier": "GA",
+      "number": 237
+    },
+    {
+      "city": "DXB",
+      "carrier": "GA",
+      "number": 254
+    },
+    {
+      "city": "NYC",
+      "carrier": "GA",
+      "number": 271
+    },
+    {
+      "city": "LAX",
+      "carrier": "GA",
+      "number": 288
+    },
+    {
+      "city": "SYD",
+      "carrier": "GA",
+      "number": 305
+    },
+    {
+      "city": "HKG",
+      "carrier": "GA",
+      "number": 322
+    },
+    {
+      "city": "TPE",
+      "carrier": "GA",
+      "number": 339
+    }
+  ],
+  "gates": [
+    "A1",
+    "A3",
+    "A5",
+    "A7",
+    "A9",
+    "A11",
+    "A13",
+    "A15",
+    "A17",
+    "A19",
+    "A21",
+    "B1",
+    "B3",
+    "B5",
+    "B7",
+    "B9",
+    "B11",
+    "B13",
+    "B15",
+    "B17",
+    "B19",
+    "B21"
+  ],
+  "columns": [
+    "flight",
+    "time",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "dark",
+  "displayNameKey": "location.CGK",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 2,
+    "rowCount": 22,
+    "headerHeight": 96,
+    "headerInk": "ffffff",
+    "rowColors": [
+      "1b5074",
+      "245e85"
+    ],
+    "textColor": "ffffff",
+    "timeColor": "ffffff",
+    "columnBand": "163c54",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": true,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "Volcano eruption grounds flights at Indonesia's Jakarta airport (https://www.1news.co.nz/2026/09/06/volcano-eruption-grounds-flights-at-indonesias-jakarta-airport/)",
+    "image": "https://tvnz-1-news-prod.cdn.arcpublishing.com/resizer/v2/travelers-wait-for-their-flights-at-soekarno-hatta-internati-B7PBIR24WFFLXPR7JGM5EB6PG4.png?auth=5c006fb7e41e434c8a7caae0a77cfcd49c8031d665d46972c12174ec120a462f&focal=960%2C540&height=431&quality=70&width=767",
+    "accessed": "2026-11-09"
+  }
+}

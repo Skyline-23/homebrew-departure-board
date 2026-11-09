@@ -1,0 +1,49 @@
+#import "DepartureBoardView.h"
+
+// Shared private state for the board's rendering categories.
+// Timetable generation stays in DepartureSchedule; renderers only draw rows.
+@interface DBBoardView ()
+@property(nonatomic, strong) NSDictionary *location;
+@property(nonatomic, strong) NSArray *rows;
+@property(nonatomic, copy) NSString *currentLanguage;
+@property(nonatomic) NSTimeInterval startTime;
+@property(nonatomic) NSTimeInterval lastRenderedSecond;
+@property(nonatomic) NSInteger languageCycle;
+@property(nonatomic, strong) NSMutableDictionary *flapStates;
+@property(nonatomic, strong) NSWindow *optionsWindow;
+@property(nonatomic, strong) NSDate *boardDate;
+- (NSString *)effectiveStyle;
+@end
+
+@interface DBBoardView (BoardChrome)
+- (void)planeAt:(NSPoint)point size:(CGFloat)size color:(NSColor *)color;
+- (void)header:(NSRect)area compact:(BOOL)compact;
+- (void)footer:(NSRect)area text:(NSString *)message;
+@end
+
+@interface DBBoardView (AirportRenderer)
+- (void)drawAirportHeader:(NSRect)area;
+- (void)drawHanedaCounters:(NSRect)area;
+- (void)drawAirportCell:(NSDictionary *)row
+                 column:(NSString *)column
+                   rect:(NSRect)cell
+               fontSize:(CGFloat)size;
+- (NSArray *)airportColumns;
+- (CGFloat)weightFor:(NSString *)key;
+- (NSString *)columnLabel:(NSString *)key;
+- (void)drawAirport:(NSRect)area;
+@end
+
+@interface DBBoardView (SplitFlapRenderer)
+- (void)flapText:(NSString *)text
+             key:(NSString *)key
+            rect:(NSRect)rect
+           cells:(NSInteger)cells
+           color:(NSColor *)ink;
+- (void)drawFlapBoard:(NSRect)area;
+@end
+
+@interface DBBoardView (RailwayRenderer)
+- (void)drawRailTable:(NSRect)area;
+- (void)drawRailCards:(NSRect)area;
+@end

@@ -1,0 +1,221 @@
+{
+  "code": "SIN",
+  "name": "Singapore Changi",
+  "subtitle": "CHANGI AIRPORT SINGAPORE",
+  "zone": "Asia/Singapore",
+  "lang": "en",
+  "preset": "changi",
+  "accent": "ffe34d",
+  "bg": "101317",
+  "header": "101317",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "TYO",
+      "carrier": "CX",
+      "number": 524
+    },
+    {
+      "city": "OSA",
+      "carrier": "CX",
+      "number": 594
+    },
+    {
+      "city": "SEL",
+      "carrier": "CX",
+      "number": 410
+    },
+    {
+      "city": "SEL",
+      "carrier": "KE",
+      "number": 608
+    },
+    {
+      "city": "TPE",
+      "carrier": "CX",
+      "number": 450
+    },
+    {
+      "city": "TPE",
+      "carrier": "BR",
+      "number": 858
+    },
+    {
+      "city": "HAN",
+      "carrier": "CX",
+      "number": 743
+    },
+    {
+      "city": "KUL",
+      "carrier": "CX",
+      "number": 721
+    },
+    {
+      "city": "DPS",
+      "carrier": "CX",
+      "number": 785
+    },
+    {
+      "city": "SYD",
+      "carrier": "CX",
+      "number": 101
+    },
+    {
+      "city": "LON",
+      "carrier": "CX",
+      "number": 251
+    },
+    {
+      "city": "LON",
+      "carrier": "BA",
+      "number": 32
+    },
+    {
+      "city": "PAR",
+      "carrier": "CX",
+      "number": 261
+    },
+    {
+      "city": "MIL",
+      "carrier": "CX",
+      "number": 293
+    },
+    {
+      "city": "DXB",
+      "carrier": "EK",
+      "number": 381
+    },
+    {
+      "city": "LAX",
+      "carrier": "CX",
+      "number": 880
+    },
+    {
+      "city": "NYC",
+      "carrier": "CX",
+      "number": 840
+    },
+    {
+      "city": "LON",
+      "carrier": "SQ",
+      "number": 308
+    },
+    {
+      "city": "PAR",
+      "carrier": "SQ",
+      "number": 336
+    },
+    {
+      "city": "SFO",
+      "carrier": "SQ",
+      "number": 32
+    },
+    {
+      "city": "NYC",
+      "carrier": "SQ",
+      "number": 24
+    },
+    {
+      "city": "SYD",
+      "carrier": "SQ",
+      "number": 221
+    },
+    {
+      "city": "FRA",
+      "carrier": "SQ",
+      "number": 326
+    },
+    {
+      "city": "DXB",
+      "carrier": "SQ",
+      "number": 494
+    },
+    {
+      "city": "BKK",
+      "carrier": "SQ",
+      "number": 710
+    },
+    {
+      "city": "TYO",
+      "carrier": "SQ",
+      "number": 638
+    }
+  ],
+  "gates": [
+    "A1",
+    "A2",
+    "A3",
+    "A4",
+    "A5",
+    "A6",
+    "A7",
+    "B1",
+    "B2",
+    "B3",
+    "B4",
+    "B5",
+    "B6",
+    "B7",
+    "C1",
+    "C2",
+    "C3",
+    "C4",
+    "C5",
+    "C6",
+    "C7",
+    "D1",
+    "D2",
+    "D3",
+    "D4",
+    "D5",
+    "D6",
+    "D7",
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5",
+    "E6",
+    "E7",
+    "F1",
+    "F2",
+    "F3",
+    "F4",
+    "F5",
+    "F6",
+    "F7"
+  ],
+  "columns": [
+    "time",
+    "destination",
+    "flight",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "dark",
+  "displayNameKey": "location.SIN",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 2,
+    "rowCount": 18,
+    "headerHeight": 96,
+    "headerInk": "f8db58",
+    "rowColors": [
+      "11151b",
+      "161a1f"
+    ],
+    "textColor": "ffffff",
+    "timeColor": "ffffff",
+    "columnBand": "15171b",
+    "columnInk": "ffffff",
+    "gateHighlight": true,
+    "airlineBadge": true,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "シンガポールチャンギ国際空港  シルバークリスラウンジ 第３ターミナル 訪問記cite2019年旅行記3-13 - SFC修行となぞの旅人 (https://www.sfc-traveler.com/entry/2019/06/20/154146)",
+    "image": "https://cdn-ak.f.st-hatena.com/images/fotolife/t/tomekichisfc/20190620/20190620150527.jpg",
+    "accessed": "2026-11-09"
+  }
+}

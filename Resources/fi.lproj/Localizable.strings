@@ -1,0 +1,15 @@
+/* Display strings. Keys are shared across all location renderers. */
+"column.destination" = "Määränpää";
+"column.expected" = "Uusi aika";
+"column.flight" = "Lento";
+"column.gate" = "Portti";
+"column.state" = "Huomautukset";
+"column.time" = "Aika";
+"heading.departures" = "Lähtevät";
+"status.boarding" = "Koneeseen nousu";
+"status.cancelled" = "Peruttu";
+"status.closing" = "Viimeinen kuulutus";
+"status.delayed" = "Myöhässä";
+"status.departed" = "Lähtenyt";
+"status.gate" = "Siirry portille";
+"status.scheduled" = "Ajallaan";

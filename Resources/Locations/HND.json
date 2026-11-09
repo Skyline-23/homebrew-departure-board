@@ -1,0 +1,168 @@
+{
+  "code": "HND",
+  "name": "東京国際空港 羽田",
+  "subtitle": "HANEDA AIRPORT",
+  "zone": "Asia/Tokyo",
+  "lang": "ja",
+  "preset": "haneda",
+  "accent": "7edee7",
+  "bg": "101d2b",
+  "header": "142637",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "SEL",
+      "carrier": "KE",
+      "number": 702
+    },
+    {
+      "city": "SEL",
+      "carrier": "JL",
+      "number": 951
+    },
+    {
+      "city": "BJS",
+      "carrier": "NH",
+      "number": 955
+    },
+    {
+      "city": "SHA",
+      "carrier": "JL",
+      "number": 877
+    },
+    {
+      "city": "HKG",
+      "carrier": "CX",
+      "number": 509
+    },
+    {
+      "city": "BKK",
+      "carrier": "NH",
+      "number": 805
+    },
+    {
+      "city": "HAN",
+      "carrier": "JL",
+      "number": 751
+    },
+    {
+      "city": "KUL",
+      "carrier": "JL",
+      "number": 723
+    },
+    {
+      "city": "LAX",
+      "carrier": "JL",
+      "number": 62
+    },
+    {
+      "city": "NYC",
+      "carrier": "JL",
+      "number": 4
+    },
+    {
+      "city": "CHI",
+      "carrier": "NH",
+      "number": 12
+    },
+    {
+      "city": "HNL",
+      "carrier": "NH",
+      "number": 182
+    },
+    {
+      "city": "HNL",
+      "carrier": "JL",
+      "number": 784
+    },
+    {
+      "city": "LON",
+      "carrier": "BA",
+      "number": 6
+    },
+    {
+      "city": "PAR",
+      "carrier": "AF",
+      "number": 275
+    }
+  ],
+  "gates": [
+    "105",
+    "106",
+    "107",
+    "108",
+    "109",
+    "110",
+    "111",
+    "112",
+    "113",
+    "114",
+    "115",
+    "116",
+    "117",
+    "118",
+    "119",
+    "120",
+    "121",
+    "122",
+    "123",
+    "124",
+    "125",
+    "126",
+    "127",
+    "128",
+    "129",
+    "130",
+    "131",
+    "132",
+    "133",
+    "134",
+    "135",
+    "136",
+    "137",
+    "138",
+    "139",
+    "140",
+    "141",
+    "142",
+    "143",
+    "144",
+    "145",
+    "146",
+    "147",
+    "148"
+  ],
+  "columns": [
+    "time",
+    "destination",
+    "flight",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "dark",
+  "displayNameKey": "location.HND",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 2,
+    "rowCount": 21,
+    "headerHeight": 236,
+    "headerInk": "ffffff",
+    "rowColors": [
+      "10253c",
+      "172e47"
+    ],
+    "textColor": "ffffff",
+    "timeColor": "ffffff",
+    "columnBand": "101923",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": true,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "2.2023年9月14日　早朝の空港にて | Atsushiの飛行機修行旅日記 (https://ameblo.jp/atsushi2019/entry-12822662974.html)",
+    "image": "https://stat.ameba.jp/user_images/20231001/02/atsushi2019/c3/92/j/o1280096015344962345.jpg",
+    "accessed": "2026-11-09"
+  }
+}

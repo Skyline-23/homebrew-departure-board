@@ -1,0 +1,146 @@
+{
+  "code": "MNL",
+  "name": "Ninoy Aquino",
+  "subtitle": "MANILA NINOY AQUINO",
+  "zone": "Asia/Manila",
+  "lang": "fil",
+  "preset": "manila",
+  "accent": "ffe261",
+  "bg": "074299",
+  "header": "1b62bd",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "LON",
+      "carrier": "PR",
+      "number": 101
+    },
+    {
+      "city": "PAR",
+      "carrier": "PR",
+      "number": 118
+    },
+    {
+      "city": "FRA",
+      "carrier": "PR",
+      "number": 135
+    },
+    {
+      "city": "AMS",
+      "carrier": "PR",
+      "number": 152
+    },
+    {
+      "city": "ROM",
+      "carrier": "PR",
+      "number": 169
+    },
+    {
+      "city": "TYO",
+      "carrier": "PR",
+      "number": 186
+    },
+    {
+      "city": "SEL",
+      "carrier": "PR",
+      "number": 203
+    },
+    {
+      "city": "SIN",
+      "carrier": "PR",
+      "number": 220
+    },
+    {
+      "city": "BKK",
+      "carrier": "PR",
+      "number": 237
+    },
+    {
+      "city": "DXB",
+      "carrier": "PR",
+      "number": 254
+    },
+    {
+      "city": "NYC",
+      "carrier": "PR",
+      "number": 271
+    },
+    {
+      "city": "LAX",
+      "carrier": "PR",
+      "number": 288
+    },
+    {
+      "city": "SYD",
+      "carrier": "PR",
+      "number": 305
+    },
+    {
+      "city": "HKG",
+      "carrier": "PR",
+      "number": 322
+    },
+    {
+      "city": "TPE",
+      "carrier": "PR",
+      "number": 339
+    }
+  ],
+  "gates": [
+    "A1",
+    "A3",
+    "A5",
+    "A7",
+    "A9",
+    "A11",
+    "A13",
+    "A15",
+    "A17",
+    "A19",
+    "A21",
+    "B1",
+    "B3",
+    "B5",
+    "B7",
+    "B9",
+    "B11",
+    "B13",
+    "B15",
+    "B17",
+    "B19",
+    "B21"
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "dark",
+  "displayNameKey": "location.MNL",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 1,
+    "rowCount": 14,
+    "headerHeight": 96,
+    "headerInk": "ffffff",
+    "rowColors": [
+      "1a5aa3",
+      "286cb7"
+    ],
+    "textColor": "ffffff",
+    "timeColor": "ffffff",
+    "columnBand": "7bc633",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": true,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "Travelers stranded as Middle East conflict spreads as governments scramble to bring citizens home - The Economic Times (https://m.economictimes.com/nri/latest-updates/travelers-stranded-as-middle-east-conflict-spreads-as-governments-scramble-to-bring-citizens-home/articleshow/128946590.cms)",
+    "image": "https://img.etimg.com/thumb/width-1600%2Cheight-900%2Cimgsize-75932%2Cresizemode-75%2Cmsid-128946590/nri/latest-updates/travelers-stranded-as-middle-east-conflict-spreads-as-governments-scramble-to-bring-citizens-home.jpg",
+    "accessed": "2026-11-09"
+  }
+}

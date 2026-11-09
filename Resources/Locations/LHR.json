@@ -1,0 +1,230 @@
+{
+  "code": "LHR",
+  "name": "London Heathrow",
+  "subtitle": "HEATHROW AIRPORT",
+  "zone": "Europe/London",
+  "lang": "en",
+  "preset": "heathrow",
+  "accent": "ffdd00",
+  "bg": "131a21",
+  "header": "ffdd00",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "PAR",
+      "carrier": "AF",
+      "number": 1381
+    },
+    {
+      "city": "PAR",
+      "carrier": "BA",
+      "number": 304
+    },
+    {
+      "city": "MIL",
+      "carrier": "BA",
+      "number": 576
+    },
+    {
+      "city": "ROM",
+      "carrier": "BA",
+      "number": 548
+    },
+    {
+      "city": "VCE",
+      "carrier": "BA",
+      "number": 2584
+    },
+    {
+      "city": "FRA",
+      "carrier": "LH",
+      "number": 921
+    },
+    {
+      "city": "MUC",
+      "carrier": "LH",
+      "number": 2481
+    },
+    {
+      "city": "AMS",
+      "carrier": "KL",
+      "number": 1000
+    },
+    {
+      "city": "MAD",
+      "carrier": "IB",
+      "number": 3171
+    },
+    {
+      "city": "BCN",
+      "carrier": "BA",
+      "number": 474
+    },
+    {
+      "city": "LIS",
+      "carrier": "TP",
+      "number": 1351
+    },
+    {
+      "city": "DUB",
+      "carrier": "EI",
+      "number": 155
+    },
+    {
+      "city": "ATH",
+      "carrier": "BA",
+      "number": 640
+    },
+    {
+      "city": "IST",
+      "carrier": "TK",
+      "number": 1980
+    },
+    {
+      "city": "ZRH",
+      "carrier": "LX",
+      "number": 317
+    },
+    {
+      "city": "VIE",
+      "carrier": "OS",
+      "number": 452
+    },
+    {
+      "city": "BER",
+      "carrier": "BA",
+      "number": 982
+    },
+    {
+      "city": "EDI",
+      "carrier": "BA",
+      "number": 1434
+    },
+    {
+      "city": "CPH",
+      "carrier": "SK",
+      "number": 504
+    },
+    {
+      "city": "NYC",
+      "carrier": "BA",
+      "number": 117
+    },
+    {
+      "city": "NYC",
+      "carrier": "VS",
+      "number": 3
+    },
+    {
+      "city": "LAX",
+      "carrier": "BA",
+      "number": 283
+    },
+    {
+      "city": "SFO",
+      "carrier": "UA",
+      "number": 901
+    },
+    {
+      "city": "YYZ",
+      "carrier": "AC",
+      "number": 857
+    },
+    {
+      "city": "DXB",
+      "carrier": "EK",
+      "number": 2
+    },
+    {
+      "city": "DOH",
+      "carrier": "QR",
+      "number": 8
+    },
+    {
+      "city": "SIN",
+      "carrier": "SQ",
+      "number": 317
+    },
+    {
+      "city": "HKG",
+      "carrier": "CX",
+      "number": 254
+    },
+    {
+      "city": "TYO",
+      "carrier": "JL",
+      "number": 44
+    },
+    {
+      "city": "TYO",
+      "carrier": "NH",
+      "number": 212
+    },
+    {
+      "city": "SEL",
+      "carrier": "KE",
+      "number": 908
+    },
+    {
+      "city": "BJS",
+      "carrier": "CA",
+      "number": 938
+    },
+    {
+      "city": "MIA",
+      "carrier": "BA",
+      "number": 209
+    }
+  ],
+  "gates": [
+    "A2",
+    "A5",
+    "A8",
+    "A11",
+    "A14",
+    "A17",
+    "A20",
+    "A23",
+    "B2",
+    "B5",
+    "B8",
+    "B11",
+    "B14",
+    "B17",
+    "B20",
+    "B23"
+  ],
+  "columns": [
+    "time",
+    "destination",
+    "flight",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "light",
+  "displayNameKey": "location.LHR",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 3,
+    "rowCount": 20,
+    "headerHeight": 96,
+    "headerInk": "111a1f",
+    "rowColors": [
+      "162330",
+      "192b3a"
+    ],
+    "textColor": "e7eef0",
+    "timeColor": "e7eef0",
+    "columnBand": "2b465b",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": false,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "Heathrow Flight Information Displays - No-Nonsense Design (https://www.nononsensedesign.co.uk/portfolio/heathrow-flight-information-displays/)",
+    "image": "https://www.nononsensedesign.co.uk/wp-content/uploads/2020/05/01-heathrow-fids.jpg",
+    "accessed": "2026-11-09"
+  }
+}

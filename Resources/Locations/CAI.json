@@ -1,0 +1,146 @@
+{
+  "code": "CAI",
+  "name": "Cairo International",
+  "subtitle": "CAIRO INTERNATIONAL",
+  "zone": "Africa/Cairo",
+  "lang": "ar",
+  "preset": "cairo",
+  "accent": "f2ce7e",
+  "bg": "232b32",
+  "header": "e6e7df",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "LON",
+      "carrier": "MS",
+      "number": 101
+    },
+    {
+      "city": "PAR",
+      "carrier": "MS",
+      "number": 118
+    },
+    {
+      "city": "FRA",
+      "carrier": "MS",
+      "number": 135
+    },
+    {
+      "city": "AMS",
+      "carrier": "MS",
+      "number": 152
+    },
+    {
+      "city": "ROM",
+      "carrier": "MS",
+      "number": 169
+    },
+    {
+      "city": "TYO",
+      "carrier": "MS",
+      "number": 186
+    },
+    {
+      "city": "SEL",
+      "carrier": "MS",
+      "number": 203
+    },
+    {
+      "city": "SIN",
+      "carrier": "MS",
+      "number": 220
+    },
+    {
+      "city": "BKK",
+      "carrier": "MS",
+      "number": 237
+    },
+    {
+      "city": "DXB",
+      "carrier": "MS",
+      "number": 254
+    },
+    {
+      "city": "NYC",
+      "carrier": "MS",
+      "number": 271
+    },
+    {
+      "city": "LAX",
+      "carrier": "MS",
+      "number": 288
+    },
+    {
+      "city": "SYD",
+      "carrier": "MS",
+      "number": 305
+    },
+    {
+      "city": "HKG",
+      "carrier": "MS",
+      "number": 322
+    },
+    {
+      "city": "TPE",
+      "carrier": "MS",
+      "number": 339
+    }
+  ],
+  "gates": [
+    "A1",
+    "A3",
+    "A5",
+    "A7",
+    "A9",
+    "A11",
+    "A13",
+    "A15",
+    "A17",
+    "A19",
+    "A21",
+    "B1",
+    "B3",
+    "B5",
+    "B7",
+    "B9",
+    "B11",
+    "B13",
+    "B15",
+    "B17",
+    "B19",
+    "B21"
+  ],
+  "columns": [
+    "flight",
+    "time",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "dark",
+  "displayNameKey": "location.CAI",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 1,
+    "rowCount": 18,
+    "headerHeight": 96,
+    "headerInk": "243441",
+    "rowColors": [
+      "e1e6e5",
+      "667886"
+    ],
+    "textColor": "1c2e3b",
+    "timeColor": "1c2e3b",
+    "columnBand": "273b4f",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": true,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "Two Surprisingly Easy And Pleasant Experiences At Cairo Airport - One Mile at a Time (https://onemileatatime.com/cairo-airport-experience/)",
+    "image": "https://cdn.onemileatatime.com/wp-content/uploads/2018/11/20181104_111944-01.jpeg",
+    "accessed": "2026-11-09"
+  }
+}

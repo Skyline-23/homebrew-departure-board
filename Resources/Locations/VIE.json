@@ -1,0 +1,146 @@
+{
+  "code": "VIE",
+  "name": "Flughafen Wien",
+  "subtitle": "VIENNA AIRPORT",
+  "zone": "Europe/Vienna",
+  "lang": "de",
+  "preset": "vienna",
+  "accent": "eb6565",
+  "bg": "14191b",
+  "header": "14191b",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "LON",
+      "carrier": "OS",
+      "number": 101
+    },
+    {
+      "city": "PAR",
+      "carrier": "OS",
+      "number": 118
+    },
+    {
+      "city": "FRA",
+      "carrier": "OS",
+      "number": 135
+    },
+    {
+      "city": "AMS",
+      "carrier": "OS",
+      "number": 152
+    },
+    {
+      "city": "ROM",
+      "carrier": "OS",
+      "number": 169
+    },
+    {
+      "city": "TYO",
+      "carrier": "OS",
+      "number": 186
+    },
+    {
+      "city": "SEL",
+      "carrier": "OS",
+      "number": 203
+    },
+    {
+      "city": "SIN",
+      "carrier": "OS",
+      "number": 220
+    },
+    {
+      "city": "BKK",
+      "carrier": "OS",
+      "number": 237
+    },
+    {
+      "city": "DXB",
+      "carrier": "OS",
+      "number": 254
+    },
+    {
+      "city": "NYC",
+      "carrier": "OS",
+      "number": 271
+    },
+    {
+      "city": "LAX",
+      "carrier": "OS",
+      "number": 288
+    },
+    {
+      "city": "SYD",
+      "carrier": "OS",
+      "number": 305
+    },
+    {
+      "city": "HKG",
+      "carrier": "OS",
+      "number": 322
+    },
+    {
+      "city": "TPE",
+      "carrier": "OS",
+      "number": 339
+    }
+  ],
+  "gates": [
+    "A1",
+    "A3",
+    "A5",
+    "A7",
+    "A9",
+    "A11",
+    "A13",
+    "A15",
+    "A17",
+    "A19",
+    "A21",
+    "B1",
+    "B3",
+    "B5",
+    "B7",
+    "B9",
+    "B11",
+    "B13",
+    "B15",
+    "B17",
+    "B19",
+    "B21"
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "dark",
+  "displayNameKey": "location.VIE",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 3,
+    "rowCount": 24,
+    "headerHeight": 96,
+    "headerInk": "ffffff",
+    "rowColors": [
+      "e2eaf0",
+      "d0e0ea"
+    ],
+    "textColor": "182e44",
+    "timeColor": "182e44",
+    "columnBand": "9ebcd2",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": true,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "Review of easyJet flight from Vienna to Nápoli in Economy (https://flight-report.com/en/report/27875/EasyJet-EZY4852-Vienna-VIE-N-poli-NAP/)",
+    "image": "https://static.flight-report.com/media/photos/1508062048CYCK/img_20171026_135949.jpg",
+    "accessed": "2026-11-09"
+  }
+}

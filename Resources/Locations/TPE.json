@@ -1,0 +1,141 @@
+{
+  "code": "TPE",
+  "name": "臺灣桃園國際機場",
+  "subtitle": "TAIWAN TAOYUAN",
+  "zone": "Asia/Taipei",
+  "lang": "zh-Hant",
+  "preset": "taoyuan",
+  "accent": "ecbd4a",
+  "bg": "20292c",
+  "header": "333b3e",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "LON",
+      "carrier": "BR",
+      "number": 101
+    },
+    {
+      "city": "PAR",
+      "carrier": "BR",
+      "number": 118
+    },
+    {
+      "city": "FRA",
+      "carrier": "BR",
+      "number": 135
+    },
+    {
+      "city": "AMS",
+      "carrier": "BR",
+      "number": 152
+    },
+    {
+      "city": "ROM",
+      "carrier": "BR",
+      "number": 169
+    },
+    {
+      "city": "TYO",
+      "carrier": "BR",
+      "number": 186
+    },
+    {
+      "city": "SEL",
+      "carrier": "BR",
+      "number": 203
+    },
+    {
+      "city": "SIN",
+      "carrier": "BR",
+      "number": 220
+    },
+    {
+      "city": "BKK",
+      "carrier": "BR",
+      "number": 237
+    },
+    {
+      "city": "DXB",
+      "carrier": "BR",
+      "number": 254
+    },
+    {
+      "city": "NYC",
+      "carrier": "BR",
+      "number": 271
+    },
+    {
+      "city": "LAX",
+      "carrier": "BR",
+      "number": 288
+    },
+    {
+      "city": "SYD",
+      "carrier": "BR",
+      "number": 305
+    },
+    {
+      "city": "HKG",
+      "carrier": "BR",
+      "number": 322
+    }
+  ],
+  "gates": [
+    "A1",
+    "A3",
+    "A5",
+    "A7",
+    "A9",
+    "A11",
+    "A13",
+    "A15",
+    "A17",
+    "A19",
+    "A21",
+    "B1",
+    "B3",
+    "B5",
+    "B7",
+    "B9",
+    "B11",
+    "B13",
+    "B15",
+    "B17",
+    "B19",
+    "B21"
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "dark",
+  "displayNameKey": "location.TPE",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 3,
+    "rowCount": 17,
+    "headerHeight": 96,
+    "headerInk": "e4d6b3",
+    "rowColors": [
+      "263136",
+      "343d3f"
+    ],
+    "textColor": "f5e7c4",
+    "timeColor": "f3e1a6",
+    "columnBand": "343d3e",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": true,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "利用者数急上昇、桃園空港延べ1,000万人突破-ニュース-財団法人中央廣播電台(中央放送局)ニュース・番組制作、放送に関する規約 (https://www.rti.org.tw/jp/news?pid=52658&uid=3)",
+    "image": "https://webfile.rti.org.tw/web/rti.org.tw/jp/code/public/assets/images/2023/05/10/28e21b63f5d5ed7d6b3e96c5dbeff08b.jpg",
+    "accessed": "2026-11-09"
+  }
+}

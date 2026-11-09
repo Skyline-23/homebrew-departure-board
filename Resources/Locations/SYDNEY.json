@@ -1,0 +1,103 @@
+{
+  "code": "SYDNEY",
+  "name": "Central",
+  "subtitle": "SYDNEY TRAINS · CENTRAL STATION",
+  "zone": "Australia/Sydney",
+  "lang": "en",
+  "preset": "sydney",
+  "accent": "f6cb57",
+  "bg": "0d1316",
+  "header": "1a272d",
+  "kind": "rail",
+  "routes": [
+    {
+      "service": {
+        "key": "route.SYDNEY.0.service"
+      },
+      "destination": {
+        "key": "route.SYDNEY.0.destination"
+      },
+      "stops": {
+        "key": "route.SYDNEY.0.stops"
+      },
+      "color": "e69124",
+      "platform": "18"
+    },
+    {
+      "service": {
+        "key": "route.SYDNEY.1.service"
+      },
+      "destination": {
+        "key": "route.SYDNEY.1.destination"
+      },
+      "stops": {
+        "key": "route.SYDNEY.1.stops"
+      },
+      "color": "338dc4",
+      "platform": "25"
+    },
+    {
+      "service": {
+        "key": "route.SYDNEY.2.service"
+      },
+      "destination": {
+        "key": "route.SYDNEY.2.destination"
+      },
+      "stops": {
+        "key": "route.SYDNEY.2.stops"
+      },
+      "color": "379b57",
+      "platform": "23"
+    },
+    {
+      "service": {
+        "key": "route.SYDNEY.3.service"
+      },
+      "destination": {
+        "key": "route.SYDNEY.3.destination"
+      },
+      "stops": {
+        "key": "route.SYDNEY.3.stops"
+      },
+      "color": "b94e4c",
+      "platform": "16"
+    },
+    {
+      "service": {
+        "key": "route.SYDNEY.4.service"
+      },
+      "destination": {
+        "key": "route.SYDNEY.4.destination"
+      },
+      "stops": {
+        "key": "route.SYDNEY.4.stops"
+      },
+      "color": "279e9c",
+      "platform": "26"
+    },
+    {
+      "service": {
+        "key": "route.SYDNEY.5.service"
+      },
+      "destination": {
+        "key": "route.SYDNEY.5.destination"
+      },
+      "stops": {
+        "key": "route.SYDNEY.5.stops"
+      },
+      "color": "c7612b",
+      "platform": "9"
+    }
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "dark",
+  "displayNameKey": "location.SYDNEY",
+  "titleKey": "heading.train"
+}

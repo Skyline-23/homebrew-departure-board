@@ -1,0 +1,146 @@
+{
+  "code": "IST",
+  "name": "İstanbul Havalimanı",
+  "subtitle": "ISTANBUL AIRPORT",
+  "zone": "Europe/Istanbul",
+  "lang": "tr",
+  "preset": "istanbul",
+  "accent": "71d8da",
+  "bg": "081132",
+  "header": "1033a6",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "LON",
+      "carrier": "TK",
+      "number": 101
+    },
+    {
+      "city": "PAR",
+      "carrier": "TK",
+      "number": 118
+    },
+    {
+      "city": "FRA",
+      "carrier": "TK",
+      "number": 135
+    },
+    {
+      "city": "AMS",
+      "carrier": "TK",
+      "number": 152
+    },
+    {
+      "city": "ROM",
+      "carrier": "TK",
+      "number": 169
+    },
+    {
+      "city": "TYO",
+      "carrier": "TK",
+      "number": 186
+    },
+    {
+      "city": "SEL",
+      "carrier": "TK",
+      "number": 203
+    },
+    {
+      "city": "SIN",
+      "carrier": "TK",
+      "number": 220
+    },
+    {
+      "city": "BKK",
+      "carrier": "TK",
+      "number": 237
+    },
+    {
+      "city": "DXB",
+      "carrier": "TK",
+      "number": 254
+    },
+    {
+      "city": "NYC",
+      "carrier": "TK",
+      "number": 271
+    },
+    {
+      "city": "LAX",
+      "carrier": "TK",
+      "number": 288
+    },
+    {
+      "city": "SYD",
+      "carrier": "TK",
+      "number": 305
+    },
+    {
+      "city": "HKG",
+      "carrier": "TK",
+      "number": 322
+    },
+    {
+      "city": "TPE",
+      "carrier": "TK",
+      "number": 339
+    }
+  ],
+  "gates": [
+    "A1",
+    "A3",
+    "A5",
+    "A7",
+    "A9",
+    "A11",
+    "A13",
+    "A15",
+    "A17",
+    "A19",
+    "A21",
+    "B1",
+    "B3",
+    "B5",
+    "B7",
+    "B9",
+    "B11",
+    "B13",
+    "B15",
+    "B17",
+    "B19",
+    "B21"
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "dark",
+  "displayNameKey": "location.IST",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 4,
+    "rowCount": 23,
+    "headerHeight": 96,
+    "headerInk": "ffffff",
+    "rowColors": [
+      "142a74",
+      "1d3784"
+    ],
+    "textColor": "ffffff",
+    "timeColor": "ffffff",
+    "columnBand": "1849b5",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": true,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "Bewertung der Turkish Airlines Business Class in der Boeing 777-300ER nach Singapur (https://travel-dealz.de/blog/bewertung-turkish-airlines-business-class-boeing-777-300er/)",
+    "image": "https://travel-dealz.de/app/uploads/sites/2/Flughafentafel-Istanbul-scaled.jpeg",
+    "accessed": "2026-11-09"
+  }
+}

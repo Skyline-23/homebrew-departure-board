@@ -1,0 +1,232 @@
+{
+  "code": "JFK",
+  "name": "New York JFK",
+  "subtitle": "JOHN F. KENNEDY INTERNATIONAL",
+  "zone": "America/New_York",
+  "lang": "en",
+  "preset": "jfk",
+  "accent": "71b9ff",
+  "bg": "0a1031",
+  "header": "192547",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "LON",
+      "carrier": "BA",
+      "number": 178
+    },
+    {
+      "city": "LON",
+      "carrier": "VS",
+      "number": 4
+    },
+    {
+      "city": "PAR",
+      "carrier": "AF",
+      "number": 7
+    },
+    {
+      "city": "PAR",
+      "carrier": "DL",
+      "number": 264
+    },
+    {
+      "city": "MIL",
+      "carrier": "AZ",
+      "number": 609
+    },
+    {
+      "city": "ROM",
+      "carrier": "AZ",
+      "number": 611
+    },
+    {
+      "city": "VCE",
+      "carrier": "DL",
+      "number": 221
+    },
+    {
+      "city": "FRA",
+      "carrier": "LH",
+      "number": 401
+    },
+    {
+      "city": "MUC",
+      "carrier": "LH",
+      "number": 411
+    },
+    {
+      "city": "AMS",
+      "carrier": "KL",
+      "number": 642
+    },
+    {
+      "city": "MAD",
+      "carrier": "IB",
+      "number": 6250
+    },
+    {
+      "city": "BCN",
+      "carrier": "DL",
+      "number": 168
+    },
+    {
+      "city": "LIS",
+      "carrier": "TP",
+      "number": 210
+    },
+    {
+      "city": "DUB",
+      "carrier": "EI",
+      "number": 106
+    },
+    {
+      "city": "ATH",
+      "carrier": "DL",
+      "number": 200
+    },
+    {
+      "city": "IST",
+      "carrier": "TK",
+      "number": 2
+    },
+    {
+      "city": "ZRH",
+      "carrier": "LX",
+      "number": 15
+    },
+    {
+      "city": "TYO",
+      "carrier": "JL",
+      "number": 5
+    },
+    {
+      "city": "TYO",
+      "carrier": "NH",
+      "number": 9
+    },
+    {
+      "city": "SEL",
+      "carrier": "KE",
+      "number": 82
+    },
+    {
+      "city": "HKG",
+      "carrier": "CX",
+      "number": 845
+    },
+    {
+      "city": "TPE",
+      "carrier": "BR",
+      "number": 31
+    },
+    {
+      "city": "DXB",
+      "carrier": "EK",
+      "number": 202
+    },
+    {
+      "city": "DOH",
+      "carrier": "QR",
+      "number": 702
+    },
+    {
+      "city": "LAX",
+      "carrier": "B6",
+      "number": 23
+    },
+    {
+      "city": "LAX",
+      "carrier": "AA",
+      "number": 1
+    },
+    {
+      "city": "SFO",
+      "carrier": "B6",
+      "number": 15
+    },
+    {
+      "city": "SFO",
+      "carrier": "UA",
+      "number": 2215
+    },
+    {
+      "city": "MIA",
+      "carrier": "AA",
+      "number": 1001
+    },
+    {
+      "city": "BOS",
+      "carrier": "B6",
+      "number": 117
+    },
+    {
+      "city": "LAS",
+      "carrier": "B6",
+      "number": 1311
+    },
+    {
+      "city": "MEX",
+      "carrier": "AM",
+      "number": 409
+    },
+    {
+      "city": "CUN",
+      "carrier": "B6",
+      "number": 1155
+    },
+    {
+      "city": "SEA",
+      "carrier": "AS",
+      "number": 9
+    },
+    {
+      "city": "YYZ",
+      "carrier": "AC",
+      "number": 711
+    }
+  ],
+  "gates": [
+    "B2",
+    "B5",
+    "B8",
+    "B11",
+    "B14",
+    "B17",
+    "B20",
+    "B23"
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "light",
+  "displayNameKey": "location.JFK",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 1,
+    "rowCount": 18,
+    "headerHeight": 96,
+    "headerInk": "ffffff",
+    "rowColors": [
+      "0631b3",
+      "1145c4"
+    ],
+    "textColor": "ffffff",
+    "timeColor": "ffffff",
+    "columnBand": "243851",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": true,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "cite実録 ニューヨークJFK空港T7でプライオリティパスは使えない？ ANA直行便を利用時にラウンジ利用を試みた体験談紹介 - ミニマリスト品川太郎の海外旅行記 〜毎月海外に行く会社員の体験談ブログ〜 (https://abtem.hateblo.jp/entry/US.NewYorkJFKAirport.PriorityPass.Lounge)",
+    "image": "https://cdn-ak.f.st-hatena.com/images/fotolife/a/aihtditsmb/20250808/20250808210821.png",
+    "accessed": "2026-11-09"
+  }
+}

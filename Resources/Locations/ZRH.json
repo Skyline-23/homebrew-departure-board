@@ -1,0 +1,146 @@
+{
+  "code": "ZRH",
+  "name": "Flughafen Zürich",
+  "subtitle": "ZURICH AIRPORT",
+  "zone": "Europe/Zurich",
+  "lang": "de",
+  "preset": "zurich",
+  "accent": "ef3846",
+  "bg": "131717",
+  "header": "151b1a",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "LON",
+      "carrier": "LX",
+      "number": 101
+    },
+    {
+      "city": "PAR",
+      "carrier": "LX",
+      "number": 118
+    },
+    {
+      "city": "FRA",
+      "carrier": "LX",
+      "number": 135
+    },
+    {
+      "city": "AMS",
+      "carrier": "LX",
+      "number": 152
+    },
+    {
+      "city": "ROM",
+      "carrier": "LX",
+      "number": 169
+    },
+    {
+      "city": "TYO",
+      "carrier": "LX",
+      "number": 186
+    },
+    {
+      "city": "SEL",
+      "carrier": "LX",
+      "number": 203
+    },
+    {
+      "city": "SIN",
+      "carrier": "LX",
+      "number": 220
+    },
+    {
+      "city": "BKK",
+      "carrier": "LX",
+      "number": 237
+    },
+    {
+      "city": "DXB",
+      "carrier": "LX",
+      "number": 254
+    },
+    {
+      "city": "NYC",
+      "carrier": "LX",
+      "number": 271
+    },
+    {
+      "city": "LAX",
+      "carrier": "LX",
+      "number": 288
+    },
+    {
+      "city": "SYD",
+      "carrier": "LX",
+      "number": 305
+    },
+    {
+      "city": "HKG",
+      "carrier": "LX",
+      "number": 322
+    },
+    {
+      "city": "TPE",
+      "carrier": "LX",
+      "number": 339
+    }
+  ],
+  "gates": [
+    "A1",
+    "A3",
+    "A5",
+    "A7",
+    "A9",
+    "A11",
+    "A13",
+    "A15",
+    "A17",
+    "A19",
+    "A21",
+    "B1",
+    "B3",
+    "B5",
+    "B7",
+    "B9",
+    "B11",
+    "B13",
+    "B15",
+    "B17",
+    "B19",
+    "B21"
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "light",
+  "displayNameKey": "location.ZRH",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 3,
+    "rowCount": 27,
+    "headerHeight": 96,
+    "headerInk": "ffffff",
+    "rowColors": [
+      "1948b6",
+      "285ac5"
+    ],
+    "textColor": "ffffff",
+    "timeColor": "ffffff",
+    "columnBand": "e5ecec",
+    "columnInk": "213449",
+    "gateHighlight": false,
+    "airlineBadge": true,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "Connexions et terminaux à l'aéroport de Zurich ZRH (https://www.cestee.fr/aeroport/zurich-zrh/terminal)",
+    "image": "https://www.cestee.fr/images/75/35/147535-2560.jpeg",
+    "accessed": "2026-11-09"
+  }
+}

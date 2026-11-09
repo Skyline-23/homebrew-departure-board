@@ -1,0 +1,146 @@
+{
+  "code": "DOH",
+  "name": "Hamad International",
+  "subtitle": "DOHA HAMAD INTERNATIONAL",
+  "zone": "Asia/Qatar",
+  "lang": "ar",
+  "preset": "doha",
+  "accent": "e6c6d7",
+  "bg": "061a54",
+  "header": "d7e4ed",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "LON",
+      "carrier": "QR",
+      "number": 101
+    },
+    {
+      "city": "PAR",
+      "carrier": "QR",
+      "number": 118
+    },
+    {
+      "city": "FRA",
+      "carrier": "QR",
+      "number": 135
+    },
+    {
+      "city": "AMS",
+      "carrier": "QR",
+      "number": 152
+    },
+    {
+      "city": "ROM",
+      "carrier": "QR",
+      "number": 169
+    },
+    {
+      "city": "TYO",
+      "carrier": "QR",
+      "number": 186
+    },
+    {
+      "city": "SEL",
+      "carrier": "QR",
+      "number": 203
+    },
+    {
+      "city": "SIN",
+      "carrier": "QR",
+      "number": 220
+    },
+    {
+      "city": "BKK",
+      "carrier": "QR",
+      "number": 237
+    },
+    {
+      "city": "DXB",
+      "carrier": "QR",
+      "number": 254
+    },
+    {
+      "city": "NYC",
+      "carrier": "QR",
+      "number": 271
+    },
+    {
+      "city": "LAX",
+      "carrier": "QR",
+      "number": 288
+    },
+    {
+      "city": "SYD",
+      "carrier": "QR",
+      "number": 305
+    },
+    {
+      "city": "HKG",
+      "carrier": "QR",
+      "number": 322
+    },
+    {
+      "city": "TPE",
+      "carrier": "QR",
+      "number": 339
+    }
+  ],
+  "gates": [
+    "A1",
+    "A3",
+    "A5",
+    "A7",
+    "A9",
+    "A11",
+    "A13",
+    "A15",
+    "A17",
+    "A19",
+    "A21",
+    "B1",
+    "B3",
+    "B5",
+    "B7",
+    "B9",
+    "B11",
+    "B13",
+    "B15",
+    "B17",
+    "B19",
+    "B21"
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "dark",
+  "displayNameKey": "location.DOH",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 2,
+    "rowCount": 24,
+    "headerHeight": 96,
+    "headerInk": "192b3c",
+    "rowColors": [
+      "1033af",
+      "1a43c2"
+    ],
+    "textColor": "ffffff",
+    "timeColor": "ffffff",
+    "columnBand": "183c96",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": true,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "ドーハのハマド空港で乗り継ぎ時間をつぶす　トルコの旅(2) | 旅って楽しい！Amyのlet's enjoy life♪ (https://ameblo.jp/amy-2010/entry-12917062928.html)",
+    "image": "https://stat.ameba.jp/user_images/20250718/09/amy-2010/7c/52/j/o0800060015636073236.jpg",
+    "accessed": "2026-11-09"
+  }
+}

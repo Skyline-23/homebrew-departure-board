@@ -1,0 +1,146 @@
+{
+  "code": "PVG",
+  "name": "上海浦东国际机场",
+  "subtitle": "SHANGHAI PUDONG",
+  "zone": "Asia/Shanghai",
+  "lang": "zh-Hans",
+  "preset": "pudong",
+  "accent": "62c4f1",
+  "bg": "171715",
+  "header": "171715",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "LON",
+      "carrier": "MU",
+      "number": 101
+    },
+    {
+      "city": "PAR",
+      "carrier": "MU",
+      "number": 118
+    },
+    {
+      "city": "FRA",
+      "carrier": "MU",
+      "number": 135
+    },
+    {
+      "city": "AMS",
+      "carrier": "MU",
+      "number": 152
+    },
+    {
+      "city": "ROM",
+      "carrier": "MU",
+      "number": 169
+    },
+    {
+      "city": "TYO",
+      "carrier": "MU",
+      "number": 186
+    },
+    {
+      "city": "SEL",
+      "carrier": "MU",
+      "number": 203
+    },
+    {
+      "city": "SIN",
+      "carrier": "MU",
+      "number": 220
+    },
+    {
+      "city": "BKK",
+      "carrier": "MU",
+      "number": 237
+    },
+    {
+      "city": "DXB",
+      "carrier": "MU",
+      "number": 254
+    },
+    {
+      "city": "NYC",
+      "carrier": "MU",
+      "number": 271
+    },
+    {
+      "city": "LAX",
+      "carrier": "MU",
+      "number": 288
+    },
+    {
+      "city": "SYD",
+      "carrier": "MU",
+      "number": 305
+    },
+    {
+      "city": "HKG",
+      "carrier": "MU",
+      "number": 322
+    },
+    {
+      "city": "TPE",
+      "carrier": "MU",
+      "number": 339
+    }
+  ],
+  "gates": [
+    "A1",
+    "A3",
+    "A5",
+    "A7",
+    "A9",
+    "A11",
+    "A13",
+    "A15",
+    "A17",
+    "A19",
+    "A21",
+    "B1",
+    "B3",
+    "B5",
+    "B7",
+    "B9",
+    "B11",
+    "B13",
+    "B15",
+    "B17",
+    "B19",
+    "B21"
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": true,
+  "headerStyle": "dark",
+  "displayNameKey": "location.PVG",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 3,
+    "rowCount": 22,
+    "headerHeight": 70,
+    "headerInk": "efe7ad",
+    "rowColors": [
+      "141613",
+      "1d1e18"
+    ],
+    "textColor": "f1db74",
+    "timeColor": "f1db74",
+    "columnBand": "20221b",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": false,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "File:Departure board of Terminal 2 of Shanghai Pudong International Airport.JPG - Wikimedia Commons (https://commons.wikimedia.org/wiki/File%3ADeparture_board_of_Terminal_2_of_Shanghai_Pudong_International_Airport.JPG)",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/b/b5/Departure_board_of_Terminal_2_of_Shanghai_Pudong_International_Airport.JPG",
+    "accessed": "2026-11-09"
+  }
+}

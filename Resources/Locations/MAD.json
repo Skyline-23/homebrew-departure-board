@@ -1,0 +1,146 @@
+{
+  "code": "MAD",
+  "name": "Adolfo Suárez Madrid–Barajas",
+  "subtitle": "MADRID BARAJAS",
+  "zone": "Europe/Madrid",
+  "lang": "es",
+  "preset": "madrid",
+  "accent": "d2e25b",
+  "bg": "121923",
+  "header": "161d23",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "LON",
+      "carrier": "IB",
+      "number": 101
+    },
+    {
+      "city": "PAR",
+      "carrier": "IB",
+      "number": 118
+    },
+    {
+      "city": "FRA",
+      "carrier": "IB",
+      "number": 135
+    },
+    {
+      "city": "AMS",
+      "carrier": "IB",
+      "number": 152
+    },
+    {
+      "city": "ROM",
+      "carrier": "IB",
+      "number": 169
+    },
+    {
+      "city": "TYO",
+      "carrier": "IB",
+      "number": 186
+    },
+    {
+      "city": "SEL",
+      "carrier": "IB",
+      "number": 203
+    },
+    {
+      "city": "SIN",
+      "carrier": "IB",
+      "number": 220
+    },
+    {
+      "city": "BKK",
+      "carrier": "IB",
+      "number": 237
+    },
+    {
+      "city": "DXB",
+      "carrier": "IB",
+      "number": 254
+    },
+    {
+      "city": "NYC",
+      "carrier": "IB",
+      "number": 271
+    },
+    {
+      "city": "LAX",
+      "carrier": "IB",
+      "number": 288
+    },
+    {
+      "city": "SYD",
+      "carrier": "IB",
+      "number": 305
+    },
+    {
+      "city": "HKG",
+      "carrier": "IB",
+      "number": 322
+    },
+    {
+      "city": "TPE",
+      "carrier": "IB",
+      "number": 339
+    }
+  ],
+  "gates": [
+    "A1",
+    "A3",
+    "A5",
+    "A7",
+    "A9",
+    "A11",
+    "A13",
+    "A15",
+    "A17",
+    "A19",
+    "A21",
+    "B1",
+    "B3",
+    "B5",
+    "B7",
+    "B9",
+    "B11",
+    "B13",
+    "B15",
+    "B17",
+    "B19",
+    "B21"
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "dark",
+  "displayNameKey": "location.MAD",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 2,
+    "rowCount": 20,
+    "headerHeight": 96,
+    "headerInk": "ffffff",
+    "rowColors": [
+      "122444",
+      "193154"
+    ],
+    "textColor": "f7f6df",
+    "timeColor": "f7f6df",
+    "columnBand": "24334a",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": true,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "Aerolíneas españolas prolongan la suspensión de vuelos desde y hacia Venezuela (https://www.elespectador.com/mundo/venezuela/aerolineas-espanolas-prolongan-la-suspension-de-vuelos-desde-y-hacia-venezuela/)",
+    "image": "https://www.elespectador.com/resizer/v2/WXOWPGIGMJF77A33OCGIUQHPFI.jpg?auth=55b36601ac385c4c669ebba19caa426f86f0ab3465d8916c5f2b0a4b8c909278&height=613&quality=60&smart=true&width=920",
+    "accessed": "2026-11-09"
+  }
+}

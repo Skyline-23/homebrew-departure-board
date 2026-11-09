@@ -1,0 +1,261 @@
+{
+  "code": "SFO",
+  "name": "San Francisco",
+  "subtitle": "SAN FRANCISCO INTERNATIONAL",
+  "zone": "America/Los_Angeles",
+  "lang": "en",
+  "preset": "sfo",
+  "accent": "5cdfec",
+  "bg": "142e52",
+  "header": "176a93",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "NYC",
+      "carrier": "UA",
+      "number": 2286
+    },
+    {
+      "city": "NYC",
+      "carrier": "B6",
+      "number": 916
+    },
+    {
+      "city": "NYC",
+      "carrier": "AA",
+      "number": 178
+    },
+    {
+      "city": "LAX",
+      "carrier": "UA",
+      "number": 1112
+    },
+    {
+      "city": "LAX",
+      "carrier": "AS",
+      "number": 1946
+    },
+    {
+      "city": "SEA",
+      "carrier": "AS",
+      "number": 1371
+    },
+    {
+      "city": "LAS",
+      "carrier": "WN",
+      "number": 1500
+    },
+    {
+      "city": "DEN",
+      "carrier": "UA",
+      "number": 401
+    },
+    {
+      "city": "CHI",
+      "carrier": "UA",
+      "number": 2240
+    },
+    {
+      "city": "BOS",
+      "carrier": "B6",
+      "number": 434
+    },
+    {
+      "city": "HNL",
+      "carrier": "UA",
+      "number": 1158
+    },
+    {
+      "city": "YVR",
+      "carrier": "AC",
+      "number": 548
+    },
+    {
+      "city": "MEX",
+      "carrier": "AM",
+      "number": 669
+    },
+    {
+      "city": "LON",
+      "carrier": "BA",
+      "number": 286
+    },
+    {
+      "city": "LON",
+      "carrier": "UA",
+      "number": 900
+    },
+    {
+      "city": "PAR",
+      "carrier": "AF",
+      "number": 83
+    },
+    {
+      "city": "FRA",
+      "carrier": "LH",
+      "number": 455
+    },
+    {
+      "city": "MUC",
+      "carrier": "LH",
+      "number": 459
+    },
+    {
+      "city": "AMS",
+      "carrier": "KL",
+      "number": 606
+    },
+    {
+      "city": "ZRH",
+      "carrier": "LX",
+      "number": 39
+    },
+    {
+      "city": "DUB",
+      "carrier": "EI",
+      "number": 60
+    },
+    {
+      "city": "TYO",
+      "carrier": "JL",
+      "number": 1
+    },
+    {
+      "city": "TYO",
+      "carrier": "NH",
+      "number": 7
+    },
+    {
+      "city": "TYO",
+      "carrier": "UA",
+      "number": 837
+    },
+    {
+      "city": "SEL",
+      "carrier": "KE",
+      "number": 26
+    },
+    {
+      "city": "SEL",
+      "carrier": "OZ",
+      "number": 211
+    },
+    {
+      "city": "TPE",
+      "carrier": "BR",
+      "number": 27
+    },
+    {
+      "city": "TPE",
+      "carrier": "CI",
+      "number": 3
+    },
+    {
+      "city": "HKG",
+      "carrier": "CX",
+      "number": 873
+    },
+    {
+      "city": "SIN",
+      "carrier": "SQ",
+      "number": 33
+    },
+    {
+      "city": "MNL",
+      "carrier": "PR",
+      "number": 105
+    },
+    {
+      "city": "SYD",
+      "carrier": "QF",
+      "number": 74
+    },
+    {
+      "city": "AKL",
+      "carrier": "NZ",
+      "number": 7
+    },
+    {
+      "city": "DXB",
+      "carrier": "EK",
+      "number": 226
+    },
+    {
+      "city": "DOH",
+      "carrier": "QR",
+      "number": 738
+    },
+    {
+      "city": "IST",
+      "carrier": "TK",
+      "number": 80
+    }
+  ],
+  "gates": [
+    "A2",
+    "A5",
+    "A8",
+    "A11",
+    "A14",
+    "A17",
+    "A20",
+    "A23",
+    "B2",
+    "B5",
+    "B8",
+    "B11",
+    "B14",
+    "B17",
+    "B20",
+    "B23",
+    "F2",
+    "F5",
+    "F8",
+    "F11",
+    "F14",
+    "F17",
+    "F20",
+    "F23",
+    "G2",
+    "G5",
+    "G8",
+    "G11",
+    "G14",
+    "G17",
+    "G20",
+    "G23"
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "dark",
+  "displayNameKey": "location.SFO",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 2,
+    "rowCount": 22,
+    "headerHeight": 96,
+    "headerInk": "ffffff",
+    "rowColors": [
+      "0d4976",
+      "175680"
+    ],
+    "textColor": "ffffff",
+    "timeColor": "ffffff",
+    "columnBand": "123047",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": true,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "SFO terminal reopens after suspicious package investigation (https://sfstandard.com/2025/12/26/police-activity-closes-sfo-terminal/)",
+    "image": "https://assets.sfstandard.com/image/994911177489/image_nric1pv0qd7qt3ir4fa4cneq69/-C1367x1367%2C259%2C0-S3840x3840-FPNG",
+    "accessed": "2026-11-09"
+  }
+}

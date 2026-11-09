@@ -1,0 +1,246 @@
+{
+  "code": "HKG",
+  "name": "香港國際機場",
+  "subtitle": "HONG KONG INTERNATIONAL AIRPORT",
+  "zone": "Asia/Hong_Kong",
+  "lang": "zh-Hant",
+  "preset": "hongkong",
+  "accent": "ffd23f",
+  "bg": "07090d",
+  "header": "0079c8",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "TYO",
+      "carrier": "CX",
+      "number": 524
+    },
+    {
+      "city": "TYO",
+      "carrier": "UO",
+      "number": 848
+    },
+    {
+      "city": "OSA",
+      "carrier": "CX",
+      "number": 594
+    },
+    {
+      "city": "OSA",
+      "carrier": "UO",
+      "number": 686
+    },
+    {
+      "city": "FUK",
+      "carrier": "UO",
+      "number": 652
+    },
+    {
+      "city": "SEL",
+      "carrier": "CX",
+      "number": 410
+    },
+    {
+      "city": "SEL",
+      "carrier": "KE",
+      "number": 608
+    },
+    {
+      "city": "TPE",
+      "carrier": "CX",
+      "number": 450
+    },
+    {
+      "city": "TPE",
+      "carrier": "BR",
+      "number": 858
+    },
+    {
+      "city": "BJS",
+      "carrier": "CA",
+      "number": 112
+    },
+    {
+      "city": "SHA",
+      "carrier": "MU",
+      "number": 502
+    },
+    {
+      "city": "SIN",
+      "carrier": "SQ",
+      "number": 893
+    },
+    {
+      "city": "BKK",
+      "carrier": "TG",
+      "number": 601
+    },
+    {
+      "city": "MNL",
+      "carrier": "PR",
+      "number": 307
+    },
+    {
+      "city": "SGN",
+      "carrier": "VN",
+      "number": 595
+    },
+    {
+      "city": "HAN",
+      "carrier": "CX",
+      "number": 743
+    },
+    {
+      "city": "KUL",
+      "carrier": "CX",
+      "number": 721
+    },
+    {
+      "city": "DPS",
+      "carrier": "CX",
+      "number": 785
+    },
+    {
+      "city": "SYD",
+      "carrier": "CX",
+      "number": 101
+    },
+    {
+      "city": "AKL",
+      "carrier": "NZ",
+      "number": 80
+    },
+    {
+      "city": "LON",
+      "carrier": "CX",
+      "number": 251
+    },
+    {
+      "city": "LON",
+      "carrier": "BA",
+      "number": 32
+    },
+    {
+      "city": "PAR",
+      "carrier": "CX",
+      "number": 261
+    },
+    {
+      "city": "FRA",
+      "carrier": "LH",
+      "number": 797
+    },
+    {
+      "city": "MIL",
+      "carrier": "CX",
+      "number": 293
+    },
+    {
+      "city": "ZRH",
+      "carrier": "LX",
+      "number": 139
+    },
+    {
+      "city": "AMS",
+      "carrier": "KL",
+      "number": 888
+    },
+    {
+      "city": "IST",
+      "carrier": "TK",
+      "number": 71
+    },
+    {
+      "city": "DXB",
+      "carrier": "EK",
+      "number": 381
+    },
+    {
+      "city": "DOH",
+      "carrier": "QR",
+      "number": 815
+    },
+    {
+      "city": "LAX",
+      "carrier": "CX",
+      "number": 880
+    },
+    {
+      "city": "SFO",
+      "carrier": "UA",
+      "number": 862
+    },
+    {
+      "city": "NYC",
+      "carrier": "CX",
+      "number": 840
+    },
+    {
+      "city": "YVR",
+      "carrier": "AC",
+      "number": 8
+    }
+  ],
+  "gates": [
+    "11",
+    "14",
+    "17",
+    "20",
+    "23",
+    "26",
+    "29",
+    "32",
+    "35",
+    "38",
+    "41",
+    "44",
+    "47",
+    "50",
+    "53",
+    "56",
+    "59",
+    "62",
+    "65",
+    "68",
+    "71",
+    "74",
+    "77",
+    "80",
+    "83",
+    "86",
+    "89"
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": true,
+  "headerStyle": "dark",
+  "displayNameKey": "location.HKG",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 3,
+    "rowCount": 25,
+    "headerHeight": 96,
+    "headerInk": "ffffff",
+    "rowColors": [
+      "101319",
+      "0c1015"
+    ],
+    "textColor": "e8eef8",
+    "timeColor": "fbe87e",
+    "columnBand": "0086d3",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": true,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "機場電腦故障　航班資訊未即時更新　林世雄促機管局調查及交報告 (https://www.hk01.com/%E7%A4%BE%E6%9C%83%E6%96%B0%E8%81%9E/1031470/%E6%A9%9F%E5%A0%B4%E9%9B%BB%E8%85%A6%E6%95%85%E9%9A%9C-%E8%88%AA%E7%8F%AD%E8%B3%87%E8%A8%8A%E6%9C%AA%E5%8D%B3%E6%99%82%E6%9B%B4%E6%96%B0-%E6%9E%97%E4%B8%96%E9%9B%84%E4%BF%83%E6%A9%9F%E7%AE%A1%E5%B1%80%E8%AA%BF%E6%9F%A5%E5%8F%8A%E4%BA%A4%E5%A0%B1%E5%91%8A)",
+    "image": "https://cdn.hk01.com/di/media/images/dw/20240623/881503014404231168514289.jpeg/oH797VZlHP8HWg7mKpFUIuWN5i-3NZSVQ5YQ0kOWENI?v=w1920",
+    "accessed": "2026-11-09"
+  }
+}

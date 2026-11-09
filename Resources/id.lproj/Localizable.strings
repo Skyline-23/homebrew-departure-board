@@ -1,0 +1,15 @@
+/* Display strings. Keys are shared across all location renderers. */
+"column.destination" = "Tujuan";
+"column.expected" = "Waktu baru";
+"column.flight" = "Penerbangan";
+"column.gate" = "Gerbang";
+"column.state" = "Keterangan";
+"column.time" = "Waktu";
+"heading.departures" = "Keberangkatan";
+"status.boarding" = "Naik pesawat";
+"status.cancelled" = "Dibatalkan";
+"status.closing" = "Panggilan terakhir";
+"status.delayed" = "Terlambat";
+"status.departed" = "Berangkat";
+"status.gate" = "Ke gerbang";
+"status.scheduled" = "Tepat waktu";

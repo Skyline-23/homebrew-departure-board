@@ -1,0 +1,146 @@
+{
+  "code": "JNB",
+  "name": "O. R. Tambo",
+  "subtitle": "JOHANNESBURG O. R. TAMBO",
+  "zone": "Africa/Johannesburg",
+  "lang": "en",
+  "preset": "johannesburg",
+  "accent": "e9c654",
+  "bg": "0a263b",
+  "header": "138fc0",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "LON",
+      "carrier": "SA",
+      "number": 101
+    },
+    {
+      "city": "PAR",
+      "carrier": "SA",
+      "number": 118
+    },
+    {
+      "city": "FRA",
+      "carrier": "SA",
+      "number": 135
+    },
+    {
+      "city": "AMS",
+      "carrier": "SA",
+      "number": 152
+    },
+    {
+      "city": "ROM",
+      "carrier": "SA",
+      "number": 169
+    },
+    {
+      "city": "TYO",
+      "carrier": "SA",
+      "number": 186
+    },
+    {
+      "city": "SEL",
+      "carrier": "SA",
+      "number": 203
+    },
+    {
+      "city": "SIN",
+      "carrier": "SA",
+      "number": 220
+    },
+    {
+      "city": "BKK",
+      "carrier": "SA",
+      "number": 237
+    },
+    {
+      "city": "DXB",
+      "carrier": "SA",
+      "number": 254
+    },
+    {
+      "city": "NYC",
+      "carrier": "SA",
+      "number": 271
+    },
+    {
+      "city": "LAX",
+      "carrier": "SA",
+      "number": 288
+    },
+    {
+      "city": "SYD",
+      "carrier": "SA",
+      "number": 305
+    },
+    {
+      "city": "HKG",
+      "carrier": "SA",
+      "number": 322
+    },
+    {
+      "city": "TPE",
+      "carrier": "SA",
+      "number": 339
+    }
+  ],
+  "gates": [
+    "A1",
+    "A3",
+    "A5",
+    "A7",
+    "A9",
+    "A11",
+    "A13",
+    "A15",
+    "A17",
+    "A19",
+    "A21",
+    "B1",
+    "B3",
+    "B5",
+    "B7",
+    "B9",
+    "B11",
+    "B13",
+    "B15",
+    "B17",
+    "B19",
+    "B21"
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "dark",
+  "displayNameKey": "location.JNB",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 1,
+    "rowCount": 16,
+    "headerHeight": 96,
+    "headerInk": "ffffff",
+    "rowColors": [
+      "2379a1",
+      "2b8aac"
+    ],
+    "textColor": "ffffff",
+    "timeColor": "ffffff",
+    "columnBand": "26516a",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": true,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "UK, Germany and Italy detect Omicron variant cases, Israel closes borders | Nippon.com (https://www.nippon.com/en/news/reu20211127KBN2IC0A8/)",
+    "image": "https://www.nippon.com/en/ncommon/contents/news/1338867/1338867.jpg",
+    "accessed": "2026-11-09"
+  }
+}

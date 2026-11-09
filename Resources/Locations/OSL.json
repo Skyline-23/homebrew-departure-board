@@ -1,0 +1,146 @@
+{
+  "code": "OSL",
+  "name": "Oslo lufthavn",
+  "subtitle": "OSLO AIRPORT",
+  "zone": "Europe/Oslo",
+  "lang": "nb",
+  "preset": "oslo",
+  "accent": "99d9ef",
+  "bg": "09152a",
+  "header": "11213c",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "LON",
+      "carrier": "SK",
+      "number": 101
+    },
+    {
+      "city": "PAR",
+      "carrier": "SK",
+      "number": 118
+    },
+    {
+      "city": "FRA",
+      "carrier": "SK",
+      "number": 135
+    },
+    {
+      "city": "AMS",
+      "carrier": "SK",
+      "number": 152
+    },
+    {
+      "city": "ROM",
+      "carrier": "SK",
+      "number": 169
+    },
+    {
+      "city": "TYO",
+      "carrier": "SK",
+      "number": 186
+    },
+    {
+      "city": "SEL",
+      "carrier": "SK",
+      "number": 203
+    },
+    {
+      "city": "SIN",
+      "carrier": "SK",
+      "number": 220
+    },
+    {
+      "city": "BKK",
+      "carrier": "SK",
+      "number": 237
+    },
+    {
+      "city": "DXB",
+      "carrier": "SK",
+      "number": 254
+    },
+    {
+      "city": "NYC",
+      "carrier": "SK",
+      "number": 271
+    },
+    {
+      "city": "LAX",
+      "carrier": "SK",
+      "number": 288
+    },
+    {
+      "city": "SYD",
+      "carrier": "SK",
+      "number": 305
+    },
+    {
+      "city": "HKG",
+      "carrier": "SK",
+      "number": 322
+    },
+    {
+      "city": "TPE",
+      "carrier": "SK",
+      "number": 339
+    }
+  ],
+  "gates": [
+    "A1",
+    "A3",
+    "A5",
+    "A7",
+    "A9",
+    "A11",
+    "A13",
+    "A15",
+    "A17",
+    "A19",
+    "A21",
+    "B1",
+    "B3",
+    "B5",
+    "B7",
+    "B9",
+    "B11",
+    "B13",
+    "B15",
+    "B17",
+    "B19",
+    "B21"
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "dark",
+  "displayNameKey": "location.OSL",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 2,
+    "rowCount": 25,
+    "headerHeight": 96,
+    "headerInk": "ffffff",
+    "rowColors": [
+      "1845a4",
+      "2052b3"
+    ],
+    "textColor": "ffffff",
+    "timeColor": "ffffff",
+    "columnBand": "315b9d",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": true,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "Chegadas e partidas no aeroporto de Oslo (OSL) (https://www.cestee.pt/aeroporto/oslo-osl/chegadas-partidas)",
+    "image": "https://www.cestee.pt/images/29/32/172932-2560.jpeg",
+    "accessed": "2026-11-09"
+  }
+}

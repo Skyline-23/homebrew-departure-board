@@ -1,0 +1,141 @@
+{
+  "code": "BKK",
+  "name": "Suvarnabhumi",
+  "subtitle": "BANGKOK SUVARNABHUMI",
+  "zone": "Asia/Bangkok",
+  "lang": "th",
+  "preset": "bangkok",
+  "accent": "d8beec",
+  "bg": "0d111d",
+  "header": "16191d",
+  "kind": "airport",
+  "routes": [
+    {
+      "city": "LON",
+      "carrier": "TG",
+      "number": 101
+    },
+    {
+      "city": "PAR",
+      "carrier": "TG",
+      "number": 118
+    },
+    {
+      "city": "FRA",
+      "carrier": "TG",
+      "number": 135
+    },
+    {
+      "city": "AMS",
+      "carrier": "TG",
+      "number": 152
+    },
+    {
+      "city": "ROM",
+      "carrier": "TG",
+      "number": 169
+    },
+    {
+      "city": "TYO",
+      "carrier": "TG",
+      "number": 186
+    },
+    {
+      "city": "SEL",
+      "carrier": "TG",
+      "number": 203
+    },
+    {
+      "city": "SIN",
+      "carrier": "TG",
+      "number": 220
+    },
+    {
+      "city": "DXB",
+      "carrier": "TG",
+      "number": 254
+    },
+    {
+      "city": "NYC",
+      "carrier": "TG",
+      "number": 271
+    },
+    {
+      "city": "LAX",
+      "carrier": "TG",
+      "number": 288
+    },
+    {
+      "city": "SYD",
+      "carrier": "TG",
+      "number": 305
+    },
+    {
+      "city": "HKG",
+      "carrier": "TG",
+      "number": 322
+    },
+    {
+      "city": "TPE",
+      "carrier": "TG",
+      "number": 339
+    }
+  ],
+  "gates": [
+    "A1",
+    "A3",
+    "A5",
+    "A7",
+    "A9",
+    "A11",
+    "A13",
+    "A15",
+    "A17",
+    "A19",
+    "A21",
+    "B1",
+    "B3",
+    "B5",
+    "B7",
+    "B9",
+    "B11",
+    "B13",
+    "B15",
+    "B17",
+    "B19",
+    "B21"
+  ],
+  "columns": [
+    "time",
+    "flight",
+    "destination",
+    "gate",
+    "state"
+  ],
+  "twoPanels": false,
+  "headerStyle": "dark",
+  "displayNameKey": "location.BKK",
+  "titleKey": "heading.departures",
+  "display": {
+    "panelCount": 4,
+    "rowCount": 24,
+    "headerHeight": 96,
+    "headerInk": "f1d15c",
+    "rowColors": [
+      "08132c",
+      "101f39"
+    ],
+    "textColor": "e9eefc",
+    "timeColor": "e9eefc",
+    "columnBand": "183259",
+    "columnInk": "ffffff",
+    "gateHighlight": false,
+    "airlineBadge": true,
+    "footerHeight": 26
+  },
+  "reference": {
+    "source": "[ปันโปรรีวิว] วันนี้ที่รอคอย AirAsia ขึ้นเครื่องที่สนามบินสุวรรณภูมิได้แล้ว! | ปันโปร - Punpromotion (https://www.punpro.com/p/AirAsia-Suvarnabhumi)",
+    "image": "https://st-th-1.byteark.com/assets.punpro.com/contents/i10306/1601002753450-S__23150596.jpg",
+    "accessed": "2026-11-09"
+  }
+}
