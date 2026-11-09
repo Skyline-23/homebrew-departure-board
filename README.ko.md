@@ -13,22 +13,34 @@
 
 ```sh
 brew tap Skyline-23/departure-board
-brew install --formula skyline-23/departure-board/departure-board
-departure-board
+brew install --cask skyline-23/departure-board/departure-board
+open -a "Departure Board"
 ```
 
 Homebrew가 없다면 [brew.sh](https://brew.sh/)의 안내에 따라 먼저 설치해 주세요.
 
-처음 실행하면 **Departure Board.app**은 `/Applications`에, 화면 보호기는 `~/Library/Screen Savers`에 설치됩니다. 앱 설정에서 공항을 고르고 API 키를 입력하면 됩니다.
+Homebrew가 **Departure Board.app**을 `/Applications`에 설치하고 화면 보호기를 등록합니다. 앱을 열어 공항을 고르고 API 키를 입력하면 됩니다. **0.6.2부터 배포되는 바이너리에는 Developer ID 서명과 Apple 공증이 적용됩니다.**
 
 <details>
 <summary>이미 설치했다면 업데이트하기</summary>
 
 ```sh
 brew update
-brew upgrade --formula skyline-23/departure-board/departure-board
+brew upgrade --cask skyline-23/departure-board/departure-board
+```
+
+</details>
+
+<details>
+<summary>소스에서 빌드하거나 기존 formula 설치본 업데이트하기</summary>
+
+```sh
+brew install --formula skyline-23/departure-board/departure-board
+# 이미 formula로 설치했다면 install 대신 upgrade를 사용하세요.
 departure-board
 ```
+
+formula는 이 Mac에서 직접 빌드하고 화면 보호기를 `~/Library/Screen Savers`에 설치합니다. 미리 빌드된 cask로 바꾸려면 formula를 먼저 제거한 뒤 `brew install --cask --force skyline-23/departure-board/departure-board`로 기존 설치본을 교체하세요. 설정은 유지됩니다.
 
 </details>
 

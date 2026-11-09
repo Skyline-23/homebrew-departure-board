@@ -12,7 +12,9 @@ for name in 'Departure Board.app' 'Departure Board.saver'; do
   xcrun stapler validate "$bundle"
   actual="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$bundle/Contents/Info.plist")"
   test "$actual" = "$VERSION"
-  lipo -verify_arch arm64 x86_64 "$bundle/Contents/MacOS/DepartureBoard"
+  for architecture in arm64 x86_64; do
+    lipo "$bundle/Contents/MacOS/DepartureBoard" -verify_arch "$architecture"
+  done
 done
 spctl --assess --type execute --verbose=4 "$CHECK_ROOT/Departure Board.app"
 printf 'Final ZIP signatures, notarization tickets and universal binaries verified.\n'

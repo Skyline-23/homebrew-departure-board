@@ -13,22 +13,34 @@ Airport departure boards for your Mac — a screen saver, live wallpaper and com
 
 ```sh
 brew tap Skyline-23/departure-board
-brew install --formula skyline-23/departure-board/departure-board
-departure-board
+brew install --cask skyline-23/departure-board/departure-board
+open -a "Departure Board"
 ```
 
 Need Homebrew first? Follow the instructions at [brew.sh](https://brew.sh/).
 
-The first launch installs **Departure Board.app** in `/Applications` and the screen saver in `~/Library/Screen Savers`. The app opens its settings so you can choose an airport and add your API key.
+Homebrew installs **Departure Board.app** in `/Applications` and registers the screen saver. Open the app to choose an airport and add your API key. Binary releases from **0.6.2** are signed with Developer ID and notarized by Apple.
 
 <details>
 <summary>Updating an existing installation</summary>
 
 ```sh
 brew update
-brew upgrade --formula skyline-23/departure-board/departure-board
+brew upgrade --cask skyline-23/departure-board/departure-board
+```
+
+</details>
+
+<details>
+<summary>Build from source or update a previous formula installation</summary>
+
+```sh
+brew install --formula skyline-23/departure-board/departure-board
+# For an existing formula installation, use brew upgrade --formula instead.
 departure-board
 ```
+
+The formula builds locally and installs the screen saver in `~/Library/Screen Savers`. To switch to the prebuilt cask, uninstall the formula first and use `brew install --cask --force skyline-23/departure-board/departure-board` to replace its installed bundles. Your settings are preserved.
 
 </details>
 
