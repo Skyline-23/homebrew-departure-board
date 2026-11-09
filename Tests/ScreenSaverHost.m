@@ -122,7 +122,8 @@ static BOOL VerifySystemFontScaling(void) {
         return NO;
     typedef NSString *(*StatusText)(NSString *, NSString *);
     StatusText statusText = (StatusText)dlsym(handle, "DBStatusText");
-    if (!statusText || statusText(@"unknown", @"en").length || statusText(@"unknown", @"fr").length ||
+    if (!statusText || ![statusText(@"unknown", @"en") isEqual:@"Status unavailable"] ||
+        !statusText(@"unknown", @"fr").length ||
         !statusText(@"boarding", @"en").length)
         return NO;
     NSBitmapImageRep *bitmap = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL pixelsWide:120

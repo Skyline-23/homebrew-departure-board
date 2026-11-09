@@ -55,10 +55,8 @@ void DBDrawTextWithFont(NSString *text, NSRect rect, NSFont *font, NSColor *colo
     [text drawInRect:box withAttributes:attrs];
 }
 NSString *DBStatusText(NSString *key, NSString *language) {
-    // An unreported operational status is an empty remark, not a data error.
-    if (!key.length || [key isEqual:@"unknown"])
-        return @"";
-    return DBBoardString([@"status." stringByAppendingString:key], language);
+    // A missing operational status must not be presented as an on-time flight.
+    return DBBoardString([@"status." stringByAppendingString:key.length ? key : @"unknown"], language);
 }
 NSColor *DBStatusColor(NSString *status) {
     if ([status isEqual:@"cancelled"])
