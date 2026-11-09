@@ -260,7 +260,7 @@
     "referenceAspect": 0.92,
     "headerFraction": 0.16,
     "headerVariant": "icn",
-    "bodyFont": "ArialNarrow-Bold",
+    "bodyFont": "HelveticaNeue-Medium",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": false,
     "hideScheduledStatus": true

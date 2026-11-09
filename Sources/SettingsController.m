@@ -8,7 +8,7 @@
 @implementation DBBoardView (SettingsController)
 
 - (NSWindow *)settingsWindowWithTarget:(id)target action:(SEL)action {
-    NSWindow *window = [[NSPanel alloc] initWithContentRect:NSMakeRect(0, 0, 700, 754)
+    NSWindow *window = [[NSPanel alloc] initWithContentRect:NSMakeRect(0, 0, 700, 798)
                                                   styleMask:NSWindowStyleMaskTitled
                                                     backing:NSBackingStoreBuffered
                                                       defer:NO];
@@ -161,7 +161,7 @@
     for (NSView *view in v.subviews) {
         if (view.frame.origin.y >= 278) {
             NSRect frame = view.frame;
-            frame.origin.y += 92;
+            frame.origin.y += 136;
             view.frame = frame;
         }
     }
@@ -178,6 +178,18 @@
                        ? NSControlStateValueOn : NSControlStateValueOff;
     spaces.frame = NSMakeRect(161, 284, 497, 24);
     [v addSubview:spaces];
+    NSTextField *scaleLabel = [NSTextField labelWithString:DBUIString(@"settings.boardScale")];
+    scaleLabel.frame = NSMakeRect(29, 376, 130, 25);
+    [v addSubview:scaleLabel];
+    NSPopUpButton *scale = [[NSPopUpButton alloc] initWithFrame:NSMakeRect(161, 374, 497, 29) pullsDown:NO];
+    scale.tag = 210;
+    for (NSNumber *value in @[ @.5, @.65, @.75, @.85, @1.0 ]) {
+        [scale addItemWithTitle:[NSString stringWithFormat:@"%.0f%%", value.doubleValue * 100]];
+        scale.lastItem.representedObject = value;
+        if (fabs(value.doubleValue - self.boardScale) < .001)
+            [scale selectItem:scale.lastItem];
+    }
+    [v addSubview:scale];
     self.optionsWindow = window;
     return window;
 }
@@ -196,6 +208,7 @@
     saved[@"refreshInterval"] = [(NSPopUpButton *)[v viewWithTag:206] selectedItem].representedObject;
     saved[@"launchAtLogin"] = @([(NSButton *)[v viewWithTag:208] state] == NSControlStateValueOn);
     saved[@"showAllSpaces"] = @([(NSButton *)[v viewWithTag:209] state] == NSControlStateValueOn);
+    saved[@"boardScale"] = [(NSPopUpButton *)[v viewWithTag:210] selectedItem].representedObject;
     NSButton *button = (NSButton *)[v viewWithTag:205];
     button.enabled = NO;
     button.title = DBUIString(@"settings.saving");

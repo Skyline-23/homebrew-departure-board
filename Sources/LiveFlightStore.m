@@ -222,7 +222,8 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
             @"destinationName": destination[@"municipalityName"] ?: destination[@"name"] ?: @"",
             @"status": flight[@"status"] ?: @"Unknown", @"gate": departure[@"gate"] ?: @"",
             @"terminal": departure[@"terminal"] ?: @"", @"checkIn": departure[@"checkInDesk"] ?: @"",
-            @"airlineName": ObjectDictionary(flight[@"airline"])[@"name"] ?: @""
+            @"airlineName": ObjectDictionary(flight[@"airline"])[@"name"] ?: @"",
+            @"airlineICAO": ObjectDictionary(flight[@"airline"])[@"icao"] ?: @""
         };
         for (NSString *key in fields) {
             id value = fields[key];
@@ -231,7 +232,8 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
         row[@"codeshareStatus"] = flight[@"codeshareStatus"] ?: @"Unknown";
         row[@"aircraft"] = ObjectDictionary(flight[@"aircraft"])[@"reg"] ?: @"";
         row[@"callSign"] = flight[@"callSign"] ?: @"";
-        row[@"variants"] = @[ @{@"number" : number, @"airline" : row[@"airlineName"]} ];
+        row[@"variants"] = @[ @{@"number" : number, @"airline" : row[@"airlineName"],
+                                @"icao" : row[@"airlineICAO"]} ];
         unique[[NSString stringWithFormat:@"%@/%@", number, row[@"scheduledUtc"]]] = row;
     }
     NSArray *flights = [self groupCodeshares:unique.allValues];
@@ -316,11 +318,13 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
             @{@"airport" : destinationCode, @"en" : flight[@"destinationName"] ?: destinationCode};
         NSString *number = flight[@"number"] ?: @"";
         NSString *airline = flight[@"airlineName"] ?: @"";
+        NSString *airlineICAO = flight[@"airlineICAO"] ?: @"";
         NSArray *variants = flight[@"variants"];
         if (variants.count) {
             NSUInteger index = (NSUInteger)floor(now.timeIntervalSince1970 / 4.0) % variants.count;
             number = variants[index][@"number"];
             airline = variants[index][@"airline"];
+            airlineICAO = variants[index][@"icao"] ?: @"";
         }
         NSString *state = statusKeys[flight[@"status"]] ?: @"unknown";
         BOOL timeChanged = revised && fabs([revised timeIntervalSinceDate:scheduled]) >= 60;
@@ -338,6 +342,7 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
             @"state" : state,
             @"color" : @"345d82",
             @"airline" : airline,
+            @"airlineICAO" : airlineICAO,
             @"minutes" : @((NSInteger)ceil([(revised ?: scheduled) timeIntervalSinceDate:now] / 60)),
             @"identity" : @((NSInteger)scheduled.timeIntervalSince1970)
         }];

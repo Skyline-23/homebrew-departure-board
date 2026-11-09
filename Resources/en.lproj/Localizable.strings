@@ -297,3 +297,5 @@
 "menu.closeWindow" = "Close Window";
 
 "settings.showAllSpaces" = "Show on all Spaces";
+
+"settings.boardScale" = "Board Scale";

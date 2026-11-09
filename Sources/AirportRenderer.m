@@ -1,24 +1,14 @@
 #import "BoardViewInternal.h"
 #import "DrawingSupport.h"
+#import "AirlineLogoStore.h"
 
-static NSImage *AirportAirlineLogo(NSString *carrier) {
-    static NSCache *logos;
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
-        logos = NSCache.new;
-    });
-    id cached = [logos objectForKey:carrier];
-    if (cached)
-        return cached == NSNull.null ? nil : cached;
-    NSImage *logo = nil;
-    if (carrier.length) {
-        NSURL *url = [[NSBundle bundleForClass:DBBoardView.class] URLForResource:carrier
-                                                                   withExtension:@"png"
-                                                                    subdirectory:@"AirlineLogos"];
-        logo = url ? [[NSImage alloc] initWithContentsOfURL:url] : nil;
-        [logos setObject:logo ?: NSNull.null forKey:carrier];
-    }
-    return logo;
+static void DrawAirlineLogo(NSImage *logo, NSRect bounds) {
+    CGFloat scale = MIN(bounds.size.width / logo.size.width, bounds.size.height / logo.size.height);
+    NSRect rect = NSMakeRect(NSMidX(bounds) - logo.size.width * scale / 2,
+                             NSMidY(bounds) - logo.size.height * scale / 2,
+                             logo.size.width * scale, logo.size.height * scale);
+    [logo drawInRect:rect fromRect:NSZeroRect operation:NSCompositingOperationSourceOver
+           fraction:1 respectFlipped:YES hints:nil];
 }
 
 @implementation DBBoardView (AirportRenderer)
@@ -49,9 +39,7 @@ static NSImage *AirportAirlineLogo(NSString *carrier) {
     CGFloat fraction = [self.location[@"display"][@"headerFraction"] doubleValue];
     if ([self.locationCode isEqual:@"HND"] && area.size.width > area.size.height)
         return 90;
-    if (self.density == 0 && [self.locationCode isEqual:@"ICN"] && area.size.width > area.size.height)
-        return MAX(230, area.size.height * fraction);
-    return fraction > 0 ? area.size.height * fraction
+    return fraction > 0 ? area.size.height * fraction * self.boardScale
                         : [self.location[@"display"][@"headerHeight"] doubleValue];
 }
 
@@ -62,28 +50,30 @@ static NSImage *AirportAirlineLogo(NSString *carrier) {
     DBFillRect(NSMakeRect(0, 0, area.size.width, height), DBColor(self.location[@"header"]));
     BOOL haneda = [self.locationCode isEqual:@"HND"];
     if ([self.locationCode isEqual:@"ICN"]) {
-        NSBezierPath *box = [NSBezierPath bezierPathWithRoundedRect:NSMakeRect(65, 28, 174, 178)
-                                                            xRadius:8
-                                                            yRadius:8];
+        CGFloat unit = height / 230;
+        NSBezierPath *box = [NSBezierPath bezierPathWithRoundedRect:
+            NSMakeRect(65 * unit, 28 * unit, 174 * unit, 178 * unit)
+            xRadius:8 * unit yRadius:8 * unit];
         [ink setStroke];
-        box.lineWidth = 5;
+        box.lineWidth = 5 * unit;
         [box stroke];
-        [self planeAt:NSMakePoint(90, 52) size:124 color:ink];
-        DBFillRect(NSMakeRect(99, 182, 105, 5), ink);
-        DBDrawTextWithFont(DBBoardString(@"heading.departures", @"ko"), NSMakeRect(290, 20, 230, height - 36),
+        [self planeAt:NSMakePoint(90 * unit, 52 * unit) size:124 * unit color:ink];
+        DBFillRect(NSMakeRect(99 * unit, 182 * unit, 105 * unit, 5 * unit), ink);
+        DBDrawTextWithFont(DBBoardString(@"heading.departures", @"ko"),
+                           NSMakeRect(290 * unit, 20 * unit, 230 * unit, height - 36 * unit),
                            DBNamedFont(@"AppleSDGothicNeo-Bold", height * .47), ink, NSTextAlignmentLeft);
         NSString *asian = [NSString stringWithFormat:@"%@  %@", DBBoardString(@"heading.departures", @"ja"),
                                                      DBBoardString(@"heading.departures", @"zh-Hans")];
-        DBDrawTextWithFont(asian, NSMakeRect(550, 16, 760, height * .43),
+        DBDrawTextWithFont(asian, NSMakeRect(550 * unit, 16 * unit, 760 * unit, height * .43),
                            DBNamedFont(@"Arial-BoldMT", height * .27), ink, NSTextAlignmentLeft);
-        DBFillRect(NSMakeRect(550, height * .46, 490, 5), ink);
+        DBFillRect(NSMakeRect(550 * unit, height * .46, 490 * unit, 5 * unit), ink);
         DBDrawTextWithFont(DBBoardString(@"heading.departures", @"en"),
-                           NSMakeRect(550, height * .48, 820, height * .37),
+                           NSMakeRect(550 * unit, height * .48, 820 * unit, height * .37),
                            DBNamedFont(@"Arial-BoldMT", height * .29), ink, NSTextAlignmentLeft);
         return;
     }
     if (haneda) {
-        CGFloat unit = area.size.width / 800;
+        CGFloat unit = MIN(2, area.size.width / 800);
         if (area.size.height > area.size.width) {
             DBDrawText(DBBoardString(@"heading.checkinInformation", self.currentLanguage),
                        NSMakeRect(26, 3, 1400, 30 * unit), 23 * unit, ink, YES, NSTextAlignmentLeft, NO);
@@ -129,7 +119,7 @@ static NSImage *AirportAirlineLogo(NSString *carrier) {
     NSArray *counters =
         @[ @"N", @"M", @"L", @"K", @"J", @"I", @"H", @"G", @"F", @"", @"E", @"D", @"C", @"B", @"A" ];
     CGFloat width = (area.size.width - 24) / counters.count;
-    CGFloat unit = area.size.width / 800;
+    CGFloat unit = MIN(2, area.size.width / 800);
     for (NSUInteger index = 0; index < counters.count; index++) {
         NSString *letter = counters[index];
         if (!letter.length)
@@ -150,17 +140,12 @@ static NSImage *AirportAirlineLogo(NSString *carrier) {
         }
         NSInteger logoIndex = 0;
         for (NSString *carrier in carriers) {
-            NSImage *logo = AirportAirlineLogo(carrier);
+            NSImage *logo = [DBAirlineLogoStore imageForCarrier:carrier icao:nil name:nil];
             if (!logo || logoIndex >= 2)
                 continue;
             CGFloat size = MIN(width - 14, (cardHeight - 32 * unit) / 2);
             NSRect rect = NSMakeRect(x + (width - size) / 2 - 3, top + 4 + logoIndex * size, size, size);
-            [logo drawInRect:rect
-                      fromRect:NSZeroRect
-                     operation:NSCompositingOperationSourceOver
-                      fraction:1
-                respectFlipped:YES
-                         hints:nil];
+            DrawAirlineLogo(logo, rect);
             logoIndex++;
         }
         DBFillRect(NSMakeRect(x, top + cardHeight - 28 * unit, width - 6, 28 * unit), DBColor(@"bcd3e2"));
@@ -175,25 +160,26 @@ static NSImage *AirportAirlineLogo(NSString *carrier) {
                NSColor.whiteColor, YES, NSTextAlignmentCenter, NO);
 }
 
+- (NSInteger)airportRowCountForArea:(NSRect)area {
+    if (self.density > 0)
+        return MAX(8, MIN(64, self.density));
+    NSDictionary *profile = self.location[@"display"];
+    CGFloat tableTop = [self airportHeaderHeight:area] + 33;
+    CGFloat tableBottom = area.size.height - MAX(29, [profile[@"footerHeight"] doubleValue] + 3);
+    NSInteger readableRows = (NSInteger)floor(MAX(0, tableBottom - tableTop) / 34);
+    NSInteger preferredRows = (NSInteger)ceil([profile[@"rowCount"] doubleValue] / self.boardScale);
+    // Preserve each airport's density without enlarging a tall reference panel
+    // to the full width of a landscape desktop.
+    return MAX(8, MIN(64, MIN(preferredRows, readableRows)));
+}
+
 - (void)drawAirport:(NSRect)area {
     NSDictionary *profile = self.location[@"display"];
     [self drawAirportHeader:area];
     // A physical display gets one panel. Long reference walls are cropped to
     // that panel instead of being shrunk or repeated across the desktop.
-    NSInteger panels = self.density == 0 ? 1 : MAX(1, [profile[@"panelCount"] integerValue]);
-    if (area.size.height > area.size.width)
-        panels = 1;
-    NSInteger rowCount = self.density > 0 ? self.density : [profile[@"rowCount"] integerValue];
-    if (self.density == 0) {
-        CGFloat referenceAspect = [profile[@"referenceAspect"] doubleValue];
-        NSInteger referencePanels = MAX(1, [profile[@"panelCount"] integerValue]);
-        if (referenceAspect > 0) {
-            CGFloat visibleFraction =
-                referenceAspect / referencePanels / (area.size.width / area.size.height);
-            rowCount = MIN(rowCount, (NSInteger)ceil(rowCount * visibleFraction));
-        }
-    }
-    rowCount = MAX(8, MIN(64, rowCount));
+    NSInteger panels = 1;
+    NSInteger rowCount = [self airportRowCountForArea:area];
     NSInteger pages = MAX(1, (self.rows.count + rowCount * panels - 1) / (rowCount * panels));
     self.currentPage = (NSInteger)((NSProcessInfo.processInfo.systemUptime - self.startTime) / 15) % pages;
     self.currentPanelCount = panels;
@@ -204,7 +190,7 @@ static NSImage *AirportAirlineLogo(NSString *carrier) {
     CGFloat tableY = headingY + 29;
     CGFloat tableBottom = area.size.height - MAX(29, [profile[@"footerHeight"] doubleValue] + 3);
     CGFloat rowHeight = (tableBottom - tableY) / rowCount;
-    CGFloat fontSize = MIN(48, MIN(rowHeight * .78, panelWidth / 34));
+    CGFloat fontSize = MIN(36, MIN(rowHeight * .78, panelWidth / 34));
     if (profile[@"rowFontScale"])
         fontSize *= [profile[@"rowFontScale"] doubleValue];
     NSArray *columns = [self airportColumns];
@@ -274,25 +260,14 @@ static NSImage *AirportAirlineLogo(NSString *carrier) {
     }
 
     if ([column isEqual:@"flight"] && [profile[@"airlineBadge"] boolValue]) {
-        CGFloat badgeWidth = MIN(54, cell.size.height - 4);
-        NSRect badge = NSMakeRect(cell.origin.x, cell.origin.y + (cell.size.height - badgeWidth) / 2,
-                                  badgeWidth, badgeWidth);
+        CGFloat badgeWidth = MIN(74, cell.size.width * .32);
+        NSRect badge = NSMakeRect(cell.origin.x, cell.origin.y + 2, badgeWidth, cell.size.height - 4);
         NSString *carrier = [row[@"flight"] componentsSeparatedByString:@" "].firstObject;
-        NSImage *logo = AirportAirlineLogo(carrier);
+        NSImage *logo = [DBAirlineLogoStore imageForCarrier:carrier
+                                                     icao:row[@"airlineICAO"] name:row[@"airline"]];
         if (logo) {
-            DBFillRect(badge, NSColor.whiteColor);
-            CGFloat scale = MIN(badge.size.width / logo.size.width, badge.size.height / logo.size.height);
-            NSRect imageRect = NSMakeRect(NSMidX(badge) - logo.size.width * scale / 2,
-                                          NSMidY(badge) - logo.size.height * scale / 2,
-                                          logo.size.width * scale, logo.size.height * scale);
-            [logo drawInRect:imageRect
-                      fromRect:NSZeroRect
-                     operation:NSCompositingOperationSourceOver
-                      fraction:1
-                respectFlipped:YES
-                         hints:nil];
+            DrawAirlineLogo(logo, badge);
         } else {
-            DBFillRect(badge, DBColor(row[@"color"]));
             DBDrawText(carrier, badge, size * .54, NSColor.whiteColor, YES, NSTextAlignmentCenter, NO);
         }
         cell.origin.x += badgeWidth + 5;

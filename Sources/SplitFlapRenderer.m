@@ -59,10 +59,16 @@
     NSArray *labels = @[ @"TIME", @"DESTINATION", @"AIRLINE / FLIGHT", @"GATE", @"REMARKS" ];
     CGFloat xs[] = {34, 196, 760, 1085, 1208};
     CGFloat widths[] = {142, 541, 304, 100, 356};
+    CGFloat horizontal = area.size.width / 1600;
+    for (NSInteger index = 0; index < 5; index++) {
+        xs[index] *= horizontal;
+        widths[index] *= horizontal;
+    }
     for (int j = 0; j < 5; j++)
         DBDrawText(labels[j], NSMakeRect(xs[j], 126, widths[j], 26), 16, DBColor(@"9da8aa"), YES,
                    NSTextAlignmentLeft, NO);
-    NSInteger count = self.density > 0 ? MAX(6, MIN(16, self.density)) : 16;
+    NSInteger count = self.density > 0 ? MAX(6, MIN(32, self.density))
+                                       : MIN(32, (NSInteger)ceil(16 / self.boardScale));
     CGFloat rowH = (area.size.height - 218) / count;
     for (NSInteger i = 0; i < count; i++) {
         if ((NSUInteger)i >= self.rows.count)

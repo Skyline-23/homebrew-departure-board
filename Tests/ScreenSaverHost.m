@@ -1,5 +1,6 @@
 #import "../Sources/DepartureBoardView.h"
 #import "../Sources/LiveFlightStore.h"
+#import "../Sources/AirlineLogoStore.h"
 #import <Cocoa/Cocoa.h>
 #import <ScreenSaver/ScreenSaver.h>
 #import <objc/runtime.h>
@@ -7,6 +8,8 @@
 @interface DBBoardView (RenderingTests)
 @property(nonatomic) NSTimeInterval startTime;
 - (BOOL)updateAtDate:(NSDate *)date uptime:(NSTimeInterval)uptime;
+- (NSInteger)airportRowCountForArea:(NSRect)area;
+- (CGFloat)airportHeaderHeight:(NSRect)area;
 @end
 
 static BOOL VerifyContentDrivenRendering(DBBoardView *board, Class store) {
@@ -76,6 +79,34 @@ static BOOL VerifySnapshotConfiguration(DBBoardView *board) {
     DBBoardView *copy = [[board.class alloc] initWithFrame:NSMakeRect(0, 0, 640, 360)];
     [copy applySnapshotConfiguration:configuration];
     return [copy.snapshotConfiguration isEqual:configuration];
+}
+
+static BOOL VerifyCompactScale(DBBoardView *board) {
+    NSDictionary *saved = board.snapshotConfiguration;
+    board.locationCode = @"ICN";
+    board.density = 0;
+    board.boardScale = .75;
+    NSRect compact = NSMakeRect(0, 0, 1600 / .75, 900 / .75);
+    NSInteger compactRows = [board airportRowCountForArea:compact];
+    BOOL readable = compactRows >= 24 && compactRows <= 40 &&
+                    [board airportHeaderHeight:compact] < compact.size.height * .18;
+    board.boardScale = 1;
+    NSInteger standardRows = [board airportRowCountForArea:NSMakeRect(0, 0, 1600, 900)];
+    board.density = 16;
+    BOOL manualRows = [board airportRowCountForArea:compact] == 16;
+    [board applySnapshotConfiguration:saved];
+    return readable && compactRows > standardRows && manualRows;
+}
+
+static BOOL VerifyAirlineLogos(void) {
+    Class store = NSClassFromString(@"DBAirlineLogoStore");
+    NSImage *tway = [store imageForCarrier:@"TW" icao:nil name:@"T'way Air"];
+    NSImage *seoul = [store imageForCarrier:@"RS" icao:@"ASV" name:@"Air Seoul"];
+    NSImage *premia = [store imageForCarrier:@"YP" icao:@"APZ" name:@"Air Premia"];
+    NSImage *perimeter = [store imageForCarrier:@"YP" icao:@"PAG" name:@"Perimeter Aviation"];
+    return tway && seoul && premia && perimeter && premia != perimeter &&
+           tway.size.width > tway.size.height &&
+           [store imageForCarrier:@"TW" icao:nil name:@"T'way Air"] == tway;
 }
 
 static BOOL VerifySharedRefreshLock(Class store) {
@@ -218,7 +249,8 @@ int main(int argc, const char *argv[]) {
                                       airport:@"ICN"];
         if ([snapshot[@"flights"] count] != 2)
             return 1;
-        if (!VerifySnapshotConfiguration(board) || !VerifySharedRowsCache(store) ||
+        if (!VerifyCompactScale(board) || !VerifyAirlineLogos() ||
+            !VerifySnapshotConfiguration(board) || !VerifySharedRowsCache(store) ||
             !VerifyContentDrivenRendering(board, store) || !VerifySharedRefreshLock(store))
             return 1;
         [preview stopAnimation];

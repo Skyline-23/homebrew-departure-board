@@ -25,7 +25,7 @@ void DBDrawText(NSString *text, NSRect rect, CGFloat size, NSColor *color, BOOL 
     DBDrawTextWithFont(text, rect, DBFont(size, bold, mono), color, align);
 }
 NSFont *DBNamedFont(NSString *name, CGFloat size) {
-    return [NSFont fontWithName:name ?: @"ArialNarrow-Bold" size:size] ?: DBFont(size, YES, NO);
+    return [NSFont fontWithName:name ?: @"HelveticaNeue-Medium" size:size] ?: DBFont(size, YES, NO);
 }
 void DBDrawTextWithFont(NSString *text, NSRect rect, NSFont *font, NSColor *color, NSTextAlignment align) {
     if (!text.length || rect.size.width <= 0)
@@ -39,9 +39,11 @@ void DBDrawTextWithFont(NSString *text, NSRect rect, NSFont *font, NSColor *colo
         NSForegroundColorAttributeName : color,
         NSParagraphStyleAttributeName : paragraph
     } mutableCopy];
-    CGFloat measured = [text sizeWithAttributes:attrs].width;
-    if (measured > rect.size.width) {
-        font = [NSFont fontWithName:font.fontName size:MAX(size * .65, size * rect.size.width / measured)];
+    // Keep one type size across a row. Long labels use an ellipsis instead of
+    // making each destination or flight number a different visual size.
+    CGFloat lineHeight = ceil(font.ascender - font.descender + font.leading);
+    if (lineHeight > rect.size.height) {
+        font = [NSFont fontWithName:font.fontName size:size * rect.size.height / lineHeight];
         attrs[NSFontAttributeName] = font;
     }
     CGFloat h = ceil(font.ascender - font.descender + font.leading);

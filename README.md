@@ -81,11 +81,15 @@ old Departure Board frame entries are removed from wallpaper photo history.
 Spaces. It is enabled by default; turning it off keeps the board on its current
 Space.
 
+The default **Board Scale** is 75%. It reduces text and header sizes and fits more
+rows on a desktop display. Settings offers 50–100%; manual row counts remain
+available independently.
+
 ## Visual profiles
 
 Each airport has its own palette, column order, row density and reference
 photograph. The default layout shows one physical panel per monitor: a long
-reference wall is cropped to one panel instead of shrinking or repeating it. Haneda includes its check-in area diagram; Changi uses
+reference wall contributes one panel, with its rows adapted to the display size. Haneda includes its check-in area diagram; Changi uses
 highlighted gate cells; Heathrow uses its yellow header; Incheon uses blue
 rows and its multilingual header. Railway renderers have their own table and column layouts. A classic
 split-flap renderer is available as an alternative for airports.
@@ -93,6 +97,13 @@ split-flap renderer is available as an alternative for airports.
 The reference catalogue records the photographs used. These are reconstructed
 display profiles, not airport-endorsed software or a promise that every terminal
 uses the same display today.
+
+Airline logos are bundled for offline use and matched by ICAO, airline name and
+IATA code. They retain their proportions without white tiles. The image cache
+is bounded; adding carriers does not load the entire collection into memory or
+consume flight API requests. `script/sync_airline_logos.py` refreshes the pinned
+source collection. Original asset URLs are recorded in
+`Resources/AirlineLogos/Sources.json`; airline trademarks belong to their owners.
 
 ## Build and validate
 

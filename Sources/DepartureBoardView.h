@@ -17,6 +17,7 @@ FOUNDATION_EXPORT NSString *DBUIString(NSString *key);
 @property(nonatomic) BOOL reducedMotion;
 @property(nonatomic) NSInteger density;
 @property(nonatomic) double brightness;
+@property(nonatomic) double boardScale;
 @property(nonatomic) BOOL useSampleData;
 @property(nonatomic, strong) NSDate *referenceDate;
 - (void)tick;

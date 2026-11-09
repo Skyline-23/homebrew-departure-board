@@ -140,7 +140,7 @@
     "referenceAspect": 2.05,
     "headerFraction": 0.08,
     "headerVariant": "left",
-    "bodyFont": "ArialNarrow",
+    "bodyFont": "HelveticaNeue",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": false
   },

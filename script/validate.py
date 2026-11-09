@@ -2,6 +2,8 @@
 """Validate the catalogue and localization files before shipping a bundle."""
 import json
 import re
+import struct
+import zlib
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -37,4 +39,28 @@ for language in RESOURCES.glob("*.lproj"):
     for required in ("heading.departures", "column.time", "status.boarding"):
         assert required in keys, (language.name, required)
 
-print(f"Validated {len(codes)} locations and {len(list(RESOURCES.glob('*.lproj')))} language bundles.")
+logo_folder = RESOURCES / "AirlineLogos"
+logo_sources = json.loads((logo_folder / "Sources.json").read_text())
+logo_catalog = json.loads((logo_folder / "Catalog.json").read_text())
+assert len(logo_sources) >= 1600, "The full offline logo collection is missing"
+for carrier, source in logo_sources.items():
+    assert re.fullmatch(r"[A-Z0-9]{2,3}", carrier)
+    assert source.startswith("https://")
+    data = (logo_folder / f"{carrier}.png").read_bytes()
+    assert data.startswith(b"\x89PNG\r\n\x1a\n"), carrier
+    width, height = struct.unpack(">II", data[16:24])
+    assert 0 < width <= 2048 and 0 < height <= 2048, carrier
+    offset = 8
+    while offset < len(data):
+        length = struct.unpack(">I", data[offset:offset + 4])[0]
+        chunk = data[offset + 4:offset + 8 + length]
+        checksum = struct.unpack(">I", data[offset + 8 + length:offset + 12 + length])[0]
+        assert zlib.crc32(chunk) & 0xffffffff == checksum, f"Corrupt logo: {carrier}"
+        offset += length + 12
+for iata, entries in logo_catalog.items():
+    assert entries and re.fullmatch(r"[A-Z0-9]{2}", iata)
+    assert all(entry["icao"] in logo_sources for entry in entries), iata
+assert {"TW", "RS", "BX", "ZE", "CZ"} <= logo_catalog.keys()
+
+print(f"Validated {len(codes)} locations, {len(list(RESOURCES.glob('*.lproj')))} language bundles "
+      f"and {len(logo_sources)} airline logos.")

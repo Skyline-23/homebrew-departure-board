@@ -52,6 +52,7 @@
     self.reducedMotion = [prefs[@"reduceMotion"] boolValue];
     self.density = prefs[@"density"] ? [prefs[@"density"] integerValue] : 0;
     self.brightness = prefs[@"brightness"] ? [prefs[@"brightness"] doubleValue] : 1.0;
+    self.boardScale = prefs[@"boardScale"] ? [prefs[@"boardScale"] doubleValue] : .75;
     self.useSampleData = [prefs[@"sampleData"] boolValue];
     self.lastRenderedSecond = -1;
     self.languageCycle = -1;
@@ -70,10 +71,17 @@
         @"reduceMotion" : @(self.reducedMotion),
         @"density" : @(self.density),
         @"brightness" : @(self.brightness),
+        @"boardScale" : @(self.boardScale),
         @"sampleData" : @(self.useSampleData)
     }];
     [DBSettingsStore saveSettings:settings replacementAPIKey:nil error:NULL];
     self.loadedSettings = settings;
+}
+
+- (void)setBoardScale:(double)scale {
+    _boardScale = isfinite(scale) ? MAX(.5, MIN(1, scale)) : .75;
+    self.lastRenderedSecond = -1;
+    self.needsDisplay = YES;
 }
 
 - (void)setLocationCode:(NSString *)locationCode {
@@ -162,7 +170,8 @@
     if (bounds.size.width < 1 || bounds.size.height < 1)
         return;
     NSString *style = [self effectiveStyle];
-    CGFloat w = 1600, h = w * bounds.size.height / bounds.size.width;
+    CGFloat w = 1600 / self.boardScale;
+    CGFloat h = w * bounds.size.height / bounds.size.width;
     {
         CGFloat scale = bounds.size.width / w;
         [NSGraphicsContext saveGraphicsState];
@@ -195,6 +204,7 @@
         @"reduceMotion" : @(self.reducedMotion),
         @"density" : @(self.density),
         @"brightness" : @(self.brightness),
+        @"boardScale" : @(self.boardScale),
         @"sampleData" : @(self.useSampleData),
         @"startTime" : @(self.startTime)
     };
@@ -207,6 +217,7 @@
     self.reducedMotion = [configuration[@"reduceMotion"] boolValue];
     self.density = [configuration[@"density"] integerValue];
     self.brightness = [configuration[@"brightness"] doubleValue];
+    self.boardScale = configuration[@"boardScale"] ? [configuration[@"boardScale"] doubleValue] : .75;
     self.useSampleData = [configuration[@"sampleData"] boolValue];
     self.startTime = [configuration[@"startTime"] doubleValue];
     self.lastRenderedSecond = -1;

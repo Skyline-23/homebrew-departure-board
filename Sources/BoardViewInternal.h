@@ -30,6 +30,7 @@
 @interface DBBoardView (AirportRenderer)
 - (void)drawAirportHeader:(NSRect)area;
 - (CGFloat)airportHeaderHeight:(NSRect)area;
+- (NSInteger)airportRowCountForArea:(NSRect)area;
 - (void)drawHanedaCounters:(NSRect)area;
 - (void)drawAirportCell:(NSDictionary *)row
                  column:(NSString *)column

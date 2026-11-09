@@ -135,7 +135,7 @@
     "referenceAspect": 2.2,
     "headerFraction": 0.14,
     "headerVariant": "bilingual",
-    "bodyFont": "ArialNarrow-Bold",
+    "bodyFont": "HelveticaNeue-Medium",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": false
   },

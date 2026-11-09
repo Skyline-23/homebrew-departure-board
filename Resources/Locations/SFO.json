@@ -255,7 +255,7 @@
     "referenceAspect": 2.4,
     "headerFraction": 0.09,
     "headerVariant": "left",
-    "bodyFont": "ArialNarrow",
+    "bodyFont": "HelveticaNeue",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": false
   },
