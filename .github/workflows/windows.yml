@@ -1,0 +1,85 @@
+name: Windows preview
+on:
+  push:
+    branches: [main, feat/windows-port]
+    paths: ['Windows/**', 'Resources/**', '.github/workflows/windows.yml']
+  pull_request:
+    paths: ['Windows/**', 'Resources/**', '.github/workflows/windows.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: windows-latest
+            runtime: win-x64
+          - runner: windows-11-arm
+            runtime: win-arm64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 25
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      DOTNET_NOLOGO: '1'
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Check C# formatting
+        run: |
+          dotnet tool restore --tool-manifest Windows/.config/dotnet-tools.json
+          python Windows/scripts/format.py --check
+      - name: Build and test shared logic
+        run: |
+          dotnet build Windows/DepartureBoard.slnx -c Release
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          dotnet run --project Windows/DepartureBoard.Core.Tests -c Release --no-build -- Resources
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+      - name: Package self-contained preview
+        run: ./Windows/scripts/Publish.ps1 -Runtime '${{ matrix.runtime }}'
+      - name: Exercise published screen saver and per-user installer
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $archive = "work/windows-publish/DepartureBoard-${{ matrix.runtime }}.zip"
+          $package = "$env:RUNNER_TEMP/DepartureBoard-package"
+          $installed = [IO.Path]::GetFullPath("$env:RUNNER_TEMP/DepartureBoard-installed")
+          $images = "$env:GITHUB_WORKSPACE/work/windows-images"
+          Expand-Archive $archive $package
+          & "$package/Install.ps1" -NoLaunch -Destination $installed
+          if (!(Test-Path "$installed/DepartureBoard.scr")) { throw 'Missing screen saver.' }
+          $selected = (Get-ItemProperty 'HKCU:\Control Panel\Desktop').'SCRNSAVE.EXE'
+          if ($selected -ne "$installed\DepartureBoard.scr") { throw 'Screen saver not registered.' }
+          try {
+            $process = Start-Process "$installed/DepartureBoard.scr" -ArgumentList @(
+              '--self-test', $images
+            ) -PassThru
+            if (!$process.WaitForExit(120000)) {
+              Stop-Process -Id $process.Id -Force
+              throw 'Windows smoke test timed out.'
+            }
+            if ($process.ExitCode -ne 0) {
+              Get-Content "$images/failure.txt" -ErrorAction SilentlyContinue
+              throw 'Windows smoke test failed.'
+            }
+            Get-Content "$images/result.txt"
+          } finally {
+            & "$installed/Uninstall.ps1"
+          }
+          if (Test-Path $installed) { throw 'Uninstaller left program files behind.' }
+      - name: Upload preview package
+        uses: actions/upload-artifact@v4
+        with:
+          name: DepartureBoard-${{ matrix.runtime }}
+          path: work/windows-publish/DepartureBoard-${{ matrix.runtime }}.zip
+      - name: Upload rendered boards
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Windows-boards-${{ matrix.runtime }}
+          path: work/windows-images/

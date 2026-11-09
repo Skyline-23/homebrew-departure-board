@@ -88,7 +88,7 @@ formula는 이 Mac에서 직접 빌드하고 화면 보호기를 `~/Library/Scre
 | 플랫폼 | 상태 |
 | --- | --- |
 | macOS 12 이상 · Apple Silicon 및 Intel | 사용 가능 |
-| Windows | 추후 공개 예정. 아직 Windows 빌드는 제공하지 않습니다. |
+| Windows | [프리뷰 포팅](Windows/README.md): Windows 워크플로에서 x64·ARM64 빌드 제공. 아직 서명되지 않은 시험 버전입니다. |
 
 ## 개발에 참여하기
 

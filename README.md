@@ -88,7 +88,7 @@ These are independent recreations of airport displays; layout and live-data cove
 | Platform | Status |
 | --- | --- |
 | macOS 12 or later · Apple Silicon and Intel | Available |
-| Windows | Planned for a later release; no Windows build is available yet |
+| Windows | [Preview port](Windows/README.md): x64/ARM64 builds in the Windows preview workflow; unsigned |
 
 ## Development
 
