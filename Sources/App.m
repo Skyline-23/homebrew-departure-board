@@ -327,8 +327,9 @@ static BOOL HandleRunningApplication(NSArray<NSString *> *arguments) {
     if (currentVersion && ![installedVersion isEqual:currentVersion]) {
         [running terminate];
         NSDate *deadline = [NSDate dateWithTimeIntervalSinceNow:3];
+        // NSRunningApplication updates termination state through the run loop.
         while (!running.terminated && deadline.timeIntervalSinceNow > 0)
-            [NSThread sleepForTimeInterval:.05];
+            [NSRunLoop.currentRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:.05]];
         if (running.terminated)
             return NO;
     }
