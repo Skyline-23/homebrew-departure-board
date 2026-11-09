@@ -12,7 +12,12 @@ cask "departure-board" do
   app "Departure Board.app"
   screen_saver "Departure Board.saver"
 
-  uninstall launchctl: "io.skyline.departureboard.refresh"
+  uninstall script: {
+    executable: "/bin/launchctl",
+    args: ["bootout", "gui/#{Process.uid}/io.skyline.departureboard.refresh"],
+    sudo: false,
+    must_succeed: false,
+  }, delete: "#{Dir.home}/Library/LaunchAgents/io.skyline.departureboard.refresh.plist"
 
   zap trash: [
     "~/Library/Application Support/DepartureBoard",

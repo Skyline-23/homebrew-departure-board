@@ -73,6 +73,10 @@
                                                        [self.board tick];
                                                    }];
     [LiveFlightStore refreshInBackground];
+    NSDictionary *savedSettings=[NSUserDefaults.standardUserDefaults persistentDomainForName:DBDefaultsDomain];
+    if ([savedSettings[@"gatewayURL"] length] && !self.board.useSampleData) {
+        [LiveFlightStore configureBackgroundRefresh];
+    }
     if ([arguments containsObject:@"--fullscreen"])
         [self.window toggleFullScreen:nil];
     if ([arguments containsObject:@"--settings"])
