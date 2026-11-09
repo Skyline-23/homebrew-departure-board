@@ -12,6 +12,7 @@ internal abstract class AirportAdapter(AirportProfile airport, StringCatalog str
 
     public virtual double HeaderHeight(Rect bounds, double scale)
     {
+
         var display = Airport.Display;
         var fraction = display.Number("headerFraction");
         var height =
@@ -42,6 +43,7 @@ internal abstract class AirportAdapter(AirportProfile airport, StringCatalog str
 
     public virtual void Footer(Drawing drawing, Rect bounds, BoardFrame frame, int page, int pages)
     {
+
         var style = Airport.Display;
         var height = Math.Max(26, style.Number("footerHeight"));
         var area = new Rect(0, bounds.Height - height, bounds.Width, height);

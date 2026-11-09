@@ -88,7 +88,13 @@ internal sealed class BoardSurface : FrameworkElement
         {
             error = null;
 
-            if (session.Update(services.Settings, ReferenceTime ?? DateTimeOffset.UtcNow))
+            if (
+                session.Update(
+                    services.Settings,
+                    ReferenceTime ?? DateTimeOffset.UtcNow,
+                    services.HasApiKey
+                )
+            )
             {
                 InvalidateVisual();
             }

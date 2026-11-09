@@ -10,7 +10,7 @@ import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTROL = re.compile(r"^\s*(?:if|for|foreach|while|switch|try|lock)\b")
-METHOD = re.compile(r"^(?:(?:public|private|protected|internal|static|async|override|sealed)\s+)*"
+METHOD = re.compile(r"^(?:(?:public|private|protected|internal|static|async|override|sealed|virtual|abstract|partial|extern|unsafe|new|readonly)\s+)*"
                     r"[\w<>?\[\],]+\s+\w+\s*\(")
 
 

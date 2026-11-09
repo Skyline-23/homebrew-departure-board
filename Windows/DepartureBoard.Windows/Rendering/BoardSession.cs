@@ -13,7 +13,7 @@ internal sealed class BoardSession(AirportCatalog catalog, FlightRepository flig
 
     public BoardFrame? Frame { get; private set; }
 
-    public bool Update(BoardSettings settings, DateTimeOffset now)
+    public bool Update(BoardSettings settings, DateTimeOffset now, bool hasApiKey)
     {
         if (airportCode != settings.Airport)
         {
@@ -41,8 +41,42 @@ internal sealed class BoardSession(AirportCatalog catalog, FlightRepository flig
         var rows = settings.SampleData
             ? SampleSchedule.Rows(catalog, airport, now, language)
             : FlightRows.Create(snapshot, catalog, airport, now, language);
-        Frame = new BoardFrame(airport, rows, now, language, settings, (int)(elapsed / 15));
+        Frame = new BoardFrame(
+            airport,
+            rows,
+            now,
+            language,
+            settings,
+            (int)(elapsed / 15),
+            EmptyMessage(settings, snapshot, now, hasApiKey)
+        );
         lastFrameKey = key;
         return true;
+    }
+
+    private string EmptyMessage(
+        BoardSettings settings,
+        FlightSnapshot? snapshot,
+        DateTimeOffset now,
+        bool hasApiKey
+    )
+    {
+
+        if (settings.SampleData)
+        {
+            return "data.noDepartures";
+        }
+
+        if (!hasApiKey)
+        {
+            return "data.configure";
+        }
+
+        if (snapshot is not null && now - snapshot.FetchedAt < TimeSpan.FromDays(1))
+        {
+            return "data.noDepartures";
+        }
+
+        return flights.LastError is null ? "data.loading" : "data.unavailable";
     }
 }

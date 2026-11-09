@@ -119,10 +119,7 @@ internal sealed class BoardRenderer(AirportCatalog catalog)
         if (frame.Rows.Count == 0)
         {
             drawing.Text(
-                catalog.Strings.Get(
-                    frame.Settings.SampleData ? "data.noDepartures" : "data.configure",
-                    frame.Language
-                ),
+                catalog.Strings.Get(frame.EmptyMessage, frame.Language),
                 new Rect(100, tableY + 70, bounds.Width - 200, 80),
                 26,
                 "b9c9d4",

@@ -12,5 +12,6 @@ internal sealed record BoardFrame(
     DateTimeOffset Time,
     string Language,
     BoardSettings Settings,
-    int PageCycle
+    int PageCycle,
+    string EmptyMessage
 );

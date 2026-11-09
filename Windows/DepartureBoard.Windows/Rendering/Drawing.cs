@@ -9,6 +9,7 @@ namespace DepartureBoard.Windows.Rendering;
 internal sealed class Drawing(DrawingContext context)
 {
     private static readonly Dictionary<string, SolidColorBrush> BrushesByColor = [];
+    private static readonly Dictionary<(string Font, bool Bold), Typeface> Typefaces = [];
 
     public void Fill(Rect rectangle, string color)
     {
@@ -37,17 +38,14 @@ internal sealed class Drawing(DrawingContext context)
             return;
         }
 
-        var family = FontFamily(font);
-        var typeface = new Typeface(
-            family,
-            FontStyles.Normal,
-            bold || font.Contains("Bold", StringComparison.OrdinalIgnoreCase)
-                ? FontWeights.SemiBold
-                : FontWeights.Normal,
-            font.Contains("Condensed", StringComparison.OrdinalIgnoreCase)
-                ? FontStretches.Condensed
-                : FontStretches.Normal
-        );
+        var key = (font, bold);
+
+        if (!Typefaces.TryGetValue(key, out var typeface))
+        {
+            typeface = CreateTypeface(font, bold);
+            Typefaces[key] = typeface;
+        }
+
         var formatted = new FormattedText(
             value,
             CultureInfo.CurrentUICulture,
@@ -133,6 +131,19 @@ internal sealed class Drawing(DrawingContext context)
         }
 
         return brush;
+    }
+
+    private static Typeface CreateTypeface(string font, bool bold)
+    {
+
+        var weight =
+            bold || font.Contains("Bold", StringComparison.OrdinalIgnoreCase)
+                ? FontWeights.SemiBold
+                : FontWeights.Normal;
+        var stretch = font.Contains("Condensed", StringComparison.OrdinalIgnoreCase)
+            ? FontStretches.Condensed
+            : FontStretches.Normal;
+        return new Typeface(FontFamily(font), FontStyles.Normal, weight, stretch);
     }
 
     private static FontFamily FontFamily(string requested)
