@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Report a security vulnerability privately
+    url: https://github.com/Skyline-23/homebrew-departure-board/security/advisories/new
+    about: Do not post credentials or vulnerability details in public issues.

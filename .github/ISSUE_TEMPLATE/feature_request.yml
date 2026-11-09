@@ -1,0 +1,16 @@
+name: Feature request
+description: Suggest an airport profile, improvement or new capability.
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What would this improve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Suggested behavior
+      description: For airport designs, link a reference photograph or an official source.
+    validations:
+      required: true

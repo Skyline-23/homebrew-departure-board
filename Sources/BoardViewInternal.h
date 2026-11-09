@@ -1,5 +1,7 @@
 #import "DepartureBoardView.h"
 
+static const NSTimeInterval DBFlapTransitionDuration = .66;
+
 // Shared private state for the board's rendering categories.
 // Timetable generation stays in DepartureSchedule; renderers only draw rows.
 @interface DBBoardView ()
@@ -12,6 +14,7 @@
 @property(nonatomic) NSTimeInterval startTime;
 @property(nonatomic) NSTimeInterval lastRenderedSecond;
 @property(nonatomic) NSInteger pageCycle;
+@property(nonatomic) BOOL flapWasAnimating;
 @property(nonatomic, strong) NSMutableDictionary *flapStates;
 @property(nonatomic, strong) NSWindow *optionsWindow;
 @property(nonatomic, strong) NSDate *boardDate;

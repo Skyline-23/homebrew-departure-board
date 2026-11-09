@@ -93,8 +93,19 @@
     return self.location[@"preset"];
 }
 
+- (BOOL)hasActiveFlapAnimationAt:(NSTimeInterval)uptime {
+    for (NSDictionary *cell in self.flapStates.objectEnumerator)
+        if (uptime - [cell[@"start"] doubleValue] < DBFlapTransitionDuration)
+            return YES;
+    return NO;
+}
+
 - (NSTimeInterval)preferredAnimationInterval {
-    return [[self effectiveStyle] isEqual:@"flap"] && !self.reducedMotion ? 1.0 / 30.0 : 1.0;
+    BOOL flap = [[self effectiveStyle] isEqual:@"flap"] && !self.reducedMotion;
+    if (!flap)
+        return 1;
+    BOOL moving = self.needsDisplay || [self hasActiveFlapAnimationAt:NSProcessInfo.processInfo.systemUptime];
+    return moving ? 1.0 / 30.0 : 1.0;
 }
 
 - (void)tick {
@@ -104,15 +115,10 @@
 - (BOOL)updateAtDate:(NSDate *)now uptime:(NSTimeInterval)uptime {
     NSTimeInterval second = floor(now.timeIntervalSince1970);
     BOOL flap = [[self effectiveStyle] isEqual:@"flap"];
-    BOOL animating = NO;
-    if (flap && !self.reducedMotion) {
-        for (NSDictionary *cell in self.flapStates.allValues)
-            if (uptime - [cell[@"start"] doubleValue] < 1.7) {
-                animating = YES;
-                break;
-            }
-    }
-    if (second != self.lastRenderedSecond || animating || self.referenceDate) {
+    BOOL animating = flap && !self.reducedMotion && [self hasActiveFlapAnimationAt:uptime];
+    BOOL finishedAnimation = self.flapWasAnimating && !animating;
+    self.flapWasAnimating = animating;
+    if (second != self.lastRenderedSecond || animating || finishedAnimation || self.referenceDate) {
         if (!self.referenceDate && second != self.lastRenderedSecond &&
             ![DBSettingsStore.settings isEqual:self.loadedSettings]) {
             [self reloadSettings];
@@ -148,8 +154,8 @@
         NSInteger page = (NSInteger)floor((uptime - self.startTime) / 15.0);
         NSString *style = [self effectiveStyle];
         BOOL secondsClock = [style isEqual:@"victoria"] || [style isEqual:@"sydney"];
-        BOOL changed = self.lastRenderedSecond < 0 || self.referenceDate || animating || secondsClock ||
-                       floor(second / 60) != floor(self.lastRenderedSecond / 60) ||
+        BOOL changed = self.lastRenderedSecond < 0 || self.referenceDate || animating || finishedAnimation ||
+                       secondsClock || floor(second / 60) != floor(self.lastRenderedSecond / 60) ||
                        ![language isEqual:self.currentLanguage] || ![rows isEqual:self.rows] ||
                        ![emptyMessage isEqual:self.emptyMessageKey] ||
                        ([self.location[@"kind"] isEqual:@"airport"] && page != self.pageCycle);

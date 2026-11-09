@@ -1,9 +1,20 @@
+<img src="docs/branding/logo.png" width="112" alt="Departure Board icon">
+
 # Departure Board
 
 A native macOS screen saver with departure-board profiles for 40 airports and
 four railway stations. Includes a companion app for previewing and configuring
 the board. The settings interface is English. Boards start in English, then
 alternate with the selected location's language every 12 seconds.
+
+| Platform | Status |
+| --- | --- |
+| macOS 12+ · Apple Silicon and Intel | Available |
+| Windows | Planned for a later release; no build available yet |
+
+[Contribute](CONTRIBUTING.md) · [Report a bug](https://github.com/Skyline-23/homebrew-departure-board/issues/new/choose) · [Releases](https://github.com/Skyline-23/homebrew-departure-board/releases)
+
+![Incheon departure board preview](docs/preview.png)
 
 ## Install
 
@@ -70,8 +81,8 @@ A local maintenance job restores the app after an unexpected exit; flight
 requests still follow the configured refresh interval.
 
 LCD boards repaint when displayed content changes. The 30 fps timer is reserved
-for visible split-flap animation; covered windows and sleeping displays stop
-rendering. Wallpaper snapshots render into a separate bitmap without resizing
+for visible split-flap animation. Settled split-flap boards return to a one-second
+tick; covered windows and sleeping displays stop rendering. Wallpaper snapshots render into a separate bitmap without resizing
 the live desktop windows. Image generation runs in a short-lived helper, so its
 buffers are released after export. Exports pause during idle time and while the
 screen saver runs. The registered photo uses a stable filename per display, and
@@ -115,5 +126,5 @@ Requires Xcode command-line tools and Python 3.
 
 `build.sh` creates the `.app` and `.saver`; `validate.sh` checks the catalogue,
 language bundles, provider data normalization and native screen-saver loading, then renders
-all 44 profiles. `package.sh` creates the release ZIP. Tags such as `v0.1.0`
+all 44 profiles. `package.sh` creates the release ZIP. Version tags such as `v0.5.8`
 trigger GitHub Actions to build, validate, release and update the Homebrew cask.

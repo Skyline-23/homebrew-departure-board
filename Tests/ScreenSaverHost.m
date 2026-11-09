@@ -43,6 +43,38 @@ static BOOL VerifyContentDrivenRendering(DBBoardView *board, Class store) {
     return unchanged && codeshare && pageChanged;
 }
 
+static BOOL VerifyFlapTimer(DBBoardView *board) {
+    NSDictionary *configuration = board.snapshotConfiguration;
+    board.displayStyle = @"flap";
+    board.reducedMotion = NO;
+    NSMutableDictionary *states = [board valueForKey:@"flapStates"];
+    [states removeAllObjects];
+    board.needsDisplay = NO;
+    BOOL idle = board.preferredAnimationInterval == 1;
+    states[@"test"] = @{@"start" : @(NSProcessInfo.processInfo.systemUptime - .1)};
+    BOOL moving = fabs(board.preferredAnimationInterval - 1.0 / 30.0) < .001;
+    states[@"test"] = @{@"start" : @(NSProcessInfo.processInfo.systemUptime - .8)};
+    BOOL settled = board.preferredAnimationInterval == 1;
+    board.reducedMotion = YES;
+    BOOL reduced = board.preferredAnimationInterval == 1;
+    board.reducedMotion = NO;
+    board.startTime = 0;
+    states[@"test"] = @{@"start" : @100};
+    NSDate *frameDate = [NSDate dateWithTimeIntervalSince1970:1800000000];
+    [board updateAtDate:frameDate uptime:100.1];
+    board.needsDisplay = NO;
+    BOOL finalFrame = [board updateAtDate:frameDate uptime:100.8];
+    board.needsDisplay = NO;
+    BOOL stops = ![board updateAtDate:frameDate uptime:100.9];
+    [states removeAllObjects];
+    [board applySnapshotConfiguration:configuration];
+    BOOL passed = idle && moving && settled && reduced && finalFrame && stops;
+    if (!passed)
+        fprintf(stderr, "Flap timer: idle=%d moving=%d settled=%d reduced=%d final=%d stops=%d\n", idle,
+                moving, settled, reduced, finalFrame, stops);
+    return passed;
+}
+
 static BOOL VerifySharedRowsCache(Class store) {
     NSDictionary *flight = @{
         @"number" : @"NH 100",
@@ -270,6 +302,10 @@ int main(int argc, const char *argv[]) {
                     error.localizedDescription.UTF8String);
             return 1;
         }
+        NSString *icon = bundle.infoDictionary[@"CFBundleIconFile"];
+        NSString *iconPath = [bundle pathForResource:icon ofType:@"icns"];
+        if (!iconPath || ![[NSImage alloc] initWithContentsOfFile:iconPath].valid)
+            return 1;
         Class principal = bundle.principalClass;
         if (![principal isSubclassOfClass:ScreenSaverView.class])
             return 1;
@@ -355,7 +391,7 @@ int main(int argc, const char *argv[]) {
         if (!VerifyCompactScale(board) || !VerifyAirlineLogos() || !VerifySystemFontScaling() ||
             !VerifyAvailabilityStates(store) || !VerifySnapshotConfiguration(board) ||
             !VerifySharedRowsCache(store) || !VerifyContentDrivenRendering(board, store) ||
-            !VerifySharedRefreshLock(store))
+            !VerifyFlapTimer(board) || !VerifySharedRefreshLock(store))
             return 1;
         [preview stopAnimation];
         puts("The native screen saver loads, animates and creates its settings sheet.");

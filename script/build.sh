@@ -25,6 +25,7 @@ make_bundle() {
   /usr/libexec/PlistBuddy -c "Add :CFBundleName string Departure Board" "$plist" >/dev/null
   /usr/libexec/PlistBuddy -c "Add :CFBundleDisplayName string Departure Board" "$plist"
   /usr/libexec/PlistBuddy -c "Add :CFBundleExecutable string $executable" "$plist"
+  /usr/libexec/PlistBuddy -c "Add :CFBundleIconFile string AppIcon" "$plist"
   /usr/libexec/PlistBuddy -c "Add :CFBundleIdentifier string $identifier" "$plist"
   /usr/libexec/PlistBuddy -c "Add :CFBundlePackageType string $package" "$plist"
   /usr/libexec/PlistBuddy -c "Add :CFBundleVersion string $VERSION" "$plist"

@@ -23,13 +23,17 @@
         if (![state[@"target"] isEqual:glyph]) {
             state = @{@"old" : state[@"target"] ?: @" ", @"target" : glyph, @"start" : @(now + i * .008)};
             self.flapStates[cellKey] = state;
+            // Keep the final clean frame even if the next timer fires late.
+            if (!self.referenceDate && !self.reducedMotion)
+                self.flapWasAnimating = YES;
         }
         NSRect c = NSMakeRect(rect.origin.x + i * cw, rect.origin.y, cw - gap, fh);
         NSGradient *gradient = [[NSGradient alloc] initWithStartingColor:DBColor(@"33373b")
                                                              endingColor:DBColor(@"202428")];
         [gradient drawInRect:c angle:90];
         BOOL moving = !self.referenceDate && !self.reducedMotion &&
-                      now - [state[@"start"] doubleValue] < .66 && now >= [state[@"start"] doubleValue];
+                      now - [state[@"start"] doubleValue] < DBFlapTransitionDuration &&
+                      now >= [state[@"start"] doubleValue];
         NSString *shown = glyph;
         double progress = now - [state[@"start"] doubleValue];
         if (moving && progress < .42 && [glyph canBeConvertedToEncoding:NSASCIIStringEncoding]) {
@@ -66,8 +70,8 @@
     for (int j = 0; j < 5; j++)
         DBDrawText(labels[j], NSMakeRect(xs[j], 126, widths[j], 26), 16, DBColor(@"9da8aa"), YES,
                    NSTextAlignmentLeft, NO);
-    NSInteger count = self.density > 0 ? MAX(6, MIN(32, self.density))
-                                       : MIN(32, (NSInteger)ceil(16 / self.boardScale));
+    NSInteger count =
+        self.density > 0 ? MAX(6, MIN(32, self.density)) : MIN(32, (NSInteger)ceil(16 / self.boardScale));
     CGFloat rowH = (area.size.height - 218) / count;
     for (NSInteger i = 0; i < count; i++) {
         if ((NSUInteger)i >= self.rows.count)

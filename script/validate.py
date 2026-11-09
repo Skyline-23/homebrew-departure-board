@@ -10,6 +10,9 @@ from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parents[1]
 RESOURCES = ROOT / "Resources"
+icon = (RESOURCES / "AppIcon.icns").read_bytes()
+assert icon[:4] == b"icns" and struct.unpack(">I", icon[4:8])[0] == len(icon)
+
 codes = json.loads((RESOURCES / "LocationOrder.json").read_text())
 assert len(codes) == len(set(codes)) == 44
 required_airports = {"ICN", "LHR", "CDG", "NRT", "HND", "HKG", "SIN"}

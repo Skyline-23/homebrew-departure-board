@@ -1,0 +1,33 @@
+name: Bug report
+description: Report an issue with the macOS app, wallpaper or screen saver.
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Departure Board version
+      placeholder: "For example: 0.5.8"
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: macOS version and Mac model
+    validations:
+      required: true
+  - type: input
+    id: airport
+    attributes:
+      label: Airport and display settings
+      placeholder: "For example: ICN, English, 75% scale, two monitors"
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: What happened?
+      description: Include steps, expected behavior and what you observed.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Screenshots or logs
+      description: Remove API keys, authorization headers and personal paths before uploading.

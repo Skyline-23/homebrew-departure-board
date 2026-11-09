@@ -23,7 +23,8 @@ jobs:
           gh release create "$GITHUB_REF_NAME" \
             "outputs/DepartureBoard/dist/DepartureBoard-$VERSION-universal.zip" \
             "outputs/DepartureBoard/dist/DepartureBoard-$VERSION-source.tar.gz" \
-            --title "Departure Board $VERSION" --generate-notes
+            --title "Departure Board $VERSION" \
+            --notes-file .github/RELEASE_NOTES.md --generate-notes
       - name: Update Homebrew tap
         run: |
           git fetch origin main
