@@ -1,7 +1,7 @@
 # Contributing
 
-Departure Board currently supports macOS 12 and later. A Windows version is
-planned for a later release; no Windows build is available yet.
+Departure Board supports macOS 12 and later. A Windows 11 preview is available;
+see [Windows development and validation](Windows/README.md) for its .NET workflow.
 
 ## Build and check
 
