@@ -189,6 +189,18 @@
         [self.windows addObject:window];
     }
 }
+- (BOOL)shouldUpdateWindow:(NSWindow *)window {
+    CGDirectDisplayID display = [window.screen.deviceDescription[@"NSScreenNumber"] unsignedIntValue];
+    return !self.sessionInactive && window.visible &&
+           (window.occlusionState & NSWindowOcclusionStateVisible) && !CGDisplayIsAsleep(display);
+}
+- (NSTimeInterval)preferredAnimationInterval {
+    NSTimeInterval interval = 1;
+    for (NSWindow *window in self.windows)
+        if ([self shouldUpdateWindow:window])
+            interval = MIN(interval, [(DBBoardView *)window.contentView preferredAnimationInterval]);
+    return interval;
+}
 - (void)tick {
     NSTimeInterval now = NSProcessInfo.processInfo.systemUptime;
     if (now >= self.nextSettingsCheck) {
@@ -196,7 +208,8 @@
         [self refresh];
     }
     for (NSWindow *window in self.windows)
-        [(DBBoardView *)window.contentView tick];
+        if ([self shouldUpdateWindow:window])
+            [(DBBoardView *)window.contentView tick];
     if (self.windows.count && now >= self.nextWallpaperUpdate && !self.sessionInactive) {
         self.nextWallpaperUpdate = now + 60;
         [self updateSystemWallpapers];

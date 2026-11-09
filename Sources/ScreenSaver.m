@@ -13,7 +13,7 @@
 @implementation DepartureBoardSaver
 - (instancetype)initWithFrame:(NSRect)frame isPreview:(BOOL)preview {
     if ((self = [super initWithFrame:frame isPreview:preview])) {
-        self.animationTimeInterval = 1.0 / 30.0;
+        self.animationTimeInterval = 1.0;
         self.board = [[DBBoardView alloc] initWithFrame:self.bounds];
         self.board.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
         [self addSubview:self.board];
@@ -35,6 +35,7 @@
 }
 - (void)animateOneFrame {
     [self.board tick];
+    self.animationTimeInterval = self.board.preferredAnimationInterval;
     if (!self.isPreview && NSDate.timeIntervalSinceReferenceDate - self.lastHeartbeat > 30) {
         NSString *folder =
             [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES).firstObject

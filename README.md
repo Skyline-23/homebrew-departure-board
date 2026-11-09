@@ -69,6 +69,11 @@ background at login** in Settings to start it automatically after signing in.
 A local maintenance job restores the app after an unexpected exit; flight
 requests still follow the configured refresh interval.
 
+LCD boards repaint when displayed content changes. The 30 fps timer is reserved
+for visible split-flap animation; covered windows and sleeping displays stop
+rendering. Wallpaper snapshots render into a separate bitmap without resizing
+the live desktop windows.
+
 ## Visual profiles
 
 Each airport has its own palette, column order, row density and reference

@@ -60,22 +60,33 @@ static NSSet *DestinationWords(NSString *name) {
 }
 
 + (NSDictionary *)names {
+    static NSDictionary *seed;
     static NSDictionary *names;
-    static NSDate *lastRead;
+    static NSDate *modified;
+    static NSTimeInterval nextCheck;
     @synchronized(self) {
-        if (names && [NSDate.date timeIntervalSinceDate:lastRead] < 2)
+        NSTimeInterval now = NSProcessInfo.processInfo.systemUptime;
+        if (names && now < nextCheck)
             return names;
-        NSURL *bundled = [[NSBundle bundleForClass:DBBoardView.class] URLForResource:@"DestinationNames"
-                                                                       withExtension:@"json"];
-        NSData *seedData = [NSData dataWithContentsOfURL:bundled];
-        NSDictionary *seed =
-            seedData ? [NSJSONSerialization JSONObjectWithData:seedData options:0 error:NULL] : nil;
-        NSMutableDictionary *merged = [seed[@"destinations"] mutableCopy] ?: NSMutableDictionary.new;
-        NSData *data = [NSData dataWithContentsOfURL:self.cacheURL];
+        nextCheck = now + 2;
+        NSURL *url = self.cacheURL;
+        NSDate *current = [NSFileManager.defaultManager attributesOfItemAtPath:url.path
+                                                                       error:NULL][NSFileModificationDate];
+        if (names && ((current == nil && modified == nil) || [current isEqual:modified]))
+            return names;
+        if (!seed) {
+            NSURL *bundled = [[NSBundle bundleForClass:DBBoardView.class] URLForResource:@"DestinationNames"
+                                                                           withExtension:@"json"];
+            NSData *data = [NSData dataWithContentsOfURL:bundled];
+            NSDictionary *body = data ? [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL] : nil;
+            seed = body[@"destinations"] ?: @{};
+        }
+        NSMutableDictionary *merged = [seed mutableCopy];
+        NSData *data = [NSData dataWithContentsOfURL:url];
         NSDictionary *saved = data ? [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL] : nil;
         [merged addEntriesFromDictionary:saved ?: @{}];
-        names = merged;
-        lastRead = NSDate.date;
+        names = [merged copy];
+        modified = current;
         return names;
     }
 }

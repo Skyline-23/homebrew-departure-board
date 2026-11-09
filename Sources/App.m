@@ -98,19 +98,33 @@
     [self.desktop refresh];
     self.runtimeRegistered = YES;
     [DBBackgroundAgent recordApplicationStarted];
-    __weak DepartureBoardApp *weakSelf = self;
-    self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0 / 30.0
-                                                 repeats:YES
-                                                   block:^(NSTimer *timer) {
-                                                       [weakSelf.board tick];
-                                                       [weakSelf.desktop tick];
-                                                   }];
+    [self updateAnimationTimer];
     [LiveFlightStore refreshInBackground];
     [DBBackgroundAgent configure];
     if ([arguments containsObject:@"--fullscreen"])
         [self.window toggleFullScreen:nil];
     if ([arguments containsObject:@"--settings"] || (!background && arguments.count == 1))
         [self showSettings:nil];
+}
+- (BOOL)previewIsVisible {
+    return self.window.visible && (self.window.occlusionState & NSWindowOcclusionStateVisible);
+}
+- (void)updateAnimationTimer {
+    NSTimeInterval interval = self.desktop.preferredAnimationInterval;
+    if ([self previewIsVisible])
+        interval = MIN(interval, self.board.preferredAnimationInterval);
+    if (self.timer && fabs(self.timer.timeInterval - interval) < .001)
+        return;
+    [self.timer invalidate];
+    __weak DepartureBoardApp *weakSelf = self;
+    self.timer = [NSTimer timerWithTimeInterval:interval repeats:YES block:^(NSTimer *timer) {
+        if ([weakSelf previewIsVisible])
+            [weakSelf.board tick];
+        [weakSelf.desktop tick];
+        [weakSelf updateAnimationTimer];
+    }];
+    self.timer.tolerance = interval * .05;
+    [NSRunLoop.mainRunLoop addTimer:self.timer forMode:NSRunLoopCommonModes];
 }
 - (void)createMainWindow {
     if (self.window)
@@ -385,7 +399,7 @@ int main(int argc, const char *argv[]) {
         if (!snapshot && HandleRunningApplication(arguments))
             return 0;
         NSApplication *app = NSApplication.sharedApplication;
-        [app setActivationPolicy:[arguments containsObject:@"--background"]
+        [app setActivationPolicy:snapshot || [arguments containsObject:@"--background"]
                                      ? NSApplicationActivationPolicyAccessory
                                      : NSApplicationActivationPolicyRegular];
         __attribute__((objc_precise_lifetime)) DepartureBoardApp *delegate = DepartureBoardApp.new;

@@ -4,6 +4,38 @@
 #import <ScreenSaver/ScreenSaver.h>
 #import <objc/runtime.h>
 
+@interface DBBoardView (RenderingTests)
+@property(nonatomic) NSTimeInterval startTime;
+- (BOOL)updateAtDate:(NSDate *)date uptime:(NSTimeInterval)uptime;
+@end
+
+static BOOL VerifyContentDrivenRendering(DBBoardView *board, Class store) {
+    board.locationCode = @"HND";
+    board.languageMode = @"english";
+    board.displayStyle = @"auto";
+    board.useSampleData = NO;
+    board.startTime = 0;
+    board.reducedMotion = YES;
+    Method method = class_getClassMethod(store, @selector(rowsForLocation:now:));
+    IMP original = method_getImplementation(method);
+    IMP mock = imp_implementationWithBlock(^NSArray *(id receiver, NSDictionary *location, NSDate *date) {
+        return @[ @{ @"flight" : @((NSInteger)date.timeIntervalSince1970 / 4) } ];
+    });
+    method_setImplementation(method, mock);
+    [board updateAtDate:[NSDate dateWithTimeIntervalSince1970:1800000005] uptime:40];
+    BOOL unchanged = ![board updateAtDate:[NSDate dateWithTimeIntervalSince1970:1800000006] uptime:41] &&
+                     board.preferredAnimationInterval == 1;
+    BOOL codeshare = [board updateAtDate:[NSDate dateWithTimeIntervalSince1970:1800000008] uptime:43];
+    BOOL pageChanged = [board updateAtDate:[NSDate dateWithTimeIntervalSince1970:1800000009] uptime:45];
+    method_setImplementation(method, original);
+    imp_removeBlock(mock);
+    [board reloadSettings];
+    if (!unchanged || !codeshare || !pageChanged)
+        fprintf(stderr, "Content redraw check: unchanged=%d codeshare=%d page=%d\n",
+                unchanged, codeshare, pageChanged);
+    return unchanged && codeshare && pageChanged;
+}
+
 static BOOL VerifySharedRefreshLock(Class store) {
     NSString *directory = [NSTemporaryDirectory() stringByAppendingPathComponent:NSUUID.UUID.UUIDString];
     [NSFileManager.defaultManager createDirectoryAtPath:directory
@@ -88,9 +120,18 @@ int main(int argc, const char *argv[]) {
         NSString *snapshotPath = [NSTemporaryDirectory()
             stringByAppendingPathComponent:[NSString stringWithFormat:@"departure-snapshot-%@.png",
                                                                       NSUUID.UUID.UUIDString]];
-        if (![board writeSnapshot:snapshotPath size:NSMakeSize(1280, 720)] ||
-            !NSEqualRects(board.frame, liveFrame))
+        __block NSUInteger frameChanges = 0;
+        board.postsFrameChangedNotifications = YES;
+        id observer = [NSNotificationCenter.defaultCenter
+            addObserverForName:NSViewFrameDidChangeNotification object:board queue:nil
+            usingBlock:^(NSNotification *notification) { frameChanges++; }];
+        BOOL snapshotSaved = [board writeSnapshot:snapshotPath size:NSMakeSize(1280, 720)];
+        [NSNotificationCenter.defaultCenter removeObserver:observer];
+        if (!snapshotSaved || !NSEqualRects(board.frame, liveFrame) || frameChanges != 0) {
+            fprintf(stderr, "Snapshot check: saved=%d frame changes=%lu\n", snapshotSaved,
+                    (unsigned long)frameChanges);
             return 1;
+        }
         [NSFileManager.defaultManager removeItemAtPath:snapshotPath error:NULL];
         Class store = NSClassFromString(@"LiveFlightStore");
         NSDictionary *flight = @{
@@ -135,7 +176,7 @@ int main(int argc, const char *argv[]) {
                                       airport:@"ICN"];
         if ([snapshot[@"flights"] count] != 2)
             return 1;
-        if (!VerifySharedRefreshLock(store))
+        if (!VerifyContentDrivenRendering(board, store) || !VerifySharedRefreshLock(store))
             return 1;
         [preview stopAnimation];
         puts("The native screen saver loads, animates and creates its settings sheet.");

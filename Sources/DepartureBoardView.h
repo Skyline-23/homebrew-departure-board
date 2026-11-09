@@ -20,6 +20,7 @@ FOUNDATION_EXPORT NSString *DBUIString(NSString *key);
 @property(nonatomic) BOOL useSampleData;
 @property(nonatomic, strong) NSDate *referenceDate;
 - (void)tick;
+- (NSTimeInterval)preferredAnimationInterval;
 - (void)reloadSettings;
 - (void)saveSettings;
 - (BOOL)writeSnapshot:(NSString *)path size:(NSSize)size;

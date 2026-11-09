@@ -12,10 +12,13 @@
 @property(nonatomic) NSTimeInterval startTime;
 @property(nonatomic) NSTimeInterval lastRenderedSecond;
 @property(nonatomic) NSInteger languageCycle;
+@property(nonatomic) NSInteger pageCycle;
 @property(nonatomic, strong) NSMutableDictionary *flapStates;
 @property(nonatomic, strong) NSWindow *optionsWindow;
 @property(nonatomic, strong) NSDate *boardDate;
 - (NSString *)effectiveStyle;
+- (BOOL)updateAtDate:(NSDate *)date uptime:(NSTimeInterval)uptime;
+- (void)drawBoardInRect:(NSRect)bounds;
 @end
 
 @interface DBBoardView (BoardChrome)

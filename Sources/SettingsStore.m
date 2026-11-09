@@ -6,6 +6,10 @@
 NSString *const DBSettingsChangedNotification = @"com.skyline23.departureboard.settingsChanged";
 NSString *const DBStoredAPIKeyMask = @"••••••••••••";
 
+static NSDictionary *cachedSettings;
+static NSDate *settingsModified;
+static NSTimeInterval nextSettingsCheck;
+
 @implementation DBSettingsStore
 + (NSURL *)settingsURL {
     NSString *folder = [[LiveFlightStore userHome]
@@ -14,12 +18,23 @@ NSString *const DBStoredAPIKeyMask = @"••••••••••••";
 }
 
 + (NSDictionary *)settings {
-    NSDictionary *shared = [NSDictionary dictionaryWithContentsOfURL:self.settingsURL];
-    if (shared)
-        return shared;
-    return [NSUserDefaults.standardUserDefaults persistentDomainForName:DBDefaultsDomain]
-        ?: [NSUserDefaults.standardUserDefaults persistentDomainForName:@"io.skyline.departureboard"]
-        ?: @{};
+    @synchronized(self) {
+        NSTimeInterval now = NSProcessInfo.processInfo.systemUptime;
+        if (cachedSettings && now < nextSettingsCheck)
+            return cachedSettings;
+        nextSettingsCheck = now + 1;
+        NSURL *url = self.settingsURL;
+        NSDate *modified = [NSFileManager.defaultManager attributesOfItemAtPath:url.path
+                                                                        error:NULL][NSFileModificationDate];
+        if (cachedSettings && modified && [modified isEqual:settingsModified])
+            return cachedSettings;
+        cachedSettings = [NSDictionary dictionaryWithContentsOfURL:url]
+            ?: [NSUserDefaults.standardUserDefaults persistentDomainForName:DBDefaultsDomain]
+            ?: [NSUserDefaults.standardUserDefaults persistentDomainForName:@"io.skyline.departureboard"]
+            ?: @{};
+        settingsModified = modified;
+        return cachedSettings;
+    }
 }
 
 + (BOOL)saveSettings:(NSDictionary *)settings replacementAPIKey:(NSString *)apiKey error:(NSError **)error {
@@ -48,6 +63,11 @@ NSString *const DBStoredAPIKeyMask = @"••••••••••••";
     [NSFileManager.defaultManager setAttributes:@{NSFilePosixPermissions : @0600}
                                    ofItemAtPath:url.path
                                           error:NULL];
+    @synchronized(self) {
+        cachedSettings = [saved copy];
+        settingsModified = nil;
+        nextSettingsCheck = 0;
+    }
     [NSUserDefaults.standardUserDefaults setPersistentDomain:saved forName:DBDefaultsDomain];
     [NSDistributedNotificationCenter.defaultCenter postNotificationName:DBSettingsChangedNotification
                                                                  object:nil
