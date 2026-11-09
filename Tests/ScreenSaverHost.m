@@ -120,6 +120,11 @@ static BOOL VerifySystemFontScaling(void) {
     DrawText draw = (DrawText)dlsym(handle, "DBDrawText");
     if (!draw)
         return NO;
+    typedef NSString *(*StatusText)(NSString *, NSString *);
+    StatusText statusText = (StatusText)dlsym(handle, "DBStatusText");
+    if (!statusText || statusText(@"unknown", @"en").length || statusText(@"unknown", @"fr").length ||
+        !statusText(@"boarding", @"en").length)
+        return NO;
     NSBitmapImageRep *bitmap = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL pixelsWide:120
         pixelsHigh:24 bitsPerSample:8 samplesPerPixel:4 hasAlpha:YES isPlanar:NO
         colorSpaceName:NSDeviceRGBColorSpace bytesPerRow:0 bitsPerPixel:0];

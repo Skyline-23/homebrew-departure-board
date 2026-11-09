@@ -153,3 +153,6 @@ using provider airport codes rather than a manual city-alias table. See
 Development bundles stay in `work/Build.noindex` so Spotlight does not list test
 apps alongside the installed app. Release archives are written to
 `outputs/DepartureBoard/dist`.
+
+Unreported operational statuses remain blank in the remarks column. They are
+not replaced with an error message or an inferred on-time status.

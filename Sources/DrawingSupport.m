@@ -55,6 +55,9 @@ void DBDrawTextWithFont(NSString *text, NSRect rect, NSFont *font, NSColor *colo
     [text drawInRect:box withAttributes:attrs];
 }
 NSString *DBStatusText(NSString *key, NSString *language) {
+    // An unreported operational status is an empty remark, not a data error.
+    if (!key.length || [key isEqual:@"unknown"])
+        return @"";
     return DBBoardString([@"status." stringByAppendingString:key], language);
 }
 NSColor *DBStatusColor(NSString *status) {
