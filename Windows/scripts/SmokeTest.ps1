@@ -9,6 +9,7 @@ $installed = [IO.Path]::GetFullPath($installed)
 Expand-Archive $PackageZip $package
 & "$package/Install.ps1" -NoLaunch -Destination $installed
 $resident = $null
+$saverProcess = $null
 
 try {
     $saver = Join-Path $installed 'DepartureBoard.scr'
@@ -72,6 +73,21 @@ try {
     }
 
     Add-Content "$OutputDirectory/result.txt" 'Single instance and close-to-tray behavior passed.'
+
+    Stop-Process -Id $resident.Id -Force
+    $resident.WaitForExit()
+    $resident = $null
+
+    # A running .scr locks the same payload as the tray executable. Both upgrade
+    # and uninstall must stop it before replacing or removing program files.
+    $start.ArgumentList.Clear()
+    $start.ArgumentList.Add('/s')
+    $saverProcess = [Diagnostics.Process]::Start($start)
+    if (!$saverProcess.WaitForInputIdle(15000)) { throw 'Screen saver did not start.' }
+    & "$package/Install.ps1" -NoLaunch -Destination $installed
+    if (!$saverProcess.WaitForExit(15000)) { throw 'Upgrade left the screen saver running.' }
+    $saverProcess = [Diagnostics.Process]::Start($start)
+    if (!$saverProcess.WaitForInputIdle(15000)) { throw 'Upgraded screen saver did not start.' }
 } finally {
     if ($resident -and !$resident.HasExited) {
         Stop-Process -Id $resident.Id -Force
@@ -80,6 +96,12 @@ try {
     & "$installed/Uninstall.ps1"
 }
 
+if ($saverProcess -and !$saverProcess.WaitForExit(15000)) {
+    Stop-Process -Id $saverProcess.Id -Force
+    throw 'Uninstall left the screen saver running.'
+}
+
 if (Test-Path $installed) {
     throw 'Uninstaller left program files behind.'
 }
+Add-Content "$OutputDirectory/result.txt" 'Upgrade and uninstall stopped the running screen saver.'

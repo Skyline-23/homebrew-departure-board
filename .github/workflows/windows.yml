@@ -56,7 +56,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: DepartureBoard-${{ matrix.runtime }}
-          path: work/windows-publish/DepartureBoard-${{ matrix.runtime }}.zip
+          path: |
+            work/windows-publish/DepartureBoard-${{ matrix.runtime }}.zip
+            work/windows-publish/DepartureBoard-${{ matrix.runtime }}.zip.sha256
       - name: Upload rendered boards
         if: always()
         uses: actions/upload-artifact@v4

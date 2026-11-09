@@ -21,9 +21,9 @@ if (Test-Path $statePath) {
         Active = $values.ScreenSaveActive
     }
 }
-Get-Process DepartureBoard -ErrorAction SilentlyContinue | Where-Object {
-    $_.Path -and [IO.Path]::GetFullPath($_.Path) -eq $executable
-} | Stop-Process -Force
+Get-Process DepartureBoard* -ErrorAction SilentlyContinue | Where-Object {
+    $_.Path -and [IO.Path]::GetFullPath($_.Path) -in @($executable, $saver)
+} | Stop-Process -Force -PassThru | Wait-Process -Timeout 10
 New-Item $Destination -ItemType Directory -Force | Out-Null
 Copy-Item "$PSScriptRoot/*" $Destination -Recurse -Force
 $prior | ConvertTo-Json | Set-Content $statePath -Encoding utf8
