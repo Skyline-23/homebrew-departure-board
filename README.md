@@ -1,22 +1,15 @@
-<img src="docs/branding/logo.png" width="112" alt="Departure Board icon">
-
 # Departure Board
 
-A native macOS screen saver with departure-board profiles for 40 airports and
-four railway stations. Includes a companion app for previewing and configuring
-the board. The settings interface is English. Boards start in English, then
-alternate with the selected location's language every 12 seconds.
+**[English](README.md) · [한국어](README.ko.md)**
 
-| Platform | Status |
-| --- | --- |
-| macOS 12+ · Apple Silicon and Intel | Available |
-| Windows | Planned for a later release; no build available yet |
+Airport departure boards for your Mac — a screen saver, live wallpaper and companion app.
 
-[Contribute](CONTRIBUTING.md) · [Report a bug](https://github.com/Skyline-23/homebrew-departure-board/issues/new/choose) · [Releases](https://github.com/Skyline-23/homebrew-departure-board/releases)
+**macOS 12+ · Apple Silicon & Intel · 40 airports · 4 railway profiles**
 
-![Incheon departure board preview](docs/preview.png)
+![Departure Board displaying Haneda departures in English](docs/screenshots/haneda-english.png)
+*Haneda (HND), English — captured from Departure Board. Flight data: [AeroDataBox](https://aerodatabox.com/).*
 
-## Install
+## Install with Homebrew
 
 ```sh
 brew tap Skyline-23/departure-board
@@ -24,107 +17,80 @@ brew install --formula skyline-23/departure-board/departure-board
 departure-board
 ```
 
-Homebrew compiles the app on your Mac. Its first launch installs real bundles in
-`/Applications` and `~/Library/Screen Savers`, outside Homebrew's isolated build
-environment. This avoids relying on an unnotarized downloaded binary.
+Need Homebrew first? Follow the instructions at [brew.sh](https://brew.sh/).
 
-Choose **Departure Board** under **Other** in the screen-saver selector. On current
-macOS this is **System Settings → Wallpaper → Screen Saver**; older releases have
-a separate **Screen Saver** settings pane. Open the
-**Departure Board** app to change location, display style, language, density,
-brightness and your API key. Requires macOS 12 or later. Both Homebrew and
-release builds include Apple Silicon and Intel code for the system screen-saver hosts.
-If your Mac has an Apple Development or Developer ID signing identity, the
-launcher applies that stable identity after Homebrew installation to retain
-Keychain approvals across updates.
+The first launch installs **Departure Board.app** in `/Applications` and the screen saver in `~/Library/Screen Savers`. The app opens its settings so you can choose an airport and add your API key.
 
-## Live flight information
-
-Each user supplies their own AeroDataBox RapidAPI key and subscription. The
-companion app calls AeroDataBox directly and stores the key in macOS Keychain.
-There is no shared proxy, bundled key, or shared request allowance.
-
-1. Subscribe to AeroDataBox on RapidAPI.
-2. Open **Options → Open Departure Board Settings** from the system screen-saver selector, or **Settings** in the app.
-3. Enter your personal RapidAPI key and select **Apply**.
-
-The app, screen saver and live desktop wallpaper share the same location and
-display settings. A saved key is represented by a masked value. The app caches 12 hours of departures and lets each user choose a refresh
-interval from one minute to six hours. Requests run while the app or screen saver
-is active. Provider quotas and availability depend on the user's subscription.
-Codeshare numbers rotate every four seconds and board pages every 15 seconds
-without additional API requests. Concurrent refreshes from the app and background job
-are combined into one request. Failed requests use increasing retry delays, and
-quota/authentication errors pause retries for an hour (or the provider's longer
-`Retry-After` interval). A replacement key clears that pause.
-
-Click **Set as Wallpaper** in Settings to apply and register the live board automatically
-behind desktop icons on every connected screen. A full-resolution still frame
-is also registered with macOS once per minute and when settings change, so the
-lock screen uses the same board instead of an unrelated photo. The app must
-remain running for updates. Turning the option off restores the previous
-system wallpaper. The current board also appears automatically in the system wallpaper chooser;
-no file or folder import is needed.
-
-The screen saver reads local flight data without opening Keychain prompts over
-the lock screen. Its **Options** button opens the companion settings editor. Keeping one editor
-avoids Keychain access and preference writes from the system screen-saver sandbox. The provider and retrieval time are shown in settings.
-
-Loading, an empty departure window, missing configuration and a failed request have separate localized messages. API authentication, subscription and rate-limit errors are explained in Settings. **Sample schedule** is for visual previews;
-the four railway profiles currently use sample timetables, not live railway feeds.
-
-Closing the preview keeps Departure Board running in the menu bar and removes
-its Dock icon. Use the menu bar icon to reopen the board or settings. **Quit
-Departure Board** stops it for the current login session. Enable **Launch in
-background at login** in Settings to start it automatically after signing in.
-A local maintenance job restores the app after an unexpected exit; flight
-requests still follow the configured refresh interval.
-
-LCD boards repaint when displayed content changes. The 30 fps timer is reserved
-for visible split-flap animation. Settled split-flap boards return to a one-second
-tick; covered windows and sleeping displays stop rendering. Wallpaper snapshots render into a separate bitmap without resizing
-the live desktop windows. Image generation runs in a short-lived helper, so its
-buffers are released after export. Exports pause during idle time and while the
-screen saver runs. The registered photo uses a stable filename per display, and
-old Departure Board frame entries are removed from wallpaper photo history.
-
-**Show on all Spaces** controls whether the live board follows you between
-Spaces. It is enabled by default; turning it off keeps the board on its current
-Space.
-
-The default **Board Scale** is 75%. It reduces text and header sizes and fits more
-rows on a desktop display. Settings offers 50–100%; manual row counts remain
-available independently.
-
-## Visual profiles
-
-All 40 airports have individual headers, column layouts, row rules, status treatments and reference photographs. The default layout shows one physical panel per monitor: a long
-reference wall contributes one panel, with its rows adapted to the display size. Haneda includes its check-in area diagram; Vienna has its analogue clock; Hong Kong has its blue check-in column; Changi uses
-highlighted gate cells; Heathrow uses its yellow header; Incheon uses blue
-rows and its multilingual header. Railway renderers have their own table and column layouts. A classic
-split-flap renderer is available as an alternative for airports.
-
-The reference catalogue records the photographs used. These are reconstructed
-display profiles, not airport-endorsed software or a promise that every terminal
-uses the same display today.
-
-Airline logos are bundled for offline use and matched by ICAO, airline name and
-IATA code. They retain their proportions without white tiles. The image cache
-is bounded; adding carriers does not load the entire collection into memory or
-consume flight API requests. `script/sync_airline_logos.py` refreshes the pinned
-source collection. Original asset URLs are recorded in
-`Resources/AirlineLogos/Sources.json`; airline trademarks belong to their owners.
-
-## Build and validate
-
-Requires Xcode command-line tools and Python 3.
+<details>
+<summary>Updating an existing installation</summary>
 
 ```sh
-./script/build_and_run.sh
+brew update
+brew upgrade --formula skyline-23/departure-board/departure-board
+departure-board
+```
+
+</details>
+
+## Get an API key
+
+Live departures use **your own AeroDataBox subscription through RapidAPI**. One key works across the supported airports; availability depends on the provider's coverage and your plan.
+
+1. Sign in to [RapidAPI](https://rapidapi.com/).
+2. Open the official [AeroDataBox pricing page](https://rapidapi.com/aedbx-aedbx/api/aerodatabox/pricing), review the plans and subscribe to one. Creating a RapidAPI account alone does not activate this API.
+3. In the [Developer Dashboard](https://rapidapi.com/developer/dashboard), open **Apps**, select an app and open **Authorization**. Copy the key used for **X-RapidAPI-Key**.
+4. In **Departure Board Settings**, choose **Live flight data** under **Timetable source**, paste the value into **API key**, then select **Apply**.
+
+For account setup, key creation, plan limits and troubleshooting, see the **[API key guide](docs/api-key.md)**. RapidAPI may require billing details for a free plan, so review the current price and quota before subscribing.
+
+The key stays in your Mac's Keychain. It is not included in the app or shared with the project. You can try the layouts without a key by choosing **Sample schedule · visual preview only**.
+
+## Make it your screen saver or wallpaper
+
+- **Screen saver:** open **System Settings → Wallpaper → Screen Saver** and choose **Departure Board**. Older macOS versions have a separate **Screen Saver** settings pane.
+- **Live wallpaper:** select **Set as Wallpaper** in Departure Board Settings. The app registers the board automatically and creates one live board per monitor.
+- **Background use:** close the preview to keep it running in the menu bar. Enable **Launch in background at login** if you want it to start when you sign in.
+
+The app, screen saver and wallpaper share their settings. **Show on all Spaces** controls whether the wallpaper appears across your Spaces.
+
+## Different airports, different boards
+
+| Heathrow · LHR | Incheon · ICN |
+| --- | --- |
+| ![Heathrow departure board in English](docs/screenshots/heathrow-english.png) | ![Incheon departure board with English flight information](docs/screenshots/incheon-english.png) |
+
+*Application captures using English flight information. Airport-specific signage is preserved. Flight data: [AeroDataBox](https://aerodatabox.com/).*
+
+Each airport has its own headers, colors, columns and status treatments. Haneda includes a check-in counter diagram; Heathrow uses a yellow header; Incheon keeps its multilingual signage. A split-flap style is also available.
+
+- **40 airport profiles**, including ICN, LHR, CDG, NRT, HND, HKG and SIN. See the [full list](Resources/LocationOrder.json) and [visual references](docs/visual-references.md).
+- **English and local-language display**, with automatic language rotation. Settings stay in English.
+- **Codeshares in one row**, rotating flight numbers without extra API calls. Board pages rotate as well.
+- **One panel per monitor**, with adjustable board scale and row density.
+- **Updates in the background**, with bounded image caches and rendering paused on sleeping or covered displays.
+
+The four railway profiles currently use sample timetables. These are independent recreations of airport displays; layout and live-data coverage can vary by terminal and provider.
+
+## Platforms
+
+| Platform | Status |
+| --- | --- |
+| macOS 12 or later · Apple Silicon and Intel | Available |
+| Windows | Planned for a later release; no Windows build is available yet |
+
+## Development
+
+Requires macOS, Xcode command-line tools and Python 3.
+
+```sh
+./script/build.sh
 ./script/validate.sh
 ```
 
-`build.sh` creates the `.app` and `.saver`; `validate.sh` checks the catalogue,
-language bundles, provider data normalization and native screen-saver loading, then renders
-all 44 profiles. `package.sh` creates the release ZIP. Version tags such as `v0.5.8`
-trigger GitHub Actions to build, validate, release and update the Homebrew cask.
+See [Contributing](CONTRIBUTING.md) for the source layout, visual changes and testing. Releases are built and checked with [GitHub Actions](https://github.com/Skyline-23/homebrew-departure-board/actions). [Download releases](https://github.com/Skyline-23/homebrew-departure-board/releases) or [report a bug](https://github.com/Skyline-23/homebrew-departure-board/issues/new/choose).
+
+## License and credits
+
+Code and project branding: **[MIT](LICENSE)**. Airline artwork retains its own rights; see [Third-party notices](THIRD_PARTY_NOTICES.md).
+
+The original MIT notice is preserved in [Resources/Data-LICENSE](Resources/Data-LICENSE). API credentials are never required for contributions or CI. Please use [private reporting](SECURITY.md) for security issues.
