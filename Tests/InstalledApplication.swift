@@ -108,19 +108,19 @@ private struct InstalledApplicationCheck {
 
     private func singleRunningApplication() -> NSRunningApplication? {
 
-        let applications =
-            NSRunningApplication
-            .runningApplications(withBundleIdentifier: bundleIdentifier)
-            .filter { application in
-                !application.isTerminated && application.activationPolicy != .prohibited
-            }
+        let applications = NSRunningApplication.runningApplications(
+            withBundleIdentifier: bundleIdentifier
+        )
+        let activeApplications = applications.filter { application in
+            !application.isTerminated && application.activationPolicy != .prohibited
+        }
 
-        guard applications.count == 1 else {
+        guard activeApplications.count == 1 else {
 
             return nil
         }
 
-        return applications.first
+        return activeApplications.first
     }
 
     private func readRuntimeState() -> RuntimeState? {
@@ -135,9 +135,8 @@ private struct InstalledApplicationCheck {
 
     private func hasVisibleWindow(for application: NSRunningApplication) -> Bool {
 
-        let windows =
-            CGWindowListCopyWindowInfo(.optionOnScreenOnly, kCGNullWindowID)
-            as? [[String: Any]] ?? []
+        let windowList = CGWindowListCopyWindowInfo(.optionOnScreenOnly, kCGNullWindowID)
+        let windows = windowList as? [[String: Any]] ?? []
         let processID = Int(application.processIdentifier)
 
         return windows.contains { window in

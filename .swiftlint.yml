@@ -16,6 +16,7 @@ opt_in_rules:
   - first_where
   - force_unwrapping
   - implicitly_unwrapped_optional
+  - indentation_width
   - last_where
   - multiline_arguments
   - multiline_parameters
@@ -35,6 +36,8 @@ disabled_rules:
 line_length:
   warning: 100
   error: 100
+indentation_width:
+  indentation_width: 4
 function_body_length:
   warning: 40
   error: 40
