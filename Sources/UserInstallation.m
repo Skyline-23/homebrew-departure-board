@@ -37,7 +37,9 @@ static BOOL InstallBundle(NSString *source, NSString *destination, NSString *ide
     NSString *stagingRoot =
         [folder stringByAppendingPathComponent:[NSString stringWithFormat:@".DepartureBoard-%@.noindex",
                                                                           NSUUID.UUID.UUIDString]];
-    NSString *staging = [stagingRoot stringByAppendingPathComponent:source.lastPathComponent];
+    // A temporary .app is registered by Launch Services even inside .noindex.
+    // Add the .app extension only when the finished bundle reaches /Applications.
+    NSString *staging = [stagingRoot stringByAppendingPathComponent:@"incoming"];
     if (![files createDirectoryAtPath:stagingRoot withIntermediateDirectories:YES attributes:nil error:error])
         return NO;
     // Synced source folders can acquire Finder metadata after signing. Copy
