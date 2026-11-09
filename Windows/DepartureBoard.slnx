@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="DepartureBoard.Core/DepartureBoard.Core.csproj" />
+  <Project Path="DepartureBoard.Core.Tests/DepartureBoard.Core.Tests.csproj" />
+  <Project Path="DepartureBoard.Windows/DepartureBoard.Windows.csproj" />
+</Solution>

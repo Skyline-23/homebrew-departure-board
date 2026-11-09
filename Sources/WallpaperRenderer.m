@@ -24,6 +24,20 @@
     return identifier;
 }
 
++ (NSEdgeInsets)contentInsetsForScreen:(NSScreen *)screen {
+
+    if (!screen || screen.frame.size.width <= 0 || screen.frame.size.height <= 0) {
+        return NSEdgeInsetsMake(0, 0, 0, 0);
+    }
+    NSRect frame = screen.frame;
+    NSRect visible = NSIntersectionRect(frame, screen.visibleFrame);
+    CGFloat margin = 12;
+    return NSEdgeInsetsMake((NSMaxY(frame) - NSMaxY(visible) + margin) / frame.size.height,
+                            (NSMinX(visible) - NSMinX(frame) + margin) / frame.size.width,
+                            (NSMinY(visible) - NSMinY(frame) + margin) / frame.size.height,
+                            (NSMaxX(frame) - NSMaxX(visible) + margin) / frame.size.width);
+}
+
 + (void)removeLegacyHistory {
 
     NSString *domain = [[LiveFlightStore userHome]
@@ -153,6 +167,7 @@
                 DBBoardView *board = [[DBBoardView alloc]
                     initWithFrame:NSMakeRect(0, 0, pixels.width, pixels.height)];
                 [board applySnapshotConfiguration:item[@"board"]];
+                board.contentInsets = [self contentInsetsForScreen:screen];
                 written = [board writeSnapshot:path size:pixels];
 
                 if (written) {
@@ -170,7 +185,7 @@
                            options:@{
                                NSWorkspaceDesktopImageScalingKey :
                                    @(NSImageScaleProportionallyUpOrDown),
-                               NSWorkspaceDesktopImageAllowClippingKey : @YES
+                               NSWorkspaceDesktopImageAllowClippingKey : @NO
                            }
                              error:NULL];
         }

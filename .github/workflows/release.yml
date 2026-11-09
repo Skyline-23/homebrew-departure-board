@@ -1,11 +1,16 @@
-name: Release macOS screen saver
+name: Release Departure Board
 on:
   push:
     tags: ['v*']
 permissions:
   contents: write
 jobs:
+  windows:
+    uses: ./.github/workflows/windows.yml
+    permissions:
+      contents: read
   release:
+    needs: windows
     runs-on: macos-15
     environment: macos-release
     timeout-minutes: 45
@@ -40,6 +45,12 @@ jobs:
         run: ./script/package.sh
       - name: Verify the final download
         run: ./script/validate-distribution.sh
+      - name: Download tested Windows packages
+        uses: actions/download-artifact@v4
+        with:
+          pattern: DepartureBoard-win-*
+          path: work/windows-release
+          merge-multiple: true
       - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -47,6 +58,7 @@ jobs:
           gh release create "$GITHUB_REF_NAME" \
             "outputs/DepartureBoard/dist/DepartureBoard-$VERSION-universal.zip" \
             "outputs/DepartureBoard/dist/DepartureBoard-$VERSION-source.tar.gz" \
+            work/windows-release/*.zip work/windows-release/*.sha256 \
             --title "Departure Board $VERSION" \
             --notes-file .github/RELEASE_NOTES.md --generate-notes
       - name: Update Homebrew tap
@@ -58,7 +70,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add Casks/departure-board.rb Formula/departure-board.rb
           git diff --cached --quiet && exit 0
-          git commit -m "Update departure-board cask to $VERSION"
+          git commit -m "chore(release): Update Homebrew to $VERSION" -m "- Point the cask and formula at the validated $VERSION release"
           git push origin HEAD:main
       - name: Remove temporary signing keychain
         if: always()

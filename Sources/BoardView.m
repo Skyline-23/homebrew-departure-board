@@ -82,6 +82,16 @@
     self.needsDisplay = YES;
 }
 
+- (void)setContentInsets:(NSEdgeInsets)insets {
+
+    if (_contentInsets.top == insets.top && _contentInsets.left == insets.left &&
+        _contentInsets.bottom == insets.bottom && _contentInsets.right == insets.right) {
+        return;
+    }
+    _contentInsets = insets;
+    self.needsDisplay = YES;
+}
+
 - (void)setLocationCode:(NSString *)locationCode {
 
     self.location = DBLocation(locationCode);
@@ -205,6 +215,11 @@
         [self tick];
     }
     DBFillRect(bounds, DBColor(@"030508"));
+    bounds =
+        NSMakeRect(bounds.origin.x + bounds.size.width * self.contentInsets.left,
+                   bounds.origin.y + bounds.size.height * self.contentInsets.top,
+                   bounds.size.width * (1 - self.contentInsets.left - self.contentInsets.right),
+                   bounds.size.height * (1 - self.contentInsets.top - self.contentInsets.bottom));
 
     if (bounds.size.width < 1 || bounds.size.height < 1) {
         return;
@@ -223,6 +238,7 @@
         [NSGraphicsContext saveGraphicsState];
         NSRectClip(bounds);
         NSAffineTransform *transform = NSAffineTransform.transform;
+        [transform translateXBy:bounds.origin.x yBy:bounds.origin.y];
         [transform scaleBy:scale];
         [transform concat];
         NSRect area = NSMakeRect(0, 0, w, h);
@@ -252,6 +268,10 @@
         @"density" : @(self.density),
         @"brightness" : @(self.brightness),
         @"boardScale" : @(self.boardScale),
+        @"contentInsets" : @[
+            @(self.contentInsets.top), @(self.contentInsets.left), @(self.contentInsets.bottom),
+            @(self.contentInsets.right)
+        ],
         @"sampleData" : @(self.useSampleData),
         @"startTime" : @(self.startTime)
     };
@@ -267,6 +287,15 @@
     self.brightness = [configuration[@"brightness"] doubleValue];
     self.boardScale =
         configuration[@"boardScale"] ? [configuration[@"boardScale"] doubleValue] : .75;
+    NSArray *insets = configuration[@"contentInsets"];
+
+    if ([insets isKindOfClass:NSArray.class] && insets.count == 4 &&
+        [insets[0] isKindOfClass:NSNumber.class] && [insets[1] isKindOfClass:NSNumber.class] &&
+        [insets[2] isKindOfClass:NSNumber.class] && [insets[3] isKindOfClass:NSNumber.class]) {
+        self.contentInsets = NSEdgeInsetsMake(
+            MAX(0, MIN(.4, [insets[0] doubleValue])), MAX(0, MIN(.4, [insets[1] doubleValue])),
+            MAX(0, MIN(.4, [insets[2] doubleValue])), MAX(0, MIN(.4, [insets[3] doubleValue])));
+    }
     self.useSampleData = [configuration[@"sampleData"] boolValue];
     self.startTime = [configuration[@"startTime"] doubleValue];
     self.lastRenderedSecond = -1;

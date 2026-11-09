@@ -17,7 +17,7 @@
     window.releasedWhenClosed = NO;
     NSView *v = window.contentView;
     NSTextField *title = [NSTextField labelWithString:@"Departure Board"];
-    title.font = DBFont(23, YES, NO);
+    title.font = [NSFont systemFontOfSize:24 weight:NSFontWeightSemibold];
     title.frame = NSMakeRect(28, 392, 520, 32);
     [v addSubview:title];
     NSArray *labels = @[
@@ -28,10 +28,12 @@
 
     for (NSInteger i = 0; i < 5; i++) {
         NSTextField *label = [NSTextField labelWithString:labels[i]];
+        label.font = [NSFont systemFontOfSize:13];
+        label.textColor = NSColor.secondaryLabelColor;
         label.frame = NSMakeRect(29, 341 - i * 48, 130, 25);
         [v addSubview:label];
     }
-    NSPopUpButton *locations = [[NSPopUpButton alloc] initWithFrame:NSMakeRect(161, 339, 397, 29)
+    NSPopUpButton *locations = [[NSPopUpButton alloc] initWithFrame:NSMakeRect(161, 339, 497, 29)
                                                           pullsDown:NO];
     locations.tag = 101;
 
@@ -63,7 +65,7 @@
 
     for (NSInteger i = 0; i < 3; i++) {
         NSPopUpButton *popup =
-            [[NSPopUpButton alloc] initWithFrame:NSMakeRect(161, 291 - i * 48, 397, 29)
+            [[NSPopUpButton alloc] initWithFrame:NSMakeRect(161, 291 - i * 48, 497, 29)
                                        pullsDown:NO];
         popup.tag = 102 + i;
         [popup addItemsWithTitles:options[i]];
@@ -82,7 +84,7 @@
                                             maxValue:1
                                               target:nil
                                               action:NULL];
-    brightness.frame = NSMakeRect(161, 147, 397, 26);
+    brightness.frame = NSMakeRect(161, 147, 497, 26);
     brightness.tag = 105;
     [v addSubview:brightness];
     NSButton *motion = [NSButton checkboxWithTitle:DBUIString(@"settings.reduceMotion")
@@ -194,7 +196,7 @@
     done.bezelStyle = NSBezelStyleRounded;
     done.keyEquivalent = @"\r";
     done.tag = 205;
-    done.frame = NSMakeRect(468, 24, 92, 32);
+    done.frame = NSMakeRect(566, 24, 92, 32);
     [v addSubview:done];
 
     for (NSView *view in v.subviews) {
@@ -236,6 +238,13 @@
         }
     }
     [v addSubview:scale];
+
+    for (NSNumber *position in @[ @454, @277 ]) {
+        NSBox *separator =
+            [[NSBox alloc] initWithFrame:NSMakeRect(28, position.doubleValue, 630, 1)];
+        separator.boxType = NSBoxSeparator;
+        [v addSubview:separator];
+    }
     self.optionsWindow = window;
     return window;
 }

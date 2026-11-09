@@ -232,6 +232,11 @@
 
 - (void)screensChanged:(NSNotification *)notification {
 
+    for (NSWindow *window in self.windows) {
+        DBBoardView *board = (DBBoardView *)window.contentView;
+        board.contentInsets = [DBWallpaperRenderer contentInsetsForScreen:window.screen];
+    }
+
     // AppKit also posts this for Dock/Space changes. Recreating every Retina
     // surface in response causes flicker, allocation spikes and more notifications.
 
@@ -308,6 +313,7 @@
         window.backgroundColor = NSColor.blackColor;
         DBBoardView *board = [[DBBoardView alloc]
             initWithFrame:NSMakeRect(0, 0, screen.frame.size.width, screen.frame.size.height)];
+        board.contentInsets = [DBWallpaperRenderer contentInsetsForScreen:screen];
         NSMutableDictionary *configuration = [board.snapshotConfiguration mutableCopy];
         configuration[@"startTime"] = @(cycleStart);
         [board applySnapshotConfiguration:configuration];

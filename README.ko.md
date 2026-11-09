@@ -2,9 +2,9 @@
 
 **[English](README.md) · [한국어](README.ko.md)**
 
-공항 출발 전광판을 Mac의 화면 보호기와 실시간 배경화면으로 사용할 수 있습니다. 함께 설치되는 앱에서 공항과 표시 방식을 설정합니다.
+공항 출발 전광판을 macOS와 Windows의 화면 보호기와 실시간 배경화면으로 사용할 수 있습니다. 함께 설치되는 앱에서 공항과 표시 방식을 설정합니다.
 
-**macOS 12 이상 · Apple Silicon 및 Intel 지원 · 공항 40곳**
+**macOS 12 이상 · Windows 11 프리뷰 · 공항 40곳**
 
 ![Departure Board 앱에서 영어로 표시한 하네다 출발 전광판](docs/screenshots/haneda-english.png)
 *Departure Board 앱의 하네다(HND) 영어 화면입니다. 항공편 데이터: [AeroDataBox](https://aerodatabox.com/).*
@@ -44,6 +44,12 @@ formula는 이 Mac에서 직접 빌드하고 화면 보호기를 `~/Library/Scre
 
 </details>
 
+## Windows에 설치하기
+
+[Windows x64](https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-win-x64.zip) 또는 [Windows ARM64](https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-win-arm64.zip)를 내려받아 압축을 풀고 **Install.cmd**를 실행하세요. .NET 런타임이 포함되어 있으며 관리자 권한 없이 현재 사용자에게 설치됩니다.
+
+Windows는 아직 서명되지 않은 프리뷰입니다. 화면 보호기와 실시간 배경화면 설정은 [Windows 안내](Windows/README.md)를 참고하세요.
+
 ## API 키 준비하기
 
 실시간 항공편을 보려면 **RapidAPI를 통한 AeroDataBox 구독**과 본인의 API 키가 필요합니다. 지원 공항마다 키를 따로 만들 필요는 없습니다. 조회 가능한 데이터는 제공자의 공항별 지원 범위와 구독 요금제에 따라 달라집니다.
@@ -55,7 +61,7 @@ formula는 이 Mac에서 직접 빌드하고 화면 보호기를 `~/Library/Scre
 
 가입부터 키 발급, 사용량 확인, 오류 해결까지는 **[API 키 설정 안내](docs/api-key.ko.md)**에서 확인할 수 있습니다. 무료 요금제도 결제 정보 입력을 요구할 수 있으니 구독 전에 현재 요금과 한도를 확인해 주세요.
 
-키는 이 Mac의 키체인에 저장되며 앱에 포함되거나 프로젝트에 공유되지 않습니다. 키 없이 화면부터 살펴보려면 **Sample schedule · visual preview only**를 선택하면 됩니다.
+키는 macOS 키체인 또는 Windows 자격 증명 관리자에 저장되며 앱에 포함되거나 프로젝트에 공유되지 않습니다. 키 없이 화면부터 살펴보려면 **Sample schedule · visual preview only**를 선택하면 됩니다.
 
 ## 화면 보호기와 배경화면으로 쓰기
 
@@ -88,7 +94,7 @@ formula는 이 Mac에서 직접 빌드하고 화면 보호기를 `~/Library/Scre
 | 플랫폼 | 상태 |
 | --- | --- |
 | macOS 12 이상 · Apple Silicon 및 Intel | 사용 가능 |
-| Windows | 추후 공개 예정. 아직 Windows 빌드는 제공하지 않습니다. |
+| Windows 11 · x64 및 ARM64 | 릴리스에 포함된 [서명 없는 프리뷰](Windows/README.md) |
 
 ## 개발에 참여하기
 

@@ -40,6 +40,10 @@ static NSString *ArgumentValue(NSArray<NSString *> *arguments, NSString *option)
 
     [NSApplication.sharedApplication setActivationPolicy:NSApplicationActivationPolicyProhibited];
     DBBoardView *board = [self boardWithArguments:arguments];
+
+    if ([arguments containsObject:@"--desktop-fit"]) {
+        board.contentInsets = [DBWallpaperRenderer contentInsetsForScreen:NSScreen.mainScreen];
+    }
     NSString *path = ArgumentValue(arguments, @"--snapshot");
 
     if (path) {

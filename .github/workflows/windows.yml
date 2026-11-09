@@ -1,0 +1,68 @@
+name: Windows preview
+on:
+  push:
+    branches: [main]
+    paths: ['Windows/**', 'Resources/**', '.github/workflows/windows.yml']
+  pull_request:
+    paths: ['Windows/**', 'Resources/**', '.github/workflows/windows.yml']
+  workflow_dispatch:
+  workflow_call:
+concurrency:
+  group: windows-preview-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+jobs:
+  windows:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: windows-latest
+            runtime: win-x64
+          - runner: windows-11-arm
+            runtime: win-arm64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 25
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      DOTNET_NOLOGO: '1'
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Check C# formatting
+        run: |
+          dotnet tool restore --tool-manifest Windows/.config/dotnet-tools.json
+          python Windows/scripts/test_format.py
+          python Windows/scripts/format.py --check
+      - name: Build and test shared logic
+        run: |
+          dotnet build Windows/DepartureBoard.slnx -c Release
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          dotnet run --project Windows/DepartureBoard.Core.Tests -c Release --no-build -- Resources
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+      - name: Package self-contained preview
+        run: ./Windows/scripts/Publish.ps1 -Runtime '${{ matrix.runtime }}'
+      - name: Exercise published screen saver and per-user installer
+        run: >-
+          ./Windows/scripts/SmokeTest.ps1
+          -PackageZip 'work/windows-publish/DepartureBoard-${{ matrix.runtime }}.zip'
+          -OutputDirectory "$env:GITHUB_WORKSPACE/work/windows-images"
+      - name: Upload preview package
+        uses: actions/upload-artifact@v4
+        with:
+          name: DepartureBoard-${{ matrix.runtime }}
+          path: |
+            work/windows-publish/DepartureBoard-${{ matrix.runtime }}.zip
+            work/windows-publish/DepartureBoard-${{ matrix.runtime }}.zip.sha256
+      - name: Upload rendered boards
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Windows-boards-${{ matrix.runtime }}
+          path: work/windows-images/
