@@ -38,11 +38,28 @@ static BOOL InstallBundle(NSString *source, NSString *destination, NSString *ide
         [folder stringByAppendingPathComponent:[NSString stringWithFormat:@".DepartureBoard-%@.noindex",
                                                                           NSUUID.UUID.UUIDString]];
     NSString *staging = [stagingRoot stringByAppendingPathComponent:source.lastPathComponent];
-    if (![files createDirectoryAtPath:stagingRoot
-            withIntermediateDirectories:YES
-                             attributes:nil
-                                  error:error] ||
-        ![files copyItemAtPath:source toPath:staging error:error]) {
+    if (![files createDirectoryAtPath:stagingRoot withIntermediateDirectories:YES attributes:nil error:error])
+        return NO;
+    // Synced source folders can acquire Finder metadata after signing. Copy
+    // bundle content without resource forks or extended attributes.
+    NSTask *copy = NSTask.new;
+    copy.executableURL = [NSURL fileURLWithPath:@"/usr/bin/ditto"];
+    copy.arguments = @[ @"--noextattr", @"--norsrc", source, staging ];
+    copy.standardOutput = NSFileHandle.fileHandleWithNullDevice;
+    copy.standardError = NSFileHandle.fileHandleWithNullDevice;
+    if (![copy launchAndReturnError:error]) {
+        [files removeItemAtPath:stagingRoot error:NULL];
+        return NO;
+    }
+    [copy waitUntilExit];
+    if (copy.terminationStatus != 0) {
+        if (error)
+            *error = [NSError errorWithDomain:@"com.skyline23.departureboard"
+                                         code:4
+                                     userInfo:@{
+                                         NSLocalizedDescriptionKey :
+                                             @"Could not copy the application into its installation folder."
+                                     }];
         [files removeItemAtPath:stagingRoot error:NULL];
         return NO;
     }

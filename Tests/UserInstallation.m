@@ -1,5 +1,6 @@
 #import "../Sources/UserInstallation.m"
 #import <Foundation/Foundation.h>
+#import <sys/xattr.h>
 
 static void WriteBundle(NSString *path, NSString *identifier, NSString *revision) {
     NSFileManager *files = NSFileManager.defaultManager;
@@ -36,7 +37,10 @@ int main(void) {
         NSString *destination = [root stringByAppendingPathComponent:@"Applications/Board.app"];
         NSString *identifier = @"com.skyline23.departureboard.test";
         WriteBundle(source, identifier, @"1");
+        char metadata[32] = {1};
+        setxattr(source.fileSystemRepresentation, "com.apple.FinderInfo", metadata, sizeof(metadata), 0, 0);
         BOOL passed = InstallBundle(source, destination, identifier, nil, NULL);
+        passed &= getxattr(destination.fileSystemRepresentation, "com.apple.FinderInfo", NULL, 0, 0, 0) < 0;
         NSDate *modified = [files attributesOfItemAtPath:destination error:NULL][NSFileModificationDate];
         passed &= InstallBundle(source, destination, identifier, nil, NULL);
         passed &= [modified isEqual:[files attributesOfItemAtPath:destination
