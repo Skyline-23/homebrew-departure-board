@@ -13,11 +13,16 @@ cask "departure-board" do
   screen_saver "Departure Board.saver"
 
   uninstall script: {
-    executable: "/bin/launchctl",
-    args: ["bootout", "gui/#{Process.uid}/io.skyline.departureboard.refresh"],
+    executable: "/bin/sh",
+    args: [
+      "-c",
+      <<~EOS,
+        /bin/launchctl bootout "gui/$(id -u)/io.skyline.departureboard.refresh" >/dev/null 2>&1 || true
+        /bin/rm -f "$HOME/Library/LaunchAgents/io.skyline.departureboard.refresh.plist"
+      EOS
+    ],
     sudo: false,
-    must_succeed: false,
-  }, delete: "#{Dir.home}/Library/LaunchAgents/io.skyline.departureboard.refresh.plist"
+  }
 
   zap trash: [
     "~/Library/Application Support/DepartureBoard",
