@@ -1,5 +1,6 @@
 work/
 outputs/
+.codex/
 .DS_Store
 __pycache__/
 
@@ -11,4 +12,5 @@ __pycache__/
 *.pem
 *.key
 *.p12
+*.p8
 *.mobileprovision
