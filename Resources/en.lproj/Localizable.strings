@@ -235,7 +235,7 @@
 "settings.density" = "Rows";
 "settings.language" = "Board language";
 "settings.location" = "Airport or station";
-"settings.note" = "Each location uses its own layout, local time and display language.\nFlight and train times are simulated, not live travel information.";
+"settings.note" = "Each location uses its own layout, local time and display language.\nSample timetables are used only in visual preview mode.";
 "settings.reduceMotion" = "Reduce split-flap animation";
 "settings.style" = "Display style";
 "settings.title" = "Departure Board Settings";
@@ -264,3 +264,5 @@
 "status.checkin" = "Check-in open";
 "status.closed" = "Gate closed";
 "status.diverted" = "Diverted";
+
+"data.retrieved" = "Retrieved";

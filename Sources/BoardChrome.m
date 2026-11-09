@@ -71,11 +71,13 @@
     NSString *dataLabel = DBUIString(@"footer.simulated");
     if (!self.referenceDate && !self.useSampleData) {
         NSDictionary *snapshot = [LiveFlightStore cachedSnapshotForAirport:self.locationCode];
-        dataLabel = snapshot
-                        ? [NSString stringWithFormat:@"AeroDataBox · %@", [snapshot[@"stale"] boolValue]
-                                                                              ? DBUIString(@"data.cached")
-                                                                              : DBUIString(@"data.live")]
-                        : DBUIString(@"data.unavailable");
+        dataLabel =
+            snapshot && self.rows.count
+                ? [NSString stringWithFormat:@"AeroDataBox · %@ · %@",
+                                             [snapshot[@"stale"] boolValue] ? DBUIString(@"data.cached")
+                                                                            : DBUIString(@"data.retrieved"),
+                                             snapshot[@"fetchedAt"] ?: @""]
+                : DBUIString(@"data.unavailable");
     }
     DBDrawText(dataLabel, NSMakeRect(area.size.width - 433, y + 3, 400, 34), 13, DBColor(@"78909f"), YES,
                NSTextAlignmentRight, NO);
