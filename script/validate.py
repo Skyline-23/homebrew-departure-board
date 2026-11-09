@@ -14,7 +14,7 @@ icon = (RESOURCES / "AppIcon.icns").read_bytes()
 assert icon[:4] == b"icns" and struct.unpack(">I", icon[4:8])[0] == len(icon)
 
 codes = json.loads((RESOURCES / "LocationOrder.json").read_text())
-assert len(codes) == len(set(codes)) == 44
+assert len(codes) == len(set(codes)) == 40
 required_airports = {"ICN", "LHR", "CDG", "NRT", "HND", "HKG", "SIN"}
 assert required_airports <= set(codes)
 
@@ -29,6 +29,7 @@ for source in (ROOT / "Sources").rglob("*.m"):
 for code in codes:
     location = json.loads((RESOURCES / "Locations" / f"{code}.json").read_text())
     assert location["code"] == code
+    assert location["kind"] == "airport"
     ZoneInfo(location["zone"])
     assert f'"location.{code}"' in english
     assert location["routes"]

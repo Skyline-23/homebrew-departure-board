@@ -72,7 +72,7 @@
 - (void)drawFlapBoard:(NSRect)area {
 
     DBFillRect(area, DBColor(@"111416"));
-    [self header:area compact:YES];
+    [self drawFlapHeader:area];
     NSArray *labels = @[ @"TIME", @"DESTINATION", @"AIRLINE / FLIGHT", @"GATE", @"REMARKS" ];
     CGFloat xs[] = {34, 196, 760, 1085, 1208};
     CGFloat widths[] = {142, 541, 304, 100, 356};
@@ -115,7 +115,7 @@
                      color:ink];
         }
     }
-    [self footer:area text:@"Please have your passport and boarding pass ready."];
+    [self drawAirportFooter:area];
 }
 
 @end

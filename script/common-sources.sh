@@ -4,7 +4,7 @@ COMMON_SOURCES=()
 
 for name in DepartureSchedule Localization DestinationStore AirlineLogoStore BackgroundAgent \
             LiveFlightStore SettingsStore UserInstallation BoardView DrawingSupport BoardChrome \
-            AirportRenderer SplitFlapRenderer RailwayRenderer SettingsController; do
+            AirportRenderer SplitFlapRenderer SettingsController; do
   COMMON_SOURCES+=("$PROJECT_ROOT/Sources/$name.m")
 done
 COMMON_SOURCES+=("$PROJECT_ROOT"/Sources/Airports/*.m "$PROJECT_ROOT"/Sources/Airports/Adapters/*.m)

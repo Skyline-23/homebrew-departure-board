@@ -3,6 +3,9 @@
 The [MIT license](LICENSE) covers Departure Board's original code and project
 branding. It does not grant ownership of third-party airline trademarks or artwork.
 
+Additional MIT terms for imported metadata are included in
+[Resources/Data-LICENSE](Resources/Data-LICENSE).
+
 ## Airline artwork and identity data
 
 - [Jxck-S/airline-logos](https://github.com/Jxck-S/airline-logos) supplies much of

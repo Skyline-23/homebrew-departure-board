@@ -4,7 +4,7 @@
 
 Airport departure boards for your Mac — a screen saver, live wallpaper and companion app.
 
-**macOS 12+ · Apple Silicon & Intel · 40 airports · 4 railway profiles**
+**macOS 12+ · Apple Silicon & Intel · 40 airports**
 
 ![Departure Board displaying Haneda departures in English](docs/screenshots/haneda-english.png)
 *Haneda (HND), English — captured from Departure Board. Flight data: [AeroDataBox](https://aerodatabox.com/).*
@@ -81,7 +81,7 @@ Each airport has its own headers, colors, columns and status treatments. Haneda 
 - **One panel per monitor**, with adjustable board scale and row density.
 - **Updates in the background**, with bounded image caches and rendering paused on sleeping or covered displays.
 
-The four railway profiles currently use sample timetables. These are independent recreations of airport displays; layout and live-data coverage can vary by terminal and provider.
+These are independent recreations of airport displays; layout and live-data coverage can vary by terminal and provider.
 
 ## Platforms
 
@@ -105,4 +105,4 @@ See [Contributing](CONTRIBUTING.md) for the source layout, visual changes and te
 
 Code and project branding: **[MIT](LICENSE)**. Airline artwork retains its own rights; see [Third-party notices](THIRD_PARTY_NOTICES.md).
 
-The original MIT notice is preserved in [Resources/Data-LICENSE](Resources/Data-LICENSE). Flight API credentials are never required for contributions or build checks. Please use [private reporting](SECURITY.md) for security issues.
+Flight API credentials are never required for contributions or build checks. Please use [private reporting](SECURITY.md) for security issues.

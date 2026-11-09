@@ -16,6 +16,8 @@ work/ScreenSaverHost "$PROJECT_ROOT/work/Build.noindex/Bundles/Departure Board.s
 if [[ "${CI:-}" == "true" || "${RUN_INTERACTIVE_TESTS:-0}" == "1" ]]; then
   ./script/validate_lifecycle.sh
 fi
+mkdir -p work/validation-previews
+rm -f work/validation-previews/*.png
 open -g -n -W "$PROJECT_ROOT/work/Build.noindex/Bundles/Departure Board.app" --args --snapshot-all "$PROJECT_ROOT/work/validation-previews"
-test "$(find work/validation-previews -name '*.png' | wc -l | tr -d ' ')" = 44
+test "$(find work/validation-previews -name '*.png' | wc -l | tr -d ' ')" = 40
 printf 'All native bundle, catalogue and language checks passed.\n'

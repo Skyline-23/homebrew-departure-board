@@ -58,11 +58,25 @@ static BOOL VerifyAirportAdapters(DBBoardView *board) {
     if (!adapterForLocation || !locations) {
         return NO;
     }
+
+    if (locations().count != 40) {
+        return NO;
+    }
+    board.locationCode = @"REMOVED";
+
+    if ([board valueForKey:@"airportAdapter"] || [board valueForKey:@"location"]) {
+        return NO;
+    }
+    [board updateAtDate:[NSDate date] uptime:NSProcessInfo.processInfo.systemUptime];
     NSDictionary *incheon;
 
     for (NSDictionary *location in locations()) {
         id adapter = adapterForLocation(location);
         BOOL airport = [location[@"kind"] isEqual:@"airport"];
+
+        if (!airport) {
+            return NO;
+        }
 
         if (airport != (adapter != nil)) {
             return NO;

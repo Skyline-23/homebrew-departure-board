@@ -1,5 +1,5 @@
 class DepartureBoard < Formula
-  desc "Airport and railway boards as a native macOS screen saver"
+  desc "Airport departure boards as a native macOS screen saver"
   homepage "https://github.com/@REPOSITORY@"
   url "https://github.com/@REPOSITORY@/releases/download/v@VERSION@/DepartureBoard-@VERSION@-source.tar.gz"
   sha256 "@SHA256@"

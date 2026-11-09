@@ -359,6 +359,9 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
 
 + (NSArray<NSDictionary *> *)rowsForLocation:(NSDictionary *)location now:(NSDate *)now {
 
+    if (![location[@"code"] length]) {
+        return @[];
+    }
     static NSCache *renderedRows;
     static dispatch_once_t once;
     dispatch_once(&once, ^{

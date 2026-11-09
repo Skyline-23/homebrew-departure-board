@@ -26,9 +26,8 @@ static const NSTimeInterval DBFlapTransitionDuration = .66;
 @end
 
 @interface DBBoardView (BoardChrome)
-- (void)planeAt:(NSPoint)point size:(CGFloat)size color:(NSColor *)color;
-- (void)header:(NSRect)area compact:(BOOL)compact;
-- (void)footer:(NSRect)area text:(NSString *)message;
+- (void)drawFlapHeader:(NSRect)area;
+- (void)drawAirportFooter:(NSRect)area;
 @end
 
 @interface DBBoardView (AirportRenderer)
@@ -45,9 +44,4 @@ static const NSTimeInterval DBFlapTransitionDuration = .66;
            cells:(NSInteger)cells
            color:(NSColor *)ink;
 - (void)drawFlapBoard:(NSRect)area;
-@end
-
-@interface DBBoardView (RailwayRenderer)
-- (void)drawRailTable:(NSRect)area;
-- (void)drawRailCards:(NSRect)area;
 @end

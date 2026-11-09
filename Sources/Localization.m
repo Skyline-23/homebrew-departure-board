@@ -1,7 +1,7 @@
 #import "DepartureBoardView.h"
 
 // The settings UI stays in English. The board independently cycles through
-// English and the language used at its selected airport or railway station.
+// English and the language used at its selected airport.
 NSString *DBBoardString(NSString *key, NSString *language) {
 
     static NSMutableDictionary<NSString *, NSDictionary *> *tables;

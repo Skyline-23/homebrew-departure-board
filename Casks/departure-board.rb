@@ -4,7 +4,7 @@ cask "departure-board" do
 
   url "https://github.com/Skyline-23/homebrew-departure-board/releases/download/v#{version}/DepartureBoard-#{version}-universal.zip"
   name "Departure Board"
-  desc "Airport and railway departure boards as a native macOS screen saver"
+  desc "Airport departure boards as a native macOS screen saver"
   homepage "https://github.com/Skyline-23/homebrew-departure-board"
 
   depends_on macos: :monterey

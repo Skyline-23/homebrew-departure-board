@@ -45,7 +45,7 @@ NSDictionary *DBLocation(NSString *code) {
             return location;
         }
     }
-    return DBLocations().firstObject ?: @{};
+    return nil;
 }
 
 NSString *DBTime(NSDate *date, NSDictionary *location, NSString *format) {
@@ -90,8 +90,7 @@ NSArray<NSDictionary *> *DBDepartures(NSDictionary *location, NSDate *now, NSUIn
     if (!routes.count) {
         return @[];
     }
-    BOOL rail = [location[@"kind"] isEqual:@"rail"];
-    NSInteger step = rail ? 240 : 300;
+    NSInteger step = 300;
     NSInteger slot = (NSInteger)floor(now.timeIntervalSince1970 / step) - 1;
     NSMutableArray *rows = NSMutableArray.new;
 
@@ -107,13 +106,13 @@ NSArray<NSDictionary *> *DBDepartures(NSDictionary *location, NSDate *now, NSUIn
         NSInteger delay = (seed % 23 == 0) ? 15 : 0;
         NSInteger minutes = (NSInteger)ceil([departure timeIntervalSinceDate:now] / 60.0) + delay;
         BOOL cancelled = (seed % 149 == 0);
-        NSString *state = cancelled                    ? @"cancelled"
-                          : delay                      ? @"delayed"
-                          : minutes < 0                ? @"departed"
-                          : minutes <= (rail ? 2 : 8)  ? @"closing"
-                          : minutes <= (rail ? 5 : 25) ? @"boarding"
-                          : minutes <= 45              ? @"gate"
-                                                       : @"scheduled";
+        NSString *state = cancelled       ? @"cancelled"
+                          : delay         ? @"delayed"
+                          : minutes < 0   ? @"departed"
+                          : minutes <= 8  ? @"closing"
+                          : minutes <= 25 ? @"boarding"
+                          : minutes <= 45 ? @"gate"
+                                          : @"scheduled";
         row[@"state"] = state;
         row[@"time"] = DBTime(departure, location, @"HH:mm");
         row[@"expected"] =
@@ -122,20 +121,14 @@ NSArray<NSDictionary *> *DBDepartures(NSDictionary *location, NSDate *now, NSUIn
         row[@"minutes"] = @(MAX(0, minutes));
         row[@"identity"] = @(ident);
 
-        if (!rail) {
-            NSDictionary *airline = DBData()[@"airlines"][route[@"carrier"]];
-            row[@"airline"] = airline[@"name"] ?: route[@"carrier"];
-            row[@"color"] = airline[@"color"] ?: @"4985a9";
-            row[@"destination"] = DBData()[@"cities"][route[@"city"]] ?: @{@"en" : route[@"city"]};
-            row[@"flight"] = [NSString stringWithFormat:@"%@ %03ld", route[@"carrier"],
-                                                        (long)[route[@"number"] integerValue]];
-            NSArray *gates = location[@"gates"];
-            row[@"gate"] = gates[(NSUInteger)seed % gates.count];
-        } else {
-            row[@"gate"] = route[@"platform"] ?: @"1";
-            row[@"flight"] = [NSString stringWithFormat:@"%ld", (long)(seed % 400 + 1)];
-            row[@"airline"] = DBLocalized(route[@"service"], @"en");
-        }
+        NSDictionary *airline = DBData()[@"airlines"][route[@"carrier"]];
+        row[@"airline"] = airline[@"name"] ?: route[@"carrier"];
+        row[@"color"] = airline[@"color"] ?: @"4985a9";
+        row[@"destination"] = DBData()[@"cities"][route[@"city"]] ?: @{@"en" : route[@"city"]};
+        row[@"flight"] = [NSString
+            stringWithFormat:@"%@ %03ld", route[@"carrier"], (long)[route[@"number"] integerValue]];
+        NSArray *gates = location[@"gates"];
+        row[@"gate"] = gates[(NSUInteger)seed % gates.count];
         [rows addObject:row];
     }
     return rows;

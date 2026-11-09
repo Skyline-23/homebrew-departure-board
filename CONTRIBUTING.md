@@ -13,7 +13,7 @@ Install Xcode command-line tools and Python 3, then run:
 ```
 
 Builds stay in `work/Build.noindex`. The validation command checks data,
-translations, installation and rendering, and exports all 44 visual profiles.
+translations, installation and rendering, and exports all 40 airport profiles.
 Window lifecycle tests run in GitHub Actions. To run them deliberately on your
 own Mac, set `RUN_INTERACTIVE_TESTS=1`; they open and close test windows.
 
