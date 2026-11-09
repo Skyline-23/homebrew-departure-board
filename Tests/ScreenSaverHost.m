@@ -1,11 +1,11 @@
+#import "../Sources/AirlineLogoStore.h"
 #import "../Sources/DepartureBoardView.h"
 #import "../Sources/LiveFlightStore.h"
-#import "../Sources/AirlineLogoStore.h"
 #import <Cocoa/Cocoa.h>
 #import <ScreenSaver/ScreenSaver.h>
-#import <objc/runtime.h>
 #import <dlfcn.h>
 #import <fcntl.h>
+#import <objc/runtime.h>
 #import <sys/file.h>
 #import <unistd.h>
 
@@ -26,7 +26,7 @@ static BOOL VerifyContentDrivenRendering(DBBoardView *board, Class store) {
     Method method = class_getClassMethod(store, @selector(rowsForLocation:now:));
     IMP original = method_getImplementation(method);
     IMP mock = imp_implementationWithBlock(^NSArray *(id receiver, NSDictionary *location, NSDate *date) {
-        return @[ @{ @"flight" : @((NSInteger)date.timeIntervalSince1970 / 4) } ];
+        return @[ @{@"flight" : @((NSInteger)date.timeIntervalSince1970 / 4)} ];
     });
     method_setImplementation(method, mock);
     [board updateAtDate:[NSDate dateWithTimeIntervalSince1970:1800000005] uptime:40];
@@ -38,44 +38,56 @@ static BOOL VerifyContentDrivenRendering(DBBoardView *board, Class store) {
     imp_removeBlock(mock);
     [board reloadSettings];
     if (!unchanged || !codeshare || !pageChanged)
-        fprintf(stderr, "Content redraw check: unchanged=%d codeshare=%d page=%d\n",
-                unchanged, codeshare, pageChanged);
+        fprintf(stderr, "Content redraw check: unchanged=%d codeshare=%d page=%d\n", unchanged, codeshare,
+                pageChanged);
     return unchanged && codeshare && pageChanged;
 }
 
 static BOOL VerifySharedRowsCache(Class store) {
     NSDictionary *flight = @{
-        @"number" : @"NH 100", @"status" : @"Expected", @"scheduledUtc" : @"2026-11-09T06:00:00Z",
-        @"destinationCode" : @"HKG", @"destinationName" : @"Hong Kong", @"gate" : @"101",
+        @"number" : @"NH 100",
+        @"status" : @"Expected",
+        @"scheduledUtc" : @"2026-11-09T06:00:00Z",
+        @"destinationCode" : @"HKG",
+        @"destinationName" : @"Hong Kong",
+        @"gate" : @"101",
         @"variants" : @[
-            @{ @"number" : @"NH 100", @"airline" : @"ANA" },
-            @{ @"number" : @"UA 7000", @"airline" : @"United" }
+            @{@"number" : @"NH 100", @"airline" : @"ANA"}, @{@"number" : @"UA 7000", @"airline" : @"United"}
         ]
     };
-    __block NSDictionary *snapshot = @{
-        @"fetchedAt" : @"2026-11-09T05:00:00Z", @"flights" : @[ flight ]
-    };
+    __block NSDictionary *snapshot = @{@"fetchedAt" : @"2026-11-09T05:00:00Z", @"flights" : @[ flight ]};
     Method method = class_getClassMethod(store, @selector(cachedSnapshotForAirport:));
     IMP original = method_getImplementation(method);
     IMP mock = imp_implementationWithBlock(^NSDictionary *(id receiver, NSString *airport) {
         return snapshot;
     });
     method_setImplementation(method, mock);
-    NSDictionary *location = @{ @"code" : @"HND", @"zone" : @"Asia/Tokyo" };
+    NSDictionary *location = @{@"code" : @"HND", @"zone" : @"Asia/Tokyo"};
     NSDate *now = [NSISO8601DateFormatter.new dateFromString:@"2026-11-09T05:00:05Z"];
     NSArray *first = [store rowsForLocation:location now:now];
-    NSArray *same = [store rowsForLocation:location now:[now dateByAddingTimeInterval:.5]];
+    NSArray *same = [store rowsForLocation:location now:[now dateByAddingTimeInterval:1.5]];
     NSArray *rotated = [store rowsForLocation:location now:[now dateByAddingTimeInterval:4]];
     BOOL shared = first == same && first.count == 1;
     BOOL cycles = ![first[0][@"flight"] isEqual:rotated[0][@"flight"]];
     NSMutableDictionary *updated = [flight mutableCopy];
     updated[@"gate"] = @"102";
-    snapshot = @{ @"fetchedAt" : @"2026-11-09T05:00:00Z", @"flights" : @[ updated ] };
+    snapshot = @{@"fetchedAt" : @"2026-11-09T05:00:00Z", @"flights" : @[ updated ]};
     NSArray *fresh = [store rowsForLocation:location now:now];
     BOOL invalidated = [fresh[0][@"gate"] isEqual:@"102"];
+    updated[@"scheduledUtc"] = @"2026-11-09T06:00:02Z";
+    snapshot = @{@"fetchedAt" : @"2026-11-09T05:00:00Z", @"flights" : @[ [updated copy] ]};
+    NSDate *boundary = [NSISO8601DateFormatter.new dateFromString:@"2026-11-09T05:00:01Z"];
+    NSArray *beforeMinute = [store rowsForLocation:location now:boundary];
+    NSArray *atMinute = [store rowsForLocation:location now:[boundary dateByAddingTimeInterval:1]];
+    BOOL minuteChanged =
+        [beforeMinute[0][@"minutes"] integerValue] == 61 && [atMinute[0][@"minutes"] integerValue] == 60;
+    NSDate *expiry = [NSISO8601DateFormatter.new dateFromString:@"2026-11-09T06:30:02Z"];
+    NSArray *atExpiry = [store rowsForLocation:location now:expiry];
+    NSArray *expired = [store rowsForLocation:location now:[expiry dateByAddingTimeInterval:.5]];
+    BOOL expires = atExpiry.count == 1 && expired.count == 0;
     method_setImplementation(method, original);
     imp_removeBlock(mock);
-    return shared && cycles && invalidated;
+    return shared && cycles && invalidated && minuteChanged && expires;
 }
 
 static BOOL VerifySnapshotConfiguration(DBBoardView *board) {
@@ -109,7 +121,8 @@ static BOOL VerifyAirlineLogos(void) {
     NSImage *premia = [store imageForCarrier:@"YP" icao:@"APZ" name:@"Air Premia"];
     NSImage *perimeter = [store imageForCarrier:@"YP" icao:@"PAG" name:@"Perimeter Aviation"];
     return tway && seoul && premia && perimeter && premia != perimeter &&
-           tway.size.width > tway.size.height &&
+           tway.size.width > tway.size.height && MAX(tway.size.width, tway.size.height) <= 256 &&
+           MAX(premia.size.width, premia.size.height) <= 256 &&
            [store imageForCarrier:@"TW" icao:nil name:@"T'way Air"] == tway;
 }
 
@@ -123,12 +136,18 @@ static BOOL VerifySystemFontScaling(void) {
     typedef NSString *(*StatusText)(NSString *, NSString *);
     StatusText statusText = (StatusText)dlsym(handle, "DBStatusText");
     if (!statusText || ![statusText(@"unknown", @"en") isEqual:@"Status unavailable"] ||
-        !statusText(@"unknown", @"fr").length ||
-        !statusText(@"boarding", @"en").length)
+        !statusText(@"unknown", @"fr").length || !statusText(@"boarding", @"en").length)
         return NO;
-    NSBitmapImageRep *bitmap = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL pixelsWide:120
-        pixelsHigh:24 bitsPerSample:8 samplesPerPixel:4 hasAlpha:YES isPlanar:NO
-        colorSpaceName:NSDeviceRGBColorSpace bytesPerRow:0 bitsPerPixel:0];
+    NSBitmapImageRep *bitmap = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL
+                                                                       pixelsWide:120
+                                                                       pixelsHigh:24
+                                                                    bitsPerSample:8
+                                                                  samplesPerPixel:4
+                                                                         hasAlpha:YES
+                                                                         isPlanar:NO
+                                                                   colorSpaceName:NSDeviceRGBColorSpace
+                                                                      bytesPerRow:0
+                                                                     bitsPerPixel:0];
     [NSGraphicsContext saveGraphicsState];
     NSGraphicsContext.currentContext = [NSGraphicsContext graphicsContextWithBitmapImageRep:bitmap];
     [NSColor.blackColor setFill];
@@ -149,25 +168,37 @@ static BOOL VerifySystemFontScaling(void) {
 
 static BOOL VerifyAvailabilityStates(Class store) {
     NSString *folder = [NSTemporaryDirectory() stringByAppendingPathComponent:NSUUID.UUID.UUIDString];
-    [NSFileManager.defaultManager createDirectoryAtPath:folder withIntermediateDirectories:YES attributes:nil error:NULL];
+    [NSFileManager.defaultManager createDirectoryAtPath:folder
+                            withIntermediateDirectories:YES
+                                             attributes:nil
+                                                  error:NULL];
     NSURL *url = [NSURL fileURLWithPath:[folder stringByAppendingPathComponent:@"CDG.json"]];
     Method cache = class_getClassMethod(store, @selector(cachedSnapshotForAirport:));
     Method path = class_getClassMethod(store, NSSelectorFromString(@"cacheURLForAirport:"));
     IMP oldCache = method_getImplementation(cache), oldPath = method_getImplementation(path);
-    __block NSDictionary *snapshot = @{@"fetchedAt":[NSISO8601DateFormatter.new stringFromDate:NSDate.date], @"flights":@[]};
-    IMP mockCache = imp_implementationWithBlock(^id(id receiver, NSString *airport) { return snapshot; });
-    IMP mockPath = imp_implementationWithBlock(^id(id receiver, NSString *airport) { return url; });
+    __block NSDictionary *snapshot =
+        @{@"fetchedAt" : [NSISO8601DateFormatter.new stringFromDate:NSDate.date],
+          @"flights" : @[]};
+    IMP mockCache = imp_implementationWithBlock(^id(id receiver, NSString *airport) {
+        return snapshot;
+    });
+    IMP mockPath = imp_implementationWithBlock(^id(id receiver, NSString *airport) {
+        return url;
+    });
     method_setImplementation(cache, mockCache);
     method_setImplementation(path, mockPath);
     BOOL empty = [store availabilityForAirport:@"CDG"] == DBFlightAvailabilityEmpty;
-    snapshot = @{@"fetchedAt":@"2020-01-01T00:00:00Z", @"flights":@[]};
+    snapshot = @{@"fetchedAt" : @"2020-01-01T00:00:00Z", @"flights" : @[]};
     BOOL stale = [store availabilityForAirport:@"CDG"] == DBFlightAvailabilityUnavailable;
-    int lock = open([url.path stringByAppendingString:@".lock"].fileSystemRepresentation, O_CREAT | O_RDWR, 0600);
+    int lock =
+        open([url.path stringByAppendingString:@".lock"].fileSystemRepresentation, O_CREAT | O_RDWR, 0600);
     flock(lock, LOCK_EX);
     BOOL loading = [store availabilityForAirport:@"CDG"] == DBFlightAvailabilityLoading;
     flock(lock, LOCK_UN);
     close(lock);
-    [@{@"status":@429, @"failures":@1} writeToFile:[url.path stringByAppendingString:@".retry.plist"] atomically:YES];
+    [@{@"status" : @429,
+       @"failures" : @1} writeToFile:[url.path stringByAppendingString:@".retry.plist"]
+                          atomically:YES];
     BOOL limited = [store availabilityForAirport:@"CDG"] == DBFlightAvailabilityUnavailable &&
                    [store refreshFailureStatusForAirport:@"CDG"] == 429;
     method_setImplementation(cache, oldCache);
@@ -264,9 +295,12 @@ int main(int argc, const char *argv[]) {
                                                                       NSUUID.UUID.UUIDString]];
         __block NSUInteger frameChanges = 0;
         board.postsFrameChangedNotifications = YES;
-        id observer = [NSNotificationCenter.defaultCenter
-            addObserverForName:NSViewFrameDidChangeNotification object:board queue:nil
-            usingBlock:^(NSNotification *notification) { frameChanges++; }];
+        id observer = [NSNotificationCenter.defaultCenter addObserverForName:NSViewFrameDidChangeNotification
+                                                                      object:board
+                                                                       queue:nil
+                                                                  usingBlock:^(NSNotification *notification) {
+                                                                      frameChanges++;
+                                                                  }];
         BOOL snapshotSaved = [board writeSnapshot:snapshotPath size:NSMakeSize(1280, 720)];
         [NSNotificationCenter.defaultCenter removeObserver:observer];
         if (!snapshotSaved || !NSEqualRects(board.frame, liveFrame) || frameChanges != 0) {
@@ -319,9 +353,9 @@ int main(int argc, const char *argv[]) {
         if ([snapshot[@"flights"] count] != 2)
             return 1;
         if (!VerifyCompactScale(board) || !VerifyAirlineLogos() || !VerifySystemFontScaling() ||
-            !VerifyAvailabilityStates(store) ||
-            !VerifySnapshotConfiguration(board) || !VerifySharedRowsCache(store) ||
-            !VerifyContentDrivenRendering(board, store) || !VerifySharedRefreshLock(store))
+            !VerifyAvailabilityStates(store) || !VerifySnapshotConfiguration(board) ||
+            !VerifySharedRowsCache(store) || !VerifyContentDrivenRendering(board, store) ||
+            !VerifySharedRefreshLock(store))
             return 1;
         [preview stopAnimation];
         puts("The native screen saver loads, animates and creates its settings sheet.");

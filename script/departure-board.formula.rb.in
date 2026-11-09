@@ -21,14 +21,15 @@ class DepartureBoard < Formula
         exec "#{opt_libexec}/Departure Board.app/Contents/MacOS/DepartureBoard" --version
       fi
       "#{opt_libexec}/sign-local.sh" || exit $?
-      exec /usr/bin/open -n "#{opt_libexec}/Departure Board.app" --args --register-bundles "#{opt_libexec}" "$@"
+      "#{opt_libexec}/Departure Board.app/Contents/MacOS/DepartureBoard" --install-bundles "#{opt_libexec}" || exit $?
+      exec /usr/bin/open -n "/Applications/Departure Board.app" --args "$@"
     SH
   end
 
   def caveats
     <<~EOS
       Built locally from source; no Gatekeeper bypass is needed.
-      Run departure-board once to register it in Applications and Screen Savers.
+      Run departure-board once to install it in /Applications and your Screen Savers folder.
       Select Departure Board in System Settings > Wallpaper > Screen Saver.
       Enter your personal AeroDataBox RapidAPI key in Options or the companion app.
     EOS

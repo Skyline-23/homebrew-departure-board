@@ -11,26 +11,30 @@
 + (NSString *)identifierForScreen:(NSScreen *)screen {
     CGDirectDisplayID display = [screen.deviceDescription[@"NSScreenNumber"] unsignedIntValue];
     CFUUIDRef uuid = CGDisplayCreateUUIDFromDisplayID(display);
-    NSString *identifier = uuid ? CFBridgingRelease(CFUUIDCreateString(NULL, uuid))
-                                : [NSString stringWithFormat:@"%u", display];
+    NSString *identifier =
+        uuid ? CFBridgingRelease(CFUUIDCreateString(NULL, uuid)) : [NSString stringWithFormat:@"%u", display];
     if (uuid)
         CFRelease(uuid);
     return identifier;
 }
 + (void)removeLegacyHistory {
-    NSString *domain = [[LiveFlightStore userHome] stringByAppendingPathComponent:
-        @"Library/Containers/com.apple.wallpaper.extension.image/Data/Library/Preferences/"
-         "com.apple.wallpaper.extension.image"];
-    NSArray *entries = CFBridgingRelease(CFPreferencesCopyAppValue(
-        CFSTR("ChoiceRequests.ImageFiles"), (__bridge CFStringRef)domain));
+    NSString *domain = [[LiveFlightStore userHome]
+        stringByAppendingPathComponent:
+            @"Library/Containers/com.apple.wallpaper.extension.image/Data/Library/Preferences/"
+             "com.apple.wallpaper.extension.image"];
+    NSArray *entries = CFBridgingRelease(
+        CFPreferencesCopyAppValue(CFSTR("ChoiceRequests.ImageFiles"), (__bridge CFStringRef)domain));
     if (![entries isKindOfClass:NSArray.class])
         return;
     NSString *legacyRoot = [self.rootPath stringByAppendingString:@"/Frames/"];
     NSMutableArray *retained = NSMutableArray.new;
     for (id entry in entries) {
         NSDictionary *record = [entry isKindOfClass:NSData.class]
-            ? [NSPropertyListSerialization propertyListWithData:entry options:0 format:NULL error:NULL]
-            : nil;
+                                   ? [NSPropertyListSerialization propertyListWithData:entry
+                                                                               options:0
+                                                                                format:NULL
+                                                                                 error:NULL]
+                                   : nil;
         id original = [record isKindOfClass:NSDictionary.class] ? record[@"originalURL"] : nil;
         NSString *urlString = [original isKindOfClass:NSDictionary.class] ? original[@"relative"] : nil;
         NSURL *url = [urlString isKindOfClass:NSString.class] ? [NSURL URLWithString:urlString] : nil;
@@ -44,15 +48,15 @@
         if (![entries writeToFile:backup atomically:YES])
             return;
         [NSFileManager.defaultManager setAttributes:@{NSFilePosixPermissions : @0600}
-                                     ofItemAtPath:backup error:NULL];
+                                       ofItemAtPath:backup
+                                              error:NULL];
     }
     CFPreferencesSetAppValue(CFSTR("ChoiceRequests.ImageFiles"), (__bridge CFArrayRef)retained,
                              (__bridge CFStringRef)domain);
     CFPreferencesAppSynchronize((__bridge CFStringRef)domain);
 }
 + (BOOL)renderRequest:(NSDictionary *)request {
-    if (![request isKindOfClass:NSDictionary.class] ||
-        ![request[@"screens"] isKindOfClass:NSArray.class])
+    if (![request isKindOfClass:NSDictionary.class] || ![request[@"screens"] isKindOfClass:NSArray.class])
         return NO;
     NSFileManager *files = NSFileManager.defaultManager;
     NSString *frames = [self.rootPath stringByAppendingPathComponent:@"Displays"];
@@ -62,6 +66,7 @@
     NSMutableDictionary *originals =
         [[NSDictionary dictionaryWithContentsOfFile:originalsPath] mutableCopy] ?: NSMutableDictionary.new;
     BOOL success = YES;
+    NSMutableDictionary<NSDictionary *, NSString *> *renderedScreens = NSMutableDictionary.new;
     for (NSDictionary *item in request[@"screens"]) {
         @autoreleasepool {
             if (![item isKindOfClass:NSDictionary.class] ||
@@ -93,19 +98,35 @@
             NSString *folder = [frames stringByAppendingPathComponent:identifier];
             [files createDirectoryAtPath:folder withIntermediateDirectories:YES attributes:nil error:NULL];
             NSString *path = [folder stringByAppendingPathComponent:@"Departure Board.png"];
-            DBBoardView *board =
-                [[DBBoardView alloc] initWithFrame:NSMakeRect(0, 0, pixels.width, pixels.height)];
-            [board applySnapshotConfiguration:item[@"board"]];
-            if (![board writeSnapshot:path size:pixels]) {
+            NSDictionary *renderKey = @{@"size" : NSStringFromSize(pixels), @"board" : item[@"board"]};
+            NSString *rendered = renderedScreens[renderKey];
+            BOOL written;
+            if (rendered) {
+                // Equal Retina displays share one render and PNG encoding.
+                NSData *png = [NSData dataWithContentsOfFile:rendered
+                                                     options:NSDataReadingMappedIfSafe
+                                                       error:NULL];
+                written = [png writeToFile:path atomically:YES];
+            } else {
+                DBBoardView *board =
+                    [[DBBoardView alloc] initWithFrame:NSMakeRect(0, 0, pixels.width, pixels.height)];
+                [board applySnapshotConfiguration:item[@"board"]];
+                written = [board writeSnapshot:path size:pixels];
+                if (written)
+                    renderedScreens[renderKey] = path;
+            }
+            if (!written) {
                 success = NO;
                 continue;
             }
             success &= [NSWorkspace.sharedWorkspace
-                setDesktopImageURL:[NSURL fileURLWithPath:path] forScreen:screen
-                options:@{
-                    NSWorkspaceDesktopImageScalingKey : @(NSImageScaleProportionallyUpOrDown),
-                    NSWorkspaceDesktopImageAllowClippingKey : @YES
-                } error:NULL];
+                setDesktopImageURL:[NSURL fileURLWithPath:path]
+                         forScreen:screen
+                           options:@{
+                               NSWorkspaceDesktopImageScalingKey : @(NSImageScaleProportionallyUpOrDown),
+                               NSWorkspaceDesktopImageAllowClippingKey : @YES
+                           }
+                             error:NULL];
         }
     }
     if (success)

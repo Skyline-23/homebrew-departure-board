@@ -30,7 +30,10 @@
                   error.localizedDescription ?: @"Invalid installation root");
         }
     }
-    if (!self.board)
+    BOOL needsPreview = ![arguments containsObject:@"--background"] ||
+                        [arguments containsObject:@"--snapshot"] ||
+                        [arguments containsObject:@"--snapshot-all"];
+    if (!self.board && needsPreview)
         self.board = [[DBBoardView alloc] initWithFrame:NSMakeRect(0, 0, 1440, 900)];
     NSUInteger index = [arguments indexOfObject:@"--location"];
     if (index != NSNotFound && index + 1 < arguments.count)
@@ -121,12 +124,14 @@
         return;
     [self.timer invalidate];
     __weak DepartureBoardApp *weakSelf = self;
-    self.timer = [NSTimer timerWithTimeInterval:interval repeats:YES block:^(NSTimer *timer) {
-        if ([weakSelf previewIsVisible])
-            [weakSelf.board tick];
-        [weakSelf.desktop tick];
-        [weakSelf updateAnimationTimer];
-    }];
+    self.timer = [NSTimer timerWithTimeInterval:interval
+                                        repeats:YES
+                                          block:^(NSTimer *timer) {
+                                              if ([weakSelf previewIsVisible])
+                                                  [weakSelf.board tick];
+                                              [weakSelf.desktop tick];
+                                              [weakSelf updateAnimationTimer];
+                                          }];
     self.timer.tolerance = interval * .05;
     [NSRunLoop.mainRunLoop addTimer:self.timer forMode:NSRunLoopCommonModes];
 }
@@ -352,10 +357,20 @@ static BOOL HandleRunningApplication(NSArray<NSString *> *arguments) {
     NSRunningApplication *running = [DBBackgroundAgent runningApplication];
     if (!running)
         return NO;
+    NSString *statePath = [[LiveFlightStore userHome]
+        stringByAppendingPathComponent:@"Library/Application Support/DepartureBoard/Runtime.plist"];
+    NSDictionary *state = [NSDictionary dictionaryWithContentsOfFile:statePath];
+    BOOL recordedProcess = [state[@"processID"] intValue] == running.processIdentifier;
     NSString *installedVersion =
-        [NSBundle bundleWithURL:running.bundleURL].infoDictionary[@"CFBundleShortVersionString"];
+        recordedProcess
+            ? state[@"appVersion"]
+            : [NSBundle bundleWithURL:running.bundleURL].infoDictionary[@"CFBundleShortVersionString"];
     NSString *currentVersion = NSBundle.mainBundle.infoDictionary[@"CFBundleShortVersionString"];
-    if (currentVersion && ![installedVersion isEqual:currentVersion]) {
+    NSDate *modified = [NSFileManager.defaultManager attributesOfItemAtPath:running.executableURL.path
+                                                                      error:NULL][NSFileModificationDate];
+    BOOL replacedOnDisk =
+        modified && running.launchDate && [modified compare:running.launchDate] == NSOrderedDescending;
+    if (replacedOnDisk || (currentVersion && ![installedVersion isEqual:currentVersion])) {
         [running terminate];
         NSDate *deadline = [NSDate dateWithTimeIntervalSinceNow:3];
         // Launch Services may cache isTerminated after the process has exited.
@@ -379,6 +394,14 @@ static BOOL HandleRunningApplication(NSArray<NSString *> *arguments) {
 
 int main(int argc, const char *argv[]) {
     @autoreleasepool {
+        if (argc == 3 && strcmp(argv[1], "--install-bundles") == 0) {
+            NSError *error = nil;
+            BOOL installed = RegisterUserInstallation([NSString stringWithUTF8String:argv[2]], &error);
+            if (!installed)
+                fprintf(stderr, "%s\n",
+                        error.localizedDescription.UTF8String ?: "Invalid installation root.");
+            return installed ? 0 : 1;
+        }
         if (argc > 2 && strcmp(argv[1], "--import-api-key") == 0) {
             NSString *path = [NSString stringWithUTF8String:argv[2]];
             NSDictionary *attributes = [NSFileManager.defaultManager attributesOfItemAtPath:path error:NULL];

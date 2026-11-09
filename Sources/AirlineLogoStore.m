@@ -3,9 +3,10 @@
 
 static NSString *NormalizedName(NSString *name) {
     NSString *folded = [(name ?: @"") stringByFoldingWithOptions:NSDiacriticInsensitiveSearch
-                                                       locale:[NSLocale localeWithLocaleIdentifier:@"en"]];
-    return [[[folded lowercaseString] componentsSeparatedByCharactersInSet:
-             NSCharacterSet.alphanumericCharacterSet.invertedSet] componentsJoinedByString:@""];
+                                                          locale:[NSLocale localeWithLocaleIdentifier:@"en"]];
+    return [[[folded lowercaseString]
+        componentsSeparatedByCharactersInSet:NSCharacterSet.alphanumericCharacterSet.invertedSet]
+        componentsJoinedByString:@""];
 }
 
 static BOOL IsWhite(const unsigned char *pixel) {
@@ -25,7 +26,7 @@ static NSImage *PreparedLogo(NSData *data) {
     unsigned char *pixels = rgba.mutableBytes;
     CGColorSpaceRef space = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
     CGContextRef context = CGBitmapContextCreate(pixels, width, height, 8, width * 4, space,
-                                                kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
+                                                 kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
     CGColorSpaceRelease(space);
     if (!context)
         return nil;
@@ -49,8 +50,7 @@ static NSImage *PreparedLogo(NSData *data) {
         for (size_t y = 0; y < height; y++) {
             for (size_t x = 0; x < width; x++) {
                 size_t index = y * width + x;
-                if ((x == 0 || y == 0 || x + 1 == width || y + 1 == height) &&
-                    IsWhite(pixels + index * 4)) {
+                if ((x == 0 || y == 0 || x + 1 == width || y + 1 == height) && IsWhite(pixels + index * 4)) {
                     memset(pixels + index * 4, 0, 4);
                     queue[tail++] = index;
                 }
@@ -74,16 +74,35 @@ static NSImage *PreparedLogo(NSData *data) {
         for (size_t x = 0; x < width; x++) {
             if (pixels[(y * width + x) * 4 + 3] <= 8)
                 continue;
-            left = MIN(left, x); right = MAX(right, x);
-            top = MIN(top, y); bottom = MAX(bottom, y);
+            left = MIN(left, x);
+            right = MAX(right, x);
+            top = MIN(top, y);
+            bottom = MAX(bottom, y);
         }
     }
     NSImage *result = nil;
     if (left < width && top < height) {
         CGImageRef rendered = CGBitmapContextCreateImage(context);
-        CGImageRef cropped = CGImageCreateWithImageInRect(rendered,
-            CGRectMake(left, top, right - left + 1, bottom - top + 1));
-        result = [[NSImage alloc] initWithCGImage:cropped size:NSZeroSize];
+        CGImageRef cropped =
+            CGImageCreateWithImageInRect(rendered, CGRectMake(left, top, right - left + 1, bottom - top + 1));
+        // CGImage crops may retain their full source bitmap. Materialize a
+        // compact, independent image so the cache's byte cost matches memory.
+        CGFloat scale = MIN(1, 256.0 / MAX(CGImageGetWidth(cropped), CGImageGetHeight(cropped)));
+        size_t logoWidth = MAX(1, (size_t)ceil(CGImageGetWidth(cropped) * scale));
+        size_t logoHeight = MAX(1, (size_t)ceil(CGImageGetHeight(cropped) * scale));
+        CGColorSpaceRef logoSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
+        CGContextRef compact =
+            CGBitmapContextCreate(NULL, logoWidth, logoHeight, 8, logoWidth * 4, logoSpace,
+                                  kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
+        CGColorSpaceRelease(logoSpace);
+        if (compact) {
+            CGContextSetInterpolationQuality(compact, kCGInterpolationHigh);
+            CGContextDrawImage(compact, CGRectMake(0, 0, logoWidth, logoHeight), cropped);
+            CGImageRef bitmap = CGBitmapContextCreateImage(compact);
+            result = [[NSImage alloc] initWithCGImage:bitmap size:NSZeroSize];
+            CGImageRelease(bitmap);
+            CGContextRelease(compact);
+        }
         CGImageRelease(cropped);
         CGImageRelease(rendered);
     }
@@ -123,8 +142,9 @@ static NSImage *PreparedLogo(NSData *data) {
         // choosing an unrelated airline sharing that code.
         asset = asset ?: iata;
     }
-    if (!asset.length || [asset rangeOfCharacterFromSet:
-                         NSCharacterSet.alphanumericCharacterSet.invertedSet].location != NSNotFound)
+    if (!asset.length ||
+        [asset rangeOfCharacterFromSet:NSCharacterSet.alphanumericCharacterSet.invertedSet].location !=
+            NSNotFound)
         return nil;
     id cached = [images objectForKey:asset];
     if (cached)
@@ -133,8 +153,9 @@ static NSImage *PreparedLogo(NSData *data) {
     if (!url && ![asset isEqual:iata])
         url = [bundle URLForResource:iata withExtension:@"png" subdirectory:@"AirlineLogos"];
     NSImage *logo = url ? PreparedLogo([NSData dataWithContentsOfURL:url]) : nil;
-    [images setObject:logo ?: NSNull.null forKey:asset
-                cost:logo ? (NSUInteger)(logo.size.width * logo.size.height * 4) : 1];
+    [images setObject:logo ?: NSNull.null
+               forKey:asset
+                 cost:logo ? (NSUInteger)(logo.size.width * logo.size.height * 4) : 1];
     return logo;
 }
 @end

@@ -34,7 +34,13 @@
                             withIntermediateDirectories:YES
                                              attributes:nil
                                                   error:NULL];
-    [@{@"sessionIdentifier" : self.sessionIdentifier, @"keepRunning" : @(running)} writeToFile:path atomically:YES];
+    [@{
+        @"sessionIdentifier" : self.sessionIdentifier,
+        @"keepRunning" : @(running),
+        @"appVersion" : NSBundle.mainBundle.infoDictionary[@"CFBundleShortVersionString"] ?: @"development",
+        @"processID" : @(getpid())
+    } writeToFile:path
+        atomically:YES];
 }
 + (void)recordApplicationStarted {
     [self recordRunning:YES];
@@ -44,7 +50,7 @@
 }
 + (BOOL)shouldStartForSettings:(NSDictionary *)settings
                   runtimeState:(NSDictionary *)state
-                sessionIdentifier:(NSString *)sessionIdentifier {
+             sessionIdentifier:(NSString *)sessionIdentifier {
     if ([state[@"sessionIdentifier"] isEqual:sessionIdentifier])
         return [state[@"keepRunning"] boolValue];
     return [settings[@"launchAtLogin"] boolValue];
@@ -61,10 +67,9 @@
     NSDictionary *state = [NSDictionary dictionaryWithContentsOfFile:self.statePath] ?: @{};
     if (!self.runningApplication && [self shouldStartForSettings:DBSettingsStore.settings
                                                     runtimeState:state
-                                                  sessionIdentifier:self.sessionIdentifier]) {
+                                               sessionIdentifier:self.sessionIdentifier]) {
         NSString *path = DBSettingsStore.settings[@"companionPath"];
-        NSString *installed =
-            [[LiveFlightStore userHome] stringByAppendingPathComponent:@"Applications/Departure Board.app"];
+        NSString *installed = @"/Applications/Departure Board.app";
         NSBundle *installedBundle = [NSBundle bundleWithPath:installed];
         if ([installedBundle.bundleIdentifier isEqual:@"com.skyline23.departureboard"] &&
             [installedBundle.infoDictionary[@"CFBundleShortVersionString"]
@@ -116,8 +121,9 @@
     NSString *path = [folder stringByAppendingPathComponent:@"com.skyline23.departureboard.refresh.plist"];
     NSString *executable = NSBundle.mainBundle.executablePath;
     for (NSString *application in @[
-             [[LiveFlightStore userHome] stringByAppendingPathComponent:@"Applications/Departure Board.app"],
-             @"/Applications/Departure Board.app"
+             @"/Applications/Departure Board.app",
+             [[LiveFlightStore userHome]
+                 stringByAppendingPathComponent:@"Applications/Departure Board.app"]
          ]) {
         NSBundle *bundle = [NSBundle bundleWithPath:application];
         if ([bundle.bundleIdentifier isEqual:@"com.skyline23.departureboard"] &&

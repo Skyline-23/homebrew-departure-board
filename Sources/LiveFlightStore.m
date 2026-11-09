@@ -123,8 +123,10 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
     return status == errSecSuccess;
 }
 
+// Empty revised times are common. Cache failed parses too, so every board tick
+// does not construct three formatters for the same missing provider value.
 + (NSDate *)dateFromISO:(NSString *)value {
-    if (![value isKindOfClass:NSString.class])
+    if (![value isKindOfClass:NSString.class] || !value.length)
         return nil;
     static NSCache *dates;
     static dispatch_once_t once;
@@ -132,26 +134,31 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
         dates = NSCache.new;
         dates.countLimit = 4000;
     });
-    NSDate *cached = [dates objectForKey:value];
+    id cached = [dates objectForKey:value];
     if (cached)
-        return cached;
-    NSISO8601DateFormatter *formatter = NSISO8601DateFormatter.new;
-    formatter.formatOptions =
-        NSISO8601DateFormatWithInternetDateTime | NSISO8601DateFormatWithFractionalSeconds;
-    NSDate *date = [formatter dateFromString:value];
-    if (!date) {
-        formatter.formatOptions = NSISO8601DateFormatWithInternetDateTime;
-        date = [formatter dateFromString:value];
-    }
-    if (!date) {
+        return cached == NSNull.null ? nil : cached;
+    NSMutableDictionary *thread = NSThread.currentThread.threadDictionary;
+    NSArray *parsers = thread[@"DepartureBoard.dateParsers"];
+    if (!parsers) {
+        NSISO8601DateFormatter *fractional = NSISO8601DateFormatter.new;
+        fractional.formatOptions =
+            NSISO8601DateFormatWithInternetDateTime | NSISO8601DateFormatWithFractionalSeconds;
+        NSISO8601DateFormatter *standard = NSISO8601DateFormatter.new;
+        standard.formatOptions = NSISO8601DateFormatWithInternetDateTime;
         NSDateFormatter *provider = NSDateFormatter.new;
         provider.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
         provider.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
         provider.dateFormat = @"yyyy-MM-dd HH:mmX";
-        date = [provider dateFromString:value];
+        parsers = @[ fractional, standard, provider ];
+        thread[@"DepartureBoard.dateParsers"] = parsers;
     }
-    if (date)
-        [dates setObject:date forKey:value];
+    NSDate *date = nil;
+    for (id parser in parsers) {
+        date = [parser dateFromString:value];
+        if (date)
+            break;
+    }
+    [dates setObject:date ?: NSNull.null forKey:value];
     return date;
 }
 
@@ -232,8 +239,8 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
         row[@"codeshareStatus"] = flight[@"codeshareStatus"] ?: @"Unknown";
         row[@"aircraft"] = ObjectDictionary(flight[@"aircraft"])[@"reg"] ?: @"";
         row[@"callSign"] = flight[@"callSign"] ?: @"";
-        row[@"variants"] = @[ @{@"number" : number, @"airline" : row[@"airlineName"],
-                                @"icao" : row[@"airlineICAO"]} ];
+        row[@"variants"] =
+            @[ @{@"number" : number, @"airline" : row[@"airlineName"], @"icao" : row[@"airlineICAO"]} ];
         unique[[NSString stringWithFormat:@"%@/%@", number, row[@"scheduledUtc"]]] = row;
     }
     NSArray *flights = [self groupCodeshares:unique.allValues];
@@ -280,14 +287,19 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
         renderedRows.countLimit = 4;
     });
     NSDictionary *snapshot = [self cachedSnapshotForAirport:location[@"code"]];
-    NSNumber *second = @(floor(now.timeIntervalSince1970));
+    NSTimeInterval timestamp = now.timeIntervalSince1970;
     NSDictionary *previous = [renderedRows objectForKey:location[@"code"]];
-    if (previous[@"snapshot"] == snapshot && [previous[@"second"] isEqual:second] &&
-        [previous[@"location"] isEqual:location])
+    if (previous[@"snapshot"] == snapshot && [previous[@"location"] isEqual:location] &&
+        timestamp >= [previous[@"createdAt"] doubleValue] &&
+        timestamp < [previous[@"validUntil"] doubleValue])
         return previous[@"rows"];
+    // Marketing flights change every four seconds. Minute countdowns, flight
+    // expiry and refreshed snapshots can invalidate the rows sooner.
+    NSTimeInterval validUntil = (floor(timestamp / 4) + 1) * 4;
     NSDate *fetched = [self dateFromISO:snapshot[@"fetchedAt"]];
     if (!fetched || [now timeIntervalSinceDate:fetched] > 86400)
         return @[];
+    validUntil = MIN(validUntil, fetched.timeIntervalSince1970 + 86400 + .000001);
     NSDictionary *statusKeys = @{
         @"Unknown" : @"unknown",
         @"Expected" : @"scheduled",
@@ -313,6 +325,10 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
         if (!scheduled || [scheduled timeIntervalSinceDate:now] < -1800)
             continue;
         NSDate *revised = [self dateFromISO:flight[@"revisedUtc"]];
+        NSTimeInterval departure = (revised ?: scheduled).timeIntervalSince1970;
+        NSInteger minutes = (NSInteger)ceil((departure - timestamp) / 60);
+        validUntil = MIN(validUntil, departure - (minutes - 1) * 60);
+        validUntil = MIN(validUntil, scheduled.timeIntervalSince1970 + 1800 + .000001);
         NSString *destinationCode = flight[@"destinationCode"] ?: @"";
         NSDictionary *destination =
             @{@"airport" : destinationCode, @"en" : flight[@"destinationName"] ?: destinationCode};
@@ -343,14 +359,19 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
             @"color" : @"345d82",
             @"airline" : airline,
             @"airlineICAO" : airlineICAO,
-            @"minutes" : @((NSInteger)ceil([(revised ?: scheduled) timeIntervalSinceDate:now] / 60)),
+            @"minutes" : @(minutes),
             @"identity" : @((NSInteger)scheduled.timeIntervalSince1970)
         }];
     }
     NSArray *result = [rows copy];
     [renderedRows setObject:@{
-        @"snapshot" : snapshot, @"second" : second, @"location" : location, @"rows" : result
-    } forKey:location[@"code"]];
+        @"snapshot" : snapshot,
+        @"createdAt" : @(timestamp),
+        @"validUntil" : @(validUntil),
+        @"location" : location,
+        @"rows" : result
+    }
+                     forKey:location[@"code"]];
     return result;
 }
 
@@ -373,17 +394,17 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
     NSDictionary *snapshot = [self cachedSnapshotForAirport:airport];
     if (!snapshot && ![DBSettingsStore.settings[@"hasAPIKey"] boolValue])
         return DBFlightAvailabilityConfigurationRequired;
-    NSDictionary *failure = [NSDictionary dictionaryWithContentsOfFile:
-                            [path stringByAppendingString:@".retry.plist"]];
+    NSDictionary *failure =
+        [NSDictionary dictionaryWithContentsOfFile:[path stringByAppendingString:@".retry.plist"]];
     if (failure)
         return DBFlightAvailabilityUnavailable;
     if (snapshot) {
         NSDate *fetched = [self dateFromISO:snapshot[@"fetchedAt"]];
-        return fetched && -fetched.timeIntervalSinceNow < 86400
-                   ? DBFlightAvailabilityEmpty : DBFlightAvailabilityUnavailable;
+        return fetched && -fetched.timeIntervalSinceNow < 86400 ? DBFlightAvailabilityEmpty
+                                                                : DBFlightAvailabilityUnavailable;
     }
-    return [DBSettingsStore.settings[@"hasAPIKey"] boolValue]
-               ? DBFlightAvailabilityLoading : DBFlightAvailabilityConfigurationRequired;
+    return [DBSettingsStore.settings[@"hasAPIKey"] boolValue] ? DBFlightAvailabilityLoading
+                                                              : DBFlightAvailabilityConfigurationRequired;
 }
 
 + (BOOL)refreshWithError:(NSError **)error {
@@ -426,9 +447,12 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
         delay = 3600;
     if (retryAfter.doubleValue > 0)
         delay = MAX(delay, retryAfter.doubleValue);
-    [@{@"failures" : @(failures), @"status" : @(status),
-       @"retryAt" : [NSDate dateWithTimeIntervalSinceNow:delay]} writeToFile:path
-                                                                                             atomically:YES];
+    [@{
+        @"failures" : @(failures),
+        @"status" : @(status),
+        @"retryAt" : [NSDate dateWithTimeIntervalSinceNow:delay]
+    } writeToFile:path
+        atomically:YES];
 }
 
 + (BOOL)refreshLockedAirport:(NSString *)airport error:(NSError **)error {

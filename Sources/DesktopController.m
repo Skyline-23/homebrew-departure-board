@@ -64,7 +64,9 @@
            CGEventSourceSecondsSinceLastEventType(kCGEventSourceStateCombinedSessionState,
                                                   kCGAnyInputEventType) >= 30;
 }
-- (NSString *)wallpaperRoot { return DBWallpaperRenderer.rootPath; }
+- (NSString *)wallpaperRoot {
+    return DBWallpaperRenderer.rootPath;
+}
 - (NSString *)identifierForScreen:(NSScreen *)screen {
     return [DBWallpaperRenderer identifierForScreen:screen];
 }
@@ -104,22 +106,21 @@
     NSMutableArray *screens = NSMutableArray.new;
     for (NSWindow *window in self.windows) {
         NSScreen *screen = window.screen;
-        if (!screen || (![self showOnAllSpaces] &&
-                        !(window.occlusionState & NSWindowOcclusionStateVisible)))
+        if (!screen || (![self showOnAllSpaces] && !(window.occlusionState & NSWindowOcclusionStateVisible)))
             continue;
         [screens addObject:@{
             @"identifier" : [self identifierForScreen:screen],
             @"board" : [(DBBoardView *)window.contentView snapshotConfiguration]
         }];
     }
-    NSData *json = [NSJSONSerialization dataWithJSONObject:@{
-        @"screens" : screens, @"force" : @(completions.count > 0)
-    } options:0 error:NULL];
+    NSData *json =
+        [NSJSONSerialization dataWithJSONObject:@{@"screens" : screens, @"force" : @(completions.count > 0)}
+                                        options:0
+                                          error:NULL];
     NSTask *task = NSTask.new;
     task.executableURL = NSBundle.mainBundle.executableURL;
-    task.arguments = @[
-        @"--render-wallpapers", [[NSString alloc] initWithData:json encoding:NSUTF8StringEncoding]
-    ];
+    task.arguments =
+        @[ @"--render-wallpapers", [[NSString alloc] initWithData:json encoding:NSUTF8StringEncoding] ];
     task.qualityOfService = NSQualityOfServiceUtility;
     task.standardOutput = NSFileHandle.fileHandleWithNullDevice;
     task.standardError = NSFileHandle.fileHandleWithNullDevice;
@@ -149,9 +150,9 @@
     }
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 30 * NSEC_PER_SEC),
                    dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
-        if (task.running)
-            [task terminate];
-    });
+                       if (task.running)
+                           [task terminate];
+                   });
 }
 - (void)applyWallpaperWithCompletion:(void (^)(BOOL))completion {
     [self refresh];
@@ -190,6 +191,7 @@
     }
     if (self.windows.count)
         return;
+    NSTimeInterval cycleStart = NSProcessInfo.processInfo.systemUptime;
     for (NSScreen *screen in NSScreen.screens) {
         NSWindow *window = [[NSWindow alloc] initWithContentRect:screen.frame
                                                        styleMask:NSWindowStyleMaskBorderless
@@ -207,6 +209,9 @@
         window.backgroundColor = NSColor.blackColor;
         DBBoardView *board = [[DBBoardView alloc]
             initWithFrame:NSMakeRect(0, 0, screen.frame.size.width, screen.frame.size.height)];
+        NSMutableDictionary *configuration = [board.snapshotConfiguration mutableCopy];
+        configuration[@"startTime"] = @(cycleStart);
+        [board applySnapshotConfiguration:configuration];
         board.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
         window.contentView = board;
         [window orderFrontRegardless];

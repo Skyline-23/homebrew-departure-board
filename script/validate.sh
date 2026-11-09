@@ -5,6 +5,8 @@ cd "$PROJECT_ROOT"
 python3 script/validate.py
 for strings in Resources/*.lproj/Localizable.strings; do plutil -lint "$strings" >/dev/null; done
 mkdir -p work
+xcrun clang -fobjc-arc -framework Foundation Tests/UserInstallation.m -o work/UserInstallationTests
+work/UserInstallationTests
 xcrun clang -fobjc-arc -framework Cocoa -framework ScreenSaver Tests/ScreenSaverHost.m -o work/ScreenSaverHost
 work/ScreenSaverHost "$PROJECT_ROOT/work/Build.noindex/Bundles/Departure Board.saver"
 # Window lifecycle checks activate test windows; keep them off a user's desktop.
