@@ -12,8 +12,8 @@ static BOOL RunLaunchctl(NSArray<NSString *> *arguments) {
     task.arguments = arguments;
     task.standardOutput = NSFileHandle.fileHandleWithNullDevice;
     task.standardError = NSFileHandle.fileHandleWithNullDevice;
-    if (![task launchAndReturnError:NULL]) {
 
+    if (![task launchAndReturnError:NULL]) {
         return NO;
     }
     [task waitUntilExit];
@@ -27,11 +27,10 @@ static BOOL RunLaunchctl(NSArray<NSString *> *arguments) {
     char value[128] = {0};
     size_t length = sizeof(value);
     NSString *boot;
-    if (sysctlbyname("kern.bootsessionuuid", value, &length, NULL, 0) == 0) {
 
+    if (sysctlbyname("kern.bootsessionuuid", value, &length, NULL, 0) == 0) {
         boot = [NSString stringWithUTF8String:value];
     } else {
-
         struct timeval bootTime = {0};
         length = sizeof(bootTime);
         sysctlbyname("kern.boottime", &bootTime, &length, NULL, 0);
@@ -39,8 +38,8 @@ static BOOL RunLaunchctl(NSArray<NSString *> *arguments) {
     }
     // A logout/login starts a new audit session even without restarting macOS.
     auditinfo_addr_t audit = {0};
-    if (getaudit_addr(&audit, sizeof(audit)) == 0) {
 
+    if (getaudit_addr(&audit, sizeof(audit)) == 0) {
         return [NSString stringWithFormat:@"%@:%u", boot, audit.ai_asid];
     }
     return boot;
@@ -84,7 +83,6 @@ static BOOL RunLaunchctl(NSArray<NSString *> *arguments) {
              sessionIdentifier:(NSString *)sessionIdentifier {
 
     if ([state[@"sessionIdentifier"] isEqual:sessionIdentifier]) {
-
         return [state[@"keepRunning"] boolValue];
     }
     return [settings[@"launchAtLogin"] boolValue];
@@ -94,10 +92,8 @@ static BOOL RunLaunchctl(NSArray<NSString *> *arguments) {
 
     for (NSRunningApplication *application in [NSRunningApplication
              runningApplicationsWithBundleIdentifier:@"com.skyline23.departureboard"]) {
-
         if (application.processIdentifier != getpid() && !application.terminated &&
             application.activationPolicy != NSApplicationActivationPolicyProhibited) {
-
             return application;
         }
     }
@@ -107,21 +103,21 @@ static BOOL RunLaunchctl(NSArray<NSString *> *arguments) {
 + (void)performMaintenance {
 
     NSDictionary *state = [NSDictionary dictionaryWithContentsOfFile:self.statePath] ?: @{};
+
     if (!self.runningApplication && [self shouldStartForSettings:DBSettingsStore.settings
                                                     runtimeState:state
                                                sessionIdentifier:self.sessionIdentifier]) {
-
         NSString *path = DBSettingsStore.settings[@"companionPath"];
         NSString *installed = @"/Applications/Departure Board.app";
         NSBundle *installedBundle = [NSBundle bundleWithPath:installed];
+
         if ([installedBundle.bundleIdentifier isEqual:@"com.skyline23.departureboard"] &&
             [installedBundle.infoDictionary[@"CFBundleShortVersionString"]
                 isEqual:NSBundle.mainBundle.infoDictionary[@"CFBundleShortVersionString"]]) {
-
             path = installed;
         }
-        if (path.length) {
 
+        if (path.length) {
             NSWorkspaceOpenConfiguration *configuration =
                 NSWorkspaceOpenConfiguration.configuration;
             configuration.activates = NO;
@@ -133,7 +129,6 @@ static BOOL RunLaunchctl(NSArray<NSString *> *arguments) {
                        configuration:configuration
                    completionHandler:^(NSRunningApplication *application, NSError *error) {
                        if (error) {
-
                            NSLog(@"Could not restore Departure Board: %@",
                                  error.localizedDescription);
                        }
@@ -141,15 +136,15 @@ static BOOL RunLaunchctl(NSArray<NSString *> *arguments) {
                    }];
             // The command-line helper needs a run loop for Launch Services' callback.
             NSDate *deadline = [NSDate dateWithTimeIntervalSinceNow:8];
+
             while (dispatch_semaphore_wait(done, DISPATCH_TIME_NOW) != 0 &&
                    deadline.timeIntervalSinceNow > 0) {
-
                 [NSRunLoop.currentRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:.05]];
             }
         }
     }
-    if ([LiveFlightStore shouldRefreshInBackground]) {
 
+    if ([LiveFlightStore shouldRefreshInBackground]) {
         [LiveFlightStore refreshWithError:NULL];
     }
 }
@@ -165,8 +160,8 @@ static BOOL RunLaunchctl(NSArray<NSString *> *arguments) {
     NSString *legacyPath =
         [folder stringByAppendingPathComponent:@"io.skyline.departureboard.refresh.plist"];
     NSDictionary *legacyJob = [NSDictionary dictionaryWithContentsOfFile:legacyPath];
-    if ([legacyJob[@"Label"] isEqual:@"io.skyline.departureboard.refresh"]) {
 
+    if ([legacyJob[@"Label"] isEqual:@"io.skyline.departureboard.refresh"]) {
         RunLaunchctl(@[
             @"bootout",
             [NSString stringWithFormat:@"gui/%u/io.skyline.departureboard.refresh", getuid()]
@@ -176,17 +171,17 @@ static BOOL RunLaunchctl(NSArray<NSString *> *arguments) {
     NSString *path =
         [folder stringByAppendingPathComponent:@"com.skyline23.departureboard.refresh.plist"];
     NSString *executable = NSBundle.mainBundle.executablePath;
+
     for (NSString *application in @[
              @"/Applications/Departure Board.app",
              [[LiveFlightStore userHome]
                  stringByAppendingPathComponent:@"Applications/Departure Board.app"]
          ]) {
-
         NSBundle *bundle = [NSBundle bundleWithPath:application];
+
         if ([bundle.bundleIdentifier isEqual:@"com.skyline23.departureboard"] &&
             [bundle.infoDictionary[@"CFBundleShortVersionString"]
                 isEqual:NSBundle.mainBundle.infoDictionary[@"CFBundleShortVersionString"]]) {
-
             executable =
                 [application stringByAppendingPathComponent:@"Contents/MacOS/DepartureBoard"];
             break;
@@ -203,16 +198,16 @@ static BOOL RunLaunchctl(NSArray<NSString *> *arguments) {
     NSString *service =
         [NSString stringWithFormat:@"gui/%u/com.skyline23.departureboard.refresh", getuid()];
     BOOL registered = RunLaunchctl(@[ @"print", service ]);
+
     if (unchanged && registered) {
-
         return;
     }
+
     if (![job writeToFile:path atomically:YES]) {
-
         return;
     }
-    if (registered) {
 
+    if (registered) {
         RunLaunchctl(@[ @"bootout", service ]);
     }
     RunLaunchctl(@[ @"bootstrap", [NSString stringWithFormat:@"gui/%u", getuid()], path ]);

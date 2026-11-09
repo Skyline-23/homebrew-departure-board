@@ -20,7 +20,6 @@ void DBFillRect(NSRect rect, NSColor *color) {
 NSFont *DBFont(CGFloat size, BOOL bold, BOOL mono) {
 
     if (mono) {
-
         return [NSFont
             monospacedDigitSystemFontOfSize:size
                                      weight:bold ? NSFontWeightSemibold : NSFontWeightRegular];
@@ -43,7 +42,6 @@ void DBDrawTextWithFont(NSString *text, NSRect rect, NSFont *font, NSColor *colo
                         NSTextAlignment align) {
 
     if (!text.length || rect.size.width <= 0) {
-
         return;
     }
     NSMutableParagraphStyle *paragraph = NSMutableParagraphStyle.new;
@@ -58,8 +56,8 @@ void DBDrawTextWithFont(NSString *text, NSRect rect, NSFont *font, NSColor *colo
     // Keep one type size across a row. Long labels use an ellipsis instead of
     // making each destination or flight number a different visual size.
     CGFloat lineHeight = ceil(font.ascender - font.descender + font.leading);
-    if (lineHeight > rect.size.height) {
 
+    if (lineHeight > rect.size.height) {
         // Private system font names cannot be resolved with fontWithName:.
         // Reuse the descriptor so clocks retain their font when scaled down.
         font = [NSFont fontWithDescriptor:font.fontDescriptor
@@ -83,19 +81,18 @@ NSString *DBStatusText(NSString *key, NSString *language) {
 NSColor *DBStatusColor(NSString *status) {
 
     if ([status isEqual:@"cancelled"]) {
-
         return DBColor(@"ff7880");
     }
-    if ([status isEqual:@"delayed"] || [status isEqual:@"closing"]) {
 
+    if ([status isEqual:@"delayed"] || [status isEqual:@"closing"]) {
         return DBColor(@"ffc65b");
     }
-    if ([status isEqual:@"boarding"] || [status isEqual:@"gate"]) {
 
+    if ([status isEqual:@"boarding"] || [status isEqual:@"gate"]) {
         return DBColor(@"88e4bd");
     }
-    if ([status isEqual:@"departed"]) {
 
+    if ([status isEqual:@"departed"]) {
         return DBColor(@"7891a5");
     }
     return DBColor(@"e5edf2");
@@ -115,15 +112,15 @@ void DBDrawDepartureIcon(NSPoint point, CGFloat size, NSColor *color) {
         [NSString stringWithFormat:@"%.3f/%.3f/%.3f/%.3f", rgb.redComponent, rgb.greenComponent,
                                    rgb.blueComponent, rgb.alphaComponent];
     NSImage *icon = [icons objectForKey:key];
-    if (!icon) {
 
+    if (!icon) {
         NSImage *symbol = [[NSImage imageWithSystemSymbolName:@"airplane.departure"
                                      accessibilityDescription:nil]
             imageWithSymbolConfiguration:[NSImageSymbolConfiguration
                                              configurationWithPointSize:128
                                                                  weight:NSFontWeightRegular]];
-        if (!symbol) {
 
+        if (!symbol) {
             return;
         }
         NSSize resolution = NSMakeSize(ceil(symbol.size.width), ceil(symbol.size.height));

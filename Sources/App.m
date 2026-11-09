@@ -23,22 +23,22 @@
 - (void)applicationDidFinishLaunching:(NSNotification *)notification {
 
     NSArray<NSString *> *arguments = NSProcessInfo.processInfo.arguments;
-    if (!self.board && ![arguments containsObject:@"--background"]) {
 
+    if (!self.board && ![arguments containsObject:@"--background"]) {
         self.board = [DBCommandLine boardWithArguments:arguments];
     }
     NSMutableDictionary *currentSettings = [DBSettingsStore.settings mutableCopy];
     currentSettings[@"companionPath"] = NSBundle.mainBundle.bundlePath;
     [DBSettingsStore saveSettings:currentSettings replacementAPIKey:nil error:NULL];
     BOOL background = [arguments containsObject:@"--background"];
-    if (!background) {
 
+    if (!background) {
         [self createMainWindow];
     }
     [self buildMenus];
     [self buildStatusMenu];
-    if (!background) {
 
+    if (!background) {
         [self showBoard:nil];
     }
     self.desktop = DBDesktopController.new;
@@ -48,12 +48,12 @@
     [self updateAnimationTimer];
     [LiveFlightStore refreshInBackground];
     [DBBackgroundAgent configure];
-    if ([arguments containsObject:@"--fullscreen"]) {
 
+    if ([arguments containsObject:@"--fullscreen"]) {
         [self.window toggleFullScreen:nil];
     }
-    if ([arguments containsObject:@"--settings"] || (!background && arguments.count == 1)) {
 
+    if ([arguments containsObject:@"--settings"] || (!background && arguments.count == 1)) {
         [self showSettings:nil];
     }
 }
@@ -66,12 +66,12 @@
 - (void)updateAnimationTimer {
 
     NSTimeInterval interval = self.desktop.preferredAnimationInterval;
-    if ([self previewIsVisible]) {
 
+    if ([self previewIsVisible]) {
         interval = MIN(interval, self.board.preferredAnimationInterval);
     }
-    if (self.timer && fabs(self.timer.timeInterval - interval) < .001) {
 
+    if (self.timer && fabs(self.timer.timeInterval - interval) < .001) {
         return;
     }
     [self.timer invalidate];
@@ -80,7 +80,6 @@
                                         repeats:YES
                                           block:^(NSTimer *timer) {
                                               if ([weakSelf previewIsVisible]) {
-
                                                   [weakSelf.board tick];
                                               }
                                               [weakSelf.desktop tick];
@@ -93,11 +92,10 @@
 - (void)createMainWindow {
 
     if (self.window) {
-
         return;
     }
-    if (!self.board) {
 
+    if (!self.board) {
         self.board = [[DBBoardView alloc] initWithFrame:NSMakeRect(0, 0, 1440, 900)];
     }
     self.window = [[NSWindow alloc]
@@ -105,6 +103,7 @@
                   styleMask:NSWindowStyleMaskTitled | NSWindowStyleMaskClosable |
                             NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable
                     backing:NSBackingStoreBuffered
+
                       defer:YES];
     self.window.title = @"Departure Board";
     self.window.colorSpace = NSColorSpace.sRGBColorSpace;
@@ -135,8 +134,8 @@
     [self.timer invalidate];
     [self.desktop stop];
     [NSDistributedNotificationCenter.defaultCenter removeObserver:self];
-    if (self.runtimeRegistered) {
 
+    if (self.runtimeRegistered) {
         [DBBackgroundAgent recordApplicationQuit];
     }
 }
@@ -144,14 +143,12 @@
 - (void)windowWillClose:(NSNotification *)notification {
 
     if (notification.object != self.window) {
-
         return;
     }
     [self closeSettings];
     NSWindow *closed = self.window;
     dispatch_async(dispatch_get_main_queue(), ^{
         if (self.window == closed && !closed.visible) {
-
             closed.contentView = nil;
             self.board.wantsLayer = NO;
             self.window = nil;
@@ -169,8 +166,8 @@
 - (void)closeSettings {
 
     NSWindow *settings = self.options;
-    if (!settings) {
 
+    if (!settings) {
         return;
     }
     [self.window endSheet:settings];
@@ -190,12 +187,12 @@
     self.statusItem.button.image = [NSImage imageWithSystemSymbolName:@"airplane.departure"
                                              accessibilityDescription:@"Departure Board"];
     NSMenu *menu = NSMenu.new;
+
     for (NSArray *entry in @[
              @[ @"menu.settings", NSStringFromSelector(@selector(showSettings:)) ],
              @[ @"menu.showBoard", NSStringFromSelector(@selector(showBoard:)) ],
              @[ @"settings.setWallpaper", NSStringFromSelector(@selector(applyWallpaper:)) ]
          ]) {
-
         NSMenuItem *item = [menu addItemWithTitle:DBUIString(entry[0])
                                            action:NSSelectorFromString(entry[1])
                                     keyEquivalent:@""];
@@ -234,8 +231,8 @@
                                                         action:NULL
                                                  keyEquivalent:@""];
     NSMenu *places = [[NSMenu alloc] initWithTitle:DBUIString(@"menu.location")];
-    for (NSDictionary *location in DBLocations()) {
 
+    for (NSDictionary *location in DBLocations()) {
         NSMenuItem *item = [places addItemWithTitle:DBUIString(location[@"displayNameKey"])
                                              action:@selector(chooseLocation:)
                                       keyEquivalent:@""];
@@ -293,8 +290,8 @@
 - (void)showSettings:(id)sender {
 
     [self showBoard:nil];
-    if (self.options) {
 
+    if (self.options) {
         [self.options makeKeyAndOrderFront:nil];
         return;
     }
@@ -308,7 +305,6 @@
     [self.board applySettingsFromWindow:self.options
                              completion:^(BOOL saved) {
                                  if (!saved) {
-
                                      return;
                                  }
                                  [self closeSettings];
@@ -325,26 +321,24 @@
             button.enabled = YES;
             button.title =
                 DBUIString(success ? @"settings.wallpaperApplied" : @"settings.setWallpaper");
-            if (!success) {
 
+            if (!success) {
                 NSAlert *alert = NSAlert.new;
                 alert.messageText = DBUIString(@"settings.wallpaperFailed");
                 [alert runModal];
             }
         }];
     };
-    if (self.options) {
 
+    if (self.options) {
         [(NSButton *)[self.options.contentView viewWithTag:204] setState:NSControlStateValueOn];
         [self.board applySettingsFromWindow:self.options
                                  completion:^(BOOL saved) {
                                      if (saved) {
-
                                          apply();
                                      }
                                  }];
     } else {
-
         NSMutableDictionary *settings = [DBSettingsStore.settings mutableCopy];
         settings[@"desktopEnabled"] = @YES;
         [DBSettingsStore saveSettings:settings replacementAPIKey:nil error:NULL];
@@ -355,8 +349,8 @@
 - (void)openScreenSaverSettings:(id)sender {
 
     NSString *pane = @"com.apple.ScreenSaver-Settings.extension";
-    if (@available(macOS 26.0, *)) {
 
+    if (@available(macOS 26.0, *)) {
         pane = @"com.apple.Wallpaper-Settings.extension";
     }
     [NSWorkspace.sharedWorkspace
@@ -369,8 +363,8 @@
 static BOOL HandleRunningApplication(NSArray<NSString *> *arguments) {
 
     NSRunningApplication *running = [DBBackgroundAgent runningApplication];
-    if (!running) {
 
+    if (!running) {
         return NO;
     }
     NSString *statePath = [[LiveFlightStore userHome]
@@ -387,23 +381,22 @@ static BOOL HandleRunningApplication(NSArray<NSString *> *arguments) {
                                                        error:NULL][NSFileModificationDate];
     BOOL replacedOnDisk = modified && running.launchDate &&
                           [modified compare:running.launchDate] == NSOrderedDescending;
-    if (replacedOnDisk || (currentVersion && ![installedVersion isEqual:currentVersion])) {
 
+    if (replacedOnDisk || (currentVersion && ![installedVersion isEqual:currentVersion])) {
         [running terminate];
         NSDate *deadline = [NSDate dateWithTimeIntervalSinceNow:3];
         // Launch Services may cache isTerminated after the process has exited.
         pid_t previousPID = running.processIdentifier;
+
         while (deadline.timeIntervalSinceNow > 0) {
-
             if (kill(previousPID, 0) == -1 && errno == ESRCH) {
-
                 return NO;
             }
             [NSRunLoop.currentRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:.05]];
         }
     }
-    if (![arguments containsObject:@"--background"]) {
 
+    if (![arguments containsObject:@"--background"]) {
         [NSDistributedNotificationCenter.defaultCenter
             postNotificationName:@"com.skyline23.departureboard.showSettings"
                           object:nil
@@ -417,21 +410,20 @@ static BOOL HandleRunningApplication(NSArray<NSString *> *arguments) {
 int main(int argc, const char *argv[]) {
 
     @autoreleasepool {
-
         NSArray<NSString *> *arguments = NSProcessInfo.processInfo.arguments;
         NSNumber *commandResult = [DBCommandLine runWithArguments:arguments];
-        if (commandResult) {
 
+        if (commandResult) {
             return commandResult.intValue;
         }
-        if (!DBSettingsStore.settings[@"hasAPIKey"]) {
 
+        if (!DBSettingsStore.settings[@"hasAPIKey"]) {
             [DBSettingsStore saveSettings:DBSettingsStore.settings
                         replacementAPIKey:nil
                                     error:NULL];
         }
-        if (HandleRunningApplication(arguments)) {
 
+        if (HandleRunningApplication(arguments)) {
             return 0;
         }
         NSApplication *app = NSApplication.sharedApplication;

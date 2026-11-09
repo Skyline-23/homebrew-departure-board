@@ -12,8 +12,8 @@ NSString *DBBoardString(NSString *key, NSString *language) {
 
     NSString *locale = language ?: @"en";
     NSDictionary *strings = tables[locale];
-    if (!strings) {
 
+    if (!strings) {
         NSBundle *bundle = [NSBundle bundleForClass:DBBoardView.class];
         NSURL *url = [bundle URLForResource:@"Localizable"
                               withExtension:@"strings"
@@ -23,8 +23,8 @@ NSString *DBBoardString(NSString *key, NSString *language) {
         tables[locale] = strings ?: @{};
     }
     NSString *value = strings[key];
-    if (value) {
 
+    if (value) {
         return value;
     }
     return [locale isEqual:@"en"] ? key : DBBoardString(key, @"en");

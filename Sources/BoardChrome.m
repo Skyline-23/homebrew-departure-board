@@ -39,15 +39,14 @@
 - (void)footer:(NSRect)area text:(NSString *)message {
 
     if (self.airportAdapter) {
-
         [self.airportAdapter drawFooterInBounds:area context:[self airportRenderContext]];
         return;
     }
     CGFloat height = 40;
     CGFloat y = area.size.height - height;
     DBFillRect(NSMakeRect(0, y, area.size.width, height), DBColor(@"080d13"));
-    if (message.length) {
 
+    if (message.length) {
         DBDrawText(message, NSMakeRect(24, y + 2, 1450, height - 3), height * .57,
                    NSColor.whiteColor, NO, NSTextAlignmentLeft, NO);
     }

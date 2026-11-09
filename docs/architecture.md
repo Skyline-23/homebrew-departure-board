@@ -54,7 +54,7 @@ perform network requests or start timers.
 ## Formatting and verification
 
 Source files use four-space indentation, explicit control-flow braces and a
-100-column limit. Leave a blank line after function and control-flow openings.
+100-column limit. Leave a blank line after function openings and before a new control-flow block.
 Format Objective-C and Swift with the checked-in configurations:
 
 ```sh

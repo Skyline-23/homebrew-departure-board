@@ -19,22 +19,22 @@ static NSSet *DestinationWords(NSString *name) {
 + (NSDictionary *)namesFromBindings:(NSArray *)rows providerNames:(NSDictionary *)providers {
 
     NSMutableDictionary *groups = NSMutableDictionary.new;
-    for (NSDictionary *row in rows) {
 
+    for (NSDictionary *row in rows) {
         NSString *code = row[@"iata"][@"value"], *city = row[@"city"][@"value"];
         NSString *language = row[@"lang"][@"value"], *name = row[@"label"][@"value"];
-        if (!code.length || !city.length || !language.length || !name.length) {
 
+        if (!code.length || !city.length || !language.length || !name.length) {
             continue;
         }
         NSMutableDictionary *cities = groups[code];
-        if (!cities) {
 
+        if (!cities) {
             groups[code] = cities = NSMutableDictionary.new;
         }
         NSMutableDictionary *entry = cities[city];
-        if (!entry) {
 
+        if (!entry) {
             cities[city] = entry =
                 [@{@"labels" : NSMutableDictionary.new, @"links" : row[@"links"][@"value"] ?: @"0"}
                     mutableCopy];
@@ -42,12 +42,12 @@ static NSSet *DestinationWords(NSString *name) {
         entry[@"labels"][language] = name;
     }
     NSMutableDictionary *result = NSMutableDictionary.new;
-    for (NSString *code in groups) {
 
+    for (NSString *code in groups) {
         NSSet *sourceWords = DestinationWords(providers[code]);
         double best = -1;
-        for (NSDictionary *entry in [groups[code] allValues]) {
 
+        for (NSDictionary *entry in [groups[code] allValues]) {
             NSDictionary *labels = entry[@"labels"];
             NSSet *words = DestinationWords(labels[@"en"]);
             NSMutableSet *shared = [sourceWords mutableCopy];
@@ -55,8 +55,8 @@ static NSSet *DestinationWords(NSString *name) {
             double score = shared.count * 100.0 / MAX(1, sourceWords.count) +
                            shared.count * 10.0 / MAX(1, words.count) +
                            [entry[@"links"] doubleValue] / 100000.0;
-            if (score > best) {
 
+            if (score > best) {
                 best = score;
                 result[code] = labels;
             }
@@ -80,10 +80,9 @@ static NSSet *DestinationWords(NSString *name) {
     static NSDate *modified;
     static NSTimeInterval nextCheck;
     @synchronized(self) {
-
         NSTimeInterval now = NSProcessInfo.processInfo.systemUptime;
-        if (names && now < nextCheck) {
 
+        if (names && now < nextCheck) {
             return names;
         }
         nextCheck = now + 2;
@@ -91,12 +90,12 @@ static NSSet *DestinationWords(NSString *name) {
         NSDate *current =
             [NSFileManager.defaultManager attributesOfItemAtPath:url.path
                                                            error:NULL][NSFileModificationDate];
-        if (names && ((current == nil && modified == nil) || [current isEqual:modified])) {
 
+        if (names && ((current == nil && modified == nil) || [current isEqual:modified])) {
             return names;
         }
-        if (!seed) {
 
+        if (!seed) {
             NSURL *bundled =
                 [[NSBundle bundleForClass:DBBoardView.class] URLForResource:@"DestinationNames"
                                                               withExtension:@"json"];
@@ -122,13 +121,13 @@ static NSSet *DestinationWords(NSString *name) {
 
     NSDictionary *entry = self.names[airport];
     NSString *locale = language.lowercaseString;
-    if ([locale isEqual:@"fil"]) {
 
+    if ([locale isEqual:@"fil"]) {
         locale = @"tl";
     }
     NSString *name = entry[locale];
-    if (!name && [locale hasPrefix:@"zh"]) {
 
+    if (!name && [locale hasPrefix:@"zh"]) {
         name = entry[@"zh"];
     }
     return name ?: entry[@"en"] ?: fallback ?: airport;
@@ -139,35 +138,34 @@ static NSSet *DestinationWords(NSString *name) {
     NSMutableSet *missing = NSMutableSet.new;
     NSMutableDictionary *providers = NSMutableDictionary.new;
     NSDictionary *known = self.names;
+
     for (NSDictionary *flight in flights) {
-
         NSString *code = flight[@"destinationCode"];
-        if (code.length) {
 
+        if (code.length) {
             providers[code] = flight[@"destinationName"] ?: @"";
         }
-        if (code.length == 3 && !known[code]) {
 
+        if (code.length == 3 && !known[code]) {
             [missing addObject:code];
         }
     }
-    if (!missing.count) {
 
+    if (!missing.count) {
         return;
     }
     // Destination metadata is independent of the paid flight feed. One batch
     // supplies every language; display ticks never perform network requests.
     NSMutableArray *values = NSMutableArray.new;
-    for (NSString *code in missing) {
 
+    for (NSString *code in missing) {
         if ([code rangeOfCharacterFromSet:NSCharacterSet.uppercaseLetterCharacterSet.invertedSet]
                 .location == NSNotFound) {
-
             [values addObject:[NSString stringWithFormat:@"\"%@\"", code]];
         }
     }
-    if (!values.count) {
 
+    if (!values.count) {
         return;
     }
     NSString *query = [NSString
@@ -198,25 +196,24 @@ static NSSet *DestinationWords(NSString *name) {
         dataTaskWithRequest:request
           completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
               if (!error && [(NSHTTPURLResponse *)response statusCode] == 200) {
-
                   bytes = data;
               }
               dispatch_semaphore_signal(done);
           }] resume];
+
     if (dispatch_semaphore_wait(done, dispatch_time(DISPATCH_TIME_NOW, 25 * NSEC_PER_SEC)) != 0 ||
         !bytes) {
-
         return;
     }
     NSDictionary *body = [NSJSONSerialization JSONObjectWithData:bytes options:0 error:NULL];
     NSArray *rows = body[@"results"][@"bindings"];
-    if (![rows isKindOfClass:NSArray.class]) {
 
+    if (![rows isKindOfClass:NSArray.class]) {
         return;
     }
     NSMutableDictionary *updated = [known mutableCopy];
-    for (NSString *code in missing) {
 
+    for (NSString *code in missing) {
         updated[code] = @{}; // Cache missing metadata too, avoiding a request per frame/refresh.
     }
     [updated addEntriesFromDictionary:[self namesFromBindings:rows providerNames:providers]];

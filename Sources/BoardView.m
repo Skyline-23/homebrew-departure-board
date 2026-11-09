@@ -19,7 +19,6 @@
 - (instancetype)initWithFrame:(NSRect)frame {
 
     if ((self = [super initWithFrame:frame])) {
-
         self.startTime = NSProcessInfo.processInfo.systemUptime;
         self.lastRenderedSecond = -1;
         self.pageCycle = -1;
@@ -32,8 +31,8 @@
 - (void)viewDidMoveToWindow {
 
     [super viewDidMoveToWindow];
-    if (self.window) {
 
+    if (self.window) {
         self.wantsLayer = YES;
         self.layer.contentsFormat = kCAContentsFormatRGBA8Uint;
         self.layer.opaque = YES;
@@ -97,11 +96,10 @@
 - (NSString *)effectiveStyle {
 
     if ([self.location[@"kind"] isEqual:@"rail"]) {
-
         return self.location[@"preset"];
     }
-    if ([self.displayStyle isEqual:@"flap"]) {
 
+    if ([self.displayStyle isEqual:@"flap"]) {
         return @"flap";
     }
     return self.location[@"preset"];
@@ -110,9 +108,7 @@
 - (BOOL)hasActiveFlapAnimationAt:(NSTimeInterval)uptime {
 
     for (NSDictionary *cell in self.flapStates.objectEnumerator) {
-
         if (uptime - [cell[@"start"] doubleValue] < DBFlapTransitionDuration) {
-
             return YES;
         }
     }
@@ -122,8 +118,8 @@
 - (NSTimeInterval)preferredAnimationInterval {
 
     BOOL flap = [[self effectiveStyle] isEqual:@"flap"] && !self.reducedMotion;
-    if (!flap) {
 
+    if (!flap) {
         return 1;
     }
     BOOL moving =
@@ -144,11 +140,10 @@
     BOOL animating = flap && !self.reducedMotion && [self hasActiveFlapAnimationAt:uptime];
     BOOL finishedAnimation = self.flapWasAnimating && !animating;
     self.flapWasAnimating = animating;
-    if (second != self.lastRenderedSecond || animating || finishedAnimation || self.referenceDate) {
 
+    if (second != self.lastRenderedSecond || animating || finishedAnimation || self.referenceDate) {
         if (!self.referenceDate && second != self.lastRenderedSecond &&
             ![DBSettingsStore.settings isEqual:self.loadedSettings]) {
-
             [self reloadSettings];
             return YES;
         }
@@ -159,17 +154,16 @@
                              : cycle % 2                             ? native
                                                                      : @"en";
         NSArray *rows = self.rows;
-        if (second != self.lastRenderedSecond || self.referenceDate || !rows) {
 
+        if (second != self.lastRenderedSecond || self.referenceDate || !rows) {
             rows = self.referenceDate || self.useSampleData
                        ? DBDepartures(self.location, now, 128)
                        : [LiveFlightStore rowsForLocation:self.location now:now];
         }
         NSString *emptyMessage = @"data.noDepartures";
+
         if (!rows.count && !self.referenceDate && !self.useSampleData) {
-
             switch ([LiveFlightStore availabilityForAirport:self.locationCode]) {
-
             case DBFlightAvailabilityLoading:
                 emptyMessage = @"data.loading";
                 break;
@@ -198,8 +192,8 @@
         self.emptyMessageKey = emptyMessage;
         self.rows = rows;
         self.pageCycle = page;
-        if (changed) {
 
+        if (changed) {
             self.needsDisplay = YES;
         }
         return changed;
@@ -215,12 +209,11 @@
 - (void)drawBoardInRect:(NSRect)bounds {
 
     if (!self.boardDate) {
-
         [self tick];
     }
     DBFillRect(bounds, DBColor(@"030508"));
-    if (bounds.size.width < 1 || bounds.size.height < 1) {
 
+    if (bounds.size.width < 1 || bounds.size.height < 1) {
         return;
     }
     NSString *style = [self effectiveStyle];
@@ -235,22 +228,19 @@
         [transform concat];
         NSRect area = NSMakeRect(0, 0, w, h);
         DBFillRect(area, DBColor(self.location[@"bg"]));
-        if ([style isEqual:@"flap"]) {
 
+        if ([style isEqual:@"flap"]) {
             [self drawFlapBoard:area];
         } else if ([style isEqual:@"victoria"] || [style isEqual:@"sydney"]) {
-
             [self drawRailCards:area];
         } else if ([self.location[@"kind"] isEqual:@"rail"]) {
-
             [self drawRailTable:area];
         } else {
-
             [self drawAirport:area];
         }
         CGFloat darkness = 1 - MAX(.35, MIN(1, self.brightness));
-        if (darkness > 0) {
 
+        if (darkness > 0) {
             DBFillRect(area, [NSColor colorWithWhite:0 alpha:darkness]);
         }
         [NSGraphicsContext restoreGraphicsState];
@@ -290,7 +280,6 @@
 - (BOOL)writeSnapshot:(NSString *)path size:(NSSize)size {
 
     @autoreleasepool {
-
         [self tick];
         NSBitmapImageRep *rep =
             [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL

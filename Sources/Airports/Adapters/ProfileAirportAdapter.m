@@ -10,9 +10,9 @@
 - (instancetype)initWithLocation:(NSDictionary *)location {
 
     if ((self = [super init])) {
-
         _location = [location copy];
     }
+
     return self;
 }
 
@@ -34,14 +34,14 @@
 - (void)drawCompactHeaderDecorationInRect:(NSRect)rect {
 
     NSDictionary *style = self.display[@"compactHeader"];
-    if (style[@"bottomRuleColor"]) {
 
+    if (style[@"bottomRuleColor"]) {
         DBFillRect(NSMakeRect(0, NSMaxY(rect) - [style[@"bottomRuleHeight"] doubleValue],
                               rect.size.width, [style[@"bottomRuleHeight"] doubleValue]),
                    DBColor(style[@"bottomRuleColor"]));
     }
-    if (style[@"leftRuleColor"]) {
 
+    if (style[@"leftRuleColor"]) {
         DBFillRect(NSMakeRect(0, 0, [style[@"leftRuleWidth"] doubleValue], rect.size.height),
                    DBColor(style[@"leftRuleColor"]));
     }
@@ -55,10 +55,11 @@
 - (CGFloat)weightForColumn:(NSString *)column {
 
     NSDictionary *weights = self.location[@"display"][@"columnWeights"];
-    if (weights[column]) {
 
+    if (weights[column]) {
         return [weights[column] doubleValue];
     }
+
     NSDictionary *defaults = @{
         @"time" : @.13,
         @"flight" : @.21,
@@ -89,9 +90,9 @@
 - (NSInteger)rowCountForBounds:(NSRect)area scale:(CGFloat)scale density:(NSInteger)density {
 
     if (density > 0) {
-
         return MAX(8, MIN(64, density));
     }
+
     NSDictionary *profile = self.location[@"display"];
     CGFloat tableTop =
         [self headerHeightForBounds:area scale:scale] + [self columnHeaderHeight] + 4;

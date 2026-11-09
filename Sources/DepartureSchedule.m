@@ -16,11 +16,11 @@ static NSDictionary *DBData(void) {
                          : nil;
         };
         NSMutableArray *locations = NSMutableArray.new;
+
         for (NSString *code in readJSON(@"LocationOrder", nil)) {
-
             NSDictionary *location = readJSON(code, @"Locations");
-            if (location) {
 
+            if (location) {
                 [locations addObject:location];
             }
         }
@@ -41,9 +41,7 @@ NSArray<NSDictionary *> *DBLocations(void) {
 NSDictionary *DBLocation(NSString *code) {
 
     for (NSDictionary *location in DBLocations()) {
-
         if ([location[@"code"] isEqual:code]) {
-
             return location;
         }
     }
@@ -53,14 +51,14 @@ NSDictionary *DBLocation(NSString *code) {
 NSString *DBTime(NSDate *date, NSDictionary *location, NSString *format) {
 
     static NSMutableDictionary *formatters;
-    if (!formatters) {
 
+    if (!formatters) {
         formatters = NSMutableDictionary.new;
     }
     NSString *key = [NSString stringWithFormat:@"%@/%@", location[@"zone"], format];
     NSDateFormatter *formatter = formatters[key];
-    if (!formatter) {
 
+    if (!formatter) {
         formatter = NSDateFormatter.new;
         formatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
         formatter.timeZone =
@@ -74,13 +72,12 @@ NSString *DBTime(NSDate *date, NSDictionary *location, NSString *format) {
 NSString *DBLocalized(NSDictionary *record, NSString *language) {
 
     if (record[@"airport"]) {
-
         return [DBDestinationStore nameForAirport:record[@"airport"]
                                          language:language
                                          fallback:record[@"en"]];
     }
-    if (record[@"key"]) {
 
+    if (record[@"key"]) {
         return DBBoardString(record[@"key"], language);
     }
     return record[language] ?: record[@"en"] ?: @"";
@@ -89,16 +86,16 @@ NSString *DBLocalized(NSDictionary *record, NSString *language) {
 NSArray<NSDictionary *> *DBDepartures(NSDictionary *location, NSDate *now, NSUInteger count) {
 
     NSArray *routes = location[@"routes"];
-    if (!routes.count) {
 
+    if (!routes.count) {
         return @[];
     }
     BOOL rail = [location[@"kind"] isEqual:@"rail"];
     NSInteger step = rail ? 240 : 300;
     NSInteger slot = (NSInteger)floor(now.timeIntervalSince1970 / step) - 1;
     NSMutableArray *rows = NSMutableArray.new;
-    for (NSUInteger i = 0; i < count; i++) {
 
+    for (NSUInteger i = 0; i < count; i++) {
         NSInteger ident = slot + (NSInteger)i;
         NSUInteger routeIndex =
             (NSUInteger)((ident % (NSInteger)routes.count + (NSInteger)routes.count) %
@@ -124,8 +121,8 @@ NSArray<NSDictionary *> *DBDepartures(NSDictionary *location, NSDate *now, NSUIn
                   : @"";
         row[@"minutes"] = @(MAX(0, minutes));
         row[@"identity"] = @(ident);
-        if (!rail) {
 
+        if (!rail) {
             NSDictionary *airline = DBData()[@"airlines"][route[@"carrier"]];
             row[@"airline"] = airline[@"name"] ?: route[@"carrier"];
             row[@"color"] = airline[@"color"] ?: @"4985a9";
@@ -135,7 +132,6 @@ NSArray<NSDictionary *> *DBDepartures(NSDictionary *location, NSDate *now, NSUIn
             NSArray *gates = location[@"gates"];
             row[@"gate"] = gates[(NSUInteger)seed % gates.count];
         } else {
-
             row[@"gate"] = route[@"platform"] ?: @"1";
             row[@"flight"] = [NSString stringWithFormat:@"%ld", (long)(seed % 400 + 1)];
             row[@"airline"] = DBLocalized(route[@"service"], @"en");

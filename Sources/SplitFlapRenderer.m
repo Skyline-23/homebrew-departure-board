@@ -17,13 +17,13 @@
                               [letters addObject:s];
                           }];
     double now = NSProcessInfo.processInfo.systemUptime;
-    for (NSInteger i = 0; i < cells; i++) {
 
+    for (NSInteger i = 0; i < cells; i++) {
         NSString *glyph = i < (NSInteger)letters.count ? letters[i] : @" ";
         NSString *cellKey = [NSString stringWithFormat:@"%@-%ld", key, (long)i];
         NSDictionary *state = self.flapStates[cellKey];
-        if (![state[@"target"] isEqual:glyph]) {
 
+        if (![state[@"target"] isEqual:glyph]) {
             state = @{
                 @"old" : state[@"target"] ?: @" ",
                 @"target" : glyph,
@@ -31,8 +31,8 @@
             };
             self.flapStates[cellKey] = state;
             // Keep the final clean frame even if the next timer fires late.
-            if (!self.referenceDate && !self.reducedMotion) {
 
+            if (!self.referenceDate && !self.reducedMotion) {
                 self.flapWasAnimating = YES;
             }
         }
@@ -45,8 +45,8 @@
                       now >= [state[@"start"] doubleValue];
         NSString *shown = glyph;
         double progress = now - [state[@"start"] doubleValue];
-        if (moving && progress < .42 && [glyph canBeConvertedToEncoding:NSASCIIStringEncoding]) {
 
+        if (moving && progress < .42 && [glyph canBeConvertedToEncoding:NSASCIIStringEncoding]) {
             NSString *alphabet = @"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             shown = [alphabet
                 substringWithRange:NSMakeRange(
@@ -55,8 +55,8 @@
         NSRect gr = NSInsetRect(c, 1, -1);
         CGFloat size = MIN(cw * 1.10, fh * .79);
         DBDrawText(shown, gr, size, ink, YES, NSTextAlignmentCenter, NO);
-        if (moving) {
 
+        if (moving) {
             double phase = fmod(progress * 10, 1.0);
             CGFloat strip = fh * .48 * sin(phase * M_PI);
             DBFillRect(NSMakeRect(c.origin.x, c.origin.y + fh / 2 - strip, c.size.width, strip),
@@ -77,23 +77,22 @@
     CGFloat xs[] = {34, 196, 760, 1085, 1208};
     CGFloat widths[] = {142, 541, 304, 100, 356};
     CGFloat horizontal = area.size.width / 1600;
-    for (NSInteger index = 0; index < 5; index++) {
 
+    for (NSInteger index = 0; index < 5; index++) {
         xs[index] *= horizontal;
         widths[index] *= horizontal;
     }
-    for (int j = 0; j < 5; j++) {
 
+    for (int j = 0; j < 5; j++) {
         DBDrawText(labels[j], NSMakeRect(xs[j], 126, widths[j], 26), 16, DBColor(@"9da8aa"), YES,
                    NSTextAlignmentLeft, NO);
     }
     NSInteger count = self.density > 0 ? MAX(6, MIN(32, self.density))
                                        : MIN(32, (NSInteger)ceil(16 / self.boardScale));
     CGFloat rowH = (area.size.height - 218) / count;
+
     for (NSInteger i = 0; i < count; i++) {
-
         if ((NSUInteger)i >= self.rows.count) {
-
             break;
         }
         NSDictionary *row = self.rows[i];
@@ -104,8 +103,8 @@
             [DBStatusText(row[@"state"], self.currentLanguage) uppercaseString]
         ];
         NSInteger cells[] = {5, 20, 10, 3, 15};
-        for (int j = 0; j < 5; j++) {
 
+        for (int j = 0; j < 5; j++) {
             NSColor *ink = j == 0   ? DBColor(@"ffdc64")
                            : j == 4 ? DBStatusColor(row[@"state"])
                                     : DBColor(@"e8e7df");

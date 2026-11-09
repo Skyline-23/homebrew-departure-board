@@ -15,7 +15,6 @@
 - (instancetype)initWithFrame:(NSRect)frame isPreview:(BOOL)preview {
 
     if ((self = [super initWithFrame:frame isPreview:preview])) {
-
         self.animationTimeInterval = 1.0;
         self.board = [[DBBoardView alloc] initWithFrame:self.bounds];
         self.board.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
@@ -34,7 +33,6 @@
 - (void)stopAnimation {
 
     if (self.heartbeatPath.length) {
-
         [NSFileManager.defaultManager removeItemAtPath:self.heartbeatPath error:NULL];
     }
     [super stopAnimation];
@@ -50,8 +48,8 @@
 
     [self.board tick];
     self.animationTimeInterval = self.board.preferredAnimationInterval;
-    if (NSDate.timeIntervalSinceReferenceDate - self.lastHeartbeat > 30) {
 
+    if (NSDate.timeIntervalSinceReferenceDate - self.lastHeartbeat > 30) {
         [self updateHeartbeat];
     }
 }
@@ -59,7 +57,6 @@
 - (void)updateHeartbeat {
 
     if (!self.isPreview) {
-
         NSString *folder =
             [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)
                     .firstObject stringByAppendingPathComponent:@"DepartureBoard"];
@@ -84,10 +81,10 @@
 - (NSWindow *)configureSheet {
 
     if (!self.options) {
-
         self.options = [[NSPanel alloc] initWithContentRect:NSMakeRect(0, 0, 500, 164)
                                                   styleMask:NSWindowStyleMaskTitled
                                                     backing:NSBackingStoreBuffered
+
                                                       defer:NO];
         self.options.title = DBUIString(@"settings.title");
         self.options.releasedWhenClosed = NO;
@@ -115,8 +112,8 @@
 - (void)openCompanion:(id)sender {
 
     NSString *path = DBSettingsStore.settings[@"companionPath"];
-    if (!path.length) {
 
+    if (!path.length) {
         path =
             [NSHomeDirectory() stringByAppendingPathComponent:@"Applications/Departure Board.app"];
     }

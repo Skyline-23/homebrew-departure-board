@@ -23,23 +23,22 @@ static BOOL MovementsCompatible(NSDictionary *first, NSDictionary *second,
     if (![first[@"scheduledUtc"] isEqual:second[@"scheduledUtc"]] ||
         ![first[@"destinationCode"] length] ||
         ![first[@"destinationCode"] isEqual:second[@"destinationCode"]]) {
-
         return NO;
     }
     BOOL physicalMatch = NO;
+
     for (NSString *key in @[ @"gate", @"terminal", @"aircraft", @"callSign" ]) {
-
         NSString *a = first[key], *b = second[key];
-        if (!a.length || !b.length) {
 
+        if (!a.length || !b.length) {
             continue;
         }
-        if (![a isEqual:b]) {
 
+        if (![a isEqual:b]) {
             return NO;
         }
-        if (![key isEqual:@"terminal"]) {
 
+        if (![key isEqual:@"terminal"]) {
             physicalMatch = YES;
         }
     }
@@ -50,19 +49,17 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
 
     NSMutableArray *variants = [flight[@"variants"] mutableCopy] ?: NSMutableArray.new;
     NSMutableSet *numbers = [NSMutableSet setWithArray:[variants valueForKey:@"number"]];
+
     for (NSDictionary *variant in alias[@"variants"]) {
-
         if (![numbers containsObject:variant[@"number"]]) {
-
             [variants addObject:variant];
             [numbers addObject:variant[@"number"]];
         }
     }
     flight[@"variants"] = variants;
+
     for (NSString *key in @[ @"gate", @"terminal", @"checkIn", @"aircraft", @"callSign" ]) {
-
         if (![flight[key] length] && [alias[key] length]) {
-
             flight[key] = alias[key];
         }
     }
@@ -108,20 +105,20 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
     CFTypeRef result = NULL;
     OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &result);
     BOOL legacy = NO;
-    if (status == errSecItemNotFound) {
 
+    if (status == errSecItemNotFound) {
         query[(__bridge id)kSecAttrService] = @"io.skyline.departureboard.aerodatabox";
         status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &result);
         legacy = status == errSecSuccess;
     }
-    if (status != errSecSuccess) {
 
+    if (status != errSecSuccess) {
         return @"";
     }
     NSData *data = CFBridgingRelease(result);
     NSString *key = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] ?: @"";
-    if (legacy && key.length) {
 
+    if (legacy && key.length) {
         [self saveAPIKey:key error:NULL];
     }
     return key;
@@ -130,31 +127,29 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
 + (BOOL)saveAPIKey:(NSString *)apiKey error:(NSError **)error {
 
     if (!apiKey.length) {
-
         return YES; // Empty input keeps the existing saved apiKey.
     }
     NSData *data = [apiKey dataUsingEncoding:NSUTF8StringEncoding];
     NSDictionary *updates = @{(__bridge id)kSecValueData : data};
     OSStatus status = SecItemUpdate((__bridge CFDictionaryRef)[self APIKeyQuery],
                                     (__bridge CFDictionaryRef)updates);
-    if (status == errSecItemNotFound) {
 
+    if (status == errSecItemNotFound) {
         NSMutableDictionary *query = [[self APIKeyQuery] mutableCopy];
         [query addEntriesFromDictionary:updates];
         status = SecItemAdd((__bridge CFDictionaryRef)query, NULL);
     }
-    if (status != errSecSuccess && error) {
 
+    if (status != errSecSuccess && error) {
         *error = [NSError errorWithDomain:NSOSStatusErrorDomain code:status userInfo:nil];
     }
-    if (status == errSecSuccess) {
 
+    if (status == errSecSuccess) {
         NSString *folder = [self cacheURLForAirport:@"ICN"].path.stringByDeletingLastPathComponent;
+
         for (NSString *name in [NSFileManager.defaultManager contentsOfDirectoryAtPath:folder
                                                                                  error:NULL]) {
-
             if ([name hasSuffix:@".retry.plist"]) {
-
                 [NSFileManager.defaultManager
                     removeItemAtPath:[folder stringByAppendingPathComponent:name]
                                error:NULL];
@@ -169,7 +164,6 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
 + (NSDate *)dateFromISO:(NSString *)value {
 
     if (![value isKindOfClass:NSString.class] || !value.length) {
-
         return nil;
     }
     static NSCache *dates;
@@ -179,14 +173,14 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
         dates.countLimit = 4000;
     });
     id cached = [dates objectForKey:value];
-    if (cached) {
 
+    if (cached) {
         return cached == NSNull.null ? nil : cached;
     }
     NSMutableDictionary *thread = NSThread.currentThread.threadDictionary;
     NSArray *parsers = thread[@"DepartureBoard.dateParsers"];
-    if (!parsers) {
 
+    if (!parsers) {
         NSISO8601DateFormatter *fractional = NSISO8601DateFormatter.new;
         fractional.formatOptions =
             NSISO8601DateFormatWithInternetDateTime | NSISO8601DateFormatWithFractionalSeconds;
@@ -200,11 +194,11 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
         thread[@"DepartureBoard.dateParsers"] = parsers;
     }
     NSDate *date = nil;
+
     for (id parser in parsers) {
-
         date = [parser dateFromString:value];
-        if (date) {
 
+        if (date) {
             break;
         }
     }
@@ -218,49 +212,45 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
         [records sortedArrayUsingComparator:^NSComparisonResult(NSDictionary *a, NSDictionary *b) {
             NSInteger aQuality = ([a[@"aircraft"] length] > 0) + ([a[@"callSign"] length] > 0);
             NSInteger bQuality = ([b[@"aircraft"] length] > 0) + ([b[@"callSign"] length] > 0);
-            if (aQuality != bQuality) {
 
+            if (aQuality != bQuality) {
                 return aQuality > bQuality ? NSOrderedAscending : NSOrderedDescending;
             }
             return [a[@"number"] compare:b[@"number"] options:NSNumericSearch];
         }];
     NSMutableArray *flights = NSMutableArray.new, *aliases = NSMutableArray.new;
+
     for (NSDictionary *record in ordered) {
-
         if ([record[@"codeshareStatus"] isEqual:@"IsCodeshared"]) {
-
             [aliases addObject:record];
             continue;
         }
         NSMutableDictionary *match = nil;
+
         for (NSMutableDictionary *flight in flights) {
-
             if (MovementsCompatible(flight, record, YES)) {
-
                 match = flight;
                 break;
             }
         }
-        if (match) {
 
+        if (match) {
             MergeFlightVariants(match, record);
         } else {
-
             [flights addObject:[record mutableCopy]];
         }
     }
+
     for (NSDictionary *alias in aliases) {
-
         NSMutableArray *matches = NSMutableArray.new;
+
         for (NSMutableDictionary *flight in flights) {
-
             if (MovementsCompatible(flight, alias, NO)) {
-
                 [matches addObject:flight];
             }
         }
-        if (matches.count == 1) {
 
+        if (matches.count == 1) {
             MergeFlightVariants(matches.firstObject, alias);
         }
         // An ambiguous marketing number must not become a second physical flight.
@@ -276,28 +266,27 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
 
     NSMutableDictionary *unique = NSMutableDictionary.new;
     NSISO8601DateFormatter *formatter = NSISO8601DateFormatter.new;
+
     for (NSDictionary *flight in payload[@"departures"]) {
-
         if (![flight isKindOfClass:NSDictionary.class]) {
-
             continue;
         }
         NSDictionary *departure = ObjectDictionary(flight[@"departure"]);
-        if (!departure.count) {
 
+        if (!departure.count) {
             departure = ObjectDictionary(flight[@"movement"]);
         }
         NSDictionary *destination =
             ObjectDictionary(ObjectDictionary(flight[@"arrival"])[@"airport"]);
-        if (!destination.count) {
 
+        if (!destination.count) {
             destination = ObjectDictionary(ObjectDictionary(flight[@"movement"])[@"airport"]);
         }
         NSDate *scheduled =
             [self dateFromISO:ObjectDictionary(departure[@"scheduledTime"])[@"utc"]];
         NSString *number = flight[@"number"];
-        if (!scheduled || ![number isKindOfClass:NSString.class]) {
 
+        if (!scheduled || ![number isKindOfClass:NSString.class]) {
             continue;
         }
         NSDate *revised = [self dateFromISO:ObjectDictionary(departure[@"revisedTime"])[@"utc"]];
@@ -312,8 +301,8 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
             @"airlineName": ObjectDictionary(flight[@"airline"])[@"name"] ?: @"",
             @"airlineICAO": ObjectDictionary(flight[@"airline"])[@"icao"] ?: @""
         };
-        for (NSString *key in fields) {
 
+        for (NSString *key in fields) {
             id value = fields[key];
             row[key] = [value isKindOfClass:NSString.class] ? value : @"";
         }
@@ -348,21 +337,21 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
         [NSFileManager.defaultManager attributesOfItemAtPath:url.path
                                                        error:NULL][NSFileModificationDate];
     NSDictionary *cached = [snapshots objectForKey:airport];
-    if (modified && [cached[@"modified"] isEqual:modified]) {
 
+    if (modified && [cached[@"modified"] isEqual:modified]) {
         return cached[@"snapshot"];
     }
     NSData *data = [NSData dataWithContentsOfURL:url];
     id json = data ? [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL] : nil;
-    if ([json isKindOfClass:NSDictionary.class] && [json[@"formatVersion"] integerValue] < 4) {
 
+    if ([json isKindOfClass:NSDictionary.class] && [json[@"formatVersion"] integerValue] < 4) {
         NSMutableDictionary *upgraded = [json mutableCopy];
         upgraded[@"flights"] = [self groupCodeshares:json[@"flights"] ?: @[]];
         upgraded[@"formatVersion"] = @4;
         json = upgraded;
     }
-    if ([json isKindOfClass:NSDictionary.class] && modified) {
 
+    if ([json isKindOfClass:NSDictionary.class] && modified) {
         [snapshots setObject:@{@"modified" : modified, @"snapshot" : json} forKey:airport];
     }
     return [json isKindOfClass:NSDictionary.class] ? json : nil;
@@ -379,18 +368,18 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
     NSDictionary *snapshot = [self cachedSnapshotForAirport:location[@"code"]];
     NSTimeInterval timestamp = now.timeIntervalSince1970;
     NSDictionary *previous = [renderedRows objectForKey:location[@"code"]];
+
     if (previous[@"snapshot"] == snapshot && [previous[@"location"] isEqual:location] &&
         timestamp >= [previous[@"createdAt"] doubleValue] &&
         timestamp < [previous[@"validUntil"] doubleValue]) {
-
         return previous[@"rows"];
     }
     // Marketing flights change every four seconds. Minute countdowns, flight
     // expiry and refreshed snapshots can invalidate the rows sooner.
     NSTimeInterval validUntil = (floor(timestamp / 4) + 1) * 4;
     NSDate *fetched = [self dateFromISO:snapshot[@"fetchedAt"]];
-    if (!fetched || [now timeIntervalSinceDate:fetched] > 86400) {
 
+    if (!fetched || [now timeIntervalSinceDate:fetched] > 86400) {
         return @[];
     }
     validUntil = MIN(validUntil, fetched.timeIntervalSince1970 + 86400 + .000001);
@@ -408,22 +397,21 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
         @"Diverted" : @"diverted"
     };
     NSMutableArray *rows = NSMutableArray.new;
+
     for (id value in snapshot[@"flights"]) {
-
         if (![value isKindOfClass:NSDictionary.class]) {
-
             continue;
         }
         NSDictionary *flight = value;
         NSString *terminal = location[@"terminal"];
+
         if (terminal.length && [flight[@"terminal"] length] &&
             ![flight[@"terminal"] isEqual:terminal]) {
-
             continue;
         }
         NSDate *scheduled = [self dateFromISO:flight[@"scheduledUtc"]];
-        if (!scheduled || [scheduled timeIntervalSinceDate:now] < -1800) {
 
+        if (!scheduled || [scheduled timeIntervalSinceDate:now] < -1800) {
             continue;
         }
         NSDate *revised = [self dateFromISO:flight[@"revisedUtc"]];
@@ -438,8 +426,8 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
         NSString *airline = flight[@"airlineName"] ?: @"";
         NSString *airlineICAO = flight[@"airlineICAO"] ?: @"";
         NSArray *variants = flight[@"variants"];
-        if (variants.count) {
 
+        if (variants.count) {
             NSUInteger index = (NSUInteger)floor(now.timeIntervalSince1970 / 4.0) % variants.count;
             number = variants[index][@"number"];
             airline = variants[index][@"airline"];
@@ -447,8 +435,8 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
         }
         NSString *state = statusKeys[flight[@"status"]] ?: @"unknown";
         BOOL timeChanged = revised && fabs([revised timeIntervalSinceDate:scheduled]) >= 60;
-        if ([state isEqual:@"scheduled"] && [revised timeIntervalSinceDate:scheduled] >= 900) {
 
+        if ([state isEqual:@"scheduled"] && [revised timeIntervalSinceDate:scheduled] >= 900) {
             state = @"delayed";
         }
         [rows addObject:@{
@@ -491,32 +479,32 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
 
     NSString *path = [self cacheURLForAirport:airport].path;
     int lock = open([path stringByAppendingString:@".lock"].fileSystemRepresentation, O_RDONLY);
+
     if (lock >= 0) {
-
         BOOL refreshing = flock(lock, LOCK_EX | LOCK_NB) != 0;
-        if (!refreshing) {
 
+        if (!refreshing) {
             flock(lock, LOCK_UN);
         }
         close(lock);
-        if (refreshing) {
 
+        if (refreshing) {
             return DBFlightAvailabilityLoading;
         }
     }
     NSDictionary *snapshot = [self cachedSnapshotForAirport:airport];
-    if (!snapshot && ![DBSettingsStore.settings[@"hasAPIKey"] boolValue]) {
 
+    if (!snapshot && ![DBSettingsStore.settings[@"hasAPIKey"] boolValue]) {
         return DBFlightAvailabilityConfigurationRequired;
     }
     NSDictionary *failure =
         [NSDictionary dictionaryWithContentsOfFile:[path stringByAppendingString:@".retry.plist"]];
-    if (failure) {
 
+    if (failure) {
         return DBFlightAvailabilityUnavailable;
     }
-    if (snapshot) {
 
+    if (snapshot) {
         NSDate *fetched = [self dateFromISO:snapshot[@"fetchedAt"]];
         return fetched && -fetched.timeIntervalSinceNow < 86400 ? DBFlightAvailabilityEmpty
                                                                 : DBFlightAvailabilityUnavailable;
@@ -529,8 +517,8 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
 + (BOOL)refreshWithError:(NSError **)error {
 
     NSDictionary *settings = DBSettingsStore.settings;
-    if ([settings[@"sampleData"] boolValue]) {
 
+    if ([settings[@"sampleData"] boolValue]) {
         return YES;
     }
     NSString *airport = settings[@"location"] ?: @"ICN";
@@ -540,19 +528,18 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
 + (BOOL)refreshAirport:(NSString *)airport error:(NSError **)error {
 
     if (![DBLocation(airport)[@"kind"] isEqual:@"airport"]) {
-
         return YES;
     }
     // The app, a wake-up refresh and every display share this lock and cache.
     // A simultaneous request reuses the refresh already in progress.
     NSString *lockPath = [[self cacheURLForAirport:airport].path stringByAppendingString:@".lock"];
     int lock = open(lockPath.fileSystemRepresentation, O_CREAT | O_RDWR, 0600);
-    if (lock < 0) {
 
+    if (lock < 0) {
         return NO;
     }
-    if (flock(lock, LOCK_EX | LOCK_NB) != 0) {
 
+    if (flock(lock, LOCK_EX | LOCK_NB) != 0) {
         close(lock);
         return YES;
     }
@@ -573,12 +560,12 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
     NSDictionary *previous = [NSDictionary dictionaryWithContentsOfFile:path];
     NSInteger failures = MIN(8, [previous[@"failures"] integerValue] + 1);
     NSTimeInterval delay = MIN(900, 60 * pow(2, failures - 1));
-    if (status == 401 || status == 403 || status == 429) {
 
+    if (status == 401 || status == 403 || status == 429) {
         delay = 3600;
     }
-    if (retryAfter.doubleValue > 0) {
 
+    if (retryAfter.doubleValue > 0) {
         delay = MAX(delay, retryAfter.doubleValue);
     }
     [@{
@@ -594,24 +581,24 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
     NSDictionary *cached = [self cachedSnapshotForAirport:airport];
     NSDate *fetched = [self dateFromISO:cached[@"fetchedAt"]];
     NSTimeInterval interval = MAX(60, [DBSettingsStore.settings[@"refreshInterval"] doubleValue]);
+
     if (fetched && [NSDate.date timeIntervalSinceDate:fetched] < interval &&
         [cached[@"formatVersion"] integerValue] >= 3) {
-
         return YES;
     }
     NSString *retryPath =
         [[self cacheURLForAirport:airport].path stringByAppendingString:@".retry.plist"];
     NSDictionary *retry = [NSDictionary dictionaryWithContentsOfFile:retryPath];
-    if ([retry[@"retryAt"] timeIntervalSinceNow] > 0) {
 
+    if ([retry[@"retryAt"] timeIntervalSinceNow] > 0) {
         return YES;
     }
     NSString *key = [self APIKey];
+
     if (!key.length) {
-
         [self recordFailureForAirport:airport status:401 retryAfter:nil];
-        if (error) {
 
+        if (error) {
             *error = [NSError errorWithDomain:DBDefaultsDomain
                                          code:2
                                      userInfo:@{
@@ -645,20 +632,20 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
               failure = err;
               dispatch_semaphore_signal(done);
           }] resume];
-    if (dispatch_semaphore_wait(done, dispatch_time(DISPATCH_TIME_NOW, 30 * NSEC_PER_SEC)) != 0) {
 
+    if (dispatch_semaphore_wait(done, dispatch_time(DISPATCH_TIME_NOW, 30 * NSEC_PER_SEC)) != 0) {
         [self recordFailureForAirport:airport status:0 retryAfter:nil];
         return NO;
     }
     NSInteger status = [(NSHTTPURLResponse *)response statusCode];
-    if (failure || status != 200) {
 
+    if (failure || status != 200) {
         [self recordFailureForAirport:airport
                                status:status
                            retryAfter:[(NSHTTPURLResponse *)response
                                           valueForHTTPHeaderField:@"Retry-After"]];
-        if (error) {
 
+        if (error) {
             *error =
                 failure
                     ?: [NSError errorWithDomain:DBDefaultsDomain
@@ -674,9 +661,9 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
         return NO;
     }
     id body = [NSJSONSerialization JSONObjectWithData:bytes options:0 error:&failure];
+
     if (![body isKindOfClass:NSDictionary.class] ||
         ![body[@"departures"] isKindOfClass:NSArray.class]) {
-
         [self recordFailureForAirport:airport status:status retryAfter:nil];
         return NO;
     }
@@ -685,8 +672,8 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
     BOOL saved = [normalized writeToURL:[self cacheURLForAirport:airport]
                                 options:NSDataWritingAtomic
                                   error:error];
-    if (saved) {
 
+    if (saved) {
         [NSFileManager.defaultManager removeItemAtPath:retryPath error:NULL];
         [DBDestinationStore refreshNamesForFlights:snapshot[@"flights"]];
     }
@@ -704,23 +691,22 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
 
     CGDirectDisplayID displays[16];
     uint32_t count = 0;
+
     if (CGGetOnlineDisplayList(16, displays, &count) == kCGErrorSuccess && count > 0) {
-
         BOOL allAsleep = YES;
-        for (uint32_t index = 0; index < count; index++) {
 
+        for (uint32_t index = 0; index < count; index++) {
             allAsleep &= CGDisplayIsAsleep(displays[index]);
         }
-        if (allAsleep) {
 
+        if (allAsleep) {
             return NO;
         }
     }
+
     for (NSRunningApplication *app in [NSRunningApplication
              runningApplicationsWithBundleIdentifier:@"com.skyline23.departureboard"]) {
-
         if (app.processIdentifier != getpid() && !app.terminated) {
-
             return YES;
         }
     }
@@ -733,24 +719,22 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
              @"com.apple.ScreenSaver.Engine.legacyScreenSaver",
              @"com.apple.ScreenSaver.Engine.legacyScreenSaver.x86-64"
          ]) {
-
         NSString *folder = [[self userHome]
             stringByAppendingPathComponent:
                 [NSString
                     stringWithFormat:@"Library/Containers/%@/Data/Library/Caches/DepartureBoard",
                                      container]];
+
         for (NSString *name in [NSFileManager.defaultManager contentsOfDirectoryAtPath:folder
                                                                                  error:NULL]) {
-
             if (![name hasPrefix:@"active-"]) {
-
                 continue;
             }
             NSDate *modified = [NSFileManager.defaultManager
                 attributesOfItemAtPath:[folder stringByAppendingPathComponent:name]
                                  error:NULL][NSFileModificationDate];
-            if (modified && [NSDate.date timeIntervalSinceDate:modified] < 90) {
 
+            if (modified && [NSDate.date timeIntervalSinceDate:modified] < 90) {
                 return YES;
             }
         }

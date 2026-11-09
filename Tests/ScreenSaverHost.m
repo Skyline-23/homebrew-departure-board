@@ -42,8 +42,8 @@ static BOOL VerifyContentDrivenRendering(DBBoardView *board, Class store) {
     method_setImplementation(method, original);
     imp_removeBlock(mock);
     [board reloadSettings];
-    if (!unchanged || !codeshare || !pageChanged) {
 
+    if (!unchanged || !codeshare || !pageChanged) {
         fprintf(stderr, "Content redraw check: unchanged=%d codeshare=%d page=%d\n", unchanged,
                 codeshare, pageChanged);
     }
@@ -54,38 +54,38 @@ static BOOL VerifyAirportAdapters(DBBoardView *board) {
 
     id (*adapterForLocation)(NSDictionary *) = dlsym(RTLD_DEFAULT, "DBAirportAdapterForLocation");
     NSArray *(*locations)(void) = dlsym(RTLD_DEFAULT, "DBLocations");
-    if (!adapterForLocation || !locations) {
 
+    if (!adapterForLocation || !locations) {
         return NO;
     }
     NSDictionary *incheon;
-    for (NSDictionary *location in locations()) {
 
+    for (NSDictionary *location in locations()) {
         id adapter = adapterForLocation(location);
         BOOL airport = [location[@"kind"] isEqual:@"airport"];
-        if (airport != (adapter != nil)) {
 
+        if (airport != (adapter != nil)) {
             return NO;
         }
-        if (!airport) {
 
+        if (!airport) {
             continue;
         }
         board.locationCode = location[@"code"];
-        if (![[[board valueForKey:@"airportAdapter"] valueForKey:@"location"] isEqual:location]) {
 
+        if (![[[board valueForKey:@"airportAdapter"] valueForKey:@"location"] isEqual:location]) {
             return NO;
         }
-        if ([location[@"code"] isEqual:@"ICN"]) {
 
+        if ([location[@"code"] isEqual:@"ICN"]) {
             incheon = location;
         }
     }
     // Routing follows the profile's adapter identifier, not a hardcoded IATA switch.
     NSMutableDictionary *custom = [incheon mutableCopy];
     custom[@"code"] = @"TEST";
-    if ([adapterForLocation(custom) class] != [adapterForLocation(incheon) class]) {
 
+    if ([adapterForLocation(custom) class] != [adapterForLocation(incheon) class]) {
         return NO;
     }
     NSMutableDictionary *display = [custom[@"display"] mutableCopy];
@@ -121,8 +121,8 @@ static BOOL VerifyFlapTimer(DBBoardView *board) {
     [states removeAllObjects];
     [board applySnapshotConfiguration:configuration];
     BOOL passed = idle && moving && settled && reduced && finalFrame && stops;
-    if (!passed) {
 
+    if (!passed) {
         fprintf(stderr, "Flap timer: idle=%d moving=%d settled=%d reduced=%d final=%d stops=%d\n",
                 idle, moving, settled, reduced, finalFrame, stops);
     }
@@ -225,15 +225,15 @@ static BOOL VerifySystemFontScaling(void) {
     NSBundle *bundle = [NSBundle bundleForClass:NSClassFromString(@"DBBoardView")];
     void *handle = dlopen(bundle.executablePath.fileSystemRepresentation, RTLD_NOW);
     DrawText draw = (DrawText)dlsym(handle, "DBDrawText");
-    if (!draw) {
 
+    if (!draw) {
         return NO;
     }
     typedef NSString *(*StatusText)(NSString *, NSString *);
     StatusText statusText = (StatusText)dlsym(handle, "DBStatusText");
+
     if (!statusText || ![statusText(@"unknown", @"en") isEqual:@"Status unavailable"] ||
         !statusText(@"unknown", @"fr").length || !statusText(@"boarding", @"en").length) {
-
         return NO;
     }
     NSBitmapImageRep *bitmap =
@@ -255,16 +255,15 @@ static BOOL VerifySystemFontScaling(void) {
          YES);
     [NSGraphicsContext restoreGraphicsState];
     NSUInteger visible = 0;
+
     for (NSUInteger y = 0; y < 24; y++) {
-
         for (NSUInteger x = 0; x < 120; x++) {
-
             unsigned char *pixel = bitmap.bitmapData + y * bitmap.bytesPerRow + x * 4;
             visible += pixel[0] > 120 && pixel[1] > 120 && pixel[2] > 120;
         }
     }
-    if (handle) {
 
+    if (handle) {
         dlclose(handle);
     }
     return visible > 30;
@@ -340,7 +339,6 @@ static BOOL VerifySharedRefreshLock(Class store) {
     IMP mockRefresh =
         imp_implementationWithBlock(^BOOL(id receiver, NSString *airport, NSError **error) {
             @synchronized(store) {
-
                 calls++;
             }
             dispatch_semaphore_signal(entered);
@@ -375,29 +373,27 @@ static BOOL VerifySharedRefreshLock(Class store) {
 int main(int argc, const char *argv[]) {
 
     @autoreleasepool {
-
         if (argc != 2) {
-
             return 2;
         }
         [NSApplication sharedApplication];
         NSBundle *bundle = [NSBundle bundleWithPath:[NSString stringWithUTF8String:argv[1]]];
         NSError *error = nil;
-        if (![bundle loadAndReturnError:&error]) {
 
+        if (![bundle loadAndReturnError:&error]) {
             fprintf(stderr, "Could not load the screen saver bundle: %s\n",
                     error.localizedDescription.UTF8String);
             return 1;
         }
         NSString *icon = bundle.infoDictionary[@"CFBundleIconFile"];
         NSString *iconPath = [bundle pathForResource:icon ofType:@"icns"];
-        if (!iconPath || ![[NSImage alloc] initWithContentsOfFile:iconPath].valid) {
 
+        if (!iconPath || ![[NSImage alloc] initWithContentsOfFile:iconPath].valid) {
             return 1;
         }
         Class principal = bundle.principalClass;
-        if (![principal isSubclassOfClass:ScreenSaverView.class]) {
 
+        if (![principal isSubclassOfClass:ScreenSaverView.class]) {
             return 1;
         }
         ScreenSaverView *preview = [[principal alloc] initWithFrame:NSMakeRect(0, 0, 800, 450)
@@ -405,25 +401,25 @@ int main(int argc, const char *argv[]) {
         [preview startAnimation];
         [preview animateOneFrame];
         NSWindow *sheet = preview.configureSheet;
+
         if (!preview.hasConfigureSheet || !sheet || preview.configureSheet != sheet ||
             preview.subviews.count != 1) {
-
             return 1;
         }
-        if (![[sheet.contentView viewWithTag:301] isEnabled]) {
 
+        if (![[sheet.contentView viewWithTag:301] isEnabled]) {
             return 1;
         }
         DBBoardView *board = (DBBoardView *)preview.subviews.firstObject;
         NSWindow *editor = [board settingsWindowWithTarget:nil action:NULL];
         NSSecureTextField *token = [editor.contentView viewWithTag:202];
+
         if (!token.enabled || !token.editable || !token.selectable ||
             !token.acceptsFirstResponder) {
-
             return 1;
         }
-        if (![[editor.contentView viewWithTag:207] isEnabled]) {
 
+        if (![[editor.contentView viewWithTag:207] isEnabled]) {
             return 1;
         }
         NSRect liveFrame = board.frame;
@@ -441,8 +437,8 @@ int main(int argc, const char *argv[]) {
                                                         }];
         BOOL snapshotSaved = [board writeSnapshot:snapshotPath size:NSMakeSize(1280, 720)];
         [NSNotificationCenter.defaultCenter removeObserver:observer];
-        if (!snapshotSaved || !NSEqualRects(board.frame, liveFrame) || frameChanges != 0) {
 
+        if (!snapshotSaved || !NSEqualRects(board.frame, liveFrame) || frameChanges != 0) {
             fprintf(stderr, "Snapshot check: saved=%d frame changes=%lu\n", snapshotSaved,
                     (unsigned long)frameChanges);
             return 1;
@@ -460,10 +456,10 @@ int main(int argc, const char *argv[]) {
             @"departures" : @[ flight, flight ]
         }
                                                     airport:@"ICN"];
+
         if ([snapshot[@"flights"] count] != 1 ||
             ![snapshot[@"flights"][0][@"scheduledUtc"] isEqual:@"2026-11-09T02:35:00Z"] ||
             ![snapshot[@"flights"][0][@"gate"] isEqual:@""]) {
-
             return 1;
         }
         NSMutableDictionary *shared = [flight mutableCopy];
@@ -473,9 +469,9 @@ int main(int argc, const char *argv[]) {
             @"departures" : @[ flight, shared ]
         }
                                       airport:@"ICN"];
+
         if ([snapshot[@"flights"] count] != 1 ||
             [snapshot[@"flights"][0][@"variants"] count] != 2) {
-
             return 1;
         }
         NSMutableDictionary *operating = [flight mutableCopy];
@@ -489,9 +485,9 @@ int main(int argc, const char *argv[]) {
             @"departures" : @[ operating, mislabelledAlias ]
         }
                                       airport:@"ICN"];
+
         if ([snapshot[@"flights"] count] != 1 ||
             [snapshot[@"flights"][0][@"variants"] count] != 2) {
-
             return 1;
         }
         NSMutableDictionary *separateFlight = [operating mutableCopy];
@@ -503,16 +499,16 @@ int main(int argc, const char *argv[]) {
             @"departures" : @[ operating, separateFlight, shared ]
         }
                                       airport:@"ICN"];
-        if ([snapshot[@"flights"] count] != 2) {
 
+        if ([snapshot[@"flights"] count] != 2) {
             return 1;
         }
+
         if (!VerifyAirportAdapters(board) || !VerifyCompactScale(board) || !VerifyAirlineLogos() ||
             !VerifySystemFontScaling() || !VerifyAvailabilityStates(store) ||
             !VerifySnapshotConfiguration(board) || !VerifySharedRowsCache(store) ||
             !VerifyContentDrivenRendering(board, store) || !VerifyFlapTimer(board) ||
             !VerifySharedRefreshLock(store)) {
-
             return 1;
         }
         [preview stopAnimation];

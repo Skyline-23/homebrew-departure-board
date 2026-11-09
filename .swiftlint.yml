@@ -58,6 +58,11 @@ nesting:
   function_level: 3
 
 custom_rules:
+  blank_line_before_control_flow:
+    name: Blank line before control flow
+    regex: '(?m)(?<=[^\s{:])\n[ \t]*(?:if|guard|while|for|switch|do|defer)\b'
+    message: Separate declarations or expressions from the next control-flow statement with a blank line.
+    severity: error
   multiline_control_flow:
     name: Multiline control flow
     regex: '\b(?:if|guard|else)\b[^\n]*\{[^\n}]+\}'
@@ -67,9 +72,4 @@ custom_rules:
     name: Function opening blank line
     regex: '(?m)^[ \t]*(?:(?:private|fileprivate|public|internal|static|class|mutating|override|final)\s+)*func\b[^{}]*\{[ \t]*\n(?![ \t]*\n)'
     message: Leave one blank line after a function opening brace.
-    severity: error
-  control_opening_blank_line:
-    name: Control-flow opening blank line
-    regex: '(?m)^[ \t]*(?:\}\s*)?(?:if|else|guard|for|while|switch|do|catch|defer)\b[^{}]*\{[ \t]*\n(?![ \t]*\n)'
-    message: Leave one blank line after a control-flow opening brace.
     severity: error

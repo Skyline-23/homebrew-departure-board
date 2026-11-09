@@ -8,11 +8,12 @@
 - (CGFloat)headerHeightForBounds:(NSRect)area scale:(CGFloat)scale {
 
     CGFloat height = [super headerHeightForBounds:area scale:scale];
-    if (area.size.width > area.size.height) {
 
+    if (area.size.width > area.size.height) {
         height = MAX(MIN(210, area.size.height * .19),
                      [self.display[@"minimumHeaderHeight"] doubleValue]);
     }
+
     return height;
 }
 
@@ -22,8 +23,8 @@
     NSColor *ink = DBColor(self.display[@"headerInk"]);
     DBFillRect(NSMakeRect(0, 0, area.size.width, height), DBColor(self.location[@"header"]));
     CGFloat unit = MIN(1.6, height / 230);
-    if (height >= 140) {
 
+    if (height >= 140) {
         DBDrawText(DBBoardString(@"heading.checkinInformation", context.language),
                    NSMakeRect(26, 3, 1400, 30 * unit), 23 * unit, ink, YES, NSTextAlignmentLeft,
                    NO);
@@ -49,11 +50,11 @@
     ];
     CGFloat width = (area.size.width - 24) / counters.count;
     CGFloat unit = MIN(1.25, area.size.height / 120);
+
     for (NSUInteger index = 0; index < counters.count; index++) {
-
         NSString *letter = counters[index];
-        if (!letter.length) {
 
+        if (!letter.length) {
             continue;
         }
         CGFloat x = area.origin.x + 12 + index * width;
@@ -61,29 +62,29 @@
         CGFloat cardHeight = area.size.height * .57;
         DBFillRect(NSMakeRect(x, top, width - 6, cardHeight), DBColor(@"d8e5eb"));
         NSMutableOrderedSet *carriers = NSMutableOrderedSet.new;
+
         for (NSDictionary *row in context.rows) {
-
             NSString *counter = row[@"counter"];
-            if (!counter.length || [counter rangeOfString:letter].location == NSNotFound) {
 
+            if (!counter.length || [counter rangeOfString:letter].location == NSNotFound) {
                 continue;
             }
             NSString *number = row[@"operatorFlight"] ?: row[@"flight"];
-            if (number.length >= 2) {
 
+            if (number.length >= 2) {
                 [carriers addObject:[number substringToIndex:2]];
             }
         }
         NSMutableArray<NSImage *> *logos = NSMutableArray.new;
+
         for (NSString *carrier in carriers) {
-
             NSImage *logo = [DBAirlineLogoStore imageForCarrier:carrier icao:nil name:nil];
-            if (logo) {
 
+            if (logo) {
                 [logos addObject:logo];
             }
-            if (logos.count == 2) {
 
+            if (logos.count == 2) {
                 break;
             }
         }
@@ -94,8 +95,8 @@
             NSMakeRect(x + 5, top + 4, width - 16, MAX(0, cardHeight - labelHeight - 8));
         CGFloat slotHeight = logoArea.size.height / 2;
         CGFloat inset = logos.count == 1 ? slotHeight / 2 : 0;
-        for (NSUInteger index = 0; index < logos.count; index++) {
 
+        for (NSUInteger index = 0; index < logos.count; index++) {
             NSRect slot =
                 NSMakeRect(logoArea.origin.x, logoArea.origin.y + inset + index * slotHeight,
                            logoArea.size.width, slotHeight);

@@ -22,10 +22,9 @@ static NSTimeInterval nextSettingsCheck;
 + (NSDictionary *)settings {
 
     @synchronized(self) {
-
         NSTimeInterval now = NSProcessInfo.processInfo.systemUptime;
-        if (cachedSettings && now < nextSettingsCheck) {
 
+        if (cachedSettings && now < nextSettingsCheck) {
             return cachedSettings;
         }
         nextSettingsCheck = now + 1;
@@ -33,8 +32,8 @@ static NSTimeInterval nextSettingsCheck;
         NSDate *modified =
             [NSFileManager.defaultManager attributesOfItemAtPath:url.path
                                                            error:NULL][NSFileModificationDate];
-        if (cachedSettings && modified && [modified isEqual:settingsModified]) {
 
+        if (cachedSettings && modified && [modified isEqual:settingsModified]) {
             return cachedSettings;
         }
         cachedSettings = [NSDictionary dictionaryWithContentsOfURL:url]
@@ -53,38 +52,35 @@ static NSTimeInterval nextSettingsCheck;
     NSMutableDictionary *saved = [settings mutableCopy];
     [saved removeObjectForKey:@"gatewayURL"];
     [saved removeObjectForKey:@"hasAccessToken"];
+
     if (apiKey.length && ![apiKey isEqual:DBStoredAPIKeyMask]) {
-
         if (![LiveFlightStore saveAPIKey:apiKey error:error]) {
-
             return NO;
         }
         saved[@"hasAPIKey"] = @YES;
     } else if (!saved[@"hasAPIKey"]) {
-
         saved[@"hasAPIKey"] = @([LiveFlightStore APIKey].length > 0);
     }
     NSURL *url = self.settingsURL;
+
     if (![NSFileManager.defaultManager createDirectoryAtURL:url.URLByDeletingLastPathComponent
                                 withIntermediateDirectories:YES
                                                  attributes:nil
                                                       error:error]) {
-
         return NO;
     }
     NSData *data = [NSPropertyListSerialization dataWithPropertyList:saved
                                                               format:NSPropertyListBinaryFormat_v1_0
                                                              options:0
                                                                error:error];
-    if (!data || ![data writeToURL:url options:NSDataWritingAtomic error:error]) {
 
+    if (!data || ![data writeToURL:url options:NSDataWritingAtomic error:error]) {
         return NO;
     }
     [NSFileManager.defaultManager setAttributes:@{NSFilePosixPermissions : @0600}
                                    ofItemAtPath:url.path
                                           error:NULL];
     @synchronized(self) {
-
         cachedSettings = [saved copy];
         settingsModified = nil;
         nextSettingsCheck = 0;

@@ -27,23 +27,22 @@
     ];
     CGFloat x[] = {34, 280, 386, 942, 1111, 1260};
     CGFloat widths[] = {230, 94, 540, 151, 131, 302};
-    for (NSInteger index = 0; index < 6; index++) {
 
+    for (NSInteger index = 0; index < 6; index++) {
         x[index] *= horizontal;
         widths[index] *= horizontal;
     }
-    for (int j = 0; j < 6; j++) {
 
+    for (int j = 0; j < 6; j++) {
         DBDrawText(names[j], NSMakeRect(x[j], 153, widths[j], 32), 20, accent, YES,
                    NSTextAlignmentLeft, NO);
     }
     NSInteger count =
         self.density > 0 ? MAX(5, MIN(10, self.density - 3)) : (NSInteger)ceil(9 / self.boardScale);
     CGFloat rowH = (area.size.height - 246) / count;
+
     for (NSInteger i = 0; i < count; i++) {
-
         if ((NSUInteger)i >= self.rows.count) {
-
             break;
         }
         NSDictionary *row = self.rows[i];
@@ -93,10 +92,9 @@
     NSInteger n = 5;
     CGFloat margin = 34 * horizontal, gap = 12 * horizontal;
     CGFloat cw = (area.size.width - 2 * margin - gap * (n - 1)) / n, top = 146;
+
     for (NSInteger i = 0; i < n; i++) {
-
         if ((NSUInteger)(i + 1) >= self.rows.count) {
-
             break;
         }
         NSDictionary *row = self.rows[i + 1];
@@ -104,8 +102,8 @@
         NSRect card = NSMakeRect(x, top, cw, height);
         DBFillRect(card, DBColor(sydney ? @"151b20" : @"101516"));
         NSColor *ink = sydney ? NSColor.whiteColor : amber;
-        if (sydney) {
 
+        if (sydney) {
             DBFillRect(NSMakeRect(x, top, cw, 52), DBColor(row[@"color"]));
             DBDrawText(DBLocalized(row[@"service"], @"en"),
                        NSMakeRect(x + 13, top + 6, cw - 26, 40), 26, NSColor.whiteColor, YES,
@@ -114,7 +112,6 @@
                        NSMakeRect(x + 14, top + 70, cw - 28, 58), 42, NSColor.whiteColor, YES,
                        NSTextAlignmentLeft, YES);
         } else {
-
             DBFillRect(NSMakeRect(x, top, cw, 4), amber);
             DBDrawText(row[@"time"], NSMakeRect(x + 15, top + 18, cw - 30, 61), 48, amber, YES,
                        NSTextAlignmentLeft, YES);
@@ -136,10 +133,9 @@
                    [ink colorWithAlphaComponent:.72], YES, NSTextAlignmentLeft, NO);
         NSArray *stops = [DBLocalized(row[@"stops"], @"en") componentsSeparatedByString:@" · "];
         CGFloat sy = platformY + 170;
+
         for (NSString *stop in stops) {
-
             if (sy + 29 > top + height - 48) {
-
                 break;
             }
             DBDrawText(stop, NSMakeRect(x + 15, sy, cw - 29, 31), 21, ink, NO, NSTextAlignmentLeft,

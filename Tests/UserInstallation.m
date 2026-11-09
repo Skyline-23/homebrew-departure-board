@@ -34,7 +34,6 @@ static void WriteBundle(NSString *path, NSString *identifier, NSString *revision
 int main(void) {
 
     @autoreleasepool {
-
         NSFileManager *files = NSFileManager.defaultManager;
         NSString *root =
             [NSTemporaryDirectory() stringByAppendingPathComponent:NSUUID.UUID.UUIDString];
