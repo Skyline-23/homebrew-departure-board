@@ -48,36 +48,10 @@ jobs:
       - name: Package self-contained preview
         run: ./Windows/scripts/Publish.ps1 -Runtime '${{ matrix.runtime }}'
       - name: Exercise published screen saver and per-user installer
-        run: |
-          $ErrorActionPreference = 'Stop'
-          $archive = "work/windows-publish/DepartureBoard-${{ matrix.runtime }}.zip"
-          $package = "$env:RUNNER_TEMP/DepartureBoard-package"
-          $installed = [IO.Path]::GetFullPath("$env:RUNNER_TEMP/DepartureBoard-installed")
-          $images = "$env:GITHUB_WORKSPACE/work/windows-images"
-          Expand-Archive $archive $package
-          & "$package/Install.ps1" -NoLaunch -Destination $installed
-          if (!(Test-Path "$installed/DepartureBoard.scr")) { throw 'Missing screen saver.' }
-          $selected = (Get-ItemProperty 'HKCU:\Control Panel\Desktop').'SCRNSAVE.EXE'
-          if ($selected -ne "$installed\DepartureBoard.scr") { throw 'Screen saver not registered.' }
-          try {
-            $start = [Diagnostics.ProcessStartInfo]::new("$installed/DepartureBoard.scr")
-            $start.UseShellExecute = $false
-            $start.ArgumentList.Add('--self-test')
-            $start.ArgumentList.Add($images)
-            $process = [Diagnostics.Process]::Start($start)
-            if (!$process.WaitForExit(120000)) {
-              Stop-Process -Id $process.Id -Force
-              throw 'Windows smoke test timed out.'
-            }
-            if ($process.ExitCode -ne 0) {
-              Get-Content "$images/failure.txt" -ErrorAction SilentlyContinue
-              throw 'Windows smoke test failed.'
-            }
-            Get-Content "$images/result.txt"
-          } finally {
-            & "$installed/Uninstall.ps1"
-          }
-          if (Test-Path $installed) { throw 'Uninstaller left program files behind.' }
+        run: >-
+          ./Windows/scripts/SmokeTest.ps1
+          -PackageZip 'work/windows-publish/DepartureBoard-${{ matrix.runtime }}.zip'
+          -OutputDirectory "$env:GITHUB_WORKSPACE/work/windows-images"
       - name: Upload preview package
         uses: actions/upload-artifact@v4
         with:
