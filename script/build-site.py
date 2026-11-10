@@ -27,6 +27,9 @@ def main():
 
     for name in ['index.html', 'ko.html', 'site.css', 'icon.png', 'download.js', 'og-ko-v1.png', 'og-en-v1.png', 'hero.css', 'airport-demo.js', 'airport-data.js', 'board-transition.js', 'flap-tile.webp', 'arrow-right.svg']:
         shutil.copyfile(ROOT / 'site' / name, output / name)
+    for name in ['index.html', 'ko.html']:
+        page = output / name
+        page.write_text(re.sub(r'(og-(?:ko|en)-v1\.png)', rf'\1?v={version}', page.read_text()))
     shutil.copytree(ROOT / 'site/boards', output / 'boards')
     shutil.copytree(ROOT / 'Resources/Guide', output / 'guide', dirs_exist_ok=True)
     shutil.copytree(ROOT / 'Resources/Guide/images', output / 'images', dirs_exist_ok=True)

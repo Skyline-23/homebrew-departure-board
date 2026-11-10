@@ -1,4 +1,40 @@
 <!doctype html>
-<html lang="{{lang}}"><head><meta charset="utf-8"><title>Departure Board social card</title><style>
-*{box-sizing:border-box}html,body{margin:0;width:1200px;height:630px;overflow:hidden}body{position:relative;background:#f5f5f7;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}.brand{position:absolute;left:64px;top:48px;display:flex;align-items:center;gap:18px;font-size:30px;font-weight:650;letter-spacing:-.8px}.brand img{width:60px;height:60px}h1{position:absolute;left:64px;top:200px;margin:0;font-size:46px;line-height:1.2;font-weight:750;letter-spacing:-1.7px}.description{position:absolute;left:64px;top:344px;margin:0;font-size:24px;color:#626267;letter-spacing:-.5px}.platform{position:absolute;left:64px;top:451px;font-size:19px;font-weight:600;letter-spacing:.1px}.display{position:absolute;left:516px;top:133px;width:620px;padding:9px;background:#1d1d1f;border-radius:17px;box-shadow:0 20px 42px #1d1d1f20}.display img{display:block;width:602px;height:376.25px;border-radius:8px;object-fit:contain}.airport{position:absolute;left:516px;top:543px;width:620px;text-align:center;font-size:13px;font-weight:600;color:#86868b;letter-spacing:2px}.domain{position:absolute;left:64px;bottom:46px;font-size:17px;color:#86868b;letter-spacing:.1px}
-</style></head><body><div class="brand"><img src="icon.png" alt="">Departure Board</div><h1>{{title}}</h1><p class="description">{{description}}</p><div class="platform">macOS &nbsp;·&nbsp; Windows</div><div class="display"><img src="board.png" alt="Incheon departure board"></div><div class="airport">INCHEON INTERNATIONAL AIRPORT · ICN</div><div class="domain">dpboard.skyline23.com</div></body></html>
+<html lang="{{lang}}">
+  <head>
+    <meta charset="utf-8" />
+    <title>Departure Board social card</title>
+    <style>
+      * { box-sizing: border-box; }
+      html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; }
+      body {
+        position: relative;
+        background: #faf6ed;
+        color: #171714;
+        font-family: "Noto Sans CJK KR", "Apple SD Gothic Neo", Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      .brand { position: absolute; left: 48px; top: 32px; display: flex; align-items: center; gap: 14px; font-size: 25px; font-weight: 700; letter-spacing: -1px; }
+      .brand img { width: 42px; height: 42px; }
+      .rule { position: absolute; left: 48px; right: 48px; top: 99px; height: 1px; background: #c9c5bb; }
+      h1 { position: absolute; left: 48px; top: 156px; width: 558px; margin: 0; font-size: 64px; line-height: 1.16; font-weight: 900; letter-spacing: -3.5px; }
+      html[lang="en"] h1 { font-size: 62px; letter-spacing: -2.8px; }
+      .description { position: absolute; left: 51px; top: 332px; margin: 0; font-size: 20px; letter-spacing: -.5px; }
+      .platform { position: absolute; left: 49px; top: 466px; padding: 11px 19px; background: #efb735; font-size: 20px; font-weight: 700; }
+      .flaps { position: absolute; left: 679px; top: 119px; display: flex; gap: 12px; }
+      .flap { width: 139px; height: 185px; display: grid; place-items: center; background: url("flap-tile.webp") center / 100% 100%; color: #faf6ed; font-family: Arial, sans-serif; font-size: 127px; line-height: 1; font-weight: 700; }
+      .display { position: absolute; left: 647px; top: 326px; width: 505px; margin: 0; }
+      .display img { display: block; width: 100%; height: auto; }
+      .domain { position: absolute; left: 50px; bottom: 37px; font-size: 17px; color: #68665f; }
+    </style>
+  </head>
+  <body>
+    <div class="brand"><img src="icon.png" alt="" />Departure Board</div>
+    <div class="rule"></div>
+    <h1>{{title}}</h1>
+    <p class="description">{{description}}</p>
+    <div class="platform">macOS · Windows</div>
+    <div class="flaps" aria-hidden="true"><span class="flap">I</span><span class="flap">C</span><span class="flap">N</span></div>
+    <figure class="display"><img src="board.webp" alt="Incheon departure board" /></figure>
+    <div class="domain">dpboard.skyline23.com</div>
+  </body>
+</html>

@@ -25,10 +25,25 @@ while (Date.now() < deadline) {
 }
 assert.ok(deployed, `Website did not deploy release ${version} within ten minutes.`);
 
-for (const path of ['/ko.html', '/guide/ko.html', '/guide/index.html']) {
+for (const path of ['/index.html', '/ko.html', '/guide/ko.html', '/guide/index.html']) {
   const response = await fetch(origin + path, { signal: AbortSignal.timeout(15000) });
   assert.equal(response.status, 200, `${path} must load.`);
   assert.match(response.headers.get('content-type') || '', /text\/html/);
+  if (!path.startsWith('/guide/')) {
+    const html = await response.text();
+    const image = html.match(/property="og:image"\s+content="([^"]+)"/);
+    assert.ok(image, `${path} must declare an Open Graph image.`);
+    const imageUrl = new URL(image[1]);
+    assert.equal(imageUrl.origin, origin);
+    assert.equal(imageUrl.searchParams.get('v'), version);
+    const social = await fetch(imageUrl, { signal: AbortSignal.timeout(15000) });
+    assert.equal(social.status, 200, 'Open Graph image must load.');
+    assert.match(social.headers.get('content-type') || '', /image\/png/);
+    const png = new DataView(await social.arrayBuffer());
+    assert.equal(png.getUint32(0), 0x89504e47, 'Open Graph image must be a PNG.');
+    assert.equal(png.getUint32(16), 1200);
+    assert.equal(png.getUint32(20), 630);
+  }
 }
 
 const installers = {

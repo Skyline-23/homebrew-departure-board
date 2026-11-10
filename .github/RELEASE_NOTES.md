@@ -3,6 +3,7 @@ Departure Board 0.7.6 automates the complete release and website rollout.
 - Build macOS, Windows and the website checks in parallel, then publish the complete installer set to GitHub Releases.
 - Update Homebrew and deploy the product website automatically. CI verifies the deployed version, both installation guides and all three native installer downloads before completing.
 - Derive Windows application and installer versions from the release tag.
+- Generate Korean and English social sharing images in CI and verify their published dimensions and versioned URLs.
 - Retry temporary Apple ticket-service failures during notarization.
 
 The refreshed native settings, illustrated offline guide, responsive product page and OS-specific downloads from 0.7.5 are included.
