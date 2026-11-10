@@ -12,6 +12,8 @@ Copy-Item "$folder/DepartureBoard.exe" "$folder/DepartureBoard.scr"
 Copy-Item "$PSScriptRoot/Install.ps1" $folder
 Copy-Item "$PSScriptRoot/Uninstall.ps1" $folder
 Copy-Item "$PSScriptRoot/../README.md" "$folder/README.md"
+Copy-Item "$PSScriptRoot/../../Resources/Guide" "$folder/Guide" -Recurse -Force
+Copy-Item "$PSScriptRoot/../../Resources/Install Guide.html" $folder
 Copy-Item "$PSScriptRoot/../../LICENSE" $folder
 Copy-Item "$PSScriptRoot/../../THIRD_PARTY_NOTICES.md" $folder
 '@echo off', 'powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0Install.ps1"', 'pause' |

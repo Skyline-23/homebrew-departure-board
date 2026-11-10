@@ -28,3 +28,5 @@
 "data.configure" = "Live-Flugdaten in Departure Board einrichten";
 
 "column.airline" = "Fluggesellschaft";
+
+"menu.guide" = "Install & user guide";

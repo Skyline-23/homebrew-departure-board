@@ -102,6 +102,15 @@ internal sealed class SettingsWindow : Window
         );
         panel.Children.Add(dataStatus);
         panel.Children.Add(Buttons());
+        var guide = new Button
+        {
+            Content = "Install & user guide",
+            HorizontalAlignment = HorizontalAlignment.Left,
+            Margin = new Thickness(0, 14, 0, 0),
+            Padding = new Thickness(10, 5, 10, 5),
+        };
+        guide.Click += (_, _) => InstallationGuide.Open();
+        panel.Children.Add(guide);
         panel.Children.Add(status);
         status.Text = services.HasApiKey
             ? "API key saved in Windows Credential Manager."

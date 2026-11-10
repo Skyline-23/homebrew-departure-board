@@ -1,6 +1,7 @@
 #import "BackgroundAgent.h"
 #import "BoardViewInternal.h"
 #import "DrawingSupport.h"
+#import "InstallationGuide.h"
 #import "LiveFlightStore.h"
 #import "SettingsStore.h"
 
@@ -247,8 +248,19 @@
         separator.boxType = NSBoxSeparator;
         [v addSubview:separator];
     }
+    NSButton *guide = [NSButton buttonWithTitle:DBUIString(@"menu.guide")
+                                         target:self
+                                         action:@selector(openInstallationGuide:)];
+    guide.bezelStyle = NSBezelStyleRounded;
+    guide.frame = NSMakeRect(28, 24, 220, 32);
+    [v addSubview:guide];
     self.optionsWindow = window;
     return window;
+}
+
+- (void)openInstallationGuide:(id)sender {
+
+    DBOpenInstallationGuide([NSBundle bundleForClass:self.class]);
 }
 
 - (void)applySettingsFromWindow:(NSWindow *)window completion:(void (^)(BOOL saved))completion {

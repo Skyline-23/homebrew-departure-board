@@ -9,6 +9,8 @@
 ![Departure Board 앱에서 영어로 표시한 하네다 출발 전광판](docs/screenshots/haneda-english.png)
 *Departure Board 앱의 하네다(HND) 영어 화면입니다. 항공편 데이터: [AeroDataBox](https://aerodatabox.com/).*
 
+**[사진으로 보는 설치·사용 설명서](docs/install-guide.ko.md)** — 첫 실행부터 모든 옵션, 여러 모니터, 업데이트와 오류 해결까지 안내합니다.
+
 ## Homebrew로 설치하기
 
 ```sh

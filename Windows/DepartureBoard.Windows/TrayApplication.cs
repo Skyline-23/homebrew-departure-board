@@ -35,6 +35,7 @@ internal sealed class TrayApplication : IDisposable
         menu = new Forms.ContextMenuStrip();
         menu.Items.Add("Settings", null, (_, _) => ShowSettings());
         menu.Items.Add("Preview", null, (_, _) => ShowPreview());
+        menu.Items.Add("Install & user guide", null, (_, _) => InstallationGuide.Open());
         menu.Items.Add("Quit", null, (_, _) => Application.Current.Shutdown());
         var iconPath = Path.Combine(AppContext.BaseDirectory, "Assets", "DepartureBoard.ico");
         icon = File.Exists(iconPath)

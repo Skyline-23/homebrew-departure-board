@@ -1,0 +1,186 @@
+{
+  "date": "2026-11-10",
+  "baseRelease": "0.7.2",
+  "candidateVersion": "0.7.3",
+  "environment": "Windows 11 console; SudoVDA 1.10.9.289 virtual monitors; normal user; other wallpaper playback stopped during capture",
+  "cases": [
+    {
+      "secondaryScalePercent": 150,
+      "monitors": [
+        {
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "width": 2560,
+          "height": 1440
+        }
+      ],
+      "screenSavers": [
+        {
+          "device": "\\\\.\\DISPLAY10",
+          "X": 0,
+          "Y": 0,
+          "Width": 1920,
+          "Height": 1080,
+          "dpi": 96,
+          "wpfScale": 1
+        },
+        {
+          "device": "\\\\.\\DISPLAY11",
+          "X": -2560,
+          "Y": -360,
+          "Width": 2560,
+          "Height": 1440,
+          "dpi": 144,
+          "wpfScale": 1.5
+        }
+      ],
+      "previewMoves": [
+        {
+          "DeviceName": "\\\\.\\DISPLAY10",
+          "dpi": 96,
+          "scale": 1,
+          "Left": 30,
+          "Top": 30,
+          "Right": 930,
+          "Bottom": 630
+        },
+        {
+          "DeviceName": "\\\\.\\DISPLAY11",
+          "dpi": 144,
+          "scale": 1.5,
+          "Left": -2530,
+          "Top": -330,
+          "Right": -1180,
+          "Bottom": 570
+        }
+      ],
+      "wallpaperEmbedding": "passed",
+      "secondaryCaptures": [
+        {
+          "mode": "wallpaper",
+          "width": 2560,
+          "height": 1440,
+          "headerPixel": [
+            23,
+            54,
+            92
+          ],
+          "sha256": "2d8d23adabc496b0fb6f96f95fa1f54451948c25ec2f28d23421ba346cae7653"
+        },
+        {
+          "mode": "screensaver",
+          "width": 2560,
+          "height": 1440,
+          "headerPixel": [
+            23,
+            54,
+            92
+          ],
+          "sha256": "3a57f87317c8bfbf38d7d900da3973931063ed797790318a0701be03d78aa6ab"
+        },
+        {
+          "mode": "still",
+          "width": 2560,
+          "height": 1440,
+          "headerPixel": [
+            23,
+            54,
+            92
+          ],
+          "sha256": "a9919847256588edbd874e9dd668f8ac7a02d9ad613b664791a01223dba176ff"
+        }
+      ]
+    },
+    {
+      "secondaryScalePercent": 200,
+      "monitors": [
+        {
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "width": 2560,
+          "height": 1440
+        }
+      ],
+      "screenSavers": [
+        {
+          "device": "\\\\.\\DISPLAY10",
+          "X": 0,
+          "Y": 0,
+          "Width": 1920,
+          "Height": 1080,
+          "dpi": 96,
+          "wpfScale": 1
+        },
+        {
+          "device": "\\\\.\\DISPLAY11",
+          "X": -2560,
+          "Y": -360,
+          "Width": 2560,
+          "Height": 1440,
+          "dpi": 192,
+          "wpfScale": 2
+        }
+      ],
+      "previewMoves": [
+        {
+          "DeviceName": "\\\\.\\DISPLAY10",
+          "dpi": 96,
+          "scale": 1,
+          "Left": 30,
+          "Top": 30,
+          "Right": 930,
+          "Bottom": 630
+        },
+        {
+          "DeviceName": "\\\\.\\DISPLAY11",
+          "dpi": 192,
+          "scale": 2,
+          "Left": -2530,
+          "Top": -330,
+          "Right": -730,
+          "Bottom": 870
+        }
+      ],
+      "wallpaperEmbedding": "passed",
+      "secondaryCaptures": [
+        {
+          "mode": "wallpaper",
+          "width": 2560,
+          "height": 1440,
+          "headerPixel": [
+            23,
+            54,
+            92
+          ],
+          "sha256": "0d187264bd508260183a2e9c22275b2b3902b00529aaffe50933239ff968c9e0"
+        },
+        {
+          "mode": "screensaver",
+          "width": 2560,
+          "height": 1440,
+          "headerPixel": [
+            23,
+            54,
+            92
+          ],
+          "sha256": "3a57f87317c8bfbf38d7d900da3973931063ed797790318a0701be03d78aa6ab"
+        },
+        {
+          "mode": "still",
+          "width": 2560,
+          "height": 1440,
+          "headerPixel": [
+            23,
+            54,
+            92
+          ],
+          "sha256": "58d9b3be96620218799eac46bd501e6ee5c515b5ae1749a8a31f08c8e2b96035"
+        }
+      ]
+    }
+  ]
+}

@@ -50,6 +50,7 @@ foreach (var airport in catalog.Airports)
     }
 }
 
+Check(LaunchOptions.Parse(["--guide"]).Mode == LaunchMode.Guide, "Offline guide mode.");
 Check(LaunchOptions.Parse(["/s"]).Mode == LaunchMode.ScreenSaver, "Full-screen mode.");
 Check(LaunchOptions.Parse(["/c:42"]).Mode == LaunchMode.Settings, "Settings mode.");
 Check(LaunchOptions.Parse(["/p", "123"]).PreviewParent == 123, "Separate preview handle.");

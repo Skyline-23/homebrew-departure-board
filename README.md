@@ -9,6 +9,8 @@ Airport departure boards for macOS and Windows — a screen saver, live wallpape
 ![Departure Board displaying Haneda departures in English](docs/screenshots/haneda-english.png)
 *Haneda (HND), English — captured from Departure Board. Flight data: [AeroDataBox](https://aerodatabox.com/).*
 
+**[Illustrated installation and user guide](docs/install-guide.md)** — first launch, every option, multiple displays, updates and troubleshooting.
+
 ## Install with Homebrew
 
 ```sh

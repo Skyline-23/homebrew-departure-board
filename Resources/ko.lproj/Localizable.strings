@@ -105,3 +105,5 @@
 "data.configure" = "Departure Board에서 실시간 운항 정보를 설정해 주세요";
 
 "column.airline" = "항공사";
+
+"menu.guide" = "설치 및 사용 설명서";

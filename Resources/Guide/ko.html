@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Departure Board — 설치와 사용 설명서</title>
+<link rel="stylesheet" href="guide.css"></head><body>
+<header><a class="brand" href="#">DEPARTURE BOARD</a><nav aria-label="Language"><a href="index.html" lang="en">English</a><a href="ko.html" lang="ko">한국어</a></nav></header>
+<div class="layout"><nav class="contents" aria-label="목차"><span>목차</span><a href="#1-내-컴퓨터에-맞는-파일-고르기">1. 내 컴퓨터에 맞는 파일 고르기</a><a href="#2-macos에-설치하기">2. macOS에 설치하기</a><a href="#3-windows에-설치하기">3. Windows에 설치하기</a><a href="#4-첫-화면-설정">4. 첫 화면 설정</a><a href="#5-배경화면과-화면-보호기">5. 배경화면과 화면 보호기</a><a href="#6-실제-항공편-연결">6. 실제 항공편 연결</a><a href="#7-모든-표시-옵션">7. 모든 표시 옵션</a><a href="#8-여러-모니터와-서로-다른-배율">8. 여러 모니터와 서로 다른 배율</a><a href="#9-업데이트와-제거">9. 업데이트와 제거</a><a href="#10-문제가-생겼을-때">10. 문제가 생겼을 때</a></nav>
+<main><h1 id="departure-board-설치와-사용-설명서">Departure Board 설치와 사용 설명서</h1>
+<p>공항 전광판을 <strong>움직이는 배경화면</strong>, <strong>화면 보호기</strong>, <strong>미리보기 창</strong>으로 사용하는 앱입니다. 이 설명서는 macOS와 Windows의 설치부터 설정, 여러 모니터, 업데이트와 문제 해결까지 안내합니다.</p>
+<aside class="note">처음에는 API 키 없이 <strong>Sample schedule</strong>로 화면을 확인하세요. 실제 항공편이 필요할 때만 본인의 AeroDataBox 구독과 API 키를 연결하면 됩니다. 샘플 시간표는 실제 운항 정보가 아닙니다.</aside>
+<h2 id="1-내-컴퓨터에-맞는-파일-고르기">1. 내 컴퓨터에 맞는 파일 고르기</h2>
+<div class="table"><table><thead><tr><th scope="col">컴퓨터</th><th scope="col">받을 파일</th><th scope="col">지원 범위</th></tr></thead><tbody><tr><td>Mac — Apple Silicon 또는 Intel</td><td><code>DepartureBoard-버전-universal.zip</code> 또는 Homebrew cask</td><td>macOS 12 이상. 배포 ZIP은 Developer ID 서명과 Apple 공증 적용</td></tr><tr><td>Windows — Intel 또는 AMD CPU</td><td><code>DepartureBoard-win-x64.zip</code></td><td>Windows 11. 서명 없는 프리뷰</td></tr><tr><td>Windows — Snapdragon 등 ARM CPU</td><td><code>DepartureBoard-win-arm64.zip</code></td><td>Windows 11 ARM64. 서명 없는 프리뷰</td></tr></tbody></table></div>
+<p>최신 파일은 <a href="https://github.com/Skyline-23/homebrew-departure-board/releases/latest">공식 릴리스 페이지</a>의 <strong>Assets</strong>에서 받습니다. Windows의 <strong>설정 → 시스템 → 정보 → 시스템 종류</strong>에서 x64 또는 ARM 기반 프로세서인지 확인할 수 있습니다. Windows ZIP에는 .NET 런타임이 포함되어 있어 별도로 설치하지 않아도 됩니다.</p>
+<p>압축 안의 <strong>Install Guide.html</strong>을 열면 이 설명서가 브라우저에 표시됩니다. 설치 후에도 앱의 <strong>Install &amp; user guide</strong> 버튼으로 다시 열 수 있습니다. 사진과 설명은 로컬 파일이므로 인터넷이 없어도 읽을 수 있습니다. 외부 사이트 링크와 실시간 항공편 조회에는 인터넷이 필요합니다.</p>
+<h2 id="2-macos에-설치하기">2. macOS에 설치하기</h2>
+<h3 id="homebrew로-설치">Homebrew로 설치</h3>
+<ol start="1"><li>터미널을 엽니다. Homebrew가 없다면 <a href="https://brew.sh/">brew.sh</a>의 공식 설치 안내를 먼저 따릅니다.</li><li>아래 명령을 순서대로 실행합니다.</li></ol>
+<pre><code>brew tap Skyline-23/departure-board
+brew install --cask skyline-23/departure-board/departure-board
+open -a &quot;Departure Board&quot;</code></pre>
+<ol start="3"><li><strong>Departure Board Settings</strong>가 열리는지 확인합니다. 앱은 메뉴 막대에서 실행되므로 Dock에 아이콘이 없어도 정상입니다.</li><li>아래의 ‘첫 화면 설정’ 순서대로 샘플 화면부터 확인합니다.</li></ol>
+<p>Homebrew는 앱을 <code>/Applications</code>에 설치하고 화면 보호기를 등록합니다. 회사에서 Homebrew 사용을 제한한다면 관리자 정책을 먼저 확인하세요.</p>
+<h3 id="zip으로-직접-설치">ZIP으로 직접 설치</h3>
+<ol start="1"><li>공식 릴리스에서 <code>universal.zip</code>을 받고 Finder에서 압축을 풉니다.</li><li><strong>Departure Board.app</strong>을 <strong>응용 프로그램</strong> 폴더로 옮깁니다.</li><li><strong>Departure Board.saver</strong>를 더블클릭하고 macOS의 화면 보호기 설치 안내를 따릅니다. 사용자 계정에 설치할 수 있습니다.</li><li>응용 프로그램 폴더의 <strong>Departure Board</strong>를 엽니다. 앱과 화면 보호기는 같은 버전으로 함께 업데이트하세요.</li></ol>
+<h2 id="3-windows에-설치하기">3. Windows에 설치하기</h2>
+<ol start="1"><li>CPU에 맞는 ZIP을 다운로드합니다. 다운로드한 ZIP을 바로 탐색하면서 실행하지 말고, 우클릭 → <strong>모두 압축 풀기</strong>를 먼저 선택합니다.</li><li>풀린 폴더에서 <strong>Install Guide.html</strong>로 안내를 확인하고 <strong>Install.cmd</strong>를 더블클릭합니다.</li><li>설치가 완료되면 <strong>Departure Board Settings</strong>가 열리는지 확인합니다. 이후에는 시작 메뉴에서 <strong>Departure Board</strong>를 검색해 실행합니다.</li><li>작업 표시줄의 숨겨진 아이콘 영역에 비행기 아이콘이 있는지 확인합니다. 설정창을 닫아도 앱은 이 영역에서 계속 실행됩니다.</li></ol>
+<p>설치는 현재 사용자에게 적용되며 관리자 권한이 필요하지 않습니다. 기본 위치는 <code>%LOCALAPPDATA%\Programs\DepartureBoard</code>입니다. 시작 메뉴 바로가기를 만들고 Departure Board를 화면 보호기로 선택하지만, 유휴 대기 시간과 잠금 옵션은 Windows 설정에서 직접 정합니다.</p>
+<aside class="note">Windows 버전은 <strong>서명 없는 프리뷰</strong>입니다. 알 수 없는 게시자 경고가 보일 수 있습니다. 공식 릴리스에서 받은 파일인지와 SHA-256을 먼저 확인하세요. 조직 정책으로 실행이 막히면 보안 기능을 끄지 말고 관리자에게 문의하세요.</aside>
+<h3 id="다운로드-무결성-확인">다운로드 무결성 확인</h3>
+<p>ZIP과 이름이 같은 <code>.zip.sha256</code> 파일도 받습니다. PowerShell에서 다음 명령을 실행한 뒤 나온 해시를 <code>.sha256</code> 파일의 첫 값과 비교합니다. ARM64 파일은 명령의 파일명을 바꾸면 됩니다.</p>
+<pre><code>Get-FileHash &quot;$env:USERPROFILE\Downloads\DepartureBoard-win-x64.zip&quot; -Algorithm SHA256</code></pre>
+<h2 id="4-첫-화면-설정">4. 첫 화면 설정</h2>
+<figure><img src="images/macos-settings.png" alt="macOS의 Departure Board 설정창" loading="lazy"></figure>
+<p><em>macOS 설정창. 공항과 표시 방식, 배경화면, 데이터 연결을 한곳에서 설정합니다. 사진은 샘플 시간표를 사용합니다.</em></p>
+<figure><img src="images/windows-settings.png" alt="Windows의 Departure Board 설정창" loading="lazy"></figure>
+<p><em>Windows 설정창. macOS와 같은 표시 옵션을 제공하며 아래 버튼에서 미리보기와 화면 보호기를 선택합니다.</em></p>
+<ol start="1"><li><strong>Airport</strong>에서 보고 싶은 공항을 선택합니다. 예: Seoul Incheon (ICN), Tokyo Haneda (HND), London Heathrow (LHR).</li><li><strong>Timetable source → Sample schedule · visual preview only</strong>를 선택합니다. 키 없이 화면과 레이아웃을 확인하는 모드입니다.</li><li><strong>Language / Board language</strong>에서 영어, 현지어 또는 두 언어 번갈아 표시를 고릅니다.</li><li><strong>Apply</strong>를 누릅니다. Windows에서는 <strong>Preview</strong>, Mac에서는 메뉴 막대의 <strong>Show Board</strong>로 전광판을 확인합니다.</li><li>표시가 마음에 들면 배경화면 또는 화면 보호기로 설정합니다. 실제 항공편 연결은 다음 항목을 참고하세요.</li></ol>
+<h2 id="5-배경화면과-화면-보호기">5. 배경화면과 화면 보호기</h2>
+<h3 id="움직이는-배경화면">움직이는 배경화면</h3>
+<p><strong>Live wallpaper</strong>(Mac) 또는 <strong>Live desktop wallpaper</strong>(Windows)를 켜고 <strong>Apply</strong>를 누릅니다. 전광판이 바탕화면 아이콘 뒤에서 갱신됩니다. 앱이 실행 중이어야 계속 움직이며, 완전히 종료하면 움직이는 전광판도 사라집니다.</p>
+<p><strong>Show on all Spaces / Show on all desktops</strong>는 여러 가상 데스크톱에 표시할지를 정합니다. 여러 물리 모니터를 하나의 가로로 긴 전광판으로 합치는 옵션은 아닙니다. 각 모니터에는 별도의 전광판이 표시됩니다.</p>
+<p>로그인할 때도 계속 쓰려면 <strong>Launch in background at login / sign-in</strong>을 켭니다. 배경화면이 필요 없으면 Live wallpaper를 끄고 Apply를 누르세요.</p>
+<p>Wallpaper Engine 등 다른 배경화면 앱이 실행 중이면 Departure Board가 가려질 수 있습니다. 배경화면을 관리하는 앱 하나만 재생하도록 설정한 뒤 확인하세요.</p>
+<h3 id="정지-배경화면">정지 배경화면</h3>
+<p><strong>Set as Wallpaper</strong>는 현재 전광판을 정지 이미지로 저장해 시스템 배경화면으로 지정합니다. 이 이미지는 앱을 종료해도 남지만, 이후 시간과 항공편은 갱신되지 않습니다. 움직이는 화면이 목적이라면 Live wallpaper를 사용하세요.</p>
+<p>전광판의 머리글과 마지막 줄은 메뉴 막대·Dock·작업 표시줄의 사용 영역을 피해 배치됩니다. 배경화면의 바깥 여백은 이를 위한 공간입니다. Windows의 정지 이미지는 생성 당시 모니터 배치에 맞춰지므로 모니터 구성이나 해상도를 바꾼 뒤에는 다시 <strong>Set as Wallpaper</strong>를 누릅니다.</p>
+<h3 id="화면-보호기">화면 보호기</h3>
+<p><strong>macOS:</strong> 앱 메뉴의 <strong>Screen Saver Settings</strong>를 열거나 시스템 설정에서 ‘화면 보호기’를 검색합니다. <strong>Departure Board</strong>를 선택하고 시스템의 미리보기로 확인합니다. 시작까지의 대기 시간과 잠금 설정은 macOS에서 정합니다.</p>
+<p><strong>Windows:</strong> 앱에서 <strong>Set as screen saver</strong>를 누릅니다. Windows 시작 메뉴에서 ‘화면 보호기 변경’을 검색해 <strong>DepartureBoard</strong>가 선택되어 있는지 확인하고 <strong>미리 보기</strong>를 누릅니다. <strong>대기 시간</strong>과 <strong>다시 시작할 때 로그온 화면 표시</strong>를 원하는 값으로 정한 뒤 적용합니다.</p>
+<p>화면 보호기는 전체 화면을 사용합니다. 키를 누르거나 마우스를 움직이면 종료됩니다. 설정창의 Preview는 일반 창이며, Windows 시스템의 화면 보호기 Preview와 다릅니다.</p>
+<figure><img src="images/board-incheon.png" alt="샘플 시간표를 표시한 인천 전광판" loading="lazy"></figure>
+<p><em>샘플 시간표 예시. 페이지·언어·공동운항 편명이 순환하므로 한 화면에 모든 항공편이 동시에 보이지 않을 수 있습니다.</em></p>
+<h2 id="6-실제-항공편-연결">6. 실제 항공편 연결</h2>
+<ol start="1"><li><a href="https://rapidapi.com/">RapidAPI</a>에 로그인합니다.</li><li><a href="https://rapidapi.com/aedbx-aedbx/api/aerodatabox/pricing">AeroDataBox 요금제</a>를 확인하고 필요한 구독을 활성화합니다. RapidAPI 계정만 만드는 것으로는 API 구독이 완료되지 않습니다.</li><li>RapidAPI의 Developer Dashboard에서 앱의 <strong>X-RapidAPI-Key</strong>를 복사합니다.</li><li>앱에서 <strong>Timetable source → Live flight data</strong>를 고르고 <strong>API key</strong>에 키를 넣은 뒤 <strong>Apply</strong>를 누릅니다.</li><li><strong>Last update</strong>가 갱신되고 실제 항공편이 나타나는지 확인합니다. 데이터가 없다는 표시와 키·구독 오류 표시는 의미가 다릅니다.</li></ol>
+<p>키는 macOS Keychain 또는 Windows Credential Manager에 저장됩니다. 프로젝트에 전송하거나 공유하지 않습니다. 저장된 키가 점으로 표시되어 있으면 다시 붙여 넣을 필요가 없습니다. 스크린샷이나 오류 제보에 키를 포함하지 마세요.</p>
+<p><strong>Data refresh / Refresh flights</strong>는 API 조회 주기입니다. 새로 설치하면 기본값은 5분이며, 기존에 고른 주기는 유지됩니다. 자주 조회할수록 요금제 할당량을 더 빨리 사용할 수 있습니다. 언어·페이지·공동운항 편명 전환에는 새 API 요청이 필요하지 않습니다. 앱과 화면 보호기는 캐시와 요청 잠금을 공유합니다. 제공사가 오류를 반환하면 공항을 바꿔도 같은 실패 요청을 반복하지 않고 재시도 대기를 공유합니다. 미리 보기·설정·움직이는 배경화면 없이 트레이나 메뉴 막대에만 있는 앱은 항공편을 계속 조회하지 않습니다. 제공사의 실제 요금과 한도를 확인하고 설정하세요.</p>
+<h2 id="7-모든-표시-옵션">7. 모든 표시 옵션</h2>
+<div class="table"><table><thead><tr><th scope="col">옵션</th><th scope="col">선택값 / 동작</th><th scope="col">이렇게 조절하세요</th></tr></thead><tbody><tr><td>Airport</td><td>공항 40곳</td><td>공항마다 열과 색상 구성이 다릅니다</td></tr><tr><td>Board style / Display style</td><td>Automatic, LCD, Split-flap</td><td>Automatic은 해당 공항의 레이아웃을 사용합니다</td></tr><tr><td>Language / Board language</td><td>영어, 현지어, 번갈아</td><td>번갈아 모드는 자동 전환됩니다</td></tr><tr><td>Row density / Rows</td><td>Airport layout, 10, 12, 16</td><td>글씨가 작으면 행 수를 줄여 보세요</td></tr><tr><td>Board scale</td><td>50, 65, 75, 85, 100%</td><td>높이면 내용이 더 크게 보입니다. Windows의 화면 배율과 별도입니다</td></tr><tr><td>Brightness</td><td>35–100%</td><td>야간에는 낮게 조절할 수 있습니다</td></tr><tr><td>Reduce motion</td><td>전환 효과 줄이기</td><td>페이지와 데이터 갱신은 계속됩니다</td></tr><tr><td>Data refresh</td><td>1분, 5분, 15분, 1시간, 6시간</td><td>API 요금제에 맞춰 선택합니다</td></tr><tr><td>Launch in background</td><td>로그인 후 자동 실행</td><td>설정창을 자동으로 띄우는 옵션은 아닙니다</td></tr><tr><td>Show on all desktops / Spaces</td><td>가상 데스크톱 전체 표시</td><td>물리 모니터 확장 모드와 다릅니다</td></tr></tbody></table></div>
+<p>공항에 따라 표시하지 않는 열이 있습니다. 출발 시각, 게이트, 체크인 카운터가 빈칸 또는 대시이면 제공된 데이터가 없을 수 있습니다. 화면의 항공편 상태는 실제 공항 안내를 대체하지 않습니다.</p>
+<h2 id="8-여러-모니터와-서로-다른-배율">8. 여러 모니터와 서로 다른 배율</h2>
+<p>Windows의 <strong>설정 → 시스템 → 디스플레이</strong>에서 각 화면을 선택해 해상도와 배율을 확인합니다. 예를 들어 4K 화면 150%와 FHD 화면 100%처럼 서로 다른 배율을 쓰는 구성이 ‘혼합 DPI’입니다. 앱의 Board scale과 Windows의 화면 배율은 서로 다른 설정입니다.</p>
+<ol start="1"><li>Windows의 표시 모드를 <strong>확장</strong>으로 설정합니다. 복제 모드는 같은 화면을 반복하므로 독립된 두 화면 검증이 아닙니다.</li><li><strong>식별</strong>을 눌러 화면 번호를 확인하고, 실제 위치에 맞게 왼쪽·오른쪽·위아래로 배치합니다. 주 모니터 왼쪽이나 위쪽 화면도 사용할 수 있습니다.</li><li>각 화면에서 Live wallpaper의 머리글, 마지막 행, 날짜·시간이 잘리지 않는지 확인합니다. 작업 표시줄을 옮긴 뒤에도 확인합니다.</li><li>Windows 화면 보호기 미리보기를 시작해 모든 화면이 채워지고 마우스 입력으로 정상 종료되는지 확인합니다.</li><li>앱의 Preview 창을 화면 사이로 옮겨 글자가 흐려지거나 내용이 창 밖으로 밀려나지 않는지 확인합니다.</li><li>모니터를 연결·분리하거나 해상도를 바꾼 뒤 정지 배경화면을 쓰고 있다면 다시 적용합니다.</li></ol>
+<p>가상 디스플레이로 확인한 결과와 물리 모니터에서 확인한 결과는 <a href="https://github.com/Skyline-23/homebrew-departure-board/blob/main/Windows/VALIDATION.md">검증 기록</a>에 구분해 기록합니다. 원격 데스크톱 한 화면의 해상도를 키우는 것만으로는 실제 다중 모니터나 혼합 DPI를 검증한 것이 아닙니다.</p>
+<figure><img src="images/mixed-dpi-200.png" alt="200% 배율의 가상 QHD 화면에서 실행 중인 화면 보호기" loading="lazy"></figure>
+<p><em>2560×1440, 200% 배율의 가상 화면에서 캡처했습니다. 1920×1080, 100% 화면과 동시에 검증했으며, 물리 모니터 촬영 사진은 아닙니다.</em></p>
+<h2 id="9-업데이트와-제거">9. 업데이트와 제거</h2>
+<p><strong>Mac / Homebrew:</strong> 아래 명령으로 업데이트합니다. 설정과 키를 새로 입력할 필요는 없습니다.</p>
+<pre><code>brew update
+brew upgrade --cask skyline-23/departure-board/departure-board</code></pre>
+<p><strong>Mac / ZIP:</strong> 앱을 완전히 종료한 뒤 새 버전의 앱과 <code>.saver</code>를 모두 교체합니다. Homebrew와 ZIP 설치를 섞어서 같은 앱을 중복 설치하지 마세요.</p>
+<p><strong>Windows:</strong> 새 버전의 ZIP을 다른 폴더에 풀고 <strong>Install.cmd</strong>를 실행합니다. 기존 설정과 키는 유지됩니다. 설치 폴더 내부에서 설치 프로그램을 다시 실행하면 오류가 나므로 새 압축 해제 폴더를 사용하세요.</p>
+<p><strong>Windows 제거:</strong> 앱을 종료하고 설치 폴더의 <code>Uninstall.ps1</code>을 PowerShell에서 실행합니다. 현재 화면 보호기가 Departure Board이면 이전 선택을 복원합니다. 사용자 설정과 API 키는 유지됩니다. 완전히 지우려면 앱을 종료한 뒤 <code>%LOCALAPPDATA%\DepartureBoard</code>와 Credential Manager의 Departure Board 항목을 별도로 정리합니다.</p>
+<p><strong>Mac 제거:</strong> Homebrew로 설치했다면 <code>brew uninstall --cask skyline-23/departure-board/departure-board</code>를 실행합니다. ZIP 설치라면 응용 프로그램 폴더의 앱과 설치한 화면 보호기를 제거합니다. 일반 제거는 사용자 설정과 키를 유지합니다.</p>
+<h2 id="10-문제가-생겼을-때">10. 문제가 생겼을 때</h2>
+<div class="table"><table><thead><tr><th scope="col">증상</th><th scope="col">먼저 확인할 것</th></tr></thead><tbody><tr><td>설치 안내가 열리지 않음</td><td>ZIP을 전부 풀었는지, <code>Install Guide.html</code> 옆에 <code>Guide</code> 폴더가 있는지 확인합니다. 설치 후에는 앱의 Install &amp; user guide를 사용합니다</td></tr><tr><td>앱 창을 닫았는데 계속 움직임</td><td>정상입니다. 메뉴 막대 또는 트레이에서 Quit을 선택해야 완전히 종료됩니다</td></tr><tr><td>화면 보호기 목록에 없음</td><td>Mac은 <code>.saver</code>를 설치했는지, Windows는 Install.cmd를 실행했는지 확인합니다. Windows의 Set as screen saver도 사용할 수 있습니다</td></tr><tr><td>실제 항공편이 나오지 않음</td><td>Sample/Live 선택, AeroDataBox 구독, API 키, 인터넷, Last update를 확인합니다</td></tr><tr><td>401 / 403 / 429</td><td>각각 키 인증, 구독·권한, 요청 한도 문제일 수 있습니다. 제공사 계정에서 확인합니다</td></tr><tr><td>계속 Loading 또는 No departures</td><td>조회 완료 여부와 공항별 제공 데이터를 확인합니다. 샘플 모드가 정상인지 먼저 비교합니다</td></tr><tr><td>배경화면이 정지함</td><td>Live wallpaper가 켜져 있고 앱이 실행 중인지 확인합니다. Set as Wallpaper만 누르면 정지 이미지입니다</td></tr><tr><td>정지 배경화면이 잘림</td><td>모니터 구성·배율·작업 표시줄 변경 후 앱에서 정지 배경화면을 다시 적용합니다</td></tr><tr><td>Windows 앱이 실행되지 않음</td><td>x64/ARM64 파일 선택, 전체 압축 해제, 조직 실행 정책을 확인합니다</td></tr></tbody></table></div>
+<p>오류를 제보할 때는 앱 버전, OS 버전, 재현 순서, 화면별 해상도·배율·배치와 <strong>API 키가 보이지 않는</strong> 사진을 함께 보내세요. 로그 위치와 진단 항목은 <a href="https://github.com/Skyline-23/homebrew-departure-board/blob/main/docs/diagnostics.md">진단 안내</a>에 있습니다. 로그를 공개하기 전에 개인 정보가 없는지 확인하세요.</p></main></div><footer>이 설명서와 사진은 앱에 포함되어 인터넷 없이도 열립니다.</footer></body></html>
