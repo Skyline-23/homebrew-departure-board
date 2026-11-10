@@ -1,4 +1,5 @@
 using DepartureBoard.Core.Airports;
+using DepartureBoard.Core.Diagnostics;
 using DepartureBoard.Core.Flights;
 using DepartureBoard.Core.Runtime;
 using DepartureBoard.Core.Settings;
@@ -162,8 +163,9 @@ try
     using var handler = new Fixtures.CountingHandler();
     using var http = new HttpClient(handler);
     var provider = new AeroDataBoxClient(http);
-    var first = new FlightRepository(storage, provider);
-    var second = new FlightRepository(storage, provider);
+    var diagnostics = new DiagnosticLog(Path.Combine(storage, "Logs"), "test");
+    var first = new FlightRepository(storage, provider, diagnostics);
+    var second = new FlightRepository(storage, provider, diagnostics);
     await Task.WhenAll(
         first.RefreshAsync("ICN", "test-key", 300, default),
         second.RefreshAsync("ICN", "test-key", 300, default)
@@ -186,6 +188,63 @@ try
     await second.RefreshAsync("NRT", "test-key", 300, default);
     Check(handler.Calls == 2, "Share API failure backoff across processes.");
     Check(second.LastError is not null, "Expose provider failure without crashing.");
+
+    handler.Fault = new InvalidOperationException("private-error-message-sentinel");
+    var failing = new FlightRepository(storage, provider, diagnostics);
+    await failing.RefreshAsync("CDG", "test-key", 300, default);
+    Check(failing.LastError is not null, "A failed background request must leave loading state.");
+
+    var logText = File.ReadAllText(diagnostics.FilePath);
+    Check(
+        logText.Contains("flight.request_started") && logText.Contains("flight.request_finished"),
+        "Record the request lifecycle."
+    );
+    Check(
+        logText.Contains("flight.request_failed") && logText.Contains("429"),
+        "Record provider status without the response body."
+    );
+    Check(
+        !logText.Contains("test-key")
+            && !logText.Contains("scheduledTime")
+            && !logText.Contains("https://")
+            && !logText.Contains("private-error-message-sentinel"),
+        "Keep credentials, provider bodies and URLs out of logs."
+    );
+
+    var rotating = new DiagnosticLog(Path.Combine(storage, "Rotation"), "test", 512);
+
+    for (var index = 0; index < 50; index++)
+    {
+        rotating.Write(new("test.rotation", "ICN", Count: index));
+    }
+
+    var files = Directory
+        .GetFiles(Path.Combine(storage, "Rotation"), "departure-board.log*")
+        .Where(path => !path.EndsWith(".lock", StringComparison.Ordinal))
+        .ToArray();
+    Check(
+        files.Length == 3 && files.All(path => new FileInfo(path).Length < 1024),
+        "Bound diagnostic storage with two rotated files."
+    );
+
+    var denied = Path.Combine(storage, "NotADirectory");
+    File.WriteAllText(denied, "occupied");
+    new DiagnosticLog(denied).Write(new("test.unwritable"));
+    Check(File.ReadAllText(denied) == "occupied", "A logging failure must not affect the app.");
+
+    var repeated = new DiagnosticLog(Path.Combine(storage, "Repeated"));
+
+    for (var index = 0; index < 60; index++)
+    {
+        repeated.Write(new("flight.refresh_skipped", "HND", "fresh_cache"));
+        repeated.Write(new("flight.cache_read_failed", "HND"));
+    }
+
+    repeated.Write(new("flight.refresh_skipped", "ICN", "fresh_cache"));
+    Check(
+        File.ReadAllLines(repeated.FilePath).Length == 3,
+        "Throttle repeated cache checks while keeping distinct airports and failures."
+    );
 }
 finally
 {

@@ -1,4 +1,5 @@
 #import "DepartureBoardView.h"
+#import "Diagnostics.h"
 #import "SettingsStore.h"
 #import <ScreenSaver/ScreenSaver.h>
 #import <os/log.h>
@@ -33,6 +34,12 @@ static os_log_t ScreenSaverLog(void) {
         self.board = [[DBBoardView alloc] initWithFrame:self.bounds];
         self.board.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
         [self addSubview:self.board];
+        DBDiagnosticEvent(@"saver", @"saver.created", @{
+            @"preview" : @(preview),
+            @"version" : [NSBundle bundleForClass:self.class]
+                    .infoDictionary[@"CFBundleShortVersionString"]
+                ?: @"development"
+        });
         [self startRefreshTimer];
     }
     return self;
@@ -40,7 +47,7 @@ static os_log_t ScreenSaverLog(void) {
 
 - (void)startAnimation {
 
-    os_log_info(ScreenSaverLog(), "Screen saver started; preview=%d", self.isPreview);
+    os_log(ScreenSaverLog(), "Screen saver started; preview=%d", self.isPreview);
     [self.board reloadSettings];
     [self updateHeartbeat];
     [self startRefreshTimer];
@@ -49,7 +56,7 @@ static os_log_t ScreenSaverLog(void) {
 
 - (void)stopAnimation {
 
-    os_log_info(ScreenSaverLog(), "Screen saver stopped; preview=%d", self.isPreview);
+    os_log(ScreenSaverLog(), "Screen saver stopped; preview=%d", self.isPreview);
     [self.refreshTimer invalidate];
     self.refreshTimer = nil;
 
@@ -100,8 +107,8 @@ static os_log_t ScreenSaverLog(void) {
                             if (elapsed >= 1.5) {
                                 if (!saver.refreshingWithoutHost) {
                                     saver.refreshingWithoutHost = YES;
-                                    os_log_info(ScreenSaverLog(),
-                                                "Host frames paused; refreshing shared cache");
+                                    os_log(ScreenSaverLog(),
+                                           "Host frames paused; refreshing shared cache");
                                 }
                                 [saver refreshBoard];
                             }
@@ -119,7 +126,7 @@ static os_log_t ScreenSaverLog(void) {
 - (void)animateOneFrame {
 
     if (self.refreshingWithoutHost) {
-        os_log_info(ScreenSaverLog(), "Host animation callbacks resumed");
+        os_log(ScreenSaverLog(), "Host animation callbacks resumed");
         self.refreshingWithoutHost = NO;
     }
     self.lastHostFrameTime = NSProcessInfo.processInfo.systemUptime;

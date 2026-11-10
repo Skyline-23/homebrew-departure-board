@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -6,6 +7,7 @@ using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using DepartureBoard.Core.Diagnostics;
 using DepartureBoard.Core.Runtime;
 using DepartureBoard.Core.Settings;
 using DepartureBoard.Windows.Platform;
@@ -28,6 +30,7 @@ internal static class WindowsSmokeTest
         CheckPreviewEmbedding(services);
         CheckCredentials();
         CheckFrameUpdates(services, outputDirectory);
+        CheckDiagnosticTransitions(services);
         WindowsPerformanceTest.Run(services, outputDirectory);
 
         if (checkDesktop)
@@ -330,6 +333,48 @@ internal static class WindowsSmokeTest
         finally
         {
             credentials.Delete();
+        }
+    }
+
+    private static void CheckDiagnosticTransitions(AppServices services)
+    {
+
+        var events = new CapturedDiagnostics();
+        var diagnostics = new BoardDiagnostics(events, "test");
+        var session = new BoardSession(services.Catalog, services.Flights);
+        session.Update(new BoardSettings(), DateTimeOffset.UtcNow, false);
+        var ready = session.Frame!;
+        var loading = ready with { Rows = [], EmptyMessage = "data.loading" };
+        diagnostics.Presented(loading);
+
+        for (var tick = 0; tick < 60; tick++)
+        {
+            diagnostics.Presented(loading with { Time = loading.Time.AddSeconds(tick) });
+        }
+
+        diagnostics.Presented(ready);
+        diagnostics.Presented(ready with { PageCycle = ready.PageCycle + 1 });
+
+        if (
+            events.Entries.Count != 2
+            || events.Entries[0].State != "data.loading"
+            || events.Entries[1].State != "ready"
+        )
+        {
+            throw new InvalidOperationException(
+                "Diagnostics must record transitions without logging every frame."
+            );
+        }
+    }
+
+    private sealed class CapturedDiagnostics : IDiagnosticSink
+    {
+        public List<DiagnosticEvent> Entries { get; } = [];
+
+        public void Write(DiagnosticEvent entry)
+        {
+
+            Entries.Add(entry);
         }
     }
 }

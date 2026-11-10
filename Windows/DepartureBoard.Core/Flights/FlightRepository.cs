@@ -1,9 +1,17 @@
+using System.Diagnostics;
 using System.Text.Json;
+using DepartureBoard.Core.Diagnostics;
 
 namespace DepartureBoard.Core.Flights;
 
-public sealed class FlightRepository(string directory, AeroDataBoxClient provider)
+public sealed class FlightRepository(
+    string directory,
+    AeroDataBoxClient provider,
+    IDiagnosticSink? sink = null
+)
 {
+    private readonly IDiagnosticSink diagnostics = sink ?? DiagnosticLog.None;
+
     private sealed record CachedFile(DateTime ModifiedAt, FlightSnapshot Snapshot);
 
     private sealed record RetryState(DateTimeOffset After, string Message);
@@ -41,10 +49,23 @@ public sealed class FlightRepository(string directory, AeroDataBoxClient provide
                 memory[airport] = new CachedFile(modifiedAt, snapshot);
             }
 
+            diagnostics.Write(
+                new(
+                    "flight.cache_loaded",
+                    airport,
+                    Count: snapshot.Flights.Length,
+                    CacheAgeSeconds: Math.Max(
+                        0,
+                        (DateTimeOffset.UtcNow - snapshot.FetchedAt).TotalSeconds
+                    )
+                )
+            );
+
             return snapshot;
         }
         catch (IOException)
         {
+            diagnostics.Write(new("flight.cache_read_failed", airport));
             return null;
         }
     }
@@ -57,8 +78,15 @@ public sealed class FlightRepository(string directory, AeroDataBoxClient provide
     )
     {
 
-        if (apiKey.Length == 0 || !await gate.WaitAsync(0, cancellationToken).ConfigureAwait(false))
+        if (apiKey.Length == 0)
         {
+            diagnostics.Write(new("flight.refresh_skipped", airport, "credential_unavailable"));
+            return;
+        }
+
+        if (!await gate.WaitAsync(0, cancellationToken).ConfigureAwait(false))
+        {
+            diagnostics.Write(new("flight.refresh_skipped", airport, "refresh_in_progress"));
             return;
         }
 
@@ -70,10 +98,18 @@ public sealed class FlightRepository(string directory, AeroDataBoxClient provide
         catch (IOException)
         {
             LastError = "The flight cache could not be updated.";
+            diagnostics.Write(new("flight.request_failed", airport, "cache_write_failed"));
         }
         catch (UnauthorizedAccessException)
         {
             LastError = "The flight cache is not writable.";
+            diagnostics.Write(new("flight.request_failed", airport, "cache_permission_denied"));
+        }
+        catch (Exception error)
+            when (error is ArgumentException or InvalidOperationException or FormatException)
+        {
+            LastError = "The flight request could not be processed. See the diagnostic log.";
+            diagnostics.Write(new("flight.request_failed", airport, error.GetType().Name));
         }
         finally
         {
@@ -95,6 +131,7 @@ public sealed class FlightRepository(string directory, AeroDataBoxClient provide
 
         if (lease is null)
         {
+            diagnostics.Write(new("flight.refresh_skipped", airport, "other_process_refresh"));
             return;
         }
 
@@ -106,6 +143,7 @@ public sealed class FlightRepository(string directory, AeroDataBoxClient provide
 
         if (cached is not null && now - cached.FetchedAt < interval)
         {
+            diagnostics.Write(new("flight.refresh_skipped", airport, "fresh_cache"));
             return;
         }
 
@@ -114,6 +152,14 @@ public sealed class FlightRepository(string directory, AeroDataBoxClient provide
         if (retry is not null && now < retry.After)
         {
             LastError = retry.Message;
+            diagnostics.Write(
+                new(
+                    "flight.refresh_skipped",
+                    airport,
+                    "backoff",
+                    RetrySeconds: (int)Math.Ceiling((retry.After - now).TotalSeconds)
+                )
+            );
             return;
         }
 
@@ -128,6 +174,9 @@ public sealed class FlightRepository(string directory, AeroDataBoxClient provide
     )
     {
 
+        var elapsed = Stopwatch.StartNew();
+        diagnostics.Write(new("flight.request_started", airport));
+
         try
         {
             var snapshot = await provider
@@ -136,15 +185,48 @@ public sealed class FlightRepository(string directory, AeroDataBoxClient provide
             await WriteJsonAsync(path, snapshot, cancellationToken).ConfigureAwait(false);
             File.Delete(path + ".retry");
             LastError = null;
+            diagnostics.Write(
+                new(
+                    "flight.request_finished",
+                    airport,
+                    "saved",
+                    Count: snapshot.Flights.Length,
+                    ElapsedMs: elapsed.Elapsed.TotalMilliseconds
+                )
+            );
         }
         catch (HttpRequestException error)
         {
-            await DeferAsync(path, error.Message, TimeSpan.FromMinutes(15), cancellationToken)
+            diagnostics.Write(
+                new(
+                    "flight.request_failed",
+                    airport,
+                    "http_error",
+                    Status: error.StatusCode is { } code ? (int)code : null,
+                    ElapsedMs: elapsed.Elapsed.TotalMilliseconds
+                )
+            );
+            await DeferAsync(
+                    airport,
+                    path,
+                    error.Message,
+                    TimeSpan.FromMinutes(15),
+                    cancellationToken
+                )
                 .ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
         {
+            diagnostics.Write(
+                new(
+                    "flight.request_failed",
+                    airport,
+                    "timeout",
+                    ElapsedMs: elapsed.Elapsed.TotalMilliseconds
+                )
+            );
             await DeferAsync(
+                    airport,
                     path,
                     "The flight request timed out.",
                     TimeSpan.FromMinutes(2),
@@ -154,7 +236,16 @@ public sealed class FlightRepository(string directory, AeroDataBoxClient provide
         }
         catch (Exception error) when (error is JsonException or InvalidDataException)
         {
+            diagnostics.Write(
+                new(
+                    "flight.request_failed",
+                    airport,
+                    "invalid_response",
+                    ElapsedMs: elapsed.Elapsed.TotalMilliseconds
+                )
+            );
             await DeferAsync(
+                    airport,
                     path,
                     "The flight provider returned an invalid response.",
                     TimeSpan.FromMinutes(15),
@@ -165,6 +256,7 @@ public sealed class FlightRepository(string directory, AeroDataBoxClient provide
     }
 
     private async Task DeferAsync(
+        string airport,
         string path,
         string message,
         TimeSpan delay,
@@ -173,6 +265,14 @@ public sealed class FlightRepository(string directory, AeroDataBoxClient provide
     {
 
         LastError = message;
+        diagnostics.Write(
+            new(
+                "flight.retry_scheduled",
+                airport,
+                State: "backoff",
+                RetrySeconds: (int)delay.TotalSeconds
+            )
+        );
         var retry = new RetryState(DateTimeOffset.UtcNow + delay, message);
         await WriteJsonAsync(path + ".retry", retry, cancellationToken).ConfigureAwait(false);
     }

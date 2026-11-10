@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using DepartureBoard.Core.Airports;
+using DepartureBoard.Core.Diagnostics;
 using DepartureBoard.Core.Flights;
 using DepartureBoard.Core.Settings;
 using DepartureBoard.Windows.Platform;
@@ -28,17 +29,30 @@ internal sealed class AppServices : IDisposable
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "DepartureBoard"
             );
+        Diagnostics = new DiagnosticLog(
+            Path.Combine(storage, "Logs"),
+            typeof(AppServices).Assembly.GetName().Version?.ToString() ?? "development"
+        );
         Catalog = new AirportCatalog(resources);
         settingsRepository = new SettingsRepository(storage);
         Settings = settingsRepository.Load();
         apiKey = isolatedStorage is null ? credentials.Read() : "";
         Flights = new FlightRepository(
             Path.Combine(storage, "Flights"),
-            new AeroDataBoxClient(http)
+            new AeroDataBoxClient(http),
+            Diagnostics
+        );
+        Diagnostics.Write(
+            new(
+                "app.services_initialized",
+                Settings.Airport,
+                HasApiKey ? "credential_available" : "credential_missing"
+            )
         );
     }
 
     public AirportCatalog Catalog { get; }
+    public IDiagnosticSink Diagnostics { get; }
     public FlightRepository Flights { get; }
     public BoardSettings Settings { get; private set; }
     public bool HasApiKey => apiKey.Length > 0;
@@ -55,6 +69,9 @@ internal sealed class AppServices : IDisposable
         settingsRepository.Save(settings);
         StartupRegistration.Apply(settings.LaunchAtLogin);
         Settings = settings;
+        Diagnostics.Write(
+            new("settings.saved", settings.Airport, settings.SampleData ? "sample" : "live")
+        );
         SettingsChanged?.Invoke(this, EventArgs.Empty);
         _ = RefreshAsync();
     }
@@ -96,6 +113,7 @@ internal sealed class AppServices : IDisposable
     {
 
         cancellation.Cancel();
+        Diagnostics.Write(new("app.services_stopped"));
         cancellation.Dispose();
         http.Dispose();
     }

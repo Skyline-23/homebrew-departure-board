@@ -2,6 +2,7 @@
 #import "CommandLine.h"
 #import "DepartureBoardView.h"
 #import "DesktopController.h"
+#import "Diagnostics.h"
 #import "LiveFlightStore.h"
 #import "SettingsStore.h"
 #import <errno.h>
@@ -22,6 +23,10 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification {
 
+    DBDiagnosticEvent(@"app", @"app.started", @{
+        @"version" : NSBundle.mainBundle.infoDictionary[@"CFBundleShortVersionString"]
+            ?: @"development"
+    });
     NSArray<NSString *> *arguments = NSProcessInfo.processInfo.arguments;
 
     if (!self.board && ![arguments containsObject:@"--background"]) {
@@ -130,6 +135,8 @@
 }
 
 - (void)applicationWillTerminate:(NSNotification *)notification {
+
+    DBDiagnosticEvent(@"app", @"app.stopped", @{});
 
     [self.timer invalidate];
     [self.desktop stop];

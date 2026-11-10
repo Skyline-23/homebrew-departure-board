@@ -23,6 +23,7 @@ internal sealed class WallpaperWindow : Forms.Form
     private readonly Rectangle bounds;
     private readonly Rectangle contentBounds;
     private readonly bool layered;
+    private readonly BoardDiagnostics diagnostics;
     private Bitmap? pixels;
     private RenderTargetBitmap? target;
 
@@ -46,6 +47,8 @@ internal sealed class WallpaperWindow : Forms.Form
     {
 
         this.services = services;
+        diagnostics = new BoardDiagnostics(services.Diagnostics, "wallpaper");
+        services.Diagnostics.Write(new("wallpaper.started", services.Settings.Airport));
         this.host = host;
         this.after = after;
         this.bounds = bounds;
@@ -70,6 +73,7 @@ internal sealed class WallpaperWindow : Forms.Form
             System.Windows.Application.Current.Dispatcher
         );
         services.SettingsChanged += OnSettingsChanged;
+        services.DataChanged += OnSettingsChanged;
     }
 
     protected override Forms.CreateParams CreateParams
@@ -184,6 +188,7 @@ internal sealed class WallpaperWindow : Forms.Form
             pixels.UnlockBits(data);
         }
         Invalidate();
+        diagnostics.Presented(session.Frame!);
     }
 
     protected override void OnPaint(Forms.PaintEventArgs arguments)
@@ -202,6 +207,8 @@ internal sealed class WallpaperWindow : Forms.Form
         {
             timer.Stop();
             services.SettingsChanged -= OnSettingsChanged;
+            services.DataChanged -= OnSettingsChanged;
+            services.Diagnostics.Write(new("wallpaper.stopped", services.Settings.Airport));
             pixels?.Dispose();
         }
         base.Dispose(disposing);

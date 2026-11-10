@@ -6,6 +6,7 @@ static const NSTimeInterval DBFlapTransitionDuration = .66;
 // Shared private state for the board's rendering categories.
 // Timetable generation stays in DepartureSchedule; renderers only draw rows.
 @interface DBBoardView ()
+@property(nonatomic, copy) NSString *diagnosticsState;
 @property(nonatomic, strong) NSDictionary *location;
 @property(nonatomic, strong) id<DBAirportAdapter> airportAdapter;
 @property(nonatomic, strong) NSDictionary *loadedSettings;
