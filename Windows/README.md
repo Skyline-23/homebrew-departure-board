@@ -7,17 +7,19 @@ Read the **[illustrated installation and user guide](../docs/install-guide.md)**
 
 ## Install a preview build
 
-1. Download `DepartureBoard-win-x64.zip` or `DepartureBoard-win-arm64.zip` from the
-   [latest release](https://github.com/Skyline-23/homebrew-departure-board/releases/latest) and extract it.
-   Development builds are also available as artifacts from successful **Windows preview** runs.
-2. Double-click **Install.cmd**. It installs for your Windows user, adds a Start menu shortcut
+1. Download `DepartureBoard-win-x64-Setup.exe` or `DepartureBoard-win-arm64-Setup.exe` from the
+   [product website](https://dpboard.skyline23.com/ko.html) and open it.
+2. Choose **Install**. It installs for your Windows user, adds a Start menu shortcut
    and selects Departure Board as your screen saver. Administrator access is not needed.
 3. Open **Departure Board** from Start. Choose an airport and use **Apply**.
+
+ZIP packages remain available in the GitHub release for manual deployment. Development
+builds are also available as artifacts from successful **Windows preview** runs.
 
 The preview is not Authenticode signed. Windows may show an unknown-publisher warning.
 Do not treat this as a signed stable release. The package includes the .NET runtime.
 
-The package includes a SHA-256 checksum file next to the ZIP.
+The package includes a SHA-256 checksum file next to each installer and ZIP.
 
 The tray icon opens settings, previews the board and quits the background app. Closing
 settings keeps it in the tray. Enable **Launch in background at sign-in** to start it automatically.
@@ -51,7 +53,7 @@ controls whether the live board follows Windows virtual desktops. This remains e
 and does not replace the lock-screen background. Physical mixed-DPI multi-monitor and
 lock/unlock coverage remains pending.
 
-To uninstall, run `Uninstall.ps1` from the installation folder using PowerShell. It restores
+To uninstall, open **Settings → Apps → Installed apps → Departure Board → Uninstall**. Manual ZIP installations can still use `Uninstall.ps1`. It restores
 the previous screen saver when Departure Board is still selected. User settings and saved
 credentials are kept.
 
@@ -77,6 +79,7 @@ python Windows/scripts/format.py --check
 dotnet run --project Windows/DepartureBoard.Core.Tests -- Resources
 dotnet build Windows/DepartureBoard.slnx -c Release
 ./Windows/scripts/Publish.ps1 -Runtime win-x64
+./Windows/scripts/PackageInstaller.ps1 -Runtime win-x64
 ```
 
 The shared-core tests and cross-compilation also run on macOS/Linux. WPF execution requires Windows.

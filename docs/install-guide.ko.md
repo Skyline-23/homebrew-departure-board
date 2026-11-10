@@ -9,12 +9,12 @@
 | 컴퓨터 | 받을 파일 | 지원 범위 |
 | --- | --- | --- |
 | Mac — Apple Silicon 또는 Intel | `DepartureBoard-버전-universal.zip` 또는 Homebrew cask | macOS 12 이상. 배포 ZIP은 Developer ID 서명과 Apple 공증 적용 |
-| Windows — Intel 또는 AMD CPU | `DepartureBoard-win-x64.zip` | Windows 11. 서명 없는 프리뷰 |
-| Windows — Snapdragon 등 ARM CPU | `DepartureBoard-win-arm64.zip` | Windows 11 ARM64. 서명 없는 프리뷰 |
+| Windows — Intel 또는 AMD CPU | `DepartureBoard-win-x64-Setup.exe` | Windows 11. 서명 없는 프리뷰 |
+| Windows — Snapdragon 등 ARM CPU | `DepartureBoard-win-arm64-Setup.exe` | Windows 11 ARM64. 서명 없는 프리뷰 |
 
-최신 파일은 [제품 다운로드 페이지](https://dpboard.skyline23.com/ko.html#download)에서 운영체제를 골라 받습니다. GitHub 페이지로 이동하지 않고 웹사이트에서 다운로드가 시작되며, 최신 공개 릴리스가 자동으로 연결됩니다. Windows의 **설정 → 시스템 → 정보 → 시스템 종류**에서 x64 또는 ARM 기반 프로세서인지 확인할 수 있습니다. Windows ZIP에는 .NET 런타임이 포함되어 있어 별도로 설치하지 않아도 됩니다.
+최신 파일은 [제품 다운로드 페이지](https://dpboard.skyline23.com/ko.html#download)에서 운영체제를 골라 받습니다. GitHub 페이지로 이동하지 않고 웹사이트에서 다운로드가 시작되며, 최신 공개 릴리스가 자동으로 연결됩니다. Windows의 **설정 → 시스템 → 정보 → 시스템 종류**에서 x64 또는 ARM 기반 프로세서인지 확인할 수 있습니다. Windows 설치 파일에는 .NET 런타임이 포함되어 있어 별도로 설치하지 않아도 됩니다.
 
-압축 안의 **Install Guide.html**을 열면 이 설명서가 브라우저에 표시됩니다. 설치 후에도 앱의 **Install & user guide** 버튼으로 다시 열 수 있습니다. 사진과 설명은 로컬 파일이므로 인터넷이 없어도 읽을 수 있습니다. 외부 사이트 링크와 실시간 항공편 조회에는 인터넷이 필요합니다.
+Mac ZIP 안의 **Install Guide.html**을 열면 이 설명서가 브라우저에 표시됩니다. Windows는 설치 후 앱의 **Install & user guide** 버튼으로 다시 열 수 있습니다. 사진과 설명은 로컬 파일이므로 인터넷이 없어도 읽을 수 있습니다. 외부 사이트 링크와 실시간 항공편 조회에는 인터넷이 필요합니다.
 
 ## 2. macOS에 설치하기
 
@@ -43,8 +43,8 @@ Homebrew는 앱을 `/Applications`에 설치하고 화면 보호기를 등록합
 
 ## 3. Windows에 설치하기
 
-1. CPU에 맞는 ZIP을 다운로드합니다. 다운로드한 ZIP을 바로 탐색하면서 실행하지 말고, 우클릭 → **모두 압축 풀기**를 먼저 선택합니다.
-2. 풀린 폴더에서 **Install Guide.html**로 안내를 확인하고 **Install.cmd**를 더블클릭합니다.
+1. CPU에 맞는 **Setup.exe**를 다운로드하고 더블클릭합니다. 압축을 풀거나 .NET을 따로 설치할 필요가 없습니다.
+2. 설치 안내에 따라 **설치**를 누릅니다. 완료 화면에서 Departure Board 실행을 선택합니다.
 3. 설치가 완료되면 **Departure Board Settings**가 열리는지 확인합니다. 이후에는 시작 메뉴에서 **Departure Board**를 검색해 실행합니다.
 4. 작업 표시줄의 숨겨진 아이콘 영역에 비행기 아이콘이 있는지 확인합니다. 설정창을 닫아도 앱은 이 영역에서 계속 실행됩니다.
 
@@ -54,10 +54,10 @@ Homebrew는 앱을 `/Applications`에 설치하고 화면 보호기를 등록합
 
 ### 다운로드 무결성 확인
 
-ZIP에 맞는 체크섬 파일도 받습니다: [Windows x64](https://dpboard.skyline23.com/download/windows-x64.sha256), [Windows ARM64](https://dpboard.skyline23.com/download/windows-arm64.sha256). PowerShell에서 다음 명령을 실행한 뒤 나온 해시를 `.sha256` 파일의 첫 값과 비교합니다. ARM64 파일은 명령의 파일명을 바꾸면 됩니다.
+설치 파일에 맞는 체크섬 파일도 받습니다: [Windows x64](https://dpboard.skyline23.com/download/windows-x64-setup.sha256), [Windows ARM64](https://dpboard.skyline23.com/download/windows-arm64-setup.sha256). PowerShell에서 다음 명령을 실행한 뒤 나온 해시를 `.sha256` 파일의 첫 값과 비교합니다. ARM64 파일은 명령의 파일명을 바꾸면 됩니다.
 
 ```powershell
-Get-FileHash "$env:USERPROFILE\Downloads\DepartureBoard-win-x64.zip" -Algorithm SHA256
+Get-FileHash "$env:USERPROFILE\Downloads\DepartureBoard-win-x64-Setup.exe" -Algorithm SHA256
 ```
 
 ## 4. 첫 화면 설정
@@ -163,9 +163,9 @@ brew upgrade --cask skyline-23/departure-board/departure-board
 
 **Mac / ZIP:** 앱을 완전히 종료한 뒤 새 버전의 앱과 `.saver`를 모두 교체합니다. Homebrew와 ZIP 설치를 섞어서 같은 앱을 중복 설치하지 마세요.
 
-**Windows:** 새 버전의 ZIP을 다른 폴더에 풀고 **Install.cmd**를 실행합니다. 기존 설정과 키는 유지됩니다. 설치 폴더 내부에서 설치 프로그램을 다시 실행하면 오류가 나므로 새 압축 해제 폴더를 사용하세요.
+**Windows:** 새 버전의 **Setup.exe**를 실행하면 기존 설치가 업데이트됩니다. 설정과 API 키는 유지됩니다.
 
-**Windows 제거:** 앱을 종료하고 설치 폴더의 `Uninstall.ps1`을 PowerShell에서 실행합니다. 현재 화면 보호기가 Departure Board이면 이전 선택을 복원합니다. 사용자 설정과 API 키는 유지됩니다. 완전히 지우려면 앱을 종료한 뒤 `%LOCALAPPDATA%\DepartureBoard`와 Credential Manager의 Departure Board 항목을 별도로 정리합니다.
+**Windows 제거:** **설정 → 앱 → 설치된 앱 → Departure Board → 제거**를 선택합니다. 현재 화면 보호기가 Departure Board이면 이전 선택을 복원합니다. 사용자 설정과 API 키는 유지됩니다. 완전히 지우려면 앱을 종료한 뒤 `%LOCALAPPDATA%\DepartureBoard`와 Credential Manager의 Departure Board 항목을 별도로 정리합니다.
 
 **Mac 제거:** Homebrew로 설치했다면 `brew uninstall --cask skyline-23/departure-board/departure-board`를 실행합니다. ZIP 설치라면 응용 프로그램 폴더의 앱과 설치한 화면 보호기를 제거합니다. 일반 제거는 사용자 설정과 키를 유지합니다.
 
@@ -175,12 +175,12 @@ brew upgrade --cask skyline-23/departure-board/departure-board
 | --- | --- |
 | 설치 안내가 열리지 않음 | ZIP을 전부 풀었는지, `Install Guide.html` 옆에 `Guide` 폴더가 있는지 확인합니다. 설치 후에는 앱의 Install & user guide를 사용합니다 |
 | 앱 창을 닫았는데 계속 움직임 | 정상입니다. 메뉴 막대 또는 트레이에서 Quit을 선택해야 완전히 종료됩니다 |
-| 화면 보호기 목록에 없음 | Mac은 `.saver`를 설치했는지, Windows는 Install.cmd를 실행했는지 확인합니다. Windows의 Set as screen saver도 사용할 수 있습니다 |
+| 화면 보호기 목록에 없음 | Mac은 `.saver`를 설치했는지, Windows는 Setup.exe로 설치했는지 확인합니다. Windows의 Set as screen saver도 사용할 수 있습니다 |
 | 실제 항공편이 나오지 않음 | Sample/Live 선택, AeroDataBox 구독, API 키, 인터넷, Last update를 확인합니다 |
 | 401 / 403 / 429 | 각각 키 인증, 구독·권한, 요청 한도 문제일 수 있습니다. 제공사 계정에서 확인합니다 |
 | 계속 Loading 또는 No departures | 조회 완료 여부와 공항별 제공 데이터를 확인합니다. 샘플 모드가 정상인지 먼저 비교합니다 |
 | 배경화면이 정지함 | Live wallpaper가 켜져 있고 앱이 실행 중인지 확인합니다. Set as Wallpaper만 누르면 정지 이미지입니다 |
 | 정지 배경화면이 잘림 | 모니터 구성·배율·작업 표시줄 변경 후 앱에서 정지 배경화면을 다시 적용합니다 |
-| Windows 앱이 실행되지 않음 | x64/ARM64 파일 선택, 전체 압축 해제, 조직 실행 정책을 확인합니다 |
+| Windows 앱이 실행되지 않음 | x64/ARM64 설치 파일 선택과 조직 실행 정책을 확인합니다 |
 
 오류를 제보할 때는 앱 버전, OS 버전, 재현 순서, 화면별 해상도·배율·배치와 **API 키가 보이지 않는** 사진을 함께 보내세요. 로그 위치와 진단 항목은 [진단 안내](https://github.com/Skyline-23/homebrew-departure-board/blob/main/docs/diagnostics.md)에 있습니다. 로그를 공개하기 전에 개인 정보가 없는지 확인하세요.

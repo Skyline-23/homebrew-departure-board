@@ -9,12 +9,12 @@ Use an airport departure board as a **live desktop wallpaper**, **screen saver**
 | Computer | Download | Support |
 | --- | --- | --- |
 | Mac, Apple Silicon or Intel | `DepartureBoard-version-universal.zip`, or the Homebrew cask | macOS 12+. Release ZIPs are Developer ID signed and notarized |
-| Windows, Intel or AMD CPU | `DepartureBoard-win-x64.zip` | Windows 11, unsigned preview |
-| Windows, ARM CPU such as Snapdragon | `DepartureBoard-win-arm64.zip` | Windows 11 ARM64, unsigned preview |
+| Windows, Intel or AMD CPU | `DepartureBoard-win-x64-Setup.exe` | Windows 11, unsigned preview |
+| Windows, ARM CPU such as Snapdragon | `DepartureBoard-win-arm64-Setup.exe` | Windows 11 ARM64, unsigned preview |
 
 Choose your operating system on the [product download page](https://dpboard.skyline23.com/#download). The download starts directly from the website and always follows the latest published release. On Windows, open **Settings → System → About → System type** to identify an x64 or ARM-based processor. The Windows packages include the .NET runtime.
 
-Open **Install Guide.html** in the extracted download to read this guide in your browser. After installation, use **Install & user guide** in the app. The guide and its pictures work offline; external links and live flight requests need a connection.
+On Mac, open **Install Guide.html** in the extracted download. After installation on either platform, use **Install & user guide** in the app. The guide and its pictures work offline; external links and live flight requests need a connection.
 
 ## 2. Install on macOS
 
@@ -43,8 +43,8 @@ Homebrew installs the app in `/Applications` and registers the screen saver. Fol
 
 ## 3. Install on Windows
 
-1. Download the ZIP for your CPU. Right-click it and choose **Extract All** before running anything; do not run the installer from inside the compressed-folder view.
-2. Read **Install Guide.html** in the extracted folder, then double-click **Install.cmd**.
+1. Download and open **Setup.exe** for your CPU. No archive extraction or separate .NET installation is needed.
+2. Follow the setup wizard and choose **Install**. On the final page, choose to launch Departure Board.
 3. Check that **Departure Board Settings** opens. Later, search for **Departure Board** in Start.
 4. Find the airplane icon in the taskbar's notification area, including its hidden icons. Closing settings leaves the app running there.
 
@@ -54,10 +54,10 @@ Installation is per-user and does not require administrator access. The default 
 
 ### Verify the download
 
-Download the matching checksum: [Windows x64](https://dpboard.skyline23.com/download/windows-x64.sha256) or [Windows ARM64](https://dpboard.skyline23.com/download/windows-arm64.sha256). In PowerShell, run the following and compare the returned hash with the first value in that file. Substitute the ARM64 filename when applicable.
+Download the matching checksum: [Windows x64](https://dpboard.skyline23.com/download/windows-x64-setup.sha256) or [Windows ARM64](https://dpboard.skyline23.com/download/windows-arm64-setup.sha256). In PowerShell, run the following and compare the returned hash with the first value in that file. Substitute the ARM64 filename when applicable.
 
 ```powershell
-Get-FileHash "$env:USERPROFILE\Downloads\DepartureBoard-win-x64.zip" -Algorithm SHA256
+Get-FileHash "$env:USERPROFILE\Downloads\DepartureBoard-win-x64-Setup.exe" -Algorithm SHA256
 ```
 
 ## 4. Set up the first board
@@ -163,9 +163,9 @@ brew upgrade --cask skyline-23/departure-board/departure-board
 
 **Mac / ZIP:** quit the app, then replace both the app and `.saver` with the new versions. Avoid mixing duplicate ZIP and Homebrew installations.
 
-**Windows:** extract the new ZIP to a different folder and run **Install.cmd**. Settings and the key remain. Running the installer from inside the destination installation folder is intentionally rejected; use the fresh extracted download.
+**Windows:** run the new **Setup.exe** to update the existing installation. Settings and the API key remain.
 
-**Remove on Windows:** quit the app and run the installed folder's `Uninstall.ps1` using PowerShell. If Departure Board is still the selected screen saver, the previous selection is restored. Settings and credentials remain. For complete removal, quit first, then separately remove `%LOCALAPPDATA%\DepartureBoard` and the Departure Board entry in Credential Manager.
+**Remove on Windows:** open **Settings → Apps → Installed apps → Departure Board → Uninstall**. If Departure Board is still the selected screen saver, the previous selection is restored. Settings and credentials remain. For complete removal, quit first, then separately remove `%LOCALAPPDATA%\DepartureBoard` and the Departure Board entry in Credential Manager.
 
 **Remove on Mac:** for a Homebrew installation, run `brew uninstall --cask skyline-23/departure-board/departure-board`. For a ZIP installation, remove the app from Applications and the installed screen saver. Normal removal preserves settings and the key.
 
@@ -175,7 +175,7 @@ brew upgrade --cask skyline-23/departure-board/departure-board
 | --- | --- |
 | Guide does not open | Extract the whole ZIP and keep the `Guide` folder next to `Install Guide.html`. After installation use Install & user guide |
 | Board keeps moving after settings closes | Expected. Use Quit from the menu bar or tray to stop the app |
-| Screen saver is missing | Install the Mac `.saver`, or run Windows Install.cmd. Windows also offers Set as screen saver |
+| Screen saver is missing | Install the Mac `.saver`, or install the Windows Setup.exe. Windows also offers Set as screen saver |
 | No real flights | Check Sample/Live selection, AeroDataBox subscription, key, connection and Last update |
 | 401 / 403 / 429 | May indicate key authentication, subscription/permission, or request-limit problems respectively |
 | Stuck on Loading or No departures | Check request completion and provider coverage; compare with sample mode |
