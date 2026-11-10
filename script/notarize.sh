@@ -5,6 +5,26 @@ SOURCE_BUNDLES="$PROJECT_ROOT/work/Build.noindex/Bundles"
 DISK_IMAGE="${1:-}"
 RESULT_PREFIX="notarization"
 
+staple_with_retry() {
+
+  local target="$1" attempt result
+
+  for attempt in 1 2 3; do
+
+    if xcrun stapler staple "$target" && xcrun stapler validate "$target"; then
+      return 0
+    else
+      result=$?
+    fi
+
+    # EX_NOHOST includes transient failures from Apple's ticket service.
+
+    if [[ "$result" != 68 || "$attempt" == 3 ]]; then return "$result"; fi
+    printf 'Ticket service unavailable; retrying in %s seconds.\n' "$((attempt * 5))" >&2
+    sleep "$((attempt * 5))"
+  done
+}
+
 if [[ -n "$DISK_IMAGE" ]]; then
   [[ "$DISK_IMAGE" == *.dmg && -f "$DISK_IMAGE" ]] || { echo 'Expected an existing DMG.' >&2; exit 1; }
   RESULT_PREFIX="notarization-dmg"
@@ -104,16 +124,14 @@ PY
 fi
 
 if [[ -n "$DISK_IMAGE" ]]; then
-  xcrun stapler staple "$DISK_IMAGE"
-  xcrun stapler validate "$DISK_IMAGE"
+  staple_with_retry "$DISK_IMAGE"
   spctl --assess --type open --context context:primary-signature --verbose=4 "$DISK_IMAGE"
   printf 'Disk image notarization accepted.\n'
   exit 0
 fi
 
 for bundle in "$BUNDLES/Departure Board.app" "$BUNDLES/Departure Board.saver"; do
-  xcrun stapler staple "$bundle"
-  xcrun stapler validate "$bundle"
+  staple_with_retry "$bundle"
 done
 spctl --assess --type execute --verbose=4 "$BUNDLES/Departure Board.app"
 

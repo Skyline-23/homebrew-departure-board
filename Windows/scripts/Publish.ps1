@@ -1,12 +1,15 @@
 param(
     [ValidateSet('win-x64', 'win-arm64')]
     [string]$Runtime = 'win-x64',
-    [string]$OutputDirectory = "$PSScriptRoot/../../work/windows-publish"
+    [string]$OutputDirectory = "$PSScriptRoot/../../work/windows-publish",
+    [ValidatePattern('^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$')][string]$Version
 )
 $ErrorActionPreference = 'Stop'
 $project = Join-Path $PSScriptRoot '../DepartureBoard.Windows/DepartureBoard.Windows.csproj'
 $folder = Join-Path $OutputDirectory $Runtime
-& dotnet publish $project -c Release -r $Runtime --self-contained true -o $folder
+$versionOption = @()
+if ($Version) { $versionOption = @("-p:Version=$Version") }
+& dotnet publish $project -c Release -r $Runtime --self-contained true -o $folder @versionOption
 if ($LASTEXITCODE -ne 0) { throw 'Windows publish failed.' }
 Copy-Item "$folder/DepartureBoard.exe" "$folder/DepartureBoard.scr"
 Copy-Item "$PSScriptRoot/Install.ps1" $folder

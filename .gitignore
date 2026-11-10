@@ -20,3 +20,4 @@ Windows/**/bin/
 Windows/**/obj/
 
 .wrangler/
+.nitroship/

@@ -32,6 +32,16 @@ jobs:
         shell: pwsh
     steps:
       - uses: actions/checkout@v4
+      - name: Read package version
+        run: |
+          $project = [xml](Get-Content Windows/DepartureBoard.Windows/DepartureBoard.Windows.csproj)
+          $version = $project.Project.PropertyGroup.Version | Select-Object -First 1
+          if ($env:GITHUB_REF -like 'refs/tags/v*') {
+            $version = $env:GITHUB_REF_NAME.Substring(1)
+            if ($version -notmatch '^\d+\.\d+\.\d+$') { throw 'Expected a semantic release tag.' }
+            $version += '-preview.1'
+          }
+          "DEPARTURE_BUILD_VERSION=$version" >> $env:GITHUB_ENV
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
@@ -60,7 +70,7 @@ jobs:
           dotnet run --project Windows/DepartureBoard.Core.Tests -c Release --no-build -- Resources
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
       - name: Package self-contained preview
-        run: ./Windows/scripts/Publish.ps1 -Runtime '${{ matrix.runtime }}'
+        run: ./Windows/scripts/Publish.ps1 -Runtime '${{ matrix.runtime }}' -Version "$env:DEPARTURE_BUILD_VERSION"
       - name: Exercise published screen saver and per-user installer
         run: >-
           ./Windows/scripts/SmokeTest.ps1
@@ -81,7 +91,7 @@ jobs:
             $p = Start-Process $setup -ArgumentList '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP-' -Wait -PassThru
             if ($p.ExitCode -ne 0) { throw 'Could not install the build compiler.' }
           }
-          ./Windows/scripts/PackageInstaller.ps1 -Runtime '${{ matrix.runtime }}' -CompilerPath $compiler
+          ./Windows/scripts/PackageInstaller.ps1 -Runtime '${{ matrix.runtime }}' -CompilerPath $compiler -Version "$env:DEPARTURE_BUILD_VERSION"
       - name: Test Windows setup and removal
         run: >-
           ./Windows/scripts/TestInstaller.ps1

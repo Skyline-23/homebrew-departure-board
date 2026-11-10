@@ -1,10 +1,12 @@
-Departure Board 0.7.5 refreshes settings on macOS and Windows and adds native installer downloads.
+Departure Board 0.7.6 automates the complete release and website rollout.
 
-- Use grouped Display, Desktop and Flight data settings, with clearer spacing and persistent primary actions. Windows settings use the built-in Fluent theme, and macOS settings use native AppKit controls.
-- Download a signed, notarized universal DMG on macOS, or a self-contained Setup.exe for Windows x64 and ARM64. The website selects your platform and offers a manual override.
-- Read the updated English and Korean guides with new screenshots of both settings windows and their flight-data sections. The guide is included in the installers.
-- Explore ICN, HND and JFK on the responsive product page, with scroll transitions and reduced-motion support.
-- Keep existing settings, API credentials and provider-request caching behavior.
+- Build macOS, Windows and the website checks in parallel, then publish the complete installer set to GitHub Releases.
+- Update Homebrew and deploy the product website automatically. CI verifies the deployed version, both installation guides and all three native installer downloads before completing.
+- Derive Windows application and installer versions from the release tag.
+- Generate Korean and English social sharing images in CI and verify their published dimensions and versioned URLs.
+- Retry temporary Apple ticket-service failures during notarization.
+
+The refreshed native settings, illustrated offline guide, responsive product page and OS-specific downloads from 0.7.5 are included.
 
 macOS 12+ supports Apple Silicon and Intel. Windows 11 supports x64 and ARM64 and remains an unsigned preview.
 

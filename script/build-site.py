@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Build the public product pages without runtime API calls or dependencies."""
 import argparse
+import json
 from pathlib import Path
 import re
 import shutil
@@ -26,9 +27,14 @@ def main():
 
     for name in ['index.html', 'ko.html', 'site.css', 'icon.png', 'download.js', 'og-ko-v1.png', 'og-en-v1.png', 'hero.css', 'airport-demo.js', 'airport-data.js', 'board-transition.js', 'flap-tile.webp', 'arrow-right.svg']:
         shutil.copyfile(ROOT / 'site' / name, output / name)
+
+    for name in ['index.html', 'ko.html']:
+        page = output / name
+        page.write_text(re.sub(r'(og-(?:ko|en)-v1\.png)', rf'\1?v={version}', page.read_text()))
     shutil.copytree(ROOT / 'site/boards', output / 'boards')
     shutil.copytree(ROOT / 'Resources/Guide', output / 'guide', dirs_exist_ok=True)
     shutil.copytree(ROOT / 'Resources/Guide/images', output / 'images', dirs_exist_ok=True)
+    (output / 'release.json').write_text(json.dumps({'version': version}) + '\n')
     (output / 'robots.txt').write_text('User-agent: *\nAllow: /\nSitemap: https://dpboard.skyline23.com/sitemap.xml\n')
     (output / 'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+''.join(f'<url><loc>https://dpboard.skyline23.com/{path}</loc></url>' for path in ['', 'ko.html', 'guide/index.html', 'guide/ko.html'])+'</urlset>')
     print(f'Built product site for {version}: {output}')

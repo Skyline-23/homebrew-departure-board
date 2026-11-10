@@ -6,7 +6,7 @@ import { Readable } from 'node:stream';
 import downloads from './download-handler.mjs';
 
 const root = resolve('public');
-const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.png': 'image/png', '.webp': 'image/webp', '.svg': 'image/svg+xml', '.xml': 'application/xml', '.txt': 'text/plain; charset=utf-8' };
+const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8', '.png': 'image/png', '.webp': 'image/webp', '.svg': 'image/svg+xml', '.xml': 'application/xml', '.txt': 'text/plain; charset=utf-8' };
 
 async function asset(request) {
   if (!['GET', 'HEAD'].includes(request.method)) return new Response('Method not allowed', { status: 405 });
@@ -31,7 +31,7 @@ async function asset(request) {
   const headers = {
     'Content-Type': types[extname(selected)] || 'application/octet-stream',
     'Content-Length': String(info.size),
-    'Cache-Control': extname(selected) === '.html' ? 'public, max-age=0, must-revalidate' : 'public, max-age=86400',
+    'Cache-Control': ['.html', '.json'].includes(extname(selected)) ? 'public, max-age=0, must-revalidate' : 'public, max-age=86400',
     'X-Content-Type-Options': 'nosniff',
     'Referrer-Policy': 'strict-origin-when-cross-origin',
   };
