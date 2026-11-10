@@ -1,6 +1,6 @@
 {
   "build": {
-    "dockerfile": "Dockerfile",
+    "dockerfile": "site/nitroship/Dockerfile.git",
     "outputDirectory": "/app/public"
   },
   "compute": {

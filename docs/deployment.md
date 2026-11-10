@@ -67,3 +67,15 @@ References: [Apple notarization requirements](https://developer.apple.com/docume
 No flight-provider credential is needed by GitHub Actions. Each user saves their
 own AeroDataBox RapidAPI key in the companion app. It remains in that user's macOS
 Keychain or Windows Credential Manager and is sent only to the provider's RapidAPI endpoint.
+
+## Native installers and settings refresh
+
+The macOS release includes a signed, notarized DMG as the primary website download. The disk image contains the universal app, screen saver, an Applications shortcut and the offline illustrated guide. Bundle notarization runs before packaging, followed by a separate DMG notarization and verification. ZIPs remain available for Homebrew and existing installation workflows.
+
+Windows continues to publish separate self-contained x64 and ARM64 Setup.exe files. The refreshed settings group controls under Display, Desktop and Flight data, with persistent Apply changes and Preview actions. The native self-test captures the regular, scrolled-data and compact settings layouts.
+
+## CI and website automation
+
+Validation first classifies changed files. Product-site and guide changes use a small Ubuntu job; native source changes run the macOS bundle suite. Superseded validation runs are cancelled. Windows caches NuGet packages and the verified installer compiler, and avoids building an unused portable desktop application before publishing the runtime-specific package.
+
+The Nitroship GitHub integration connects only `Skyline-23/homebrew-departure-board`. Repository-root `nitroship.json` defines the production website build. Keep branch previews disabled and enable production deployment after the configuration reaches `main`. Tagged releases upload a complete draft before publishing, then update Homebrew from the released archives.

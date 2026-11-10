@@ -35,6 +35,17 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
+      - name: Cache NuGet and formatter packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('Windows/**/*.csproj', 'Windows/.config/dotnet-tools.json') }}
+          restore-keys: nuget-${{ runner.os }}-${{ runner.arch }}-
+      - name: Cache installer compiler download
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.tool_cache }}/departure-board/innosetup-6.7.4.exe
+          key: innosetup-${{ runner.os }}-${{ runner.arch }}-6.7.4
       - name: Check C# formatting
         run: |
           dotnet tool restore --tool-manifest Windows/.config/dotnet-tools.json
@@ -44,7 +55,7 @@ jobs:
           python Windows/scripts/format.py --check
       - name: Build and test shared logic
         run: |
-          dotnet build Windows/DepartureBoard.slnx -c Release
+          dotnet build Windows/DepartureBoard.Core.Tests/DepartureBoard.Core.Tests.csproj -c Release
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
           dotnet run --project Windows/DepartureBoard.Core.Tests -c Release --no-build -- Resources
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
@@ -59,8 +70,12 @@ jobs:
         run: |
           $compiler = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
           if (!(Test-Path $compiler)) {
-            $setup = Join-Path $env:RUNNER_TEMP 'innosetup-6.7.4.exe'
-            Invoke-WebRequest 'https://github.com/jrsoftware/issrc/releases/download/is-6_7_4/innosetup-6.7.4.exe' -OutFile $setup
+            $tools = Join-Path $env:RUNNER_TOOL_CACHE 'departure-board'
+            New-Item -ItemType Directory -Force $tools | Out-Null
+            $setup = Join-Path $tools 'innosetup-6.7.4.exe'
+            if (!(Test-Path $setup)) {
+              Invoke-WebRequest 'https://github.com/jrsoftware/issrc/releases/download/is-6_7_4/innosetup-6.7.4.exe' -OutFile $setup
+            }
             $signature = Get-AuthenticodeSignature $setup
             if ($signature.Status -ne 'Valid' -or $signature.SignerCertificate.Subject -notmatch 'Pyrsys B.V.') { throw 'Invalid Inno Setup publisher signature.' }
             $p = Start-Process $setup -ArgumentList '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP-' -Wait -PassThru

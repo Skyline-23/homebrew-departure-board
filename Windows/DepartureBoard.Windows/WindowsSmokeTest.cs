@@ -119,15 +119,9 @@ internal static class WindowsSmokeTest
         }
     }
 
-    private static void CheckSettings(AppServices services, string outputDirectory)
+    private static void CaptureSettings(FrameworkElement content, string destination)
     {
 
-        services.UsePreviewSettings(new BoardSettings { Airport = "ICN", SampleData = true });
-        var settings = new SettingsWindow(services, () => { }, () => true);
-        settings.Show();
-        settings.UpdateLayout();
-        var content = (FrameworkElement)settings.Content;
-        ((System.Windows.Controls.Control)content).Background = Brushes.White;
         var bitmap = new RenderTargetBitmap(
             (int)Math.Ceiling(content.ActualWidth),
             (int)Math.Ceiling(content.ActualHeight),
@@ -152,10 +146,31 @@ internal static class WindowsSmokeTest
         bitmap.Render(visual);
         var encoder = new PngBitmapEncoder();
         encoder.Frames.Add(BitmapFrame.Create(bitmap));
-        using (var stream = File.Create(Path.Combine(outputDirectory, "settings-window.png")))
+        using (var stream = File.Create(destination))
         {
             encoder.Save(stream);
         }
+    }
+
+    private static void CheckSettings(AppServices services, string outputDirectory)
+    {
+
+        services.UsePreviewSettings(new BoardSettings { Airport = "ICN", SampleData = true });
+        var settings = new SettingsWindow(services, () => { }, () => true);
+        settings.Show();
+        settings.UpdateLayout();
+        var content = (FrameworkElement)settings.Content;
+        CaptureSettings(content, Path.Combine(outputDirectory, "settings-window.png"));
+        var scroll = ((System.Windows.Controls.Grid)content)
+            .Children.OfType<System.Windows.Controls.ScrollViewer>()
+            .Single();
+        scroll.ScrollToBottom();
+        settings.UpdateLayout();
+        CaptureSettings(content, Path.Combine(outputDirectory, "settings-data.png"));
+        settings.Width = 560;
+        settings.Height = 420;
+        settings.UpdateLayout();
+        CaptureSettings(content, Path.Combine(outputDirectory, "settings-compact.png"));
 
         foreach (var language in new[] { "en", "ko" })
         {

@@ -8,13 +8,15 @@ Use an airport departure board as a **live desktop wallpaper**, **screen saver**
 
 | Computer | Download | Support |
 | --- | --- | --- |
-| Mac, Apple Silicon or Intel | `DepartureBoard-version-universal.zip`, or the Homebrew cask | macOS 12+. Release ZIPs are Developer ID signed and notarized |
+| Mac, Apple Silicon or Intel | `DepartureBoard-universal.dmg`, or the Homebrew cask | macOS 12+, Apple Silicon and Intel. Developer ID signed and notarized |
 | Windows, Intel or AMD CPU | `DepartureBoard-win-x64-Setup.exe` | Windows 11, unsigned preview |
 | Windows, ARM CPU such as Snapdragon | `DepartureBoard-win-arm64-Setup.exe` | Windows 11 ARM64, unsigned preview |
 
-Choose your operating system on the [product download page](https://dpboard.skyline23.com/#download). The download starts directly from the website and always follows the latest published release. On Windows, open **Settings → System → About → System type** to identify an x64 or ARM-based processor. The Windows packages include the .NET runtime.
+Select **Install** or **Get** on the [product page](https://dpboard.skyline23.com/) to download the latest installer for your computer. macOS uses a DMG. Windows uses an x64 or ARM64 EXE. The detected platform appears below the button. Select **Need a different operating system?** to choose manually.
 
-On Mac, open **Install Guide.html** in the extracted download. After installation on either platform, use **Install & user guide** in the app. The guide and its pictures work offline; external links and live flight requests need a connection.
+On Windows, open **Settings → System → About → System type** to identify your processor. The installer includes the .NET runtime.
+
+Open **Install Guide.html** on the mounted Mac disk image, **Install & user guide** in the Mac app, or **Installation guide** in the Windows app. The text and pictures are bundled with the app and work offline.
 
 ## 2. Install on macOS
 
@@ -34,18 +36,21 @@ open -a "Departure Board"
 
 Homebrew installs the app in `/Applications` and registers the screen saver. Follow your organization's policy if Homebrew is restricted.
 
-### Using the ZIP
+### Using the DMG
 
-1. Download `universal.zip` from the official release and extract it in Finder.
-2. Move **Departure Board.app** into **Applications**.
-3. Double-click **Departure Board.saver** and follow macOS's installation dialog. A per-user installation is available.
-4. Open **Departure Board** from Applications. Update the app and screen saver together to keep their versions aligned.
+1. Open **DepartureBoard-universal.dmg**. Finder shows the installation disk.
+2. Drag **Departure Board.app** to **Applications** in the same window.
+3. Double-click **Departure Board.saver** and follow the macOS screen-saver installation dialog.
+4. Open **Departure Board** from Applications.
+5. Eject the **Departure Board** installation disk. Continue launching the installed app from Applications.
+
+Update the app and screen saver together. For an older ZIP release, extract it and follow steps 2–4.
 
 ## 3. Install on Windows
 
 1. Download and open **Setup.exe** for your CPU. No archive extraction or separate .NET installation is needed.
 2. Follow the setup wizard and choose **Install**. On the final page, choose to launch Departure Board.
-3. Check that **Departure Board Settings** opens. Later, search for **Departure Board** in Start.
+3. Check that the **Departure Board** settings window opens. Later, search for **Departure Board** in Start.
 4. Find the airplane icon in the taskbar's notification area, including its hidden icons. Closing settings leaves the app running there.
 
 Installation is per-user and does not require administrator access. The default folder is `%LOCALAPPDATA%\Programs\DepartureBoard`. It creates a Start shortcut and selects Departure Board as the screen saver. Set its idle timeout and sign-in behavior in Windows separately.
@@ -64,23 +69,23 @@ Get-FileHash "$env:USERPROFILE\Downloads\DepartureBoard-win-x64-Setup.exe" -Algo
 
 ![Departure Board settings on macOS](../Resources/Guide/images/macos-settings.png)
 
-*macOS settings: choose the board, desktop behavior and flight source in one window. The image uses sample data.*
+*macOS settings. Display controls the board, Desktop controls wallpaper, and Flight data appears below when you scroll.*
 
 ![Departure Board settings on Windows](../Resources/Guide/images/windows-settings.png)
 
-*Windows settings offer the same display choices, plus buttons for a preview and screen-saver registration.*
+*Windows settings use Display, Desktop and Flight data sections. Preview and Apply changes stay visible while scrolling.*
 
 1. Choose an **Airport**, such as Seoul Incheon (ICN), Tokyo Haneda (HND), or London Heathrow (LHR).
-2. Set **Timetable source → Sample schedule · visual preview only** to try the layouts without a key.
+2. Under **Flight data**, set **Timetable / Timetable source → Sample schedule · visual preview only** to try the layouts without a key.
 3. Choose English, local language, or alternating languages under **Language / Board language**.
-4. Select **Apply**. On Windows, select **Preview**; on Mac, use **Show Board** in the menu bar.
+4. Select **Apply** on Mac or **Apply changes** on Windows. On Windows, select **Preview**; on Mac, use **Show Board** in the menu bar.
 5. Once the preview looks right, enable wallpaper or choose the screen saver. Connect live data using section 6 if needed.
 
 ## 5. Wallpaper and screen saver
 
 ### Live wallpaper
 
-Enable **Live wallpaper** (Mac) or **Live desktop wallpaper** (Windows), then select **Apply**. The board updates behind desktop icons while the app runs. Quitting the app removes its live desktop windows.
+Under **Desktop**, enable **Live wallpaper** (Mac) or **Live desktop wallpaper** (Windows). Select **Apply** on Mac or **Apply changes** on Windows. The board updates behind desktop icons while the app runs. Quitting the app removes its live desktop windows.
 
 **Show on all Spaces / Show on all desktops** controls virtual desktops. It does not combine physical monitors into one stretched board. Each physical monitor receives its own board.
 
@@ -96,9 +101,9 @@ Desktop board content leaves room for the menu bar, Dock or taskbar. The outer m
 
 ### Screen saver
 
-**macOS:** use **Screen Saver Settings** in the app menu, or search for “screen saver” in System Settings. Choose **Departure Board** and try the system preview. Set the idle timeout and lock behavior in macOS.
+**macOS** select **Open Screen Saver Settings…** in settings, or search for “screen saver” in System Settings. Choose **Departure Board** and try the system preview. Set the idle timeout and lock behavior in macOS.
 
-**Windows:** select **Set as screen saver** in the app. Search Start for **Change screen saver**, confirm **DepartureBoard** is selected, and choose **Preview**. Set **Wait** and **On resume, display logon screen**, then apply.
+**Windows** select **Set as screen saver** in the app. Search Start for **Change screen saver**, confirm **DepartureBoard** is selected, and choose **Preview**. Set **Wait** and **On resume, display logon screen**, then apply.
 
 The screen saver fills the screen and exits on keyboard or mouse input. The app's Preview button opens a normal window; it is separate from the Windows screen-saver preview.
 
@@ -108,10 +113,18 @@ The screen saver fills the screen and exits on keyboard or mouse input. The app'
 
 ## 6. Connect real flights
 
+![Flight data settings on macOS](../Resources/Guide/images/macos-settings-data.png)
+
+*Mac Flight data settings show the schedule source, API key and refresh interval.*
+
+![Flight data settings on Windows](../Resources/Guide/images/windows-settings-data.png)
+
+*Windows Flight data settings. A saved key does not need to be entered again. No key is shown here.*
+
 1. Sign in to [RapidAPI](https://rapidapi.com/).
 2. Review [AeroDataBox plans](https://rapidapi.com/aedbx-aedbx/api/aerodatabox/pricing) and activate the subscription you need. Creating a RapidAPI account alone does not activate this API.
 3. In RapidAPI's Developer Dashboard, copy your app's **X-RapidAPI-Key**.
-4. Choose **Timetable source → Live flight data** in Departure Board, paste the key into **API key**, and select **Apply**.
+4. Under **Flight data**, choose **Live flight data** in **Timetable / Timetable source** and paste the key into **API key**. Select **Apply** on Mac or **Apply changes** on Windows.
 5. Check that **Last update** advances and real flights appear. An empty schedule is different from a key or subscription error.
 
 Keys are stored in macOS Keychain or Windows Credential Manager, not shared with the project. A masked saved key does not need to be pasted again. Never include a key in screenshots or bug reports.
@@ -154,26 +167,26 @@ Open **Windows Settings → System → Display** and select each screen to inspe
 
 ## 9. Update or remove
 
-**Mac / Homebrew:** update with the following commands. Existing settings and the saved key remain.
+**Mac / Homebrew** update with the following commands. Existing settings and the saved key remain.
 
 ```sh
 brew update
 brew upgrade --cask skyline-23/departure-board/departure-board
 ```
 
-**Mac / ZIP:** quit the app, then replace both the app and `.saver` with the new versions. Avoid mixing duplicate ZIP and Homebrew installations.
+**Mac / DMG** quit the app, open the new disk image, replace the app in Applications and reinstall the `.saver`. Eject the disk image and launch the installed app.
 
-**Windows:** run the new **Setup.exe** to update the existing installation. Settings and the API key remain.
+**Windows** run the new **Setup.exe** to update the existing installation. Settings and the API key remain.
 
-**Remove on Windows:** open **Settings → Apps → Installed apps → Departure Board → Uninstall**. If Departure Board is still the selected screen saver, the previous selection is restored. Settings and credentials remain. For complete removal, quit first, then separately remove `%LOCALAPPDATA%\DepartureBoard` and the Departure Board entry in Credential Manager.
+**Remove on Windows** open **Settings → Apps → Installed apps → Departure Board → Uninstall**. If Departure Board is still the selected screen saver, the previous selection is restored. Settings and credentials remain. For complete removal, quit first, then separately remove `%LOCALAPPDATA%\DepartureBoard` and the Departure Board entry in Credential Manager.
 
-**Remove on Mac:** for a Homebrew installation, run `brew uninstall --cask skyline-23/departure-board/departure-board`. For a ZIP installation, remove the app from Applications and the installed screen saver. Normal removal preserves settings and the key.
+**Remove on Mac** for a Homebrew installation, run `brew uninstall --cask skyline-23/departure-board/departure-board`. For a DMG installation, remove the app from Applications and the installed screen saver. Normal removal preserves settings and the key.
 
 ## 10. Troubleshooting
 
 | Symptom | First check |
 | --- | --- |
-| Guide does not open | Extract the whole ZIP and keep the `Guide` folder next to `Install Guide.html`. After installation use Install & user guide |
+| Guide does not open | Use Installation guide or Install & user guide in the app. On the disk image, keep `Guide` beside `Install Guide.html` |
 | Board keeps moving after settings closes | Expected. Use Quit from the menu bar or tray to stop the app |
 | Screen saver is missing | Install the Mac `.saver`, or install the Windows Setup.exe. Windows also offers Set as screen saver |
 | No real flights | Check Sample/Live selection, AeroDataBox subscription, key, connection and Last update |
@@ -181,6 +194,6 @@ brew upgrade --cask skyline-23/departure-board/departure-board
 | Stuck on Loading or No departures | Check request completion and provider coverage; compare with sample mode |
 | Wallpaper does not move | Check Live wallpaper and that the app is running; Set as Wallpaper creates a still image |
 | Still wallpaper is cropped | Reapply from the app after monitor, scaling or taskbar changes |
-| Windows app will not start | Check x64/ARM64 selection, full ZIP extraction and organization policy |
+| Windows app will not start | Check x64/ARM64 installer selection and organization policy |
 
 For a report, include the app version, OS, reproduction steps, each monitor's resolution/scale/position and a screenshot with **no API key visible**. See [diagnostics](https://github.com/Skyline-23/homebrew-departure-board/blob/main/docs/diagnostics.md) for log locations. Review logs before sharing them publicly.

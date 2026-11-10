@@ -61,3 +61,7 @@ No actionable P0, P1 or P2 design findings remain. Native Windows rendering and 
 - [x] Compare revised browser captures against the source image.
 
 final result: passed
+
+## Native installer selector follow-up
+
+The next revision labels the detected OS beneath Get and exposes a manual platform disclosure. macOS targets the universal DMG, Windows targets CPU-specific Setup.exe files, and mobile/unknown clients open the platform picker. Seven client fixtures and three server routes passed. At 320px, the open disclosure stays inside the viewport, the date remains on one line, and the fixed header stays at y=0. New implementation evidence is `work/settings-redesign/download-picker-mobile.png`. The corresponding release assets are verified separately before production promotion.

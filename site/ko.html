@@ -51,9 +51,9 @@
       name="twitter:image:alt"
       content="Departure Board — 공항 전광판 배경화면과 화면 보호기"
     />
-    <script src="/download.js?v=setup-1" defer></script>
-    <link rel="stylesheet" href="hero.css?v=editorial-6" />
-    <script type="module" src="airport-demo.js?v=editorial-6"></script>
+    <script src="/download.js?v=native-installers-1" defer></script>
+    <link rel="stylesheet" href="hero.css?v=editorial-8" />
+    <script type="module" src="airport-demo.js?v=editorial-8"></script>
     <noscript
       ><style>
         .airport-hero {
@@ -139,7 +139,26 @@
                   ><span>받기</span
                   ><img src="arrow-right.svg" width="32" height="32" alt=""
                 /></a>
-                <p class="download-note">무료 · macOS 12+ · Windows 11</p>
+                <p class="download-note" data-detected-platform>
+                  컴퓨터에 맞는 설치 파일
+                </p>
+                <details class="platform-picker">
+                  <summary>혹시 이 운영체제가 아닌가요?</summary>
+                  <div class="platform-options">
+                    <a
+                      href="https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-universal.dmg"
+                      >macOS · Apple Silicon / Intel</a
+                    >
+                    <a
+                      href="https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-win-x64-Setup.exe"
+                      >Windows · Intel / AMD (x64)</a
+                    >
+                    <a
+                      href="https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-win-arm64-Setup.exe"
+                      >Windows · ARM64</a
+                    >
+                  </div>
+                </details>
               </div>
               <div class="preview-caption">
                 <p id="airport-status" class="demo-status" role="status">
@@ -222,8 +241,8 @@
           <figure class="mac">
             <img
               src="images/macos-settings.png"
-              width="1400"
-              height="1596"
+              width="720"
+              height="760"
               alt="macOS 설정"
               loading="lazy"
             />
@@ -232,8 +251,8 @@
           <figure>
             <img
               src="images/windows-settings.png"
-              width="624"
-              height="821"
+              width="747"
+              height="825"
               alt="Windows 설정"
               loading="lazy"
             />
@@ -288,23 +307,6 @@
           >GitHub</a
         ><a href="https://blog.skyline23.com">Blog</a>
       </div>
-      <details class="platform-downloads">
-        <summary>다른 운영체제</summary>
-        <div>
-          <a
-            href="https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-universal.zip"
-            >macOS · Universal</a
-          >
-          <a
-            href="https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-win-x64-Setup.exe"
-            >Windows · x64</a
-          >
-          <a
-            href="https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-win-arm64-Setup.exe"
-            >Windows · ARM64</a
-          >
-        </div>
-      </details>
     </footer>
   </body>
 </html>

@@ -5,48 +5,107 @@
 #import "LiveFlightStore.h"
 #import "SettingsStore.h"
 
+@interface DBSettingsDocumentView : NSView
+@end
+
+@implementation DBSettingsDocumentView
+
+- (BOOL)isFlipped {
+
+    return YES;
+}
+
+@end
+
+static NSTextField *DBSettingsLabel(NSString *text) {
+
+    NSTextField *label = [NSTextField labelWithString:text];
+    label.font = [NSFont systemFontOfSize:13];
+    label.textColor = NSColor.secondaryLabelColor;
+    return label;
+}
+
+static NSArray<NSView *> *DBSettingsRow(NSString *label, NSView *control) {
+
+    if ([control isKindOfClass:NSControl.class]) {
+        [(NSControl *)control setFont:[NSFont systemFontOfSize:13]];
+    }
+
+    if (label.length) {
+        [control setAccessibilityLabel:label];
+    }
+    [control.heightAnchor constraintGreaterThanOrEqualToConstant:28].active = YES;
+    return @[ DBSettingsLabel(label), control ];
+}
+
+static NSView *DBSettingsGrid(NSArray<NSArray<NSView *> *> *rows) {
+
+    NSGridView *grid = [NSGridView gridViewWithViews:rows];
+    grid.rowSpacing = 12;
+    grid.columnSpacing = 18;
+    grid.yPlacement = NSGridCellPlacementCenter;
+    grid.xPlacement = NSGridCellPlacementFill;
+    [grid columnAtIndex:0].width = 128;
+    [grid columnAtIndex:0].xPlacement = NSGridCellPlacementLeading;
+    return grid;
+}
+
+static NSView *DBSettingsGroup(NSString *heading, NSView *body) {
+
+    NSBox *box = NSBox.new;
+    box.boxType = NSBoxCustom;
+    box.borderWidth = 1;
+    box.borderColor = NSColor.separatorColor;
+    box.fillColor = NSColor.controlBackgroundColor;
+    box.cornerRadius = 10;
+    box.contentViewMargins = NSZeroSize;
+    NSTextField *title = [NSTextField labelWithString:heading];
+    title.font = [NSFont systemFontOfSize:15 weight:NSFontWeightSemibold];
+    title.translatesAutoresizingMaskIntoConstraints = NO;
+    body.translatesAutoresizingMaskIntoConstraints = NO;
+    [box.contentView addSubview:title];
+    [box.contentView addSubview:body];
+    [NSLayoutConstraint activateConstraints:@[
+        [title.topAnchor constraintEqualToAnchor:box.contentView.topAnchor constant:18],
+        [title.leadingAnchor constraintEqualToAnchor:box.contentView.leadingAnchor constant:20],
+        [body.topAnchor constraintEqualToAnchor:title.bottomAnchor constant:16],
+        [body.leadingAnchor constraintEqualToAnchor:box.contentView.leadingAnchor constant:20],
+        [body.trailingAnchor constraintEqualToAnchor:box.contentView.trailingAnchor constant:-20],
+        [body.bottomAnchor constraintEqualToAnchor:box.contentView.bottomAnchor constant:-18]
+    ]];
+    return box;
+}
+
 @implementation DBBoardView (SettingsController)
 
 - (NSWindow *)settingsWindowWithTarget:(id)target action:(SEL)action {
 
-    NSWindow *window = [[NSPanel alloc] initWithContentRect:NSMakeRect(0, 0, 700, 798)
-                                                  styleMask:NSWindowStyleMaskTitled
-                                                    backing:NSBackingStoreBuffered
+    NSScreen *screen = self.window.screen ?: NSScreen.mainScreen;
+    NSSize visible = screen.visibleFrame.size;
+    CGFloat width = MIN(720, MAX(620, visible.width - 64));
+    CGFloat height = MIN(760, MAX(500, visible.height - 80));
+    NSWindow *window =
+        [[NSPanel alloc] initWithContentRect:NSMakeRect(0, 0, width, height)
+                                   styleMask:NSWindowStyleMaskTitled | NSWindowStyleMaskResizable
+                                     backing:NSBackingStoreBuffered
 
-                                                      defer:NO];
+                                       defer:NO];
     window.title = DBUIString(@"settings.title");
+    window.contentMinSize = NSMakeSize(620, 500);
     window.releasedWhenClosed = NO;
-    NSView *v = window.contentView;
-    NSTextField *title = [NSTextField labelWithString:@"Departure Board"];
-    title.font = [NSFont systemFontOfSize:24 weight:NSFontWeightSemibold];
-    title.frame = NSMakeRect(28, 392, 520, 32);
-    [v addSubview:title];
-    NSArray *labels = @[
-        DBUIString(@"settings.location"), DBUIString(@"settings.style"),
-        DBUIString(@"settings.language"), DBUIString(@"settings.density"),
-        DBUIString(@"settings.brightness")
-    ];
-
-    for (NSInteger i = 0; i < 5; i++) {
-        NSTextField *label = [NSTextField labelWithString:labels[i]];
-        label.font = [NSFont systemFontOfSize:13];
-        label.textColor = NSColor.secondaryLabelColor;
-        label.frame = NSMakeRect(29, 341 - i * 48, 130, 25);
-        [v addSubview:label];
-    }
-    NSPopUpButton *locations = [[NSPopUpButton alloc] initWithFrame:NSMakeRect(161, 339, 497, 29)
-                                                          pullsDown:NO];
+    NSView *root = window.contentView;
+    NSDictionary *saved = DBSettingsStore.settings;
+    NSPopUpButton *locations = [[NSPopUpButton alloc] initWithFrame:NSZeroRect pullsDown:NO];
     locations.tag = 101;
 
-    for (NSDictionary *l in DBLocations()) {
-        [locations addItemWithTitle:DBUIString(l[@"displayNameKey"])];
-        locations.lastItem.representedObject = l[@"code"];
+    for (NSDictionary *location in DBLocations()) {
+        [locations addItemWithTitle:DBUIString(location[@"displayNameKey"])];
+        locations.lastItem.representedObject = location[@"code"];
 
-        if ([l[@"code"] isEqual:self.locationCode]) {
+        if ([location[@"code"] isEqual:self.locationCode]) {
             [locations selectItem:locations.lastItem];
         }
     }
-    [v addSubview:locations];
     NSArray *options = @[
         @[ DBUIString(@"style.auto"), DBUIString(@"style.lcd"), DBUIString(@"style.flap") ],
         @[
@@ -63,64 +122,90 @@
         @[ @0, @10, @12, @16 ]
     ];
     NSArray *current = @[ self.displayStyle, self.languageMode, @(self.density) ];
+    NSMutableArray<NSPopUpButton *> *popups = NSMutableArray.new;
 
     for (NSInteger i = 0; i < 3; i++) {
-        NSPopUpButton *popup =
-            [[NSPopUpButton alloc] initWithFrame:NSMakeRect(161, 291 - i * 48, 497, 29)
-                                       pullsDown:NO];
+        NSPopUpButton *popup = [[NSPopUpButton alloc] initWithFrame:NSZeroRect pullsDown:NO];
         popup.tag = 102 + i;
         [popup addItemsWithTitles:options[i]];
 
-        for (NSInteger j = 0; j < (NSInteger)popup.numberOfItems; j++) {
+        for (NSInteger j = 0; j < popup.numberOfItems; j++) {
             [popup itemAtIndex:j].representedObject = values[i][j];
 
             if ([values[i][j] isEqual:current[i]]) {
                 [popup selectItemAtIndex:j];
             }
         }
-        [v addSubview:popup];
+        [popups addObject:popup];
     }
     NSSlider *brightness = [NSSlider sliderWithValue:self.brightness
                                             minValue:.35
                                             maxValue:1
                                               target:nil
                                               action:NULL];
-    brightness.frame = NSMakeRect(161, 147, 497, 26);
     brightness.tag = 105;
-    [v addSubview:brightness];
     NSButton *motion = [NSButton checkboxWithTitle:DBUIString(@"settings.reduceMotion")
                                             target:nil
                                             action:NULL];
     motion.tag = 106;
     motion.state = self.reducedMotion;
-    motion.frame = NSMakeRect(161, 107, 397, 24);
-    [v addSubview:motion];
+    NSPopUpButton *scale = [[NSPopUpButton alloc] initWithFrame:NSZeroRect pullsDown:NO];
+    scale.tag = 210;
 
-    for (NSView *view in v.subviews) {
-        NSRect frame = view.frame;
-        frame.origin.y += 220;
-        view.frame = frame;
+    for (NSNumber *value in @[ @.5, @.65, @.75, @.85, @1.0 ]) {
+        [scale addItemWithTitle:[NSString stringWithFormat:@"%.0f%%", value.doubleValue * 100]];
+        scale.lastItem.representedObject = value;
+
+        if (fabs(value.doubleValue - self.boardScale) < .001) {
+            [scale selectItem:scale.lastItem];
+        }
     }
-    NSDictionary *saved = DBSettingsStore.settings;
+    NSView *displayGroup =
+        DBSettingsGroup(DBUIString(@"settings.groupDisplay"), DBSettingsGrid(@[
+                            DBSettingsRow(DBUIString(@"settings.location"), locations),
+                            DBSettingsRow(DBUIString(@"settings.language"), popups[1]),
+                            DBSettingsRow(DBUIString(@"settings.style"), popups[0]),
+                            DBSettingsRow(DBUIString(@"settings.density"), popups[2]),
+                            DBSettingsRow(DBUIString(@"settings.boardScale"), scale),
+                            DBSettingsRow(DBUIString(@"settings.brightness"), brightness),
+                            DBSettingsRow(@"", motion)
+                        ]));
+
     NSButton *desktop = [NSButton checkboxWithTitle:DBUIString(@"settings.desktop")
                                              target:nil
                                              action:NULL];
     desktop.tag = 204;
     desktop.state = [saved[@"desktopEnabled"] boolValue];
-    desktop.frame = NSMakeRect(161, 284, 250, 24);
-    [v addSubview:desktop];
+    NSButton *spaces = [NSButton checkboxWithTitle:DBUIString(@"settings.showAllSpaces")
+                                            target:nil
+                                            action:NULL];
+    spaces.tag = 209;
+    spaces.state = !saved[@"showAllSpaces"] || [saved[@"showAllSpaces"] boolValue];
+    NSButton *login = [NSButton checkboxWithTitle:DBUIString(@"settings.launchAtLogin")
+                                           target:nil
+                                           action:NULL];
+    login.tag = 208;
+    login.state = [saved[@"launchAtLogin"] boolValue];
     NSButton *wallpaper = [NSButton buttonWithTitle:DBUIString(@"settings.setWallpaper")
                                              target:target
                                              action:@selector(applyWallpaper:)];
     wallpaper.bezelStyle = NSBezelStyleRounded;
-    wallpaper.frame = NSMakeRect(452, 278, 206, 32);
     wallpaper.tag = 207;
-    [v addSubview:wallpaper];
-    NSTextField *refreshLabel = [NSTextField labelWithString:DBUIString(@"settings.refresh")];
-    refreshLabel.frame = NSMakeRect(29, 245, 130, 25);
-    [v addSubview:refreshLabel];
-    NSPopUpButton *refresh = [[NSPopUpButton alloc] initWithFrame:NSMakeRect(161, 243, 497, 29)
-                                                        pullsDown:NO];
+    NSButton *saver = [NSButton buttonWithTitle:DBUIString(@"menu.screensaver")
+                                         target:target
+                                         action:@selector(openScreenSaverSettings:)];
+    saver.bezelStyle = NSBezelStyleRounded;
+    NSStackView *desktopActions = [NSStackView stackViewWithViews:@[ wallpaper, saver ]];
+    desktopActions.orientation = NSUserInterfaceLayoutOrientationHorizontal;
+    desktopActions.spacing = 10;
+    NSStackView *desktopOptions =
+        [NSStackView stackViewWithViews:@[ desktop, spaces, login, desktopActions ]];
+    desktopOptions.orientation = NSUserInterfaceLayoutOrientationVertical;
+    desktopOptions.alignment = NSLayoutAttributeLeading;
+    desktopOptions.spacing = 14;
+    NSView *desktopGroup = DBSettingsGroup(DBUIString(@"settings.groupDesktop"), desktopOptions);
+
+    NSPopUpButton *refresh = [[NSPopUpButton alloc] initWithFrame:NSZeroRect pullsDown:NO];
     refresh.tag = 206;
 
     for (NSNumber *interval in @[ @60, @300, @900, @3600, @21600 ]) {
@@ -132,7 +217,19 @@
             [refresh selectItem:refresh.lastItem];
         }
     }
-    [v addSubview:refresh];
+    NSPopUpButton *source = [[NSPopUpButton alloc] initWithFrame:NSZeroRect pullsDown:NO];
+    source.tag = 203;
+    [source addItemsWithTitles:@[ DBUIString(@"data.live"), DBUIString(@"data.sample") ]];
+    [source selectItemAtIndex:self.useSampleData ? 1 : 0];
+    NSSecureTextField *apiKey = [[NSSecureTextField alloc] initWithFrame:NSZeroRect];
+    apiKey.tag = 202;
+    apiKey.placeholderString = DBUIString(@"settings.apiKeyHint");
+    BOOL keySaved = [saved[@"hasAPIKey"] boolValue];
+
+    if (keySaved) {
+        apiKey.stringValue = DBStoredAPIKeyMask;
+    }
+    NSTextField *provider = DBSettingsLabel(@"AeroDataBox · RapidAPI");
     NSDictionary *snapshot = [LiveFlightStore cachedSnapshotForAirport:self.locationCode];
     NSString *updated = snapshot[@"fetchedAt"] ?: DBUIString(@"settings.neverUpdated");
     NSDate *date = [NSISO8601DateFormatter.new dateFromString:updated];
@@ -152,108 +249,88 @@
                       : failure == 403 ? @"settings.apiSubscriptionRequired"
                       : failure == 429 ? @"settings.apiRateLimited"
                                        : nil;
-    NSTextField *lastUpdate = [NSTextField
-        labelWithString:self.useSampleData ? DBUIString(@"data.sample")
-                        : issue            ? DBUIString(issue)
-                                : [NSString stringWithFormat:DBUIString(@"settings.lastUpdate"),
-                                                             updated]];
-    lastUpdate.frame = NSMakeRect(161, 215, 497, 22);
+    NSTextField *lastUpdate = DBSettingsLabel(
+        self.useSampleData ? DBUIString(@"data.sample")
+        : issue            ? DBUIString(issue)
+                : [NSString stringWithFormat:DBUIString(@"settings.lastUpdate"), updated]);
     lastUpdate.textColor = issue ? NSColor.systemOrangeColor : NSColor.secondaryLabelColor;
-    lastUpdate.font = DBFont(11, NO, NO);
-    [v addSubview:lastUpdate];
-    NSArray *extraLabels = @[ @"settings.data", @"settings.provider", @"settings.apiKey" ];
+    NSTextField *keyNote =
+        DBSettingsLabel(DBUIString(keySaved ? @"settings.apiKeySaved" : @"settings.apiKeyMissing"));
+    NSView *dataGroup =
+        DBSettingsGroup(DBUIString(@"settings.groupData"), DBSettingsGrid(@[
+                            DBSettingsRow(DBUIString(@"settings.data"), source),
+                            DBSettingsRow(DBUIString(@"settings.apiKey"), apiKey),
+                            DBSettingsRow(DBUIString(@"settings.refresh"), refresh),
+                            DBSettingsRow(DBUIString(@"settings.provider"), provider),
+                            DBSettingsRow(@"", lastUpdate), DBSettingsRow(@"", keyNote)
+                        ]));
 
-    for (NSInteger index = 0; index < 3; index++) {
-        NSTextField *label = [NSTextField labelWithString:DBUIString(extraLabels[index])];
-        label.frame = NSMakeRect(29, 181 - index * 44, 130, 25);
-        [v addSubview:label];
-    }
-    NSPopUpButton *source = [[NSPopUpButton alloc] initWithFrame:NSMakeRect(161, 179, 497, 29)
-                                                       pullsDown:NO];
-    source.tag = 203;
-    [source addItemsWithTitles:@[ DBUIString(@"data.live"), DBUIString(@"data.sample") ]];
-    [source selectItemAtIndex:self.useSampleData ? 1 : 0];
-    [v addSubview:source];
-    NSTextField *provider = [NSTextField labelWithString:@"AeroDataBox · RapidAPI"];
-    provider.frame = NSMakeRect(161, 137, 497, 25);
-    [v addSubview:provider];
-    NSSecureTextField *apiKey =
-        [[NSSecureTextField alloc] initWithFrame:NSMakeRect(161, 93, 497, 25)];
-    apiKey.tag = 202;
-    apiKey.placeholderString = DBUIString(@"settings.apiKeyHint");
-    BOOL keySaved = [saved[@"hasAPIKey"] boolValue];
+    NSImageView *icon =
+        [NSImageView imageViewWithImage:[NSImage imageNamed:NSImageNameApplicationIcon]];
+    [icon.widthAnchor constraintEqualToConstant:44].active = YES;
+    [icon.heightAnchor constraintEqualToConstant:44].active = YES;
+    NSTextField *title = [NSTextField labelWithString:@"Departure Board"];
+    title.font = [NSFont systemFontOfSize:24 weight:NSFontWeightSemibold];
+    NSStackView *heading = [NSStackView
+        stackViewWithViews:@[ title, DBSettingsLabel(DBUIString(@"settings.subtitle")) ]];
+    heading.orientation = NSUserInterfaceLayoutOrientationVertical;
+    heading.alignment = NSLayoutAttributeLeading;
+    heading.spacing = 3;
+    NSStackView *header = [NSStackView stackViewWithViews:@[ icon, heading ]];
+    header.orientation = NSUserInterfaceLayoutOrientationHorizontal;
+    header.spacing = 14;
+    header.translatesAutoresizingMaskIntoConstraints = NO;
+    [root addSubview:header];
+    NSScrollView *scroll = NSScrollView.new;
+    scroll.hasVerticalScroller = YES;
+    scroll.drawsBackground = NO;
+    scroll.translatesAutoresizingMaskIntoConstraints = NO;
+    [root addSubview:scroll];
+    DBSettingsDocumentView *document = DBSettingsDocumentView.new;
+    document.translatesAutoresizingMaskIntoConstraints = NO;
+    scroll.documentView = document;
+    NSStackView *groups =
+        [NSStackView stackViewWithViews:@[ displayGroup, desktopGroup, dataGroup ]];
+    groups.orientation = NSUserInterfaceLayoutOrientationVertical;
+    groups.alignment = NSLayoutAttributeLeading;
+    groups.spacing = 16;
+    groups.translatesAutoresizingMaskIntoConstraints = NO;
+    [document addSubview:groups];
 
-    if (keySaved) {
-        apiKey.stringValue = DBStoredAPIKeyMask;
+    for (NSView *group in groups.arrangedSubviews) {
+        [group.widthAnchor constraintEqualToAnchor:groups.widthAnchor].active = YES;
     }
-    [v addSubview:apiKey];
-    NSTextField *keyNote = [NSTextField
-        labelWithString:DBUIString(keySaved ? @"settings.apiKeySaved" : @"settings.apiKeyMissing")];
-    keyNote.frame = NSMakeRect(161, 58, 497, 25);
-    keyNote.font = DBFont(11, NO, NO);
-    keyNote.textColor = NSColor.secondaryLabelColor;
-    [v addSubview:keyNote];
+    NSButton *guide = [NSButton buttonWithTitle:DBUIString(@"menu.guide")
+                                         target:self
+                                         action:@selector(openInstallationGuide:)];
+    guide.bezelStyle = NSBezelStyleRounded;
     NSButton *done = [NSButton buttonWithTitle:DBUIString(@"settings.apply")
                                         target:target
                                         action:action];
     done.bezelStyle = NSBezelStyleRounded;
     done.keyEquivalent = @"\r";
     done.tag = 205;
-    done.frame = NSMakeRect(566, 24, 92, 32);
-    [v addSubview:done];
-
-    for (NSView *view in v.subviews) {
-        if (view.frame.origin.y >= 278) {
-            NSRect frame = view.frame;
-            frame.origin.y += 136;
-            view.frame = frame;
-        }
-    }
-    NSButton *login = [NSButton checkboxWithTitle:DBUIString(@"settings.launchAtLogin")
-                                           target:nil
-                                           action:NULL];
-    login.tag = 208;
-    login.state = [saved[@"launchAtLogin"] boolValue];
-    login.frame = NSMakeRect(161, 328, 497, 24);
-    [v addSubview:login];
-    NSButton *spaces = [NSButton checkboxWithTitle:DBUIString(@"settings.showAllSpaces")
-                                            target:nil
-                                            action:NULL];
-    spaces.tag = 209;
-    spaces.state = (!saved[@"showAllSpaces"] || [saved[@"showAllSpaces"] boolValue])
-                       ? NSControlStateValueOn
-                       : NSControlStateValueOff;
-    spaces.frame = NSMakeRect(161, 284, 497, 24);
-    [v addSubview:spaces];
-    NSTextField *scaleLabel = [NSTextField labelWithString:DBUIString(@"settings.boardScale")];
-    scaleLabel.frame = NSMakeRect(29, 376, 130, 25);
-    [v addSubview:scaleLabel];
-    NSPopUpButton *scale = [[NSPopUpButton alloc] initWithFrame:NSMakeRect(161, 374, 497, 29)
-                                                      pullsDown:NO];
-    scale.tag = 210;
-
-    for (NSNumber *value in @[ @.5, @.65, @.75, @.85, @1.0 ]) {
-        [scale addItemWithTitle:[NSString stringWithFormat:@"%.0f%%", value.doubleValue * 100]];
-        scale.lastItem.representedObject = value;
-
-        if (fabs(value.doubleValue - self.boardScale) < .001) {
-            [scale selectItem:scale.lastItem];
-        }
-    }
-    [v addSubview:scale];
-
-    for (NSNumber *position in @[ @454, @277 ]) {
-        NSBox *separator =
-            [[NSBox alloc] initWithFrame:NSMakeRect(28, position.doubleValue, 630, 1)];
-        separator.boxType = NSBoxSeparator;
-        [v addSubview:separator];
-    }
-    NSButton *guide = [NSButton buttonWithTitle:DBUIString(@"menu.guide")
-                                         target:self
-                                         action:@selector(openInstallationGuide:)];
-    guide.bezelStyle = NSBezelStyleRounded;
-    guide.frame = NSMakeRect(28, 24, 220, 32);
-    [v addSubview:guide];
+    guide.translatesAutoresizingMaskIntoConstraints = NO;
+    done.translatesAutoresizingMaskIntoConstraints = NO;
+    [root addSubview:guide];
+    [root addSubview:done];
+    [NSLayoutConstraint activateConstraints:@[
+        [header.topAnchor constraintEqualToAnchor:root.topAnchor constant:24],
+        [header.leadingAnchor constraintEqualToAnchor:root.leadingAnchor constant:28],
+        [scroll.topAnchor constraintEqualToAnchor:header.bottomAnchor constant:22],
+        [scroll.leadingAnchor constraintEqualToAnchor:root.leadingAnchor],
+        [scroll.trailingAnchor constraintEqualToAnchor:root.trailingAnchor],
+        [scroll.bottomAnchor constraintEqualToAnchor:done.topAnchor constant:-20],
+        [document.widthAnchor constraintEqualToAnchor:scroll.contentView.widthAnchor],
+        [groups.topAnchor constraintEqualToAnchor:document.topAnchor constant:2],
+        [groups.leadingAnchor constraintEqualToAnchor:document.leadingAnchor constant:24],
+        [groups.trailingAnchor constraintEqualToAnchor:document.trailingAnchor constant:-24],
+        [groups.bottomAnchor constraintEqualToAnchor:document.bottomAnchor constant:-20],
+        [done.trailingAnchor constraintEqualToAnchor:root.trailingAnchor constant:-24],
+        [done.bottomAnchor constraintEqualToAnchor:root.bottomAnchor constant:-20],
+        [guide.leadingAnchor constraintEqualToAnchor:root.leadingAnchor constant:24],
+        [guide.centerYAnchor constraintEqualToAnchor:done.centerYAnchor]
+    ]];
     self.optionsWindow = window;
     return window;
 }

@@ -14,7 +14,7 @@ PORT=8767 node server.mjs
 
 Open `http://localhost:8767/ko` or `/` for English. The build copies the same English/Korean illustrated guide that ships inside the apps, along with public screenshots and the app icon. `/install` and `/install/ko` redirect to the corresponding guide. The upload directory contains only the public product site, its server, Dockerfile and deployment settings.
 
-`site/nitroship/nitroship.json` extracts `/app/public` from the image for Nitroship's static CDN. Fallback platform redirects run in the Incheon region, with zero idle instances and at most one active instance. `/healthz` is the runtime health check. These hosting settings do not affect the desktop app's flight-provider requests.
+`nitroship.json` extracts `/app/public` from the image for Nitroship's static CDN. Fallback platform redirects run in the Incheon region, with zero idle instances and at most one active instance. `/healthz` is the runtime health check. These hosting settings do not affect the desktop app's flight-provider requests.
 
 ## Deploy
 
@@ -26,7 +26,7 @@ ntro deploy work/nitroship --app dpboard --team buseong-kim-f9isa5 --preview
 ntro promote <ready-deployment-id> --app dpboard --team buseong-kim-f9isa5
 ```
 
-Check the preview before promotion: English and Korean pages, all guide images, both install redirects, the single Get button, platform selection, and direct GitHub ZIP downloads. After promotion, check both `dpboard.ntro.run` and `dpboard.skyline23.com` over HTTPS. A ready preview alone does not activate the production address.
+Check the preview before promotion: English and Korean pages, all guide images, both install redirects, the fixed Install and hero Get actions, platform selection, and direct GitHub DMG/EXE downloads. After promotion, check both `dpboard.ntro.run` and `dpboard.skyline23.com` over HTTPS. A ready preview alone does not activate the production address.
 
 The custom domain uses a DNS-only CNAME from `dpboard` to `via.nitroship.co`. Nitroship verifies ownership and issues the TLS certificate. Leave the apex, blog and portfolio DNS records unchanged.
 
@@ -37,11 +37,11 @@ ntro domains verify dpboard.skyline23.com --app dpboard --team buseong-kim-f9isa
 
 ## Downloads and request usage
 
-The hero Get button and fixed-navigation Install button link directly to the latest GitHub release installer for the visitor's desktop OS. `download.js` reads the local browser user agent and sets the link without a network request. Alternative OS links are direct GitHub asset URLs inside a disclosure.
+The hero Get button and fixed-navigation Install button link directly to the latest GitHub release installer for the visitor's desktop OS. `download.js` reads the local browser user agent and sets the link without a network request. The detected operating system is shown below Get. The “different operating system” disclosure exposes direct GitHub links for macOS, Windows x64 and Windows ARM64. Chromium architecture hints improve Windows ARM64 selection without a network request.
 
-Without JavaScript, `/download` detects the OS and returns an uncached redirect to the same GitHub asset. An unknown/mobile browser gets one platform selector and one Get button. Legacy `/download/macos`, `/download/windows-x64` and `/download/windows-arm64` URLs also redirect directly. Nitroship does not fetch, buffer, cache or proxy installers.
+Without JavaScript, `/download` detects the OS and returns an uncached redirect to the same GitHub asset. An unknown/mobile browser gets one platform selector and one Get button. `/download?choose=1` explicitly opens that selector. Legacy `/download/macos`, `/download/windows-x64` and `/download/windows-arm64` URLs also redirect directly. Nitroship does not fetch, buffer, cache or proxy installers.
 
-Every release includes `DepartureBoard-universal.zip`; Windows setup executables use stable `DepartureBoard-win-x64-Setup.exe` and `DepartureBoard-win-arm64-Setup.exe` filenames. Optional ZIPs remain on the release page. All URLs use `releases/latest/download/`, so new tags require no website edit and visitors never need to navigate the GitHub release page.
+The primary macOS asset is `DepartureBoard-universal.dmg`; Windows setup executables use stable `DepartureBoard-win-x64-Setup.exe` and `DepartureBoard-win-arm64-Setup.exe` filenames. Optional ZIPs remain on the release page. All URLs use `releases/latest/download/`, so new tags require no website edit and visitors never need to navigate the GitHub release page.
 
 The page makes no flight-provider requests, client-side release lookups or background polling. No API keys, quota limits or automatic quota-based stop are added to the desktop clients.
 
@@ -56,3 +56,9 @@ The editorial landing page uses an ivory background, a yellow Get button and thr
 `site/airport-demo.js` owns page events, stale image requests, scroll state and teardown. `site/board-transition.js` owns raster-strip animation and cancellation. `site/airport-data.js` owns the three featured previews. The 1920×1080 WebP files in `site/boards` are lossless exports of the app's fixed-date sample PNG renders. The decorative blank split-flap tile was generated for this page. Its letters remain selectable UI state rather than part of the bitmap.
 
 Only the initial preview loads on first view. Other previews load on selection or a scroll transition. There is no autoplay, flight-provider request or GitHub API lookup. Reduced-motion mode disables scroll pinning, flip animation and section reveals. The controller cancels unfinished image transitions and releases listeners and observers when the page is left. The date is the visitor's local date.
+
+## Automatic deployment
+
+The repository-root `nitroship.json` builds the product site with `site/nitroship/Dockerfile.git`. It copies only the public site, bundled guide and runtime redirect handler into the final image. The Nitroship GitHub App is limited to this repository, with `main` as the production branch. Preview auto-deployments are disabled to avoid building every working-branch update.
+
+GitHub validation separates site/guide checks from native app checks. Superseded validation runs are cancelled. Windows caches NuGet packages and the verified installer-compiler download, and builds the desktop application only when publishing its runtime package. Tagged releases create a draft, upload all platform assets, and publish the complete release together.

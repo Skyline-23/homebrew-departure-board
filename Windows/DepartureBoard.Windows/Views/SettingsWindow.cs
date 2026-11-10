@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using DepartureBoard.Core.Airports;
 using DepartureBoard.Core.Settings;
 using DepartureBoard.Windows.Platform;
@@ -52,66 +54,90 @@ internal sealed class SettingsWindow : Window
         this.preview = preview;
         this.applyWallpaper = applyWallpaper;
         Title = "Departure Board Settings";
-        Width = 640;
-        Height = Math.Min(860, SystemParameters.WorkArea.Height - 50);
-        ResizeMode = ResizeMode.CanMinimize;
+        Width = Math.Min(760, SystemParameters.WorkArea.Width - 48);
+        Height = Math.Min(860, SystemParameters.WorkArea.Height - 48);
+        MinWidth = 560;
+        MinHeight = 420;
+        ResizeMode = ResizeMode.CanResize;
         WindowStartupLocation = WindowStartupLocation.CenterScreen;
-        Background = Brushes.White;
-        FontFamily = new FontFamily("Segoe UI");
+        Background = new SolidColorBrush(Color.FromRgb(246, 247, 249));
+        FontFamily = new FontFamily("Segoe UI Variable Text, Segoe UI");
         FontSize = 14;
-        var panel = new StackPanel { Margin = new Thickness(28) };
-        panel.Children.Add(
-            new TextBlock
+        Resources.MergedDictionaries.Add(
+            new ResourceDictionary
             {
-                Text = "Departure Board",
-                FontSize = 24,
-                FontWeight = FontWeights.SemiBold,
-                Margin = new Thickness(0, 0, 0, 20),
+                Source = new Uri(
+                    "pack://application:,,,/PresentationFramework.Fluent;component/Themes/Fluent.Light.xaml"
+                ),
             }
         );
-        Content = new ScrollViewer
+        var layout = new Grid { Background = Background };
+        layout.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        layout.RowDefinitions.Add(
+            new RowDefinition { Height = new GridLength(1, GridUnitType.Star) }
+        );
+        layout.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        Content = layout;
+        layout.Children.Add(Header());
+        var panel = new StackPanel { Margin = new Thickness(24, 0, 24, 24) };
+        var scroll = new ScrollViewer
         {
             Content = panel,
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+            HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+            Padding = new Thickness(0, 0, 4, 0),
         };
+        Grid.SetRow(scroll, 1);
+        layout.Children.Add(scroll);
         Populate();
-        AddRow(panel, "Airport", airport);
-        AddRow(panel, "Language", language);
-        AddRow(panel, "Board style", style);
-        AddRow(panel, "Row density", density);
-        AddRow(panel, "Board scale", scale);
-        AddRow(panel, "Brightness", brightness);
-        panel.Children.Add(reduceMotion);
-        panel.Children.Add(Separator());
-        panel.Children.Add(wallpaper);
-        panel.Children.Add(allDesktops);
-        panel.Children.Add(startup);
-        panel.Children.Add(Separator());
-        AddRow(panel, "Timetable source", source);
-        AddRow(panel, "API key", apiKey);
-        AddRow(panel, "Data refresh", refresh);
-        AddRow(
+
+        var display = Section(panel, "Display", "Choose the airport and how the board looks.");
+        AddRow(display, "Airport", airport);
+        AddRow(display, "Language", language);
+        AddRow(display, "Board style", style);
+        AddRow(display, "Rows", density);
+        AddRow(display, "Scale", scale);
+        AddRow(display, "Brightness", brightness);
+        AddRow(display, "Animation", reduceMotion);
+
+        var desktop = Section(panel, "Desktop", "Make it part of your workspace.");
+        AddOption(desktop, wallpaper);
+        AddOption(desktop, allDesktops);
+        AddOption(desktop, startup);
+        var desktopActions = new WrapPanel { Margin = new Thickness(0, 8, 0, 0) };
+        var still = ActionButton("Set as wallpaper");
+        still.Click += (_, _) => SetStillWallpaper();
+        desktopActions.Children.Add(still);
+        var saver = ActionButton("Set as screen saver");
+        saver.Margin = new Thickness(10, 0, 0, 0);
+        saver.Click += (_, _) => RegisterScreenSaver();
+        desktopActions.Children.Add(saver);
+        desktop.Children.Add(desktopActions);
+
+        var data = Section(
             panel,
-            "Provider",
-            new TextBox
+            "Flight data",
+            "Try the sample schedule or connect your own account."
+        );
+        AddRow(data, "Timetable", source);
+        AddRow(data, "API key", apiKey);
+        AddRow(data, "Refresh", refresh);
+        data.Children.Add(
+            new TextBlock
             {
                 Text = "AeroDataBox · RapidAPI",
-                IsReadOnly = true,
-                BorderThickness = new Thickness(0),
+                Foreground = SystemColors.GrayTextBrush,
+                FontSize = 12,
+                Margin = new Thickness(0, 4, 0, 6),
             }
         );
-        panel.Children.Add(dataStatus);
-        panel.Children.Add(Buttons());
-        var guide = new Button
-        {
-            Content = "Install & user guide",
-            HorizontalAlignment = HorizontalAlignment.Left,
-            Margin = new Thickness(0, 14, 0, 0),
-            Padding = new Thickness(10, 5, 10, 5),
-        };
-        guide.Click += (_, _) => InstallationGuide.Open();
-        panel.Children.Add(guide);
-        panel.Children.Add(status);
+        dataStatus.FontSize = 12;
+        dataStatus.Foreground = SystemColors.GrayTextBrush;
+        data.Children.Add(dataStatus);
+
+        var footer = Footer();
+        Grid.SetRow(footer, 2);
+        layout.Children.Add(footer);
         status.Text = services.HasApiKey
             ? "API key saved in Windows Credential Manager."
             : "Use sample mode or enter your AeroDataBox RapidAPI key.";
@@ -202,49 +228,131 @@ internal sealed class SettingsWindow : Window
         startup.IsChecked = settings.LaunchAtLogin;
     }
 
-    private UIElement Buttons()
+    private static UIElement Header()
     {
 
-        var panel = new WrapPanel
+        var header = new Grid { Margin = new Thickness(28, 24, 28, 22) };
+        header.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        header.ColumnDefinitions.Add(new ColumnDefinition());
+        var icon = new Image
         {
-            Orientation = Orientation.Horizontal,
-            Margin = new Thickness(0, 22, 0, 0),
+            Width = 44,
+            Height = 44,
+            Margin = new Thickness(0, 0, 14, 0),
+            Source = new BitmapImage(
+                new Uri(Path.Combine(AppContext.BaseDirectory, "Assets", "DepartureBoard.ico"))
+            ),
         };
-        var save = new Button
-        {
-            Content = "Apply",
-            Padding = new Thickness(18, 7, 18, 7),
-            IsDefault = true,
-            Background = SystemColors.HighlightBrush,
-            Foreground = SystemColors.HighlightTextBrush,
-        };
+        header.Children.Add(icon);
+        var title = new StackPanel();
+        Grid.SetColumn(title, 1);
+        title.Children.Add(
+            new TextBlock
+            {
+                Text = "Departure Board",
+                FontSize = 24,
+                FontWeight = FontWeights.SemiBold,
+            }
+        );
+        title.Children.Add(
+            new TextBlock
+            {
+                Text = "Wallpaper and screen saver",
+                Foreground = SystemColors.GrayTextBrush,
+                Margin = new Thickness(0, 2, 0, 0),
+            }
+        );
+        header.Children.Add(title);
+        return header;
+    }
+
+    private UIElement Footer()
+    {
+
+        var panel = new StackPanel { Margin = new Thickness(24, 12, 24, 20) };
+        status.Margin = new Thickness(0, 0, 0, 12);
+        panel.Children.Add(status);
+        var actions = new DockPanel { LastChildFill = false };
+        var guide = ActionButton("Installation guide");
+        guide.Click += (_, _) => InstallationGuide.Open();
+        DockPanel.SetDock(guide, Dock.Left);
+        actions.Children.Add(guide);
+        var save = ActionButton("Apply changes");
+        save.IsDefault = true;
+        save.Background = new SolidColorBrush(Color.FromRgb(0, 95, 184));
+        save.Foreground = Brushes.White;
+        save.BorderThickness = new Thickness(0);
         save.Click += (_, _) => Save();
-        panel.Children.Add(save);
-        var show = new Button
-        {
-            Content = "Preview",
-            Margin = new Thickness(10, 0, 0, 0),
-            Padding = new Thickness(12, 7, 12, 7),
-        };
+        DockPanel.SetDock(save, Dock.Right);
+        actions.Children.Add(save);
+        var show = ActionButton("Preview");
+        show.Margin = new Thickness(0, 0, 10, 0);
         show.Click += (_, _) => preview();
-        panel.Children.Add(show);
-        var install = new Button
+        DockPanel.SetDock(show, Dock.Right);
+        actions.Children.Add(show);
+        panel.Children.Add(actions);
+        return new Border
         {
-            Content = "Set as screen saver",
-            Margin = new Thickness(10, 0, 0, 0),
-            Padding = new Thickness(12, 7, 12, 7),
+            Background = Brushes.White,
+            BorderBrush = new SolidColorBrush(Color.FromRgb(225, 228, 232)),
+            BorderThickness = new Thickness(0, 1, 0, 0),
+            Child = panel,
         };
-        install.Click += (_, _) => RegisterScreenSaver();
-        panel.Children.Add(install);
-        var still = new Button
+    }
+
+    private static Button ActionButton(string title)
+    {
+
+        return new Button
         {
-            Content = "Set as wallpaper",
-            Margin = new Thickness(10, 0, 0, 0),
-            Padding = new Thickness(12, 7, 12, 7),
+            Content = title,
+            MinHeight = 36,
+            Padding = new Thickness(16, 8, 16, 8),
         };
-        still.Click += (_, _) => SetStillWallpaper();
-        panel.Children.Add(still);
-        return panel;
+    }
+
+    private static StackPanel Section(Panel parent, string title, string description)
+    {
+
+        var content = new StackPanel { Margin = new Thickness(20, 18, 20, 12) };
+        content.Children.Add(
+            new TextBlock
+            {
+                Text = title,
+                FontSize = 17,
+                FontWeight = FontWeights.SemiBold,
+            }
+        );
+        content.Children.Add(
+            new TextBlock
+            {
+                Text = description,
+                FontSize = 12,
+                Foreground = SystemColors.GrayTextBrush,
+                TextWrapping = TextWrapping.Wrap,
+                Margin = new Thickness(0, 4, 0, 18),
+            }
+        );
+        parent.Children.Add(
+            new Border
+            {
+                Background = Brushes.White,
+                BorderBrush = new SolidColorBrush(Color.FromRgb(225, 228, 232)),
+                BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(10),
+                Margin = new Thickness(0, 0, 0, 14),
+                Child = content,
+            }
+        );
+        return content;
+    }
+
+    private static void AddOption(Panel panel, CheckBox option)
+    {
+
+        option.MinHeight = 36;
+        option.Margin = new Thickness(0, 0, 0, 6);
+        panel.Children.Add(option);
     }
 
     private bool Save()
@@ -354,7 +462,7 @@ internal sealed class SettingsWindow : Window
     {
 
         var row = new Grid { Margin = new Thickness(0, 0, 0, 12) };
-        row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(130) });
+        row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(146) });
         row.ColumnDefinitions.Add(new ColumnDefinition());
         row.Children.Add(
             new TextBlock
@@ -364,21 +472,12 @@ internal sealed class SettingsWindow : Window
                 Foreground = SystemColors.GrayTextBrush,
             }
         );
-        control.MinHeight = 30;
+        control.MinHeight = 36;
+        control.FontSize = 14;
+        AutomationProperties.SetName(control, label);
         Grid.SetColumn(control, 1);
         row.Children.Add(control);
         panel.Children.Add(row);
-    }
-
-    private static Border Separator()
-    {
-
-        return new Border
-        {
-            Height = 1,
-            Background = new SolidColorBrush(Color.FromRgb(230, 232, 235)),
-            Margin = new Thickness(0, 6, 0, 20),
-        };
     }
 
     private static void SetChoices(ItemsControl control, IEnumerable<Choice> choices)

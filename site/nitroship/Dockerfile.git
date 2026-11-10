@@ -1,0 +1,16 @@
+FROM python:3.13-slim AS website
+WORKDIR /source
+COPY Casks/departure-board.rb ./Casks/departure-board.rb
+COPY docs/install-guide.md docs/install-guide.ko.md ./docs/
+COPY Resources/Guide ./Resources/Guide
+COPY script/build-guide.py script/build-site.py ./script/
+COPY site ./site
+RUN python3 script/build-site.py
+
+FROM node:22-slim
+WORKDIR /app
+COPY --from=website --chown=node:node /source/work/site ./public
+COPY --chown=node:node site/nitroship/server.mjs site/download-handler.mjs ./
+USER node
+EXPOSE 3000
+CMD ["node", "server.mjs"]

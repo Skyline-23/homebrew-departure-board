@@ -1,5 +1,5 @@
 const downloads = {
-  macos: 'DepartureBoard-universal.zip',
+  macos: 'DepartureBoard-universal.dmg',
   'windows-x64': 'DepartureBoard-win-x64-Setup.exe',
   'windows-arm64': 'DepartureBoard-win-arm64-Setup.exe',
   'windows-x64-setup.sha256': 'DepartureBoard-win-x64-Setup.exe.sha256',
@@ -16,6 +16,7 @@ export default {
     let platform = url.pathname.slice('/download/'.length);
     const automatic = url.pathname === '/download' || url.pathname === '/download/';
     if (automatic) {
+      if (url.searchParams.has('choose')) return platformPicker();
       platform = url.searchParams.get('platform') || detectPlatform(request);
       if (!platform) return platformPicker();
     }

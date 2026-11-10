@@ -1,0 +1,9 @@
+.git
+work
+outputs
+_workspace
+.codex
+.env*
+Windows
+Sources
+Tests
