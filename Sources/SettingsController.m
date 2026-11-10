@@ -80,8 +80,12 @@ static NSView *DBSettingsGroup(NSString *heading, NSView *body) {
 
 - (NSWindow *)settingsWindowWithTarget:(id)target action:(SEL)action {
 
+    NSScreen *screen = self.window.screen ?: NSScreen.mainScreen;
+    NSSize visible = screen.visibleFrame.size;
+    CGFloat width = MIN(720, MAX(620, visible.width - 64));
+    CGFloat height = MIN(760, MAX(500, visible.height - 80));
     NSWindow *window =
-        [[NSPanel alloc] initWithContentRect:NSMakeRect(0, 0, 720, 760)
+        [[NSPanel alloc] initWithContentRect:NSMakeRect(0, 0, width, height)
                                    styleMask:NSWindowStyleMaskTitled | NSWindowStyleMaskResizable
                                      backing:NSBackingStoreBuffered
 

@@ -67,16 +67,28 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "$GITHUB_REF_NAME" \
-            "outputs/DepartureBoard/dist/DepartureBoard-$VERSION-universal.zip" \
-            outputs/DepartureBoard/dist/DepartureBoard-universal.zip \
-            "outputs/DepartureBoard/dist/DepartureBoard-$VERSION-universal.dmg" \
-            outputs/DepartureBoard/dist/DepartureBoard-universal.dmg \
-            outputs/DepartureBoard/dist/DepartureBoard-universal.dmg.sha256 \
-            "outputs/DepartureBoard/dist/DepartureBoard-$VERSION-source.tar.gz" \
-            work/windows-release/*.zip work/windows-release/*.exe work/windows-release/*.sha256 \
-            --title "Departure Board $VERSION" \
-            --notes-file .github/RELEASE_NOTES.md --generate-notes
+          state="$(gh release view "$GITHUB_REF_NAME" --json isDraft --jq .isDraft 2>/dev/null || echo missing)"
+          if [[ "$state" == false ]]; then
+            gh release download "$GITHUB_REF_NAME" \
+              --pattern "DepartureBoard-$VERSION-universal.zip" \
+              --pattern "DepartureBoard-$VERSION-source.tar.gz" \
+              --dir outputs/DepartureBoard/dist --clobber
+          else
+            if [[ "$state" == missing ]]; then
+              gh release create "$GITHUB_REF_NAME" --draft \
+                --title "Departure Board $VERSION" \
+                --notes-file .github/RELEASE_NOTES.md --generate-notes
+            fi
+            gh release upload "$GITHUB_REF_NAME" --clobber \
+              "outputs/DepartureBoard/dist/DepartureBoard-$VERSION-universal.zip" \
+              outputs/DepartureBoard/dist/DepartureBoard-universal.zip \
+              "outputs/DepartureBoard/dist/DepartureBoard-$VERSION-universal.dmg" \
+              outputs/DepartureBoard/dist/DepartureBoard-universal.dmg \
+              outputs/DepartureBoard/dist/DepartureBoard-universal.dmg.sha256 \
+              "outputs/DepartureBoard/dist/DepartureBoard-$VERSION-source.tar.gz" \
+              work/windows-release/*.zip work/windows-release/*.exe work/windows-release/*.sha256
+            gh release edit "$GITHUB_REF_NAME" --draft=false --latest
+          fi
       - name: Update Homebrew tap
         run: |
           git fetch origin main
