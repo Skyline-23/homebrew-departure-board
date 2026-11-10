@@ -26,7 +26,7 @@ ntro deploy work/nitroship --app dpboard --team buseong-kim-f9isa5 --preview
 ntro promote <ready-deployment-id> --app dpboard --team buseong-kim-f9isa5
 ```
 
-Check the preview before promotion: English and Korean pages, all guide images, both install redirects, the single Get button, platform selection, and direct GitHub ZIP downloads. After promotion, check both `dpboard.ntro.run` and `dpboard.skyline23.com` over HTTPS. A ready preview alone does not activate the production address.
+Check the preview before promotion: English and Korean pages, all guide images, both install redirects, the fixed Install and hero Get actions, platform selection, and direct GitHub DMG/EXE downloads. After promotion, check both `dpboard.ntro.run` and `dpboard.skyline23.com` over HTTPS. A ready preview alone does not activate the production address.
 
 The custom domain uses a DNS-only CNAME from `dpboard` to `via.nitroship.co`. Nitroship verifies ownership and issues the TLS certificate. Leave the apex, blog and portfolio DNS records unchanged.
 
@@ -37,11 +37,11 @@ ntro domains verify dpboard.skyline23.com --app dpboard --team buseong-kim-f9isa
 
 ## Downloads and request usage
 
-The hero Get button and fixed-navigation Install button link directly to the latest GitHub release installer for the visitor's desktop OS. `download.js` reads the local browser user agent and sets the link without a network request. Alternative OS links are direct GitHub asset URLs inside a disclosure.
+The hero Get button and fixed-navigation Install button link directly to the latest GitHub release installer for the visitor's desktop OS. `download.js` reads the local browser user agent and sets the link without a network request. The detected operating system is shown below Get. The “different operating system” disclosure exposes direct GitHub links for macOS, Windows x64 and Windows ARM64. Chromium architecture hints improve Windows ARM64 selection without a network request.
 
-Without JavaScript, `/download` detects the OS and returns an uncached redirect to the same GitHub asset. An unknown/mobile browser gets one platform selector and one Get button. Legacy `/download/macos`, `/download/windows-x64` and `/download/windows-arm64` URLs also redirect directly. Nitroship does not fetch, buffer, cache or proxy installers.
+Without JavaScript, `/download` detects the OS and returns an uncached redirect to the same GitHub asset. An unknown/mobile browser gets one platform selector and one Get button. `/download?choose=1` explicitly opens that selector. Legacy `/download/macos`, `/download/windows-x64` and `/download/windows-arm64` URLs also redirect directly. Nitroship does not fetch, buffer, cache or proxy installers.
 
-Every release includes `DepartureBoard-universal.zip`; Windows setup executables use stable `DepartureBoard-win-x64-Setup.exe` and `DepartureBoard-win-arm64-Setup.exe` filenames. Optional ZIPs remain on the release page. All URLs use `releases/latest/download/`, so new tags require no website edit and visitors never need to navigate the GitHub release page.
+The primary macOS asset is `DepartureBoard-universal.dmg`; Windows setup executables use stable `DepartureBoard-win-x64-Setup.exe` and `DepartureBoard-win-arm64-Setup.exe` filenames. Optional ZIPs remain on the release page. All URLs use `releases/latest/download/`, so new tags require no website edit and visitors never need to navigate the GitHub release page.
 
 The page makes no flight-provider requests, client-side release lookups or background polling. No API keys, quota limits or automatic quota-based stop are added to the desktop clients.
 

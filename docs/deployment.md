@@ -67,3 +67,9 @@ References: [Apple notarization requirements](https://developer.apple.com/docume
 No flight-provider credential is needed by GitHub Actions. Each user saves their
 own AeroDataBox RapidAPI key in the companion app. It remains in that user's macOS
 Keychain or Windows Credential Manager and is sent only to the provider's RapidAPI endpoint.
+
+## Native installers and settings refresh
+
+The macOS release includes a signed, notarized DMG as the primary website download. The disk image contains the universal app, screen saver, an Applications shortcut and the offline illustrated guide. Bundle notarization runs before packaging, followed by a separate DMG notarization and verification. ZIPs remain available for Homebrew and existing installation workflows.
+
+Windows continues to publish separate self-contained x64 and ARM64 Setup.exe files. The refreshed settings group controls under Display, Desktop and Flight data, with persistent Apply changes and Preview actions. The native self-test captures the regular, scrolled-data and compact settings layouts.

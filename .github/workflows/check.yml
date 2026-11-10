@@ -12,6 +12,7 @@ jobs:
       - uses: actions/checkout@v4
       - run: brew install swiftlint
       - run: ./script/lint.sh
+      - run: node script/test-downloads.mjs
       - run: ./script/build.sh
       - run: ./script/validate.sh
       - uses: actions/upload-artifact@v4

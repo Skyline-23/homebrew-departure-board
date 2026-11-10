@@ -2,6 +2,13 @@
 set -euo pipefail
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SOURCE_BUNDLES="$PROJECT_ROOT/work/Build.noindex/Bundles"
+DISK_IMAGE="${1:-}"
+RESULT_PREFIX="notarization"
+
+if [[ -n "$DISK_IMAGE" ]]; then
+  [[ "$DISK_IMAGE" == *.dmg && -f "$DISK_IMAGE" ]] || { echo 'Expected an existing DMG.' >&2; exit 1; }
+  RESULT_PREFIX="notarization-dmg"
+fi
 : "${APPLE_TEAM_ID:?Set APPLE_TEAM_ID}"
 TEMP_ROOT="$(mktemp -d "${RUNNER_TEMP:-${TMPDIR:-/tmp}}/departure-notarize.XXXXXX")"
 trap 'rm -rf "$TEMP_ROOT"' EXIT
@@ -44,9 +51,14 @@ else
 fi
 
 # Both executables are scanned in the same submission; staple each bundle afterward.
-COPYFILE_DISABLE=1 ditto -c -k --norsrc --noextattr --keepParent "$BUNDLES" "$TEMP_ROOT/submission.zip"
+SUBMISSION="$DISK_IMAGE"
+
+if [[ -z "$SUBMISSION" ]]; then
+  SUBMISSION="$TEMP_ROOT/submission.zip"
+  COPYFILE_DISABLE=1 ditto -c -k --norsrc --noextattr --keepParent "$BUNDLES" "$SUBMISSION"
+fi
 set +e
-xcrun notarytool submit "$TEMP_ROOT/submission.zip" "${AUTH[@]}" --wait --timeout 20m \
+xcrun notarytool submit "$SUBMISSION" "${AUTH[@]}" --wait --timeout 20m \
   --output-format json > "$TEMP_ROOT/result.json"
 SUBMIT_STATUS=$?
 set -e
@@ -59,8 +71,8 @@ except (ValueError,OSError):
 PYRESULT
 )"
 mkdir -p "$PROJECT_ROOT/work"
-rm -f "$PROJECT_ROOT/work/notarization-log.json"
-cp "$TEMP_ROOT/result.json" "$PROJECT_ROOT/work/notarization-result.json"
+rm -f "$PROJECT_ROOT/work/$RESULT_PREFIX-log.json"
+cp "$TEMP_ROOT/result.json" "$PROJECT_ROOT/work/$RESULT_PREFIX-result.json"
 SUBMISSION_ID="$(python3 - "$TEMP_ROOT/result.json" <<'PYID'
 import json,sys
 try:
@@ -72,7 +84,7 @@ PYID
 
 if [[ -n "$SUBMISSION_ID" ]]; then
   xcrun notarytool log "$SUBMISSION_ID" "${AUTH[@]}" \
-    "$PROJECT_ROOT/work/notarization-log.json" || true
+    "$PROJECT_ROOT/work/$RESULT_PREFIX-log.json" || true
 fi
 
 if [[ "$SUBMIT_STATUS" != 0 || "$STATUS" != Accepted ]]; then
@@ -85,10 +97,18 @@ except (ValueError,OSError):
 print('Notarization did not succeed:',result.get('status','Unknown'),result.get('id',''))
 PY
 
-  if [[ -f "$PROJECT_ROOT/work/notarization-log.json" ]]; then
-    cat "$PROJECT_ROOT/work/notarization-log.json" >&2
+  if [[ -f "$PROJECT_ROOT/work/$RESULT_PREFIX-log.json" ]]; then
+    cat "$PROJECT_ROOT/work/$RESULT_PREFIX-log.json" >&2
   fi
   exit 1
+fi
+
+if [[ -n "$DISK_IMAGE" ]]; then
+  xcrun stapler staple "$DISK_IMAGE"
+  xcrun stapler validate "$DISK_IMAGE"
+  spctl --assess --type open --context context:primary-signature --verbose=4 "$DISK_IMAGE"
+  printf 'Disk image notarization accepted.\n'
+  exit 0
 fi
 
 for bundle in "$BUNDLES/Departure Board.app" "$BUNDLES/Departure Board.saver"; do
