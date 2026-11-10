@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Build the public product pages without runtime API calls or dependencies."""
 import argparse
+import json
 from pathlib import Path
 import re
 import shutil
@@ -29,6 +30,7 @@ def main():
     shutil.copytree(ROOT / 'site/boards', output / 'boards')
     shutil.copytree(ROOT / 'Resources/Guide', output / 'guide', dirs_exist_ok=True)
     shutil.copytree(ROOT / 'Resources/Guide/images', output / 'images', dirs_exist_ok=True)
+    (output / 'release.json').write_text(json.dumps({'version': version}) + '\n')
     (output / 'robots.txt').write_text('User-agent: *\nAllow: /\nSitemap: https://dpboard.skyline23.com/sitemap.xml\n')
     (output / 'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+''.join(f'<url><loc>https://dpboard.skyline23.com/{path}</loc></url>' for path in ['', 'ko.html', 'guide/index.html', 'guide/ko.html'])+'</urlset>')
     print(f'Built product site for {version}: {output}')

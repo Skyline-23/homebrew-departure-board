@@ -8,17 +8,25 @@ concurrency:
 permissions:
   contents: write
 jobs:
+  site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: node script/test-downloads.mjs
+      - run: node --check script/verify-site.mjs
+      - run: python3 script/build-site.py
+      - run: python3 script/check-guide.py
   windows:
     uses: ./.github/workflows/windows.yml
     permissions:
       contents: read
-  release:
-    needs: windows
+  macos:
     runs-on: macos-15
     environment: macos-release
     timeout-minutes: 45
     env:
       APPLE_TEAM_ID: ${{ vars.APPLE_TEAM_ID }}
+      HOMEBREW_NO_AUTO_UPDATE: 1
     steps:
       - uses: actions/checkout@v4
         with:
@@ -26,7 +34,7 @@ jobs:
       - name: Read version
         run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
       - name: Install SwiftLint
-        run: brew install swiftlint
+        run: command -v swiftlint >/dev/null || brew install swiftlint
       - name: Check source style
         run: ./script/lint.sh
       - name: Import Developer ID certificate
@@ -54,18 +62,44 @@ jobs:
         run: ./script/notarize.sh "outputs/DepartureBoard/dist/DepartureBoard-$VERSION-universal.dmg"
       - name: Verify the final download
         run: ./script/validate-distribution.sh
-      - name: Download tested Windows packages
-        uses: actions/download-artifact@v4
-        with:
-          pattern: DepartureBoard-win-*
-          path: work/windows-release
-          merge-multiple: true
       - name: Add a stable latest-download filename
         run: |
           cp "outputs/DepartureBoard/dist/DepartureBoard-$VERSION-universal.zip" outputs/DepartureBoard/dist/DepartureBoard-universal.zip
           cp "outputs/DepartureBoard/dist/DepartureBoard-$VERSION-universal.dmg" outputs/DepartureBoard/dist/DepartureBoard-universal.dmg
           cd outputs/DepartureBoard/dist
           shasum -a 256 DepartureBoard-universal.dmg > DepartureBoard-universal.dmg.sha256
+      - name: Upload verified macOS packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: DepartureBoard-macos
+          path: outputs/DepartureBoard/dist/
+      - name: Remove temporary signing keychain
+        if: always()
+        run: |
+          if [[ -n "${CODE_SIGN_KEYCHAIN:-}" ]]; then
+            security delete-keychain "$CODE_SIGN_KEYCHAIN"
+          fi
+  release:
+    needs: [site, windows, macos]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Read version
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
+      - name: Download verified macOS packages
+        uses: actions/download-artifact@v4
+        with:
+          name: DepartureBoard-macos
+          path: outputs/DepartureBoard/dist
+      - name: Download tested Windows packages
+        uses: actions/download-artifact@v4
+        with:
+          pattern: DepartureBoard-win-*
+          path: work/windows-release
+          merge-multiple: true
       - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -103,9 +137,11 @@ jobs:
           git diff --cached --quiet && exit 0
           git commit -m "chore(release): Update Homebrew to $VERSION" -m "- Point the cask and formula at the validated $VERSION release"
           git push origin HEAD:main
-      - name: Remove temporary signing keychain
-        if: always()
-        run: |
-          if [[ -n "${CODE_SIGN_KEYCHAIN:-}" ]]; then
-            security delete-keychain "$CODE_SIGN_KEYCHAIN"
-          fi
+  website:
+    needs: release
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify automatic website deployment and GitHub downloads
+        run: node script/verify-site.mjs "${GITHUB_REF_NAME#v}"
