@@ -17,6 +17,7 @@
 @property(nonatomic, strong) DBDesktopController *desktop;
 @property(nonatomic, strong) NSStatusItem *statusItem;
 @property(nonatomic) BOOL runtimeRegistered;
+@property(nonatomic) NSTimeInterval lastDataRefresh;
 @end
 
 @implementation DepartureBoardApp
@@ -51,7 +52,7 @@
     self.runtimeRegistered = YES;
     [DBBackgroundAgent recordApplicationStarted];
     [self updateAnimationTimer];
-    [LiveFlightStore refreshInBackground];
+    [self refreshVisibleData];
     [DBBackgroundAgent configure];
 
     if ([arguments containsObject:@"--fullscreen"]) {
@@ -60,6 +61,19 @@
 
     if ([arguments containsObject:@"--settings"] || (!background && arguments.count == 1)) {
         [self showSettings:nil];
+    }
+}
+
+- (void)refreshVisibleData {
+
+    BOOL visible = [self previewIsVisible] ||
+                   (self.options.visible && !self.options.miniaturized) ||
+                   [DBSettingsStore.settings[@"desktopEnabled"] boolValue];
+    NSTimeInterval now = NSProcessInfo.processInfo.systemUptime;
+
+    if (visible && (!self.lastDataRefresh || now - self.lastDataRefresh >= 30)) {
+        self.lastDataRefresh = now;
+        [LiveFlightStore refreshInBackground];
     }
 }
 
@@ -88,6 +102,7 @@
                                                   [weakSelf.board tick];
                                               }
                                               [weakSelf.desktop tick];
+                                              [weakSelf refreshVisibleData];
                                               [weakSelf updateAnimationTimer];
                                           }];
     self.timer.tolerance = interval * .05;
@@ -282,7 +297,8 @@
     self.board.locationCode = sender.representedObject;
     [self.board saveSettings];
     [self.board tick];
-    [LiveFlightStore refreshInBackground];
+    self.lastDataRefresh = 0;
+    [self refreshVisibleData];
 }
 
 - (void)nextLocation:(id)sender {

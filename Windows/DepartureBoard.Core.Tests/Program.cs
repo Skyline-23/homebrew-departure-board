@@ -230,7 +230,7 @@ try
     Check(second.LastError is not null, "Expose provider failure without crashing.");
 
     handler.Fault = new InvalidOperationException("private-error-message-sentinel");
-    var failing = new FlightRepository(storage, provider, diagnostics);
+    var failing = new FlightRepository(Path.Combine(storage, "fault"), provider, diagnostics);
     await failing.RefreshAsync("CDG", "test-key", 300, default);
     Check(failing.LastError is not null, "A failed background request must leave loading state.");
 
@@ -249,6 +249,96 @@ try
             && !logText.Contains("https://")
             && !logText.Contains("private-error-message-sentinel"),
         "Keep credentials, provider bodies and URLs out of logs."
+    );
+
+    // Provider failures must not multiply when users switch airports or restart the app.
+
+    foreach (
+        var status in new[]
+        {
+            System.Net.HttpStatusCode.TooManyRequests,
+            System.Net.HttpStatusCode.Forbidden,
+            System.Net.HttpStatusCode.ServiceUnavailable,
+        }
+    )
+    {
+        var retryStorage = Path.Combine(storage, status.ToString());
+        using var retryHandler = new Fixtures.CountingHandler
+        {
+            Fail = true,
+            FailureStatus = status,
+            RetryAfter = new(TimeSpan.FromHours(2)),
+        };
+        using var retryHttp = new HttpClient(retryHandler);
+        var retryProvider = new AeroDataBoxClient(retryHttp);
+
+        foreach (var airport in catalog.Airports)
+        {
+            await new FlightRepository(retryStorage, retryProvider).RefreshAsync(
+                airport.Code,
+                "test-key",
+                300,
+                default
+            );
+        }
+        Check(retryHandler.Calls == 1, $"One request, not 40, after account-wide HTTP {status}.");
+        var state = System.Text.Json.JsonDocument.Parse(
+            File.ReadAllText(Path.Combine(retryStorage, "provider.retry"))
+        );
+        Check(
+            state.RootElement.GetProperty("After").GetDateTimeOffset()
+                > DateTimeOffset.UtcNow.AddMinutes(119),
+            "Respect the provider Retry-After delay."
+        );
+        Check(
+            !File.ReadAllText(Path.Combine(retryStorage, "provider.retry")).Contains("test-key"),
+            "Retry state must not contain the credential."
+        );
+        retryHandler.Fail = false;
+        var rotatedKeyRepository = new FlightRepository(retryStorage, retryProvider);
+        await rotatedKeyRepository.RefreshAsync("ICN", "replacement-key", 300, default);
+        await new FlightRepository(retryStorage, retryProvider).RefreshAsync(
+            "ICN",
+            "replacement-key",
+            300,
+            default
+        );
+        Check(
+            retryHandler.Calls == 2 && rotatedKeyRepository.Read("ICN") is not null,
+            "A replacement key recovers immediately and shares its cache."
+        );
+        Console.WriteLine(
+            $"Request fixture HTTP {(int)status}: 40 airport refreshes -> 1 HTTP request; key replacement -> 1 request."
+        );
+    }
+    var retryDate = DateTimeOffset.UtcNow.AddHours(3);
+    using (
+        var dateHandler = new Fixtures.CountingHandler { Fail = true, RetryAfter = new(retryDate) }
+    )
+    using (var dateHttp = new HttpClient(dateHandler))
+    {
+        var dateStorage = Path.Combine(storage, "retry-date");
+        await new FlightRepository(dateStorage, new AeroDataBoxClient(dateHttp)).RefreshAsync(
+            "ICN",
+            "test-key",
+            300,
+            default
+        );
+        var state = System.Text.Json.JsonDocument.Parse(
+            File.ReadAllText(Path.Combine(dateStorage, "provider.retry"))
+        );
+        Check(
+            Math.Abs(
+                (
+                    state.RootElement.GetProperty("After").GetDateTimeOffset() - retryDate
+                ).TotalSeconds
+            ) < 2,
+            "Respect an HTTP-date Retry-After value."
+        );
+    }
+    Check(
+        new BoardSettings().RefreshSeconds == 300,
+        "Use a five-minute default without changing a saved interval."
     );
 
     var rotating = new DiagnosticLog(Path.Combine(storage, "Rotation"), "test", 512);

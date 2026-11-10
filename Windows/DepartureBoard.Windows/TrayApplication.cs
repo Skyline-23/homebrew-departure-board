@@ -58,7 +58,7 @@ internal sealed class TrayApplication : IDisposable
         refreshTimer = new DispatcherTimer(
             TimeSpan.FromSeconds(30),
             DispatcherPriority.Background,
-            (_, _) => _ = services.RefreshAsync(),
+            (_, _) => RefreshVisibleData(),
             Application.Current.Dispatcher
         );
         ApplyWallpaper();
@@ -75,6 +75,22 @@ internal sealed class TrayApplication : IDisposable
 
         settingsWindow.Show();
         settingsWindow.Activate();
+    }
+
+    private void RefreshVisibleData()
+    {
+
+        if (
+            (
+                settingsWindow?.IsVisible == true
+                && settingsWindow.WindowState != WindowState.Minimized
+            )
+            || (preview?.IsVisible == true && preview.WindowState != WindowState.Minimized)
+            || System.Linq.Enumerable.Any(displays.WallpaperWindows, window => window.Visible)
+        )
+        {
+            _ = services.RefreshAsync();
+        }
     }
 
     private void ShowPreview()

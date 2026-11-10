@@ -16,6 +16,120 @@
 - (CGFloat)airportHeaderHeight:(NSRect)area;
 @end
 
+// An in-process HTTP fixture guarantees these checks never use a real API key or network.
+@interface DBFixtureTask : NSObject
+@property(nonatomic, copy) void (^complete)(void);
+- (void)resume;
+@end
+@implementation DBFixtureTask
+
+- (void)resume {
+
+    self.complete();
+}
+
+@end
+
+@interface DBFixtureSession : NSObject
+@property(nonatomic) NSInteger calls;
+@property(nonatomic) NSInteger status;
+@property(nonatomic, copy) NSString *retryAfter;
+- (id)dataTaskWithRequest:(NSURLRequest *)request
+        completionHandler:(void (^)(NSData *, NSURLResponse *, NSError *))completion;
+@end
+@implementation DBFixtureSession
+
+- (id)dataTaskWithRequest:(NSURLRequest *)request
+        completionHandler:(void (^)(NSData *, NSURLResponse *, NSError *))completion {
+
+    self.calls++;
+    DBFixtureTask *task = DBFixtureTask.new;
+    NSHTTPURLResponse *response =
+        [[NSHTTPURLResponse alloc] initWithURL:request.URL
+                                    statusCode:self.status
+                                   HTTPVersion:@"HTTP/1.1"
+                                  headerFields:@{@"Retry-After" : self.retryAfter ?: @"7200"}];
+    task.complete = ^{
+        completion([@"{\"departures\":[]}" dataUsingEncoding:NSUTF8StringEncoding], response, nil);
+    };
+    return task;
+}
+
+@end
+
+static BOOL VerifyProviderRequestCoalescing(Class store) {
+
+    NSString *directory =
+        [NSTemporaryDirectory() stringByAppendingPathComponent:NSUUID.UUID.UUIDString];
+    [NSFileManager.defaultManager createDirectoryAtPath:directory
+                            withIntermediateDirectories:YES
+                                             attributes:nil
+                                                  error:NULL];
+    Method pathMethod = class_getClassMethod(store, NSSelectorFromString(@"cacheURLForAirport:"));
+    Method keyMethod = class_getClassMethod(store, @selector(APIKey));
+    Method sessionMethod = class_getClassMethod(NSURLSession.class, @selector(sharedSession));
+    IMP oldPath = method_getImplementation(pathMethod),
+        oldKey = method_getImplementation(keyMethod),
+        oldSession = method_getImplementation(sessionMethod);
+    __block NSString *key = @"fixture-key";
+    DBFixtureSession *session = DBFixtureSession.new;
+    IMP pathMock = imp_implementationWithBlock(^NSURL *(id receiver, NSString *airport) {
+        return [NSURL fileURLWithPath:[directory stringByAppendingPathComponent:
+                                                     [airport stringByAppendingString:@".json"]]];
+    });
+    IMP keyMock = imp_implementationWithBlock(^NSString *(id receiver) {
+        return key;
+    });
+    IMP sessionMock = imp_implementationWithBlock(^id(id receiver) {
+        return session;
+    });
+    method_setImplementation(pathMethod, pathMock);
+    method_setImplementation(keyMethod, keyMock);
+    method_setImplementation(sessionMethod, sessionMock);
+    BOOL passed = YES;
+    @try {
+        NSArray *(*locations)(void) = dlsym(RTLD_DEFAULT, "DBLocations");
+        NSInteger scenario = 0;
+
+        for (NSNumber *status in @[ @429, @403, @503 ]) {
+            scenario++;
+            key = [NSString stringWithFormat:@"fixture-key-%ld", (long)scenario];
+            session.status = status.integerValue;
+            NSInteger before = session.calls;
+
+            for (NSDictionary *location in locations()) {
+                [store refreshAirport:location[@"code"] error:NULL];
+            }
+            passed &= session.calls == before + 1;
+            NSDictionary *retry = [NSDictionary
+                dictionaryWithContentsOfFile:
+                    [directory stringByAppendingPathComponent:@"provider.retry.plist"]];
+            passed &= [retry[@"retryAt"] timeIntervalSinceNow] > 7190;
+            passed &= ![retry[@"credential"] isEqual:key];
+            session.status = 200;
+            key = [key stringByAppendingString:@"-replacement"];
+            // A fresh key can retry immediately; the second attempt reuses the successful cache.
+            NSString *airport = locations()[scenario - 1][@"code"];
+            [store refreshAirport:airport error:NULL];
+            [store refreshAirport:airport error:NULL];
+            passed &= session.calls == before + 2;
+            fprintf(stdout,
+                    "macOS HTTP %ld fixture: 40 airport refreshes -> 1 request; key replacement -> "
+                    "1 request\n",
+                    (long)status.integerValue);
+        }
+    } @finally {
+        method_setImplementation(pathMethod, oldPath);
+        method_setImplementation(keyMethod, oldKey);
+        method_setImplementation(sessionMethod, oldSession);
+        imp_removeBlock(pathMock);
+        imp_removeBlock(keyMock);
+        imp_removeBlock(sessionMock);
+        [NSFileManager.defaultManager removeItemAtPath:directory error:NULL];
+    }
+    return passed;
+}
+
 static BOOL VerifyContentDrivenRendering(DBBoardView *board, Class store) {
 
     board.locationCode = @"HND";
@@ -387,6 +501,7 @@ static BOOL VerifyAvailabilityStates(Class store) {
     flock(lock, LOCK_UN);
     close(lock);
     [@{@"status" : @429,
+       @"retryAt" : [NSDate dateWithTimeIntervalSinceNow:3600],
        @"failures" : @1} writeToFile:[url.path stringByAppendingString:@".retry.plist"]
                           atomically:YES];
     BOOL limited = [store availabilityForAirport:@"CDG"] == DBFlightAvailabilityUnavailable &&
@@ -643,6 +758,7 @@ int main(int argc, const char *argv[]) {
             !VerifySharedRowsCache(store) || !VerifyDistinctLocationLabels(store) ||
             !VerifyMissingFieldText() || !VerifyContentDrivenRendering(board, store) ||
             !VerifyFlapTimer(board) || !VerifySharedRefreshLock(store) ||
+            !VerifyProviderRequestCoalescing(store) ||
             !VerifyRefreshWithoutHostFrames(principal, store)) {
             return 1;
         }

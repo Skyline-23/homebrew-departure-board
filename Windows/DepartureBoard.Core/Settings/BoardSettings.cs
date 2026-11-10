@@ -11,7 +11,7 @@ public sealed record BoardSettings
     public bool ReduceMotion { get; init; }
     public bool ShowAllDesktops { get; init; } = true;
     public int Density { get; init; }
-    public int RefreshSeconds { get; init; } = 60;
+    public int RefreshSeconds { get; init; } = 300;
     public bool WallpaperEnabled { get; init; }
     public bool LaunchAtLogin { get; init; }
 
