@@ -51,7 +51,7 @@ English and Korean use separate 1200×630 PNG cards with the real app icon and s
 
 ## Interactive airport preview
 
-The editorial landing page uses an ivory background, one yellow Get button and three split-flap airport codes. Scrolling selects Incheon, Haneda and JFK. The airport codes and the app's real sample renders turn together, with short staggered transitions. The same three airports can be selected with native radio controls. The display opens in a native dialog with Escape dismissal and focus restoration.
+The editorial landing page uses an ivory background, one yellow Get button and three split-flap airport codes. The navigation stays fixed across the whole page, and the install section has a separate outlined guide button. Scrolling selects Incheon, Haneda and JFK. The airport codes and the app's real sample renders turn together, with short staggered transitions. The same three airports can be selected with native radio controls. The display opens in a native dialog with Escape dismissal and focus restoration.
 
 `site/airport-demo.js` owns page events, stale image requests, scroll state and teardown. `site/board-transition.js` owns raster-strip animation and cancellation. `site/airport-data.js` owns the three featured previews. The 1920×1080 WebP files in `site/boards` are lossless exports of the app's fixed-date sample PNG renders. The decorative blank split-flap tile was generated for this page. Its letters remain selectable UI state rather than part of the bitmap.
 

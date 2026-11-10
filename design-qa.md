@@ -38,6 +38,10 @@
 - The installation guide opened from the header. The visible macOS screenshot loaded successfully. Bundled guide validation and site builds passed.
 - `script/lint.sh`, `script/function-spacing.py`, JavaScript syntax checks, Prettier checks and `git diff --check` passed.
 
+## Follow-up navigation and install action
+
+The user requested an installation action and persistent top navigation during final review. The whole-page fixed navigation now stays at y=0 with a 64px height while the install section is visible. `work/design/editorial-install-button.png` shows the outlined installation-guide action below the installation details. Clicking it opened the Korean guide. The primary download-link count remains one. The initial composition was recaptured and compared in `editorial-comparison-final.jpg` after these changes.
+
 ## Remaining scope
 
 No actionable P0, P1 or P2 design findings remain. Native Windows rendering and installation results are documented in `Windows/VALIDATION.md`; this page-only change does not provide new native-device test evidence. Minor platform-font and generated-texture differences are accepted P3 differences from the static mock.
