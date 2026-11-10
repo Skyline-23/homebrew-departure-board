@@ -48,7 +48,7 @@ formula는 이 Mac에서 직접 빌드하고 화면 보호기를 `~/Library/Scre
 
 ## Windows에 설치하기
 
-[Windows x64](https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-win-x64.zip) 또는 [Windows ARM64](https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-win-arm64.zip)를 내려받아 압축을 풀고 **Install.cmd**를 실행하세요. .NET 런타임이 포함되어 있으며 관리자 권한 없이 현재 사용자에게 설치됩니다.
+[Windows x64](https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-win-x64-Setup.exe) 또는 [Windows ARM64](https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-win-arm64-Setup.exe)를 내려받아 실행하고 설치 안내를 따르세요. .NET 런타임이 포함되어 있으며 관리자 권한 없이 현재 사용자에게 설치됩니다.
 
 Windows는 아직 서명되지 않은 프리뷰입니다. 화면 보호기와 실시간 배경화면 설정은 [Windows 안내](Windows/README.md)를 참고하세요.
 

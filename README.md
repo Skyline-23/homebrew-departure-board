@@ -48,7 +48,7 @@ The formula builds locally and installs the screen saver in `~/Library/Screen Sa
 
 ## Install on Windows
 
-Download [Windows x64](https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-win-x64.zip) or [Windows ARM64](https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-win-arm64.zip), extract the ZIP and run **Install.cmd**. The package includes the .NET runtime and installs for your user without administrator access.
+Download [Windows x64](https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-win-x64-Setup.exe) or [Windows ARM64](https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-win-arm64-Setup.exe), open **Setup.exe** and follow the installation wizard. The package includes the .NET runtime and installs for your user without administrator access.
 
 Windows is an unsigned preview. See the [Windows guide](Windows/README.md) for installation, screen-saver selection and live wallpaper settings.
 
