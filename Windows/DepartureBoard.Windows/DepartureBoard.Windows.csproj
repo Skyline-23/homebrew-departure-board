@@ -10,7 +10,7 @@
     <AssemblyName>DepartureBoard</AssemblyName>
     <ApplicationIcon>Assets/DepartureBoard.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Version>0.7.3-preview.1</Version>
+    <Version>0.7.4-preview.1</Version>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="Assets/DepartureBoard.ico" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />

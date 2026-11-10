@@ -61,7 +61,7 @@ jobs:
             "outputs/DepartureBoard/dist/DepartureBoard-$VERSION-universal.zip" \
             outputs/DepartureBoard/dist/DepartureBoard-universal.zip \
             "outputs/DepartureBoard/dist/DepartureBoard-$VERSION-source.tar.gz" \
-            work/windows-release/*.zip work/windows-release/*.sha256 \
+            work/windows-release/*.zip work/windows-release/*.exe work/windows-release/*.sha256 \
             --title "Departure Board $VERSION" \
             --notes-file .github/RELEASE_NOTES.md --generate-notes
       - name: Update Homebrew tap

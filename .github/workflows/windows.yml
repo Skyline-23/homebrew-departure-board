@@ -55,6 +55,23 @@ jobs:
           ./Windows/scripts/SmokeTest.ps1
           -PackageZip 'work/windows-publish/DepartureBoard-${{ matrix.runtime }}.zip'
           -OutputDirectory "$env:GITHUB_WORKSPACE/work/windows-images"
+      - name: Build Windows setup executable
+        run: |
+          $compiler = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (!(Test-Path $compiler)) {
+            $setup = Join-Path $env:RUNNER_TEMP 'innosetup-6.7.4.exe'
+            Invoke-WebRequest 'https://github.com/jrsoftware/issrc/releases/download/is-6_7_4/innosetup-6.7.4.exe' -OutFile $setup
+            $signature = Get-AuthenticodeSignature $setup
+            if ($signature.Status -ne 'Valid' -or $signature.SignerCertificate.Subject -notmatch 'Pyrsys B.V.') { throw 'Invalid Inno Setup publisher signature.' }
+            $p = Start-Process $setup -ArgumentList '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP-' -Wait -PassThru
+            if ($p.ExitCode -ne 0) { throw 'Could not install the build compiler.' }
+          }
+          ./Windows/scripts/PackageInstaller.ps1 -Runtime '${{ matrix.runtime }}' -CompilerPath $compiler
+      - name: Test Windows setup and removal
+        run: >-
+          ./Windows/scripts/TestInstaller.ps1
+          -Installer 'work/windows-publish/DepartureBoard-${{ matrix.runtime }}-Setup.exe'
+          -OutputDirectory "$env:GITHUB_WORKSPACE/work/installer-validation"
       - name: Upload preview package
         uses: actions/upload-artifact@v4
         with:
@@ -62,9 +79,17 @@ jobs:
           path: |
             work/windows-publish/DepartureBoard-${{ matrix.runtime }}.zip
             work/windows-publish/DepartureBoard-${{ matrix.runtime }}.zip.sha256
+            work/windows-publish/DepartureBoard-${{ matrix.runtime }}-Setup.exe
+            work/windows-publish/DepartureBoard-${{ matrix.runtime }}-Setup.exe.sha256
       - name: Upload rendered boards
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: Windows-boards-${{ matrix.runtime }}
           path: work/windows-images/
+      - name: Upload installer validation
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Installer-validation-${{ matrix.runtime }}
+          path: work/installer-validation/

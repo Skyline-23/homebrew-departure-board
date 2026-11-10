@@ -1,5 +1,8 @@
-Departure Board 0.7.3 improves API request handling and includes an illustrated offline guide.
+Departure Board 0.7.4 adds a guided Windows installer and direct downloads from the product site.
 
+- Install Windows with one Setup.exe for x64 or ARM64, without administrator access or a separate .NET installation. Update in place and remove it from Installed apps.
+- Keep the previous screen saver across upgrades and restore it on removal. User settings and credentials are preserved.
+- Download the latest release directly from GitHub through one OS-aware Get button; the website no longer proxies installer files.
 - Share provider retry delays across airports and processes, honor `Retry-After`, and avoid continuous refresh when only the tray/menu-bar icon is active.
 - Keep saved refresh settings; new installations default to five minutes. Language, page and codeshare changes reuse cached flights.
 - Include English and Korean installation guides with real screenshots, every display option, wallpaper/screen saver setup and troubleshooting. Open them from the app or `Install Guide.html` in the download.

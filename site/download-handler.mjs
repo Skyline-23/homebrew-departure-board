@@ -1,7 +1,9 @@
 const downloads = {
   macos: 'DepartureBoard-universal.zip',
-  'windows-x64': 'DepartureBoard-win-x64.zip',
-  'windows-arm64': 'DepartureBoard-win-arm64.zip',
+  'windows-x64': 'DepartureBoard-win-x64-Setup.exe',
+  'windows-arm64': 'DepartureBoard-win-arm64-Setup.exe',
+  'windows-x64-setup.sha256': 'DepartureBoard-win-x64-Setup.exe.sha256',
+  'windows-arm64-setup.sha256': 'DepartureBoard-win-arm64-Setup.exe.sha256',
   'windows-x64.sha256': 'DepartureBoard-win-x64.zip.sha256',
   'windows-arm64.sha256': 'DepartureBoard-win-arm64.zip.sha256',
 };
