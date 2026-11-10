@@ -6,7 +6,7 @@ import { Readable } from 'node:stream';
 import downloads from './download-handler.mjs';
 
 const root = resolve('public');
-const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.png': 'image/png', '.xml': 'application/xml', '.txt': 'text/plain; charset=utf-8' };
+const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.png': 'image/png', '.webp': 'image/webp', '.svg': 'image/svg+xml', '.xml': 'application/xml', '.txt': 'text/plain; charset=utf-8' };
 
 async function asset(request) {
   if (!['GET', 'HEAD'].includes(request.method)) return new Response('Method not allowed', { status: 405 });

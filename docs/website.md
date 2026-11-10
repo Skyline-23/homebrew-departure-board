@@ -48,3 +48,11 @@ The page makes no flight-provider requests, client-side release lookups or backg
 ## Social previews
 
 English and Korean use separate 1200×630 PNG cards with the real app icon and screen capture. Both Open Graph and Twitter metadata point at these absolute public URLs. Regenerate the layout with `python3 script/build-og-preview.py`, serve `work/og`, and export each HTML page at 1200×630 to `site/og-en-v1.png` and `site/og-ko-v1.png`. Change the asset version in the HTML when replacing an already published card.
+
+## Interactive airport preview
+
+The editorial landing page uses an ivory background, one yellow Get button and three split-flap airport codes. Scrolling selects Incheon, Haneda and JFK. The airport codes and the app's real sample renders turn together, with short staggered transitions. The same three airports can be selected with native radio controls. The display opens in a native dialog with Escape dismissal and focus restoration.
+
+`site/airport-demo.js` owns page events, stale image requests, scroll state and teardown. `site/board-transition.js` owns raster-strip animation and cancellation. `site/airport-data.js` owns the three featured previews. The 1920×1080 WebP files in `site/boards` are lossless exports of the app's fixed-date sample PNG renders. The decorative blank split-flap tile was generated for this page. Its letters remain selectable UI state rather than part of the bitmap.
+
+Only the initial preview loads on first view. Other previews load on selection or a scroll transition. There is no autoplay, flight-provider request or GitHub API lookup. Reduced-motion mode disables scroll pinning, flip animation and section reveals. The controller cancels unfinished image transitions and releases listeners and observers when the page is left. The date is the visitor's local date.
