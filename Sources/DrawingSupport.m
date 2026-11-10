@@ -3,12 +3,26 @@
 
 NSColor *DBColor(NSString *hex) {
 
+    static NSCache<NSString *, NSColor *> *colors;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        colors = NSCache.new;
+        colors.countLimit = 128;
+    });
+    NSString *key = hex ?: @"ffffff";
+    NSColor *color = [colors objectForKey:key];
+
+    if (color) {
+        return color;
+    }
     unsigned value = 0;
-    [[NSScanner scannerWithString:hex ?: @"ffffff"] scanHexInt:&value];
-    return [NSColor colorWithSRGBRed:((value >> 16) & 255) / 255.0
-                               green:((value >> 8) & 255) / 255.0
-                                blue:(value & 255) / 255.0
-                               alpha:1];
+    [[NSScanner scannerWithString:key] scanHexInt:&value];
+    color = [NSColor colorWithSRGBRed:((value >> 16) & 255) / 255.0
+                                green:((value >> 8) & 255) / 255.0
+                                 blue:(value & 255) / 255.0
+                                alpha:1];
+    [colors setObject:color forKey:key];
+    return color;
 }
 
 void DBFillRect(NSRect rect, NSColor *color) {
@@ -76,6 +90,13 @@ NSString *DBStatusText(NSString *key, NSString *language) {
     // A missing operational status must not be presented as an on-time flight.
     return DBBoardString([@"status." stringByAppendingString:key.length ? key : @"unknown"],
                          language);
+}
+
+NSString *DBValueOrPlaceholder(NSString *value, NSString *language) {
+
+    NSString *trimmed =
+        [value stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
+    return trimmed.length ? value : DBBoardString(@"data.notAssigned", language);
 }
 
 NSColor *DBStatusColor(NSString *status) {

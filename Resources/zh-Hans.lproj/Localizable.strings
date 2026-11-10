@@ -90,6 +90,7 @@
 "data.noDepartures" = "此时段暂无出发航班";
 
 "data.unavailable" = "暂时无法获取航班信息";
+"data.notAssigned" = "—";
 
 "data.configure" = "请在 Departure Board 中设置实时航班信息";
 

@@ -23,6 +23,7 @@
 "data.noDepartures" = "Ei lähtöjä tällä aikavälillä";
 
 "data.unavailable" = "Lentotiedot eivät ole tilapäisesti saatavilla";
+"data.notAssigned" = "—";
 
 "data.configure" = "Määritä reaaliaikaiset lentotiedot Departure Boardissa";
 

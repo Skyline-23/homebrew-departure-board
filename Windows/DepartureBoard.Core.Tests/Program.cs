@@ -58,6 +58,25 @@ Reject(() => LaunchOptions.Parse(["/p", "0"]), "Reject an invalid preview parent
 
 Check(catalog.City("TYO", "en") == "TOKYO", "Resolve sample city strings.");
 Check(catalog.City("TYO", "ko") == "도쿄", "Translate sample city strings.");
+
+foreach (var language in new[] { "en", "ja", "ko" })
+{
+    Check(
+        catalog.Strings.ValueOrPlaceholder("", language) == "—"
+            && catalog.Strings.ValueOrPlaceholder(" \t", language) == "—",
+        "Missing gate and counter values should remain visibly unavailable."
+    );
+    Check(
+        catalog.Strings.ValueOrPlaceholder("A12", language) == "A12",
+        "Preserve an assigned gate or counter value."
+    );
+    Check(
+        catalog.Strings.Get("status.unknown", language).Length > 0
+            && catalog.Strings.Get("status.scheduled", language).Length > 0,
+        "Known and unavailable flight statuses must have visible labels."
+    );
+}
+
 var sampleGates = SampleSchedule
     .Rows(catalog, catalog.Get("ICN"), now, "en")
     .Select(row => row.Gate)
@@ -134,6 +153,27 @@ Check(
 );
 
 var storage = Path.Combine(Path.GetTempPath(), "DepartureBoard.Tests-" + Guid.NewGuid());
+
+foreach (
+    var (value, expected) in new[]
+    {
+        ("I,I", "I"),
+        (" H ,H, H ,h ", "H"),
+        ("J, K,J", "J, K"),
+        ("11-14,11-14,16A", "11-14, 16A"),
+        ("", ""),
+        (", ,A,,", "A"),
+    }
+)
+{
+    var flight = operation with { Gate = value, Counter = value };
+    var snapshot = new FlightSnapshot("HND", Fixtures.Time, [flight]);
+    var row = FlightRows.Create(snapshot, catalog, catalog.Get("HND"), Fixtures.Time, "en")[0];
+    Check(
+        row.Gate == expected && row.Counter == expected,
+        "Show each gate or check-in label once, keeping distinct labels and ranges."
+    );
+}
 
 try
 {

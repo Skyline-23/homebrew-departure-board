@@ -161,6 +161,7 @@
 "data.sample" = "Sample schedule · visual preview only";
 "data.cached" = "Cached data";
 "data.unavailable" = "Flight information temporarily unavailable";
+"data.notAssigned" = "—";
 "status.unknown" = "Status unavailable";
 "status.checkin" = "Check-in open";
 "status.closed" = "Gate closed";

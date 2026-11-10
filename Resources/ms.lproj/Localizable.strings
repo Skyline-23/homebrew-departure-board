@@ -23,6 +23,7 @@
 "data.noDepartures" = "Tiada pelepasan dalam tempoh ini";
 
 "data.unavailable" = "Maklumat penerbangan tidak tersedia buat sementara waktu";
+"data.notAssigned" = "—";
 
 "data.configure" = "Tetapkan data penerbangan langsung dalam Departure Board";
 

@@ -88,6 +88,7 @@
 "data.noDepartures" = "Aucun départ sur cette période";
 
 "data.unavailable" = "Informations de vol temporairement indisponibles";
+"data.notAssigned" = "—";
 
 "data.configure" = "Configurez les vols en direct dans Departure Board";
 

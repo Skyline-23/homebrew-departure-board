@@ -69,11 +69,6 @@ internal sealed class AirportCellRenderer(StringCatalog strings, LogoStore logos
 
         if (column == "state")
         {
-            if (style.Flag("hideScheduledStatus") && row.Status == "scheduled")
-            {
-                value = "";
-            }
-
             if (
                 !style.Flag("statusUsesRowInk")
                 && StatusColors.TryGetValue(row.Status, out var statusColor)
@@ -106,7 +101,7 @@ internal sealed class AirportCellRenderer(StringCatalog strings, LogoStore logos
 
         if (column == "gate" && style.Flag("gateIncludesTerminal") && row.Terminal.Length > 0)
         {
-            value = row.Gate.Length > 0 ? row.Terminal + " · " + row.Gate : row.Terminal;
+            value = row.Terminal + " · " + strings.ValueOrPlaceholder(row.Gate, frame.Language);
         }
 
         if (column == "airline" || (column == "flight" && style.Flag("airlineBadge")))
@@ -135,6 +130,11 @@ internal sealed class AirportCellRenderer(StringCatalog strings, LogoStore logos
         if (value.Length == 0)
         {
             value = style.Child("emptyFields").Text(column);
+        }
+
+        if (column is "gate" or "terminal" or "counter")
+        {
+            value = strings.ValueOrPlaceholder(value, frame.Language);
         }
 
         if (column == "gate" && style.Flag("gateHighlight"))
@@ -166,7 +166,10 @@ internal sealed class AirportCellRenderer(StringCatalog strings, LogoStore logos
             "terminal" => row.Terminal,
             "counter" => row.Counter,
             "airline" => row.Airline,
-            "state" => strings.Get("status." + row.Status, language),
+            "state" => strings.Get(
+                "status." + (row.Status.Length == 0 ? "unknown" : row.Status),
+                language
+            ),
             _ => "",
         };
     }

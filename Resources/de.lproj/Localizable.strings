@@ -23,6 +23,7 @@
 "data.noDepartures" = "Keine Abflüge in diesem Zeitraum";
 
 "data.unavailable" = "Fluginformationen vorübergehend nicht verfügbar";
+"data.notAssigned" = "—";
 
 "data.configure" = "Live-Flugdaten in Departure Board einrichten";
 

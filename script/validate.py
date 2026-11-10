@@ -54,7 +54,7 @@ for language in RESOURCES.glob("*.lproj"):
     assert len(keys) == len(set(keys)), f"Duplicate localization key in {language.name}"
 
     for required in ("heading.departures", "column.time", "status.boarding", "data.loading",
-                     "data.unavailable", "data.noDepartures", "data.configure"):
+                     "data.unavailable", "data.notAssigned", "data.noDepartures", "data.configure"):
         assert required in keys, (language.name, required)
 
 logo_folder = RESOURCES / "AirlineLogos"

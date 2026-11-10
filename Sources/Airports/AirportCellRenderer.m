@@ -38,10 +38,6 @@ void DBDrawAirportCell(NSDictionary *row, NSString *column, NSRect cell, CGFloat
     } else if ([column isEqual:@"state"]) {
         value = DBStatusText(row[@"state"], context.language);
 
-        if ([profile[@"hideScheduledStatus"] boolValue] && [row[@"state"] isEqual:@"scheduled"]) {
-            value = @"";
-        }
-
         if (![profile[@"statusUsesRowInk"] boolValue] &&
             ![@[ @"scheduled", @"departed", @"unknown" ] containsObject:row[@"state"]]) {
             ink = DBStatusColor(row[@"state"]);
@@ -79,13 +75,17 @@ void DBDrawAirportCell(NSDictionary *row, NSString *column, NSRect cell, CGFloat
         NSString *terminal = row[@"terminal"] ?: @"";
 
         if (terminal.length) {
-            value =
-                value.length ? [NSString stringWithFormat:@"%@ · %@", terminal, value] : terminal;
+            value = [NSString stringWithFormat:@"%@ · %@", terminal,
+                                               DBValueOrPlaceholder(value, context.language)];
         }
     }
 
     if (!value.length) {
         value = profile[@"emptyFields"][column] ?: @"";
+    }
+
+    if ([column isEqual:@"gate"] || [column isEqual:@"terminal"] || [column isEqual:@"counter"]) {
+        value = DBValueOrPlaceholder(value, context.language);
     }
 
     if ([column isEqual:@"airline"]) {

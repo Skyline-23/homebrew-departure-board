@@ -260,7 +260,6 @@
     "bodyFont": "HelveticaNeue-Medium",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": false,
-    "hideScheduledStatus": true,
     "statusFills": {
       "closing": "e37c2b",
       "cancelled": "ad3343"

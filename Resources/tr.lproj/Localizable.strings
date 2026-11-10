@@ -23,6 +23,7 @@
 "data.noDepartures" = "Bu zaman aralığında kalkış yok";
 
 "data.unavailable" = "Uçuş bilgileri geçici olarak kullanılamıyor";
+"data.notAssigned" = "—";
 
 "data.configure" = "Departure Board uygulamasında canlı uçuş verilerini ayarlayın";
 

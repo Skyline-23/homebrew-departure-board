@@ -99,7 +99,7 @@
         CGFloat y = 167 + i * rowH;
         NSArray *texts = @[
             row[@"time"], [DBLocalized(row[@"destination"], self.currentLanguage) uppercaseString],
-            row[@"flight"], row[@"gate"],
+            row[@"flight"], DBValueOrPlaceholder(row[@"gate"], self.currentLanguage),
             [DBStatusText(row[@"state"], self.currentLanguage) uppercaseString]
         ];
         NSInteger cells[] = {5, 20, 10, 3, 15};

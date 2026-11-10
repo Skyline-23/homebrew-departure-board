@@ -23,6 +23,7 @@
 "data.noDepartures" = "لا توجد رحلات مغادرة في هذه الفترة";
 
 "data.unavailable" = "معلومات الرحلات غير متاحة مؤقتًا";
+"data.notAssigned" = "—";
 
 "data.configure" = "يرجى إعداد بيانات الرحلات المباشرة في Departure Board";
 

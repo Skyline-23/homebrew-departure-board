@@ -18,6 +18,32 @@ static NSDictionary *ObjectDictionary(id value) {
     return [value isKindOfClass:NSDictionary.class] ? value : @{};
 }
 
+static NSString *DistinctLocationLabels(NSString *value) {
+
+    if (!value.length) {
+        return @"";
+    }
+
+    if ([value rangeOfString:@","].location == NSNotFound) {
+        return
+            [value stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
+    }
+    NSMutableArray<NSString *> *labels = NSMutableArray.new;
+    NSMutableSet<NSString *> *seen = NSMutableSet.new;
+
+    for (NSString *part in [value componentsSeparatedByString:@","]) {
+        NSString *label =
+            [part stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
+
+        if (!label.length || [seen containsObject:label.uppercaseString]) {
+            continue;
+        }
+        [seen addObject:label.uppercaseString];
+        [labels addObject:label];
+    }
+    return [labels componentsJoinedByString:@", "];
+}
+
 static BOOL MovementsCompatible(NSDictionary *first, NSDictionary *second,
                                 BOOL requirePhysicalMatch) {
 
@@ -457,9 +483,9 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
             @"destination" : destination,
             @"flight" : number,
             @"operatorFlight" : flight[@"number"] ?: number,
-            @"gate" : flight[@"gate"] ?: @"",
+            @"gate" : DistinctLocationLabels(flight[@"gate"]),
             @"terminal" : flight[@"terminal"] ?: @"",
-            @"counter" : flight[@"checkIn"] ?: @"",
+            @"counter" : DistinctLocationLabels(flight[@"checkIn"]),
             @"state" : state,
             @"color" : @"345d82",
             @"airline" : airline,

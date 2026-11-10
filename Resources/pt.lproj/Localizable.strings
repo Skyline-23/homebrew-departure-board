@@ -23,6 +23,7 @@
 "data.noDepartures" = "Sem partidas neste período";
 
 "data.unavailable" = "Informações de voos temporariamente indisponíveis";
+"data.notAssigned" = "—";
 
 "data.configure" = "Configure os voos em tempo real no Departure Board";
 

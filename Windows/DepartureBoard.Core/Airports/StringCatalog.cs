@@ -39,6 +39,12 @@ public sealed partial class StringCatalog
             : key;
     }
 
+    public string ValueOrPlaceholder(string value, string language)
+    {
+
+        return string.IsNullOrWhiteSpace(value) ? Get("data.notAssigned", language) : value;
+    }
+
     [GeneratedRegex(
         "^\\\"([^\\\"]+)\\\"\\s*=\\s*\\\"((?:\\\\.|[^\\\"])*)\\\";",
         RegexOptions.Multiline
