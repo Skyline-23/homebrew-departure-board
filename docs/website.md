@@ -37,11 +37,11 @@ ntro domains verify dpboard.skyline23.com --app dpboard --team buseong-kim-f9isa
 
 ## Downloads and request usage
 
-The single Get button links directly to the latest GitHub release asset for the visitor's desktop OS. `download.js` reads the local browser user agent and sets the link without a network request. Alternative OS links are direct GitHub asset URLs inside a disclosure.
+The single Get button links directly to the latest GitHub release installer for the visitor's desktop OS. `download.js` reads the local browser user agent and sets the link without a network request. Alternative OS links are direct GitHub asset URLs inside a disclosure.
 
-Without JavaScript, `/download` detects the OS and returns an uncached redirect to the same GitHub ZIP. An unknown/mobile browser gets one platform selector and one Get button. Legacy `/download/macos`, `/download/windows-x64` and `/download/windows-arm64` URLs also redirect directly. Nitroship does not fetch, buffer, cache or proxy installers.
+Without JavaScript, `/download` detects the OS and returns an uncached redirect to the same GitHub asset. An unknown/mobile browser gets one platform selector and one Get button. Legacy `/download/macos`, `/download/windows-x64` and `/download/windows-arm64` URLs also redirect directly. Nitroship does not fetch, buffer, cache or proxy installers.
 
-Every release includes `DepartureBoard-universal.zip`; Windows archives use stable x64 and ARM64 filenames. All URLs use `releases/latest/download/`, so new tags require no website edit and visitors never need to navigate the GitHub release page.
+Every release includes `DepartureBoard-universal.zip`; Windows setup executables use stable `DepartureBoard-win-x64-Setup.exe` and `DepartureBoard-win-arm64-Setup.exe` filenames. Optional ZIPs remain on the release page. All URLs use `releases/latest/download/`, so new tags require no website edit and visitors never need to navigate the GitHub release page.
 
 The page makes no flight-provider requests, client-side release lookups or background polling. No API keys, quota limits or automatic quota-based stop are added to the desktop clients.
 

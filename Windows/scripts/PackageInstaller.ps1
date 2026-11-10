@@ -17,7 +17,7 @@ if (!$CompilerPath) { throw 'Install the official Inno Setup compiler first.' }
 $project = [xml](Get-Content "$PSScriptRoot/../DepartureBoard.Windows/DepartureBoard.Windows.csproj")
 $version = ($project.Project.PropertyGroup.Version | Select-Object -First 1) -replace '-.*$', ''
 Copy-Item "$PSScriptRoot/Configure-Installation.ps1" $package -Force
-& $CompilerPath "/DPackageDir=$package" "/DAppVersion=$version" "/DRuntime=$Runtime" "/DOutputDir=$OutputDirectory" "$PSScriptRoot/../installer/DepartureBoard.iss"
+& $CompilerPath /Q "/DPackageDir=$package" "/DAppVersion=$version" "/DRuntime=$Runtime" "/DOutputDir=$OutputDirectory" "$PSScriptRoot/../installer/DepartureBoard.iss"
 if ($LASTEXITCODE -ne 0) { throw 'Installer compilation failed.' }
 $installer = Join-Path $OutputDirectory "DepartureBoard-$Runtime-Setup.exe"
 $hash = (Get-FileHash $installer -Algorithm SHA256).Hash.ToLowerInvariant()

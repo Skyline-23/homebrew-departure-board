@@ -3,7 +3,7 @@
   if (/Android|iPhone|iPad|iPod/i.test(agent)) return;
   let filename;
   if (/Windows/i.test(agent)) {
-    filename = /ARM|aarch64/i.test(agent) ? 'DepartureBoard-win-arm64.zip' : 'DepartureBoard-win-x64.zip';
+    filename = /ARM|aarch64/i.test(agent) ? 'DepartureBoard-win-arm64-Setup.exe' : 'DepartureBoard-win-x64-Setup.exe';
   } else if (/Macintosh/i.test(agent)) {
     filename = 'DepartureBoard-universal.zip';
   }
