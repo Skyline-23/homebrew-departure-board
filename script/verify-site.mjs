@@ -92,20 +92,30 @@ const installers = {
   'windows-x64': 'DepartureBoard-win-x64-Setup.exe',
   'windows-arm64': 'DepartureBoard-win-arm64-Setup.exe',
 };
+
+async function fetchDownload(url, options) {
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    const response = await fetch(url, options);
+    if (![502, 503, 504].includes(response.status) || attempt === 3) return response;
+    await response.body?.cancel();
+    await delay(2000 * (attempt + 1));
+  }
+}
+
 for (const [platform, filename] of Object.entries(installers)) {
-  const redirect = await fetch(`${origin}/download/${platform}`, {
+  const redirect = await fetchDownload(`${origin}/download/${platform}`, {
     method: 'HEAD', redirect: 'manual', signal: AbortSignal.timeout(15000),
   });
   assert.equal(redirect.status, 302, `${platform} must redirect.`);
   const latest = `https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/${filename}`;
   assert.equal(redirect.headers.get('location'), latest);
-  const release = await fetch(latest, {
+  const release = await fetchDownload(latest, {
     method: 'HEAD', redirect: 'manual', signal: AbortSignal.timeout(15000),
   });
   assert.equal(release.status, 302, `${filename} must resolve to a published release.`);
   const asset = release.headers.get('location');
   assert.equal(asset, `https://github.com/Skyline-23/homebrew-departure-board/releases/download/v${version}/${filename}`);
-  const download = await fetch(asset, { method: 'HEAD', signal: AbortSignal.timeout(30000) });
+  const download = await fetchDownload(asset, { method: 'HEAD', signal: AbortSignal.timeout(30000) });
   assert.equal(download.status, 200, `${filename} must download.`);
   assert.ok(Number(download.headers.get('content-length')) > 1000000);
   console.log(`PASS ${platform}: GitHub release ${version}, ${download.headers.get('content-length')} bytes.`);
