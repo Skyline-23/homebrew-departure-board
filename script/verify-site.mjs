@@ -35,6 +35,9 @@ for (const path of ['/index.html', '/ko.html', '/guide/ko.html', '/guide/index.h
     assert.ok(image, `${path} must declare an Open Graph image.`);
     const imageUrl = new URL(image[1]);
     assert.equal(imageUrl.origin, origin);
+    const korean = path === '/ko.html';
+    assert.equal(imageUrl.pathname, `/og-${korean ? 'ko' : 'en'}-v1.png`);
+    assert.ok(html.includes(`property="og:locale" content="${korean ? 'ko_KR' : 'en_US'}"`));
     assert.equal(imageUrl.searchParams.get('v'), version);
     const social = await fetch(imageUrl, { signal: AbortSignal.timeout(15000) });
     assert.equal(social.status, 200, 'Open Graph image must load.');
