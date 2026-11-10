@@ -148,7 +148,11 @@ internal sealed class BoardSurface : FrameworkElement
             InvalidateVisual();
         }
 
-        if (ReferenceTime is null && Window.GetWindow(this)?.WindowState != WindowState.Minimized && ticks++ % 30 == 0)
+        if (
+            ReferenceTime is null
+            && Window.GetWindow(this)?.WindowState != WindowState.Minimized
+            && ticks++ % 30 == 0
+        )
         {
             _ = services.RefreshAsync();
         }
