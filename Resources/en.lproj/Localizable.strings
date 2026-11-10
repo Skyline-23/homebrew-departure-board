@@ -244,3 +244,8 @@
 "data.selectAirport" = "Select an airport in Settings.";
 
 "menu.guide" = "Install & user guide";
+
+"settings.groupDisplay" = "Display";
+"settings.groupDesktop" = "Desktop";
+"settings.groupData" = "Flight data";
+"settings.subtitle" = "Wallpaper and screen saver";
