@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Prepare only the public product site and its download server for Nitroship."""
+import json
 from pathlib import Path
 import shutil
 import subprocess
@@ -16,8 +17,11 @@ def main():
     output.mkdir(parents=True, exist_ok=True)
     shutil.copytree(ROOT / 'work/site', output / 'public')
 
-    for name in ['server.mjs', 'Dockerfile', 'nitroship.json']:
+    for name in ['server.mjs', 'Dockerfile']:
         shutil.copyfile(ROOT / 'site/nitroship' / name, output / name)
+    configuration = json.loads((ROOT / 'nitroship.json').read_text())
+    configuration['build']['dockerfile'] = 'Dockerfile'
+    (output / 'nitroship.json').write_text(json.dumps(configuration, indent=2) + '\n')
     shutil.copyfile(ROOT / 'site/download-handler.mjs', output / 'download-handler.mjs')
     print(f'Prepared product-only Nitroship upload: {output}')
 

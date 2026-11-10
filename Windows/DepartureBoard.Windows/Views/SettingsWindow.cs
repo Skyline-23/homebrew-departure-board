@@ -53,7 +53,7 @@ internal sealed class SettingsWindow : Window
         this.services = services;
         this.preview = preview;
         this.applyWallpaper = applyWallpaper;
-        Title = "Departure Board";
+        Title = "Departure Board Settings";
         Width = Math.Min(760, SystemParameters.WorkArea.Width - 48);
         Height = Math.Min(860, SystemParameters.WorkArea.Height - 48);
         MinWidth = 560;

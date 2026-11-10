@@ -14,7 +14,7 @@ PORT=8767 node server.mjs
 
 Open `http://localhost:8767/ko` or `/` for English. The build copies the same English/Korean illustrated guide that ships inside the apps, along with public screenshots and the app icon. `/install` and `/install/ko` redirect to the corresponding guide. The upload directory contains only the public product site, its server, Dockerfile and deployment settings.
 
-`site/nitroship/nitroship.json` extracts `/app/public` from the image for Nitroship's static CDN. Fallback platform redirects run in the Incheon region, with zero idle instances and at most one active instance. `/healthz` is the runtime health check. These hosting settings do not affect the desktop app's flight-provider requests.
+`nitroship.json` extracts `/app/public` from the image for Nitroship's static CDN. Fallback platform redirects run in the Incheon region, with zero idle instances and at most one active instance. `/healthz` is the runtime health check. These hosting settings do not affect the desktop app's flight-provider requests.
 
 ## Deploy
 
@@ -56,3 +56,9 @@ The editorial landing page uses an ivory background, a yellow Get button and thr
 `site/airport-demo.js` owns page events, stale image requests, scroll state and teardown. `site/board-transition.js` owns raster-strip animation and cancellation. `site/airport-data.js` owns the three featured previews. The 1920×1080 WebP files in `site/boards` are lossless exports of the app's fixed-date sample PNG renders. The decorative blank split-flap tile was generated for this page. Its letters remain selectable UI state rather than part of the bitmap.
 
 Only the initial preview loads on first view. Other previews load on selection or a scroll transition. There is no autoplay, flight-provider request or GitHub API lookup. Reduced-motion mode disables scroll pinning, flip animation and section reveals. The controller cancels unfinished image transitions and releases listeners and observers when the page is left. The date is the visitor's local date.
+
+## Automatic deployment
+
+The repository-root `nitroship.json` builds the product site with `site/nitroship/Dockerfile.git`. It copies only the public site, bundled guide and runtime redirect handler into the final image. The Nitroship GitHub App is limited to this repository, with `main` as the production branch. Preview auto-deployments are disabled to avoid building every working-branch update.
+
+GitHub validation separates site/guide checks from native app checks. Superseded validation runs are cancelled. Windows caches NuGet packages and the verified installer-compiler download, and builds the desktop application only when publishing its runtime package. Tagged releases create a draft, upload all platform assets, and publish the complete release together.

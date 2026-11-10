@@ -5,14 +5,54 @@ on:
   pull_request:
 permissions:
   contents: read
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
-  native:
-    runs-on: macos-15
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      native: ${{ steps.paths.outputs.native }}
+      site: ${{ steps.paths.outputs.site }}
     steps:
       - uses: actions/checkout@v4
-      - run: brew install swiftlint
-      - run: ./script/lint.sh
+        with:
+          fetch-depth: 0
+      - id: paths
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          if ! git cat-file -e "$BASE_SHA^{commit}" 2>/dev/null; then
+            echo 'native=true' >> "$GITHUB_OUTPUT"
+            echo 'site=true' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git diff --name-only "$BASE_SHA" HEAD > "$RUNNER_TEMP/changed-files"
+          native=false
+          site=false
+          if grep -Eq '^(Sources/|Resources/|Tests/|\.clang-format|\.swift|script/(build\.sh|common-sources\.sh|validate|lint\.sh|format\.sh|function-spacing\.py)|\.github/workflows/(check|release)\.yml)' "$RUNNER_TEMP/changed-files"; then native=true; fi
+          if grep -Eq '^(site/|nitroship\.json|\.dockerignore|Resources/Guide/|docs/install-guide|script/(build-site|build-guide|check-guide|build-nitroship|test-downloads)|\.github/workflows/)' "$RUNNER_TEMP/changed-files"; then site=true; fi
+          echo "native=$native" >> "$GITHUB_OUTPUT"
+          echo "site=$site" >> "$GITHUB_OUTPUT"
+  site:
+    needs: changes
+    if: needs.changes.outputs.site == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
       - run: node script/test-downloads.mjs
+      - run: python3 script/build-site.py
+      - run: python3 script/check-guide.py
+  native:
+    needs: changes
+    if: needs.changes.outputs.native == 'true'
+    runs-on: macos-15
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: 1
+    steps:
+      - uses: actions/checkout@v4
+      - run: command -v swiftlint >/dev/null || brew install swiftlint
+      - run: ./script/lint.sh
       - run: ./script/build.sh
       - run: ./script/validate.sh
       - uses: actions/upload-artifact@v4
