@@ -135,6 +135,27 @@ Check(
 
 var storage = Path.Combine(Path.GetTempPath(), "DepartureBoard.Tests-" + Guid.NewGuid());
 
+foreach (
+    var (value, expected) in new[]
+    {
+        ("I,I", "I"),
+        (" H ,H, H ,h ", "H"),
+        ("J, K,J", "J, K"),
+        ("11-14,11-14,16A", "11-14, 16A"),
+        ("", ""),
+        (", ,A,,", "A"),
+    }
+)
+{
+    var flight = operation with { Gate = value, Counter = value };
+    var snapshot = new FlightSnapshot("HND", Fixtures.Time, [flight]);
+    var row = FlightRows.Create(snapshot, catalog, catalog.Get("HND"), Fixtures.Time, "en")[0];
+    Check(
+        row.Gate == expected && row.Counter == expected,
+        "Show each gate or check-in label once, keeping distinct labels and ranges."
+    );
+}
+
 try
 {
     var settings = new SettingsRepository(storage);

@@ -197,6 +197,40 @@ static BOOL VerifySnapshotConfiguration(DBBoardView *board) {
     return matched;
 }
 
+static BOOL VerifyDistinctLocationLabels(Class store) {
+
+    Method method = class_getClassMethod(store, @selector(cachedSnapshotForAirport:));
+    IMP original = method_getImplementation(method);
+    __block NSDictionary *snapshot;
+    IMP mock = imp_implementationWithBlock(^NSDictionary *(id receiver, NSString *airport) {
+        return snapshot;
+    });
+    method_setImplementation(method, mock);
+    NSDate *now = [NSISO8601DateFormatter.new dateFromString:@"2026-11-09T05:00:00Z"];
+    NSDictionary *location = @{@"code" : @"HND", @"zone" : @"Asia/Tokyo"};
+    NSArray *cases = @[
+        @[ @"I,I", @"I" ], @[ @" H ,H, H ,h ", @"H" ], @[ @"J, K,J", @"J, K" ],
+        @[ @"11-14,11-14,16A", @"11-14, 16A" ], @[ @"", @"" ], @[ @", ,A,,", @"A" ]
+    ];
+    BOOL passed = YES;
+
+    for (NSArray *test in cases) {
+        NSDictionary *flight = @{
+            @"number" : @"NH 100",
+            @"scheduledUtc" : @"2026-11-09T06:00:00Z",
+            @"gate" : test[0],
+            @"checkIn" : test[0]
+        };
+        snapshot = @{@"fetchedAt" : @"2026-11-09T05:00:00Z", @"flights" : @[ flight ]};
+        NSArray *rows = [store rowsForLocation:location now:now];
+        passed = passed && rows.count == 1 && [rows[0][@"gate"] isEqual:test[1]] &&
+                 [rows[0][@"counter"] isEqual:test[1]];
+    }
+    method_setImplementation(method, original);
+    imp_removeBlock(mock);
+    return passed;
+}
+
 static BOOL VerifyCompactScale(DBBoardView *board) {
 
     NSDictionary *saved = board.snapshotConfiguration;
@@ -586,9 +620,9 @@ int main(int argc, const char *argv[]) {
         if (!VerifyAirportAdapters(board) || !VerifyCompactScale(board) || !VerifyAirlineLogos() ||
             !VerifySystemFontScaling() || !VerifyDiagnosticPrivacy() ||
             !VerifyAvailabilityStates(store) || !VerifySnapshotConfiguration(board) ||
-            !VerifySharedRowsCache(store) || !VerifyContentDrivenRendering(board, store) ||
-            !VerifyFlapTimer(board) || !VerifySharedRefreshLock(store) ||
-            !VerifyRefreshWithoutHostFrames(principal, store)) {
+            !VerifySharedRowsCache(store) || !VerifyDistinctLocationLabels(store) ||
+            !VerifyContentDrivenRendering(board, store) || !VerifyFlapTimer(board) ||
+            !VerifySharedRefreshLock(store) || !VerifyRefreshWithoutHostFrames(principal, store)) {
             return 1;
         }
         [preview stopAnimation];

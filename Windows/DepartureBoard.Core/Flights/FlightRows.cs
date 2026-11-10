@@ -68,11 +68,20 @@ public static class FlightRows
             flight.Number,
             variant.Airline,
             variant.Icao,
-            flight.Gate,
+            DistinctLocationLabels(flight.Gate),
             flight.Terminal,
-            flight.Counter,
+            DistinctLocationLabels(flight.Counter),
             status
         );
+    }
+
+    private static string DistinctLocationLabels(string value)
+    {
+
+        var labels = value
+            .Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
+            .Distinct(StringComparer.OrdinalIgnoreCase);
+        return string.Join(", ", labels);
     }
 
     private static string Status(string status)
