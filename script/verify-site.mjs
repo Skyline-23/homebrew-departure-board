@@ -1,10 +1,21 @@
 #!/usr/bin/env node
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
+import { readFile, readdir } from 'node:fs/promises';
 import { setTimeout as delay } from 'node:timers/promises';
+import { isDeepStrictEqual } from 'node:util';
 
 const version = process.argv[2];
 assert.match(version || '', /^\d+\.\d+\.\d+$/, 'Supply the release version.');
 const origin = 'https://dpboard.skyline23.com';
+const imageFolder = new URL('../Resources/Guide/images/', import.meta.url);
+const expectedImages = {};
+const imageDimensions = {};
+for (const filename of (await readdir(imageFolder)).filter(name => name.endsWith('.png')).sort()) {
+  const bytes = await readFile(new URL(filename, imageFolder));
+  expectedImages[filename] = createHash('sha256').update(bytes).digest('hex').slice(0, 12);
+  imageDimensions[filename] = [bytes.readUInt32BE(16), bytes.readUInt32BE(20)];
+}
 const deadline = Date.now() + 10 * 60 * 1000;
 let deployed = false;
 
@@ -14,9 +25,12 @@ while (Date.now() < deadline) {
       cache: 'no-store',
       signal: AbortSignal.timeout(15000),
     });
-    if (response.ok && (await response.json()).version === version) {
-      deployed = true;
-      break;
+    if (response.ok) {
+      const manifest = await response.json();
+      if (manifest.version === version && isDeepStrictEqual(manifest.images, expectedImages)) {
+        deployed = true;
+        break;
+      }
     }
   } catch (error) {
     console.log(`Waiting for website deployment (${error.message}).`);
@@ -25,12 +39,35 @@ while (Date.now() < deadline) {
 }
 assert.ok(deployed, `Website did not deploy release ${version} within ten minutes.`);
 
+const checkedImages = new Set();
 for (const path of ['/index.html', '/ko.html', '/guide/ko.html', '/guide/index.html']) {
   const response = await fetch(origin + path, { signal: AbortSignal.timeout(15000) });
   assert.equal(response.status, 200, `${path} must load.`);
   assert.match(response.headers.get('content-type') || '', /text\/html/);
+  const html = await response.text();
+  const pageImages = new Set();
+  for (const match of html.matchAll(/<img\b[^>]*\bsrc="(images\/([^"?]+))"/g)) {
+    const filename = match[2].match(/^(.+)\.([a-f0-9]{12})(\.png)$/);
+    assert.ok(filename, `${path} must use a content-versioned image URL.`);
+    const original = filename[1] + filename[3];
+    assert.equal(filename[2], expectedImages[original], `${original} must match the current screenshot.`);
+    pageImages.add(original);
+    const imageUrl = new URL(match[1], origin + path).href;
+    if (!checkedImages.has(imageUrl)) {
+      const image = await fetch(imageUrl, { signal: AbortSignal.timeout(15000) });
+      assert.equal(image.status, 200, `${imageUrl} must load.`);
+      const png = new DataView(await image.arrayBuffer());
+      assert.equal(png.getUint32(0), 0x89504e47);
+      assert.deepEqual([png.getUint32(16), png.getUint32(20)], imageDimensions[original]);
+      checkedImages.add(imageUrl);
+    }
+  }
+  const requiredImages = path.startsWith('/guide/')
+    ? Object.keys(expectedImages)
+    : ['macos-settings.png', 'windows-settings.png'];
+  for (const filename of requiredImages)
+    assert.ok(pageImages.has(filename), `${path} must show the current ${filename}.`);
   if (!path.startsWith('/guide/')) {
-    const html = await response.text();
     const image = html.match(/property="og:image"\s+content="([^"]+)"/);
     assert.ok(image, `${path} must declare an Open Graph image.`);
     const imageUrl = new URL(image[1]);
@@ -48,6 +85,7 @@ for (const path of ['/index.html', '/ko.html', '/guide/ko.html', '/guide/index.h
     assert.equal(png.getUint32(20), 630);
   }
 }
+console.log(`PASS ${checkedImages.size} current screenshots use content-versioned URLs.`);
 
 const installers = {
   macos: 'DepartureBoard-universal.dmg',

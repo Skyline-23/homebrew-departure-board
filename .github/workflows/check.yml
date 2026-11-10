@@ -48,6 +48,9 @@ jobs:
           python3 script/build-og-preview.py --render
       - run: python3 script/build-site.py
       - run: python3 script/check-guide.py
+      - name: Verify the deployed site after main updates
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: node script/verify-site.mjs "$(python3 -c 'import json; print(json.load(open("work/site/release.json"))["version"])')"
       - uses: actions/upload-artifact@v4
         with:
           name: OpenGraph

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Build the public product pages without runtime API calls or dependencies."""
 import argparse
+import hashlib
 import json
 from pathlib import Path
 import re
@@ -34,7 +35,24 @@ def main():
     shutil.copytree(ROOT / 'site/boards', output / 'boards')
     shutil.copytree(ROOT / 'Resources/Guide', output / 'guide', dirs_exist_ok=True)
     shutil.copytree(ROOT / 'Resources/Guide/images', output / 'images', dirs_exist_ok=True)
-    (output / 'release.json').write_text(json.dumps({'version': version}) + '\n')
+    image_hashes = {}
+
+    for image in sorted((ROOT / 'Resources/Guide/images').glob('*.png')):
+        digest = hashlib.sha256(image.read_bytes()).hexdigest()[:12]
+        image_hashes[image.name] = digest
+        filename = f'{image.stem}.{digest}{image.suffix}'
+
+        for folder in ['images', 'guide/images']:
+            shutil.copyfile(image, output / folder / filename)
+
+    for page in output.rglob('*.html'):
+        html = page.read_text()
+
+        for filename, digest in image_hashes.items():
+            image = Path(filename)
+            html = html.replace(f'src="images/{filename}"', f'src="images/{image.stem}.{digest}{image.suffix}"')
+        page.write_text(html)
+    (output / 'release.json').write_text(json.dumps({'version': version, 'images': image_hashes}) + '\n')
     (output / 'robots.txt').write_text('User-agent: *\nAllow: /\nSitemap: https://dpboard.skyline23.com/sitemap.xml\n')
     (output / 'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+''.join(f'<url><loc>https://dpboard.skyline23.com/{path}</loc></url>' for path in ['', 'ko.html', 'guide/index.html', 'guide/ko.html'])+'</urlset>')
     print(f'Built product site for {version}: {output}')
