@@ -1,9 +1,311 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Departure Board — Airport displays for your desktop</title><meta name="description" content="40 airport departure displays as a wallpaper and screen saver."><link rel="canonical" href="https://dpboard.skyline23.com/"><link rel="alternate" hreflang="en" href="https://dpboard.skyline23.com/"><link rel="alternate" hreflang="ko" href="https://dpboard.skyline23.com/ko.html"><link rel="icon" href="icon.png"><link rel="stylesheet" href="site.css"><meta property="og:title" content="Departure Board"><meta property="og:description" content="40 airport departure displays as a wallpaper and screen saver."><meta property="og:image" content="https://dpboard.skyline23.com/og-en-v1.png"><meta property="og:type" content="website"><meta property="og:site_name" content="Departure Board"><meta property="og:url" content="https://dpboard.skyline23.com/"><meta property="og:locale" content="en_US"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:type" content="image/png"><meta property="og:image:alt" content="Departure Board — Airport wallpaper and screen saver"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Departure Board"><meta name="twitter:description" content="40 airport departure displays as a wallpaper and screen saver."><meta name="twitter:image" content="https://dpboard.skyline23.com/og-en-v1.png"><meta name="twitter:image:alt" content="Departure Board — Airport wallpaper and screen saver"><script src="/download.js?v=setup-1" defer></script></head><body>
-<header><a class="brand" href="index.html"><img src="icon.png" alt="" width="36" height="36">Departure Board</a><nav><a class="wide" href="guide/index.html">Installation guide</a><a href="#download">Download</a><a href="ko.html" lang="ko">한국어</a></nav></header>
-<main><section class="hero"><p class="eyebrow">Departure Board · macOS & Windows</p><h1>Your favorite airport.<br>Now on your desktop.</h1><p class="lead">40 airport departure displays.<br>One wallpaper and screen saver for your desktop.</p><div class="actions"><a class="button" data-download href="/download">Get</a></div><p class="caption">Free · macOS 12+ · Windows 11</p></section>
-<figure class="preview"><img src="images/board-incheon.png" alt="Incheon International Airport · Sample data" width="1600" height="1000" fetchpriority="high"><figcaption>Incheon International Airport · Sample data</figcaption></figure>
-<section class="section"><h2>While you work. While you’re away.</h2><div class="features"><article><h3>Three ways to use it</h3><p>Use a live desktop wallpaper, save a still image or let the full-screen screen saver take over.</p></article><article><h3>40 distinct airports</h3><p>Airport-specific designs, local languages and time zones. Pages and codeshare flight numbers rotate in place.</p></article><article><h3>Made for multiple screens</h3><p>Each monitor uses its own resolution and scale. Adjust text size, rows and spacing to suit your setup.</p></article></div></section>
-<section class="section"><h2>Make it yours.</h2><p>Airport, language, brightness, scale, motion and refresh interval, together in one settings window. Preview changes as you go.</p><div class="settings"><figure class="mac"><img src="images/macos-settings.png" width="1400" height="1596" alt="macOS settings" loading="lazy"><figcaption>macOS settings</figcaption></figure><figure><img src="images/windows-settings.png" width="624" height="821" alt="Windows settings" loading="lazy"><figcaption>Windows settings</figcaption></figure></div></section>
-<section class="section" id="download"><h2>Bring it to your desktop.</h2><p>Free · macOS 12+ · Windows 11</p><article class="download"><h3>macOS & Windows</h3><p>macOS 12 or later · Windows 11. The Get button selects the file for your computer.</p><details><summary>Other operating systems</summary><p><a href="https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-universal.zip">macOS · Universal</a><br><a href="https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-win-x64-Setup.exe">Windows · x64</a><br><a href="https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-win-arm64-Setup.exe">Windows · ARM64</a></p></details><p>Homebrew</p><pre><code>brew install --cask skyline-23/departure-board/departure-board</code></pre></article><p><a href="guide/index.html">Installation guide</a></p></article></div><p><a href="guide/index.html">Follow the illustrated installation guide →</a></p></section>
-<section class="section"><h2>A few things to know</h2><details><summary>Can I display real flights?</summary><p>Yes. Add your own AeroDataBox RapidAPI key to fetch real flights. A separate provider subscription is required. Sample data works immediately without a key.</p></details><details><summary>When does the app make API requests?</summary><p>Flights refresh at your chosen interval, using a shared cache. Language changes, paging and codeshare rotation do not make new requests. After a provider error, the app respects the server retry instructions.</p></details><details><summary>What if the board feels too small?</summary><p>The board fits the full display, then lets you adjust its scale and row count. Each monitor adapts to its own display scale. The guide walks through the settings.</p></details><details><summary>Does it work offline?</summary><p>Sample data and a saved still wallpaper work offline. The guide and its pictures are included with the app. Fetching new live flights needs an internet connection.</p></details></section></main>
-<footer><span>Made by Skyline23</span><div><a href="https://portfolio.skyline23.com/en/projects/departure-board">Portfolio</a><a href="https://github.com/Skyline-23/homebrew-departure-board">GitHub</a><a href="https://blog.skyline23.com">Blog</a></div></footer></body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Departure Board — Airport displays for your desktop</title>
+    <meta
+      name="description"
+      content="40 airport departure displays as a wallpaper and screen saver."
+    />
+    <link rel="canonical" href="https://dpboard.skyline23.com/" />
+    <link rel="alternate" hreflang="en" href="https://dpboard.skyline23.com/" />
+    <link
+      rel="alternate"
+      hreflang="ko"
+      href="https://dpboard.skyline23.com/ko.html"
+    />
+    <link rel="icon" href="icon.png" />
+    <link rel="stylesheet" href="site.css" />
+    <meta property="og:title" content="Departure Board" />
+    <meta
+      property="og:description"
+      content="40 airport departure displays as a wallpaper and screen saver."
+    />
+    <meta
+      property="og:image"
+      content="https://dpboard.skyline23.com/og-en-v1.png"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Departure Board" />
+    <meta property="og:url" content="https://dpboard.skyline23.com/" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/png" />
+    <meta
+      property="og:image:alt"
+      content="Departure Board — Airport wallpaper and screen saver"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Departure Board" />
+    <meta
+      name="twitter:description"
+      content="40 airport departure displays as a wallpaper and screen saver."
+    />
+    <meta
+      name="twitter:image"
+      content="https://dpboard.skyline23.com/og-en-v1.png"
+    />
+    <meta
+      name="twitter:image:alt"
+      content="Departure Board — Airport wallpaper and screen saver"
+    />
+    <script src="/download.js?v=setup-1" defer></script>
+    <link rel="stylesheet" href="hero.css?v=editorial-6" />
+    <script type="module" src="airport-demo.js?v=editorial-6"></script>
+    <noscript
+      ><style>
+        .airport-hero {
+          height: auto;
+        }
+        .hero-scene {
+          position: relative;
+        }
+        .airport-route {
+          visibility: hidden;
+        }
+      </style></noscript
+    >
+  </head>
+  <body class="editorial-product" data-theme="light">
+    <header class="site-header">
+      <a class="brand" href="index.html"
+        ><img src="icon.png" alt="" width="32" height="32" />Departure Board</a
+      >
+      <nav aria-label="Site navigation">
+        <a class="nav-guide" href="guide/index.html">Installation guide</a>
+        <a class="nav-install" data-download href="/download">Install</a>
+        <a class="language-link" href="ko.html" lang="ko">KO</a>
+      </nav>
+    </header>
+    <main>
+      <section class="airport-hero" aria-label="Enlarge the airport display">
+        <div class="hero-scene">
+          <div class="hero-intro">
+            <div class="hero-copy">
+              <h1>Your airport.<br />On your desktop.</h1>
+              <p>40 airports. At home on macOS and Windows.</p>
+            </div>
+            <div class="airport-index">
+              <div class="airport-identity">
+                <p class="index-label">DEPARTURE<br />BOARD</p>
+                <div class="flap-code" aria-hidden="true">
+                  <span class="flap-tile"
+                    ><span class="flap-letter">I</span></span
+                  >
+                  <span class="flap-tile"
+                    ><span class="flap-letter">C</span></span
+                  >
+                  <span class="flap-tile"
+                    ><span class="flap-letter">N</span></span
+                  >
+                </div>
+              </div>
+              <fieldset class="airport-route">
+                <legend class="visually-hidden">Choose an airport</legend>
+                <label class="airport-stop"
+                  ><input
+                    type="radio"
+                    name="airport"
+                    value="ICN"
+                    aria-label="Incheon ICN"
+                    checked
+                  /><span>ICN</span></label
+                >
+                <label class="airport-stop"
+                  ><input
+                    type="radio"
+                    name="airport"
+                    value="HND"
+                    aria-label="Haneda HND"
+                  /><span>HND</span></label
+                >
+                <label class="airport-stop"
+                  ><input
+                    type="radio"
+                    name="airport"
+                    value="JFK"
+                    aria-label="New York JFK"
+                  /><span>JFK</span></label
+                >
+              </fieldset>
+            </div>
+          </div>
+          <div class="hero-preview">
+            <div class="hero-aside">
+              <div class="hero-download">
+                <a class="button" data-download href="/download"
+                  ><span>Get</span
+                  ><img src="arrow-right.svg" width="32" height="32" alt=""
+                /></a>
+                <p class="download-note">Free · macOS 12+ · Windows 11</p>
+              </div>
+              <div class="preview-caption">
+                <p id="airport-status" class="demo-status" role="status">
+                  ICN · Sample preview
+                </p>
+                <time id="local-date" datetime="2026-11-10">2026-11-10</time>
+              </div>
+            </div>
+            <button
+              id="airport-expand"
+              class="board-expand"
+              aria-label="Enlarge the airport display"
+              aria-haspopup="dialog"
+            >
+              <img
+                id="airport-board"
+                class="board-image"
+                src="boards/icn.webp"
+                width="1920"
+                height="1080"
+                alt="Incheon International Airport departure board · Sample preview"
+                fetchpriority="high"
+              />
+            </button>
+          </div>
+        </div>
+      </section>
+      <dialog
+        class="board-dialog"
+        id="airport-dialog"
+        aria-label="Airport display detail"
+      >
+        <div class="dialog-toolbar">
+          <span>Sample display rendered by the app</span
+          ><button id="airport-close" type="button">Close</button>
+        </div>
+        <div class="dialog-image-wrap">
+          <img
+            class="board-zoom"
+            id="airport-zoom"
+            alt=""
+            width="1920"
+            height="1080"
+          />
+        </div>
+      </dialog>
+      <section class="section" id="features">
+        <h2>While you work. While you’re away.</h2>
+        <div class="features">
+          <article>
+            <h3>Three ways to use it</h3>
+            <p>
+              Use a live desktop wallpaper, save a still image or let the
+              full-screen screen saver take over.
+            </p>
+          </article>
+          <article>
+            <h3>40 distinct airports</h3>
+            <p>
+              Airport-specific designs, local languages and time zones. Pages
+              and codeshare flight numbers rotate in place.
+            </p>
+          </article>
+          <article>
+            <h3>Made for multiple screens</h3>
+            <p>
+              Each monitor uses its own resolution and scale. Adjust text size,
+              rows and spacing to suit your setup.
+            </p>
+          </article>
+        </div>
+      </section>
+      <section class="section">
+        <h2>Make it yours.</h2>
+        <p>
+          Airport, language, brightness, scale, motion and refresh interval,
+          together in one settings window. Preview changes as you go.
+        </p>
+        <div class="settings">
+          <figure class="mac">
+            <img
+              src="images/macos-settings.png"
+              width="1400"
+              height="1596"
+              alt="macOS settings"
+              loading="lazy"
+            />
+            <figcaption>macOS settings</figcaption>
+          </figure>
+          <figure>
+            <img
+              src="images/windows-settings.png"
+              width="624"
+              height="821"
+              alt="Windows settings"
+              loading="lazy"
+            />
+            <figcaption>Windows settings</figcaption>
+          </figure>
+        </div>
+      </section>
+      <section class="section">
+        <h2>A few things to know</h2>
+        <details>
+          <summary>Can I display real flights?</summary>
+          <p>
+            Yes. Add your own AeroDataBox RapidAPI key to fetch real flights. A
+            separate provider subscription is required. Sample data works
+            immediately without a key.
+          </p>
+        </details>
+        <details>
+          <summary>When does the app make API requests?</summary>
+          <p>
+            Flights refresh at your chosen interval, using a shared cache.
+            Language changes, paging and codeshare rotation do not make new
+            requests. After a provider error, the app respects the server retry
+            instructions.
+          </p>
+        </details>
+        <details>
+          <summary>What if the board feels too small?</summary>
+          <p>
+            The board fits the full display, then lets you adjust its scale and
+            row count. Each monitor adapts to its own display scale. The guide
+            walks through the settings.
+          </p>
+        </details>
+        <details>
+          <summary>Does it work offline?</summary>
+          <p>
+            Sample data and a saved still wallpaper work offline. The guide and
+            its pictures are included with the app. Fetching new live flights
+            needs an internet connection.
+          </p>
+        </details>
+      </section>
+    </main>
+    <footer id="download">
+      <span>Made by Skyline23</span>
+      <div>
+        <a href="guide/index.html">Installation guide</a>
+
+        <a href="https://portfolio.skyline23.com/en/projects/departure-board"
+          >Portfolio</a
+        ><a href="https://github.com/Skyline-23/homebrew-departure-board"
+          >GitHub</a
+        ><a href="https://blog.skyline23.com">Blog</a>
+      </div>
+      <details class="platform-downloads">
+        <summary>Other platforms</summary>
+        <div>
+          <a
+            href="https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-universal.zip"
+            >macOS · Universal</a
+          >
+          <a
+            href="https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-win-x64-Setup.exe"
+            >Windows · x64</a
+          >
+          <a
+            href="https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-win-arm64-Setup.exe"
+            >Windows · ARM64</a
+          >
+        </div>
+      </details>
+    </footer>
+  </body>
+</html>
