@@ -1,24 +1,50 @@
 # Product website
 
-The portfolio landing page is `https://portfolio.skyline23.com/ko/projects/departure-board`.
-The detailed product site is `https://dpboard.skyline23.com`, hosted by the Cloudflare Pages project `departure-board`.
-The existing apex domain, blog and portfolio deployments are separate.
+The detailed product site is `https://dpboard.skyline23.com`, hosted by the Nitroship app `dpboard`. Its default address is `https://dpboard.ntro.run`. Cloudflare manages DNS only; the product no longer uses Cloudflare Pages. The portfolio landing page remains at `https://portfolio.skyline23.com/ko/projects/departure-board` on its existing hosting.
 
-Build the static site with Python 3:
+## Build and preview
 
-```sh
-python3 script/build-guide.py --check
-python3 script/build-site.py
-```
-
-The output is `work/site`. The build copies the same English/Korean illustrated guide that ships inside the apps. The build reads a release label from `Casks/departure-board.rb`; `--version 0.7.3` can prepare the next release. The three same-origin download endpoints stream stable GitHub `releases/latest/download/...` assets through a Pages function. A download stays on `dpboard.skyline23.com`; no GitHub page or client-side release lookup is needed. A five-minute cache bounds staleness after a new release. The page makes no flight-provider requests or runtime GitHub API calls. The Pages function only fetches a ZIP when a visitor downloads one.
-
-Cloudflare Pages is connected to this repository, with `main` as the production branch, `python3 script/build-site.py` as the build command and `work/site` as the output directory. Every published release includes the stable `DepartureBoard-universal.zip` filename alongside its versioned macOS archive. Windows archives already use stable x64 and ARM64 filenames. No additional browser-side release polling is needed.
-
-For a local preview:
+Python 3 and Node.js 22 or later are sufficient. No npm dependencies or flight-provider credentials are needed.
 
 ```sh
-python3 -m http.server 8766 --directory work/site
+python3 script/build-nitroship.py
+cd work/nitroship
+PORT=8767 node server.mjs
 ```
 
-Python's local server does not run the Pages download function. Verify streamed downloads and response headers on a Pages preview before production deployment. `_routes.json` invokes the function only for `/download/*`; regular pages and images remain static.
+Open `http://localhost:8767/ko` or `/` for English. The build copies the same English/Korean illustrated guide that ships inside the apps, along with public screenshots and the app icon. `/install` and `/install/ko` redirect to the corresponding guide. The upload directory contains only the public product site, its server, Dockerfile and deployment settings.
+
+`site/nitroship/nitroship.json` extracts `/app/public` from the image for Nitroship's static CDN. Fallback platform redirects run in the Incheon region, with zero idle instances and at most one active instance. `/healthz` is the runtime health check. These hosting settings do not affect the desktop app's flight-provider requests.
+
+## Deploy
+
+Install the official Nitroship CLI and sign in, then run:
+
+```sh
+python3 script/build-nitroship.py
+ntro deploy work/nitroship --app dpboard --team buseong-kim-f9isa5 --preview
+ntro promote <ready-deployment-id> --app dpboard --team buseong-kim-f9isa5
+```
+
+Check the preview before promotion: English and Korean pages, all guide images, both install redirects, the single Get button, platform selection, and direct GitHub ZIP downloads. After promotion, check both `dpboard.ntro.run` and `dpboard.skyline23.com` over HTTPS. A ready preview alone does not activate the production address.
+
+The custom domain uses a DNS-only CNAME from `dpboard` to `via.nitroship.co`. Nitroship verifies ownership and issues the TLS certificate. Leave the apex, blog and portfolio DNS records unchanged.
+
+```sh
+ntro domains list --app dpboard --team buseong-kim-f9isa5
+ntro domains verify dpboard.skyline23.com --app dpboard --team buseong-kim-f9isa5 --wait
+```
+
+## Downloads and request usage
+
+The single Get button links directly to the latest GitHub release asset for the visitor's desktop OS. `download.js` reads the local browser user agent and sets the link without a network request. Alternative OS links are direct GitHub asset URLs inside a disclosure.
+
+Without JavaScript, `/download` detects the OS and returns an uncached redirect to the same GitHub ZIP. An unknown/mobile browser gets one platform selector and one Get button. Legacy `/download/macos`, `/download/windows-x64` and `/download/windows-arm64` URLs also redirect directly. Nitroship does not fetch, buffer, cache or proxy installers.
+
+Every release includes `DepartureBoard-universal.zip`; Windows archives use stable x64 and ARM64 filenames. All URLs use `releases/latest/download/`, so new tags require no website edit and visitors never need to navigate the GitHub release page.
+
+The page makes no flight-provider requests, client-side release lookups or background polling. No API keys, quota limits or automatic quota-based stop are added to the desktop clients.
+
+## Social previews
+
+English and Korean use separate 1200×630 PNG cards with the real app icon and screen capture. Both Open Graph and Twitter metadata point at these absolute public URLs. Regenerate the layout with `python3 script/build-og-preview.py`, serve `work/og`, and export each HTML page at 1200×630 to `site/og-en-v1.png` and `site/og-ko-v1.png`. Change the asset version in the HTML when replacing an already published card.

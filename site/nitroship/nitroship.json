@@ -1,0 +1,15 @@
+{
+  "build": {
+    "dockerfile": "Dockerfile",
+    "outputDirectory": "/app/public"
+  },
+  "compute": {
+    "regions": [
+      "kr-icn"
+    ],
+    "port": 3000,
+    "healthPath": "/healthz",
+    "minInstances": 0,
+    "maxInstances": 1
+  }
+}
