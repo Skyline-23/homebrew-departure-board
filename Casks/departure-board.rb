@@ -1,6 +1,6 @@
 cask "departure-board" do
-  version "0.7.5"
-  sha256 "d580bd9d9251516f5ca3f39f28019ac350ee20e856e0208913b03503da20f3fe"
+  version "0.7.6"
+  sha256 "3be0526a24345764987644cf5bf832fbdc087fca70ee3f24fea17c5d4e35f253"
 
   url "https://github.com/Skyline-23/homebrew-departure-board/releases/download/v#{version}/DepartureBoard-#{version}-universal.zip"
   name "Departure Board"
