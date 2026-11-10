@@ -25,8 +25,10 @@ for language, title, description in [
 ]:
     page = template.replace('{{lang}}', language).replace('{{title}}', title).replace('{{description}}', html.escape(description))
     (output / f'{language}.html').write_text(page)
+
     if args.render:
         browser = shutil.which('google-chrome') or shutil.which('chromium')
+
         if not browser:
             raise SystemExit('Install Chrome to render social cards.')
         image = ROOT / f'site/og-{language}-v1.png'
@@ -39,6 +41,7 @@ for language, title, description in [
                 (output / f'{language}.html').as_uri(),
             ], check=True, timeout=45, capture_output=True)
         header = image.read_bytes()[:24]
+
         if header[:8] != b'\x89PNG\r\n\x1a\n' or struct.unpack('>II', header[16:24]) != (1200, 630):
             raise SystemExit(f'Invalid social card dimensions: {image}')
         print(f'Rendered {image.name} at 1200x630.')

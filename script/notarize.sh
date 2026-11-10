@@ -6,9 +6,11 @@ DISK_IMAGE="${1:-}"
 RESULT_PREFIX="notarization"
 
 staple_with_retry() {
+
   local target="$1" attempt result
 
   for attempt in 1 2 3; do
+
     if xcrun stapler staple "$target" && xcrun stapler validate "$target"; then
       return 0
     else
@@ -16,6 +18,7 @@ staple_with_retry() {
     fi
 
     # EX_NOHOST includes transient failures from Apple's ticket service.
+
     if [[ "$result" != 68 || "$attempt" == 3 ]]; then return "$result"; fi
     printf 'Ticket service unavailable; retrying in %s seconds.\n' "$((attempt * 5))" >&2
     sleep "$((attempt * 5))"
