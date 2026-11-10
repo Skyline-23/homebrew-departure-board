@@ -26,7 +26,7 @@ def main():
     shutil.copytree(ROOT / 'Resources/Guide', output / 'guide', dirs_exist_ok=True)
     shutil.copytree(ROOT / 'Resources/Guide/images', output / 'images', dirs_exist_ok=True)
     base = 'https://github.com/Skyline-23/homebrew-departure-board/releases'
-    redirects = [f'/download/macos {base}/download/v{version}/DepartureBoard-{version}-universal.zip 302', f'/download/windows-x64 {base}/download/v{version}/DepartureBoard-win-x64.zip 302', f'/download/windows-arm64 {base}/download/v{version}/DepartureBoard-win-arm64.zip 302', '/install /guide/index.html 302', '/install/ko /guide/ko.html 302']
+    redirects = [f'/download/macos {base}/latest/download/DepartureBoard-universal.zip 302', f'/download/windows-x64 {base}/latest/download/DepartureBoard-win-x64.zip 302', f'/download/windows-arm64 {base}/latest/download/DepartureBoard-win-arm64.zip 302', '/install /guide/index.html 302', '/install/ko /guide/ko.html 302']
     (output / '_redirects').write_text('\n'.join(redirects)+'\n')
     (output / '_headers').write_text('/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  Content-Security-Policy: default-src \'self\'; img-src \'self\' data:; style-src \'self\'; frame-ancestors \'none\'; base-uri \'self\'; form-action \'none\'\n  Permissions-Policy: camera=(), microphone=(), geolocation=()\n')
     (output / 'robots.txt').write_text('User-agent: *\nAllow: /\nSitemap: https://dpboard.skyline23.com/sitemap.xml\n')

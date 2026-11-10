@@ -11,9 +11,9 @@ python3 script/build-guide.py --check
 python3 script/build-site.py
 ```
 
-The output is `work/site`. The build copies the same English/Korean illustrated guide that ships inside the apps. It reads the published version from `Casks/departure-board.rb`; `--version 0.7.3` can prepare the next release. Download links use server redirects to the macOS universal, Windows x64 and Windows ARM64 release files. The page makes no flight-provider requests or runtime GitHub API calls.
+The output is `work/site`. The build copies the same English/Korean illustrated guide that ships inside the apps. The build reads a release label from `Casks/departure-board.rb`; `--version 0.7.3` can prepare the next release. Download redirects always use GitHub `releases/latest/download/...` and stable asset names, so they automatically follow the newest published release without a site rebuild. The page makes no flight-provider requests or runtime GitHub API calls.
 
-Cloudflare Pages is connected to this repository, with `main` as the production branch, `python3 script/build-site.py` as the build command and `work/site` as the output directory. A published release updates the Homebrew cask, which also updates the site's download target. No additional browser-side release polling is needed.
+Cloudflare Pages is connected to this repository, with `main` as the production branch, `python3 script/build-site.py` as the build command and `work/site` as the output directory. Every published release includes the stable `DepartureBoard-universal.zip` filename alongside its versioned macOS archive. Windows archives already use stable x64 and ARM64 filenames. No additional browser-side release polling is needed.
 
 For a local preview:
 
