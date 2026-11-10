@@ -19,6 +19,7 @@ def main():
         raise SystemExit('Expected a release version such as 0.7.3')
     subprocess.run(['python3', str(ROOT / 'script/build-guide.py'), '--check'], check=True)
     output = ROOT / 'work/site'
+
     if output.exists():
         shutil.rmtree(output)
     output.mkdir(parents=True, exist_ok=True)
