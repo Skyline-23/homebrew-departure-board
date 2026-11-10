@@ -12,7 +12,7 @@ Use an airport departure board as a **live desktop wallpaper**, **screen saver**
 | Windows, Intel or AMD CPU | `DepartureBoard-win-x64.zip` | Windows 11, unsigned preview |
 | Windows, ARM CPU such as Snapdragon | `DepartureBoard-win-arm64.zip` | Windows 11 ARM64, unsigned preview |
 
-Get files from **Assets** on the [official latest release](https://github.com/Skyline-23/homebrew-departure-board/releases/latest). On Windows, open **Settings → System → About → System type** to identify an x64 or ARM-based processor. The Windows packages include the .NET runtime.
+Choose your operating system on the [product download page](https://dpboard.skyline23.com/#download). The download starts directly from the website and always follows the latest published release. On Windows, open **Settings → System → About → System type** to identify an x64 or ARM-based processor. The Windows packages include the .NET runtime.
 
 Open **Install Guide.html** in the extracted download to read this guide in your browser. After installation, use **Install & user guide** in the app. The guide and its pictures work offline; external links and live flight requests need a connection.
 
@@ -54,7 +54,7 @@ Installation is per-user and does not require administrator access. The default 
 
 ### Verify the download
 
-Download the matching `.zip.sha256` file. In PowerShell, run the following and compare the returned hash with the first value in that file. Substitute the ARM64 filename when applicable.
+Download the matching checksum: [Windows x64](https://dpboard.skyline23.com/download/windows-x64.sha256) or [Windows ARM64](https://dpboard.skyline23.com/download/windows-arm64.sha256). In PowerShell, run the following and compare the returned hash with the first value in that file. Substitute the ARM64 filename when applicable.
 
 ```powershell
 Get-FileHash "$env:USERPROFILE\Downloads\DepartureBoard-win-x64.zip" -Algorithm SHA256

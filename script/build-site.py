@@ -25,9 +25,9 @@ def main():
         shutil.copyfile(ROOT / 'site' / name, output / name)
     shutil.copytree(ROOT / 'Resources/Guide', output / 'guide', dirs_exist_ok=True)
     shutil.copytree(ROOT / 'Resources/Guide/images', output / 'images', dirs_exist_ok=True)
-    base = 'https://github.com/Skyline-23/homebrew-departure-board/releases'
-    redirects = [f'/download/macos {base}/latest/download/DepartureBoard-universal.zip 302', f'/download/windows-x64 {base}/latest/download/DepartureBoard-win-x64.zip 302', f'/download/windows-arm64 {base}/latest/download/DepartureBoard-win-arm64.zip 302', '/install /guide/index.html 302', '/install/ko /guide/ko.html 302']
-    (output / '_redirects').write_text('\n'.join(redirects)+'\n')
+    shutil.copyfile(ROOT / 'site/download-worker.js', output / '_worker.js')
+    (output / '_routes.json').write_text('{"version":1,"include":["/download/*"],"exclude":[]}')
+    (output / '_redirects').write_text('/install /guide/index.html 302\n/install/ko /guide/ko.html 302\n')
     (output / '_headers').write_text('/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  Content-Security-Policy: default-src \'self\'; img-src \'self\' data:; style-src \'self\'; frame-ancestors \'none\'; base-uri \'self\'; form-action \'none\'\n  Permissions-Policy: camera=(), microphone=(), geolocation=()\n')
     (output / 'robots.txt').write_text('User-agent: *\nAllow: /\nSitemap: https://dpboard.skyline23.com/sitemap.xml\n')
     (output / 'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+''.join(f'<url><loc>https://dpboard.skyline23.com/{path}</loc></url>' for path in ['', 'ko.html', 'guide/index.html', 'guide/ko.html'])+'</urlset>')

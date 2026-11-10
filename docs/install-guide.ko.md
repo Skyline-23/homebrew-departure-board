@@ -12,7 +12,7 @@
 | Windows — Intel 또는 AMD CPU | `DepartureBoard-win-x64.zip` | Windows 11. 서명 없는 프리뷰 |
 | Windows — Snapdragon 등 ARM CPU | `DepartureBoard-win-arm64.zip` | Windows 11 ARM64. 서명 없는 프리뷰 |
 
-최신 파일은 [공식 릴리스 페이지](https://github.com/Skyline-23/homebrew-departure-board/releases/latest)의 **Assets**에서 받습니다. Windows의 **설정 → 시스템 → 정보 → 시스템 종류**에서 x64 또는 ARM 기반 프로세서인지 확인할 수 있습니다. Windows ZIP에는 .NET 런타임이 포함되어 있어 별도로 설치하지 않아도 됩니다.
+최신 파일은 [제품 다운로드 페이지](https://dpboard.skyline23.com/ko.html#download)에서 운영체제를 골라 받습니다. GitHub 페이지로 이동하지 않고 웹사이트에서 다운로드가 시작되며, 최신 공개 릴리스가 자동으로 연결됩니다. Windows의 **설정 → 시스템 → 정보 → 시스템 종류**에서 x64 또는 ARM 기반 프로세서인지 확인할 수 있습니다. Windows ZIP에는 .NET 런타임이 포함되어 있어 별도로 설치하지 않아도 됩니다.
 
 압축 안의 **Install Guide.html**을 열면 이 설명서가 브라우저에 표시됩니다. 설치 후에도 앱의 **Install & user guide** 버튼으로 다시 열 수 있습니다. 사진과 설명은 로컬 파일이므로 인터넷이 없어도 읽을 수 있습니다. 외부 사이트 링크와 실시간 항공편 조회에는 인터넷이 필요합니다.
 
@@ -54,7 +54,7 @@ Homebrew는 앱을 `/Applications`에 설치하고 화면 보호기를 등록합
 
 ### 다운로드 무결성 확인
 
-ZIP과 이름이 같은 `.zip.sha256` 파일도 받습니다. PowerShell에서 다음 명령을 실행한 뒤 나온 해시를 `.sha256` 파일의 첫 값과 비교합니다. ARM64 파일은 명령의 파일명을 바꾸면 됩니다.
+ZIP에 맞는 체크섬 파일도 받습니다: [Windows x64](https://dpboard.skyline23.com/download/windows-x64.sha256), [Windows ARM64](https://dpboard.skyline23.com/download/windows-arm64.sha256). PowerShell에서 다음 명령을 실행한 뒤 나온 해시를 `.sha256` 파일의 첫 값과 비교합니다. ARM64 파일은 명령의 파일명을 바꾸면 됩니다.
 
 ```powershell
 Get-FileHash "$env:USERPROFILE\Downloads\DepartureBoard-win-x64.zip" -Algorithm SHA256
