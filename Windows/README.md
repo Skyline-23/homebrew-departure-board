@@ -90,3 +90,9 @@ or lock/unlock testing.
 `DepartureBoard.Windows/Rendering` owns airport adapters and drawing.
 `Platform` owns Windows credentials, screen saver, startup and desktop embedding.
 `Views` owns the settings and board windows. `scripts` owns packaging and formatting.
+
+## Troubleshooting
+
+Local diagnostic logs record request results, shared-cache updates and displayed state
+changes. Files rotate automatically and do not contain API keys or response bodies.
+See [diagnostic logs](../docs/diagnostics.md) for the location and capture commands.

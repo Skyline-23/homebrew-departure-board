@@ -57,6 +57,7 @@ internal static class Fixtures
 
         internal int Calls => calls;
         internal bool Fail { get; set; }
+        internal Exception? Fault { get; set; }
 
         protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request,
@@ -64,6 +65,11 @@ internal static class Fixtures
         )
         {
             Interlocked.Increment(ref calls);
+
+            if (Fault is not null)
+            {
+                throw Fault;
+            }
             await Task.Delay(30, cancellationToken);
             return new HttpResponseMessage(
                 Fail ? HttpStatusCode.TooManyRequests : HttpStatusCode.OK

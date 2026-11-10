@@ -14,6 +14,7 @@ internal sealed class BoardSurface : FrameworkElement
     private readonly BoardSession session;
     private readonly BoardRenderer renderer;
     private readonly DispatcherTimer timer;
+    private readonly BoardDiagnostics diagnostics;
     private string? error;
     private int ticks;
 
@@ -21,6 +22,7 @@ internal sealed class BoardSurface : FrameworkElement
     {
 
         this.services = services;
+        diagnostics = new BoardDiagnostics(services.Diagnostics, "view");
         session = new BoardSession(services.Catalog, services.Flights);
         renderer = new BoardRenderer(services.Catalog);
         timer = new DispatcherTimer(DispatcherPriority.Background, Dispatcher)
@@ -46,6 +48,7 @@ internal sealed class BoardSurface : FrameworkElement
         if (session.Frame is { } frame && error is null)
         {
             renderer.Draw(drawingContext, RenderSize, frame);
+            diagnostics.Presented(frame);
         }
         else
         {
@@ -64,6 +67,8 @@ internal sealed class BoardSurface : FrameworkElement
     {
 
         services.SettingsChanged += OnSettingsChanged;
+        services.DataChanged += OnDataChanged;
+        services.Diagnostics.Write(new("view.started", services.Settings.Airport));
         timer.Start();
         Tick();
     }
@@ -73,6 +78,8 @@ internal sealed class BoardSurface : FrameworkElement
 
         timer.Stop();
         services.SettingsChanged -= OnSettingsChanged;
+        services.DataChanged -= OnDataChanged;
+        services.Diagnostics.Write(new("view.stopped", services.Settings.Airport));
     }
 
     private void OnSettingsChanged(object? sender, EventArgs arguments)
@@ -86,6 +93,15 @@ internal sealed class BoardSurface : FrameworkElement
 
         if (IsVisible)
             Tick();
+    }
+
+    private void OnDataChanged(object? sender, EventArgs arguments)
+    {
+
+        if (IsVisible)
+        {
+            Tick();
+        }
     }
 
     public void Tick()
@@ -125,6 +141,9 @@ internal sealed class BoardSurface : FrameworkElement
         }
         catch (ArgumentException exception)
         {
+            services.Diagnostics.Write(
+                new("view.update_failed", services.Settings.Airport, exception.GetType().Name)
+            );
             error = exception.Message;
             InvalidateVisual();
         }

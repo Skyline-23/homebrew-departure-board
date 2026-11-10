@@ -1,6 +1,7 @@
 #import "LiveFlightStore.h"
 #import "DepartureBoardView.h"
 #import "DestinationStore.h"
+#import "Diagnostics.h"
 #import "SettingsStore.h"
 #import <CoreGraphics/CoreGraphics.h>
 #import <LocalAuthentication/LocalAuthentication.h>
@@ -113,6 +114,8 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
     }
 
     if (status != errSecSuccess) {
+        DBDiagnosticEvent(@"credentials", @"credentials.read_failed",
+                          @{@"errorCode" : @(status), @"errorDomain" : NSOSStatusErrorDomain});
         return @"";
     }
     NSData *data = CFBridgingRelease(result);
@@ -353,6 +356,12 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
 
     if ([json isKindOfClass:NSDictionary.class] && modified) {
         [snapshots setObject:@{@"modified" : modified, @"snapshot" : json} forKey:airport];
+        NSDate *fetched = [self dateFromISO:json[@"fetchedAt"]];
+        DBDiagnosticEvent(@"data", @"flight.cache_loaded", @{
+            @"airport" : airport,
+            @"count" : @([json[@"flights"] count]),
+            @"cacheAgeSeconds" : @(fetched ? -fetched.timeIntervalSinceNow : -1)
+        });
     }
     return [json isKindOfClass:NSDictionary.class] ? json : nil;
 }
@@ -539,6 +548,8 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
     int lock = open(lockPath.fileSystemRepresentation, O_CREAT | O_RDWR, 0600);
 
     if (lock < 0) {
+        DBDiagnosticEvent(@"data", @"flight.lock_failed",
+                          @{@"airport" : airport, @"errorCode" : @(errno)});
         return NO;
     }
 
@@ -577,6 +588,8 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
         @"retryAt" : [NSDate dateWithTimeIntervalSinceNow:delay]
     } writeToFile:path
         atomically:YES];
+    DBDiagnosticEvent(@"data", @"flight.retry_scheduled",
+                      @{@"airport" : airport, @"status" : @(status), @"retrySeconds" : @(delay)});
 }
 
 + (BOOL)refreshLockedAirport:(NSString *)airport error:(NSError **)error {
@@ -587,6 +600,8 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
 
     if (fetched && [NSDate.date timeIntervalSinceDate:fetched] < interval &&
         [cached[@"formatVersion"] integerValue] >= 3) {
+        DBDiagnosticEvent(@"data", @"flight.refresh_skipped",
+                          @{@"airport" : airport, @"state" : @"fresh_cache"});
         return YES;
     }
     NSString *retryPath =
@@ -594,11 +609,18 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
     NSDictionary *retry = [NSDictionary dictionaryWithContentsOfFile:retryPath];
 
     if ([retry[@"retryAt"] timeIntervalSinceNow] > 0) {
+        DBDiagnosticEvent(@"data", @"flight.refresh_skipped", @{
+            @"airport" : airport,
+            @"state" : @"backoff",
+            @"retrySeconds" : @([retry[@"retryAt"] timeIntervalSinceNow])
+        });
         return YES;
     }
     NSString *key = [self APIKey];
 
     if (!key.length) {
+        DBDiagnosticEvent(@"data", @"flight.request_failed",
+                          @{@"airport" : airport, @"state" : @"credential_unavailable"});
         [self recordFailureForAirport:airport status:401 retryAfter:nil];
 
         if (error) {
@@ -621,6 +643,8 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
     NSMutableURLRequest *request =
         [NSMutableURLRequest requestWithURL:[NSURL URLWithString:address]];
     request.timeoutInterval = 25;
+    NSTimeInterval started = NSProcessInfo.processInfo.systemUptime;
+    DBDiagnosticEvent(@"data", @"flight.request_started", @{@"airport" : airport});
     [request setValue:key forHTTPHeaderField:@"X-RapidAPI-Key"];
     [request setValue:@"aerodatabox.p.rapidapi.com" forHTTPHeaderField:@"X-RapidAPI-Host"];
     dispatch_semaphore_t done = dispatch_semaphore_create(0);
@@ -637,12 +661,20 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
           }] resume];
 
     if (dispatch_semaphore_wait(done, dispatch_time(DISPATCH_TIME_NOW, 30 * NSEC_PER_SEC)) != 0) {
+        DBDiagnosticEvent(@"data", @"flight.request_failed",
+                          @{@"airport" : airport, @"state" : @"timeout"});
         [self recordFailureForAirport:airport status:0 retryAfter:nil];
         return NO;
     }
     NSInteger status = [(NSHTTPURLResponse *)response statusCode];
 
     if (failure || status != 200) {
+        DBDiagnosticEvent(@"data", @"flight.request_failed", @{
+            @"airport" : airport,
+            @"status" : @(status),
+            @"errorDomain" : failure.domain ?: @"HTTP",
+            @"errorCode" : @(failure.code)
+        });
         [self recordFailureForAirport:airport
                                status:status
                            retryAfter:[(NSHTTPURLResponse *)response
@@ -667,6 +699,8 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
 
     if (![body isKindOfClass:NSDictionary.class] ||
         ![body[@"departures"] isKindOfClass:NSArray.class]) {
+        DBDiagnosticEvent(@"data", @"flight.request_failed",
+                          @{@"airport" : airport, @"state" : @"invalid_response"});
         [self recordFailureForAirport:airport status:status retryAfter:nil];
         return NO;
     }
@@ -675,6 +709,13 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
     BOOL saved = [normalized writeToURL:[self cacheURLForAirport:airport]
                                 options:NSDataWritingAtomic
                                   error:error];
+    DBDiagnosticEvent(@"data", @"flight.request_finished", @{
+        @"airport" : airport,
+        @"state" : saved ? @"saved" : @"cache_write_failed",
+        @"status" : @(status),
+        @"count" : @([snapshot[@"flights"] count]),
+        @"elapsedMs" : @((NSProcessInfo.processInfo.systemUptime - started) * 1000)
+    });
 
     if (saved) {
         [NSFileManager.defaultManager removeItemAtPath:retryPath error:NULL];

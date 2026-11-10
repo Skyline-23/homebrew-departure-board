@@ -278,6 +278,28 @@ static BOOL VerifySystemFontScaling(void) {
     return visible > 30;
 }
 
+static BOOL VerifyDiagnosticPrivacy(void) {
+
+    typedef NSDictionary *(*FilterFields)(NSDictionary *);
+    typedef void (*LogEvent)(NSString *, NSString *, NSDictionary *);
+    FilterFields filter = (FilterFields)dlsym(RTLD_DEFAULT, "DBDiagnosticFields");
+    LogEvent log = (LogEvent)dlsym(RTLD_DEFAULT, "DBDiagnosticEvent");
+
+    if (!filter || !log) {
+        return NO;
+    }
+    NSDictionary *input = @{
+        @"airport" : @"HND",
+        @"status" : @429,
+        @"apiKey" : @"diagnostic-secret-sentinel",
+        @"url" : @"https://private.example",
+        @"responseBody" : @"diagnostic-body-sentinel"
+    };
+    NSDictionary *safe = filter(input);
+    log(@"validation", @"diagnostics.privacy_check", input);
+    return safe.count == 2 && [safe[@"airport"] isEqual:@"HND"] && [safe[@"status"] isEqual:@429];
+}
+
 static BOOL VerifyAvailabilityStates(Class store) {
 
     NSString *folder =
@@ -562,10 +584,11 @@ int main(int argc, const char *argv[]) {
         }
 
         if (!VerifyAirportAdapters(board) || !VerifyCompactScale(board) || !VerifyAirlineLogos() ||
-            !VerifySystemFontScaling() || !VerifyAvailabilityStates(store) ||
-            !VerifySnapshotConfiguration(board) || !VerifySharedRowsCache(store) ||
-            !VerifyContentDrivenRendering(board, store) || !VerifyFlapTimer(board) ||
-            !VerifySharedRefreshLock(store) || !VerifyRefreshWithoutHostFrames(principal, store)) {
+            !VerifySystemFontScaling() || !VerifyDiagnosticPrivacy() ||
+            !VerifyAvailabilityStates(store) || !VerifySnapshotConfiguration(board) ||
+            !VerifySharedRowsCache(store) || !VerifyContentDrivenRendering(board, store) ||
+            !VerifyFlapTimer(board) || !VerifySharedRefreshLock(store) ||
+            !VerifyRefreshWithoutHostFrames(principal, store)) {
             return 1;
         }
         [preview stopAnimation];

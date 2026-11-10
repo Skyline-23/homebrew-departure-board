@@ -1,4 +1,5 @@
 #import "BoardViewInternal.h"
+#import "Diagnostics.h"
 #import "DrawingSupport.h"
 #import "LiveFlightStore.h"
 #import "SettingsStore.h"
@@ -184,6 +185,20 @@
             }
         }
         NSInteger page = (NSInteger)floor((uptime - self.startTime) / 15.0);
+        NSString *state = rows.count ? @"ready" : emptyMessage;
+        NSString *mode = self.useSampleData || self.referenceDate ? @"sample" : @"live";
+        NSString *diagnosticsState =
+            [NSString stringWithFormat:@"%@:%@:%@", self.locationCode, mode, state];
+
+        if (![self.diagnosticsState isEqual:diagnosticsState]) {
+            self.diagnosticsState = diagnosticsState;
+            DBDiagnosticEvent(@"board", @"board.state_changed", @{
+                @"airport" : self.locationCode ?: @"",
+                @"state" : state,
+                @"mode" : mode,
+                @"count" : @(rows.count)
+            });
+        }
         BOOL changed = self.lastRenderedSecond < 0 || self.referenceDate || animating ||
                        finishedAnimation ||
                        floor(second / 60) != floor(self.lastRenderedSecond / 60) ||

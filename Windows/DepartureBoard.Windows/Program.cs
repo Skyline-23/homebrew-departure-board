@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows;
+using DepartureBoard.Core.Diagnostics;
 using DepartureBoard.Core.Runtime;
 using DepartureBoard.Windows.Platform;
 
@@ -29,6 +30,7 @@ internal static class Program
             }
 
             using var services = new AppServices();
+            services.Diagnostics.Write(new("app.started", State: options.Mode.ToString()));
 
             if (options.Mode is LaunchMode.ScreenSaver or LaunchMode.Preview)
             {
@@ -82,6 +84,13 @@ internal static class Program
                 Console.Error.WriteLine(error);
                 return 1;
             }
+
+            var logs = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "DepartureBoard",
+                "Logs"
+            );
+            new DiagnosticLog(logs).Write(new("app.unhandled_error", State: error.GetType().Name));
 
             MessageBox.Show(
                 error.Message,
