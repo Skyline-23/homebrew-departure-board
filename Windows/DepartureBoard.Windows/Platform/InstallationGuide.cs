@@ -28,6 +28,6 @@ internal static class InstallationGuide
                 path
             );
         }
-        Process.Start(new ProcessStartInfo(new Uri(path).AbsoluteUri) { UseShellExecute = true });
+        Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
     }
 }
