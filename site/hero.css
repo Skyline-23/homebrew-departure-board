@@ -31,6 +31,7 @@
   padding: 64px var(--page-gutter) 32px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   background: var(--bg);
 }
 
@@ -78,6 +79,36 @@
 
 .site-header nav a {
   font-size: 16px;
+}
+
+.site-header .nav-install {
+  justify-content: center;
+  min-height: 38px;
+  padding: 7px 18px;
+  border-radius: 4px;
+  background: var(--text);
+  color: var(--bg);
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.site-header .nav-install:hover {
+  text-decoration: none;
+  background: #373832;
+}
+
+.platform-downloads {
+  padding: 0;
+  border: 0;
+}
+.platform-downloads summary {
+  min-height: auto;
+  font-weight: 400;
+}
+.platform-downloads div {
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 16px;
 }
 
 .language-link {
@@ -249,7 +280,7 @@
   grid-template-columns: minmax(0, 25%) minmax(0, 1fr);
   gap: 26px;
   min-height: 0;
-  flex: 1;
+  flex: 0 1 auto;
   align-items: stretch;
 }
 
@@ -326,7 +357,8 @@
   overflow: hidden;
   border: 0;
   border-radius: 0;
-  background: #081323;
+  aspect-ratio: 16 / 9;
+  background: transparent;
   color-scheme: light;
   cursor: zoom-in;
 }
@@ -444,42 +476,12 @@
   border-radius: 4px;
 }
 
-.editorial-product .download {
-  padding: 28px 0;
-  border-radius: 0;
-  background: transparent;
-}
-
-.guide-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 28px;
-  min-height: 56px;
-  padding: 14px 22px;
-  border: 1px solid var(--text);
-  border-radius: 3px;
-  color: var(--text);
-  font-size: 17px;
-  font-weight: 650;
-}
-
-.guide-button:hover {
-  background: var(--text);
-  color: var(--bg);
-  text-decoration: none;
-}
-
-.guide-button:hover img {
-  filter: invert(1);
-}
-
-.editorial-product pre {
-  border-radius: 4px;
-}
-
 .editorial-product footer {
   padding: 32px 0 48px;
+  flex-wrap: wrap;
+}
+.editorial-product footer > div {
+  flex-wrap: wrap;
 }
 
 .reveal-ready {
@@ -583,7 +585,14 @@ html[lang="en"] .hero-copy h1 {
     font-size: 17px;
   }
   .site-header nav {
-    gap: 16px;
+    gap: 12px;
+  }
+  .site-header .nav-guide {
+    display: none;
+  }
+  .site-header .nav-install {
+    padding: 6px 12px;
+    font-size: 13px;
   }
   .site-header nav a {
     font-size: 13px;
@@ -684,6 +693,9 @@ html[lang="en"] .hero-copy h1 {
 }
 
 @media (max-width: 380px) {
+  .site-header {
+    gap: 12px;
+  }
   .site-header .brand {
     font-size: 14px;
     gap: 8px;

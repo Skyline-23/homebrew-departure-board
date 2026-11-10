@@ -42,6 +42,12 @@
 
 The user requested an installation action and persistent top navigation during final review. The whole-page fixed navigation now stays at y=0 with a 64px height while the install section is visible. `work/design/editorial-install-button.png` shows the outlined installation-guide action below the installation details. Clicking it opened the Korean guide. The primary download-link count remains one. The initial composition was recaptured and compared in `editorial-comparison-final.jpg` after these changes.
 
+## Final user-directed changes
+
+The user clarified that Install belongs in the fixed navigation and that the long installation block is unnecessary. The final page therefore has an Install action in the masthead and a Get action in the hero, both targeting the same platform-specific latest asset. The duplicate compatibility paragraphs, Homebrew command and large installation section are removed. Other platform links remain in a compact footer disclosure. The header Install action was clicked and downloaded the published macOS ZIP successfully. At 320px the header, Install action and language link fit with no overflow.
+
+The fixed browser test viewport has been cleared. At the actual 2200 × 1452 window, the preview measures 1138 × 640 CSS pixels. The preview row no longer grows to fill excess vertical space. At 1440 × 1024 it measures 972 × 547, and at 390 × 844 it measures 350 × 197. The complete native image remains contained at shorter heights. Evidence is `editorial-final-nav.png`, `editorial-final-nav-mobile.png`, `editorial-fluid-actual.png` and `editorial-fluid-1440.png`. The final full-view comparison has been regenerated after these changes.
+
 ## Remaining scope
 
 No actionable P0, P1 or P2 design findings remain. Native Windows rendering and installation results are documented in `Windows/VALIDATION.md`; this page-only change does not provide new native-device test evidence. Minor platform-font and generated-texture differences are accepted P3 differences from the static mock.

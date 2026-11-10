@@ -52,8 +52,8 @@
       content="Departure Board — Airport wallpaper and screen saver"
     />
     <script src="/download.js?v=setup-1" defer></script>
-    <link rel="stylesheet" href="hero.css?v=editorial-4" />
-    <script type="module" src="airport-demo.js?v=editorial-4"></script>
+    <link rel="stylesheet" href="hero.css?v=editorial-6" />
+    <script type="module" src="airport-demo.js?v=editorial-6"></script>
     <noscript
       ><style>
         .airport-hero {
@@ -74,7 +74,8 @@
         ><img src="icon.png" alt="" width="32" height="32" />Departure Board</a
       >
       <nav aria-label="Site navigation">
-        <a href="guide/index.html">Installation guide</a>
+        <a class="nav-guide" href="guide/index.html">Installation guide</a>
+        <a class="nav-install" data-download href="/download">Install</a>
         <a class="language-link" href="ko.html" lang="ko">KO</a>
       </nav>
     </header>
@@ -240,44 +241,6 @@
           </figure>
         </div>
       </section>
-      <section class="section" id="download">
-        <h2>Bring it to your desktop.</h2>
-        <p>Free · macOS 12+ · Windows 11</p>
-        <article class="download">
-          <h3>macOS & Windows</h3>
-          <p>
-            macOS 12 or later · Windows 11. The Get button selects the file for
-            your computer.
-          </p>
-          <details>
-            <summary>Other operating systems</summary>
-            <p>
-              <a
-                href="https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-universal.zip"
-                >macOS · Universal</a
-              ><br /><a
-                href="https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-win-x64-Setup.exe"
-                >Windows · x64</a
-              ><br /><a
-                href="https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-win-arm64-Setup.exe"
-                >Windows · ARM64</a
-              >
-            </p>
-          </details>
-          <p>Homebrew</p>
-          <pre><code>brew install --cask skyline-23/departure-board/departure-board</code></pre>
-        </article>
-
-        <p>
-          <a class="guide-button" href="guide/index.html"
-            >View installation guide<img
-              src="arrow-right.svg"
-              width="22"
-              height="22"
-              alt=""
-          /></a>
-        </p>
-      </section>
       <section class="section">
         <h2>A few things to know</h2>
         <details>
@@ -315,15 +278,34 @@
         </details>
       </section>
     </main>
-    <footer>
+    <footer id="download">
       <span>Made by Skyline23</span>
       <div>
+        <a href="guide/index.html">Installation guide</a>
+
         <a href="https://portfolio.skyline23.com/en/projects/departure-board"
           >Portfolio</a
         ><a href="https://github.com/Skyline-23/homebrew-departure-board"
           >GitHub</a
         ><a href="https://blog.skyline23.com">Blog</a>
       </div>
+      <details class="platform-downloads">
+        <summary>Other platforms</summary>
+        <div>
+          <a
+            href="https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-universal.zip"
+            >macOS · Universal</a
+          >
+          <a
+            href="https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-win-x64-Setup.exe"
+            >Windows · x64</a
+          >
+          <a
+            href="https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-win-arm64-Setup.exe"
+            >Windows · ARM64</a
+          >
+        </div>
+      </details>
     </footer>
   </body>
 </html>

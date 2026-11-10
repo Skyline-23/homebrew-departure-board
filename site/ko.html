@@ -52,8 +52,8 @@
       content="Departure Board — 공항 전광판 배경화면과 화면 보호기"
     />
     <script src="/download.js?v=setup-1" defer></script>
-    <link rel="stylesheet" href="hero.css?v=editorial-4" />
-    <script type="module" src="airport-demo.js?v=editorial-4"></script>
+    <link rel="stylesheet" href="hero.css?v=editorial-6" />
+    <script type="module" src="airport-demo.js?v=editorial-6"></script>
     <noscript
       ><style>
         .airport-hero {
@@ -74,7 +74,8 @@
         ><img src="icon.png" alt="" width="32" height="32" />Departure Board</a
       >
       <nav aria-label="사이트 메뉴">
-        <a href="guide/ko.html">설치 설명서</a>
+        <a class="nav-guide" href="guide/ko.html">설치 설명서</a>
+        <a class="nav-install" data-download href="/download">설치하기</a>
         <a class="language-link" href="index.html" lang="en">EN</a>
       </nav>
     </header>
@@ -240,44 +241,6 @@
           </figure>
         </div>
       </section>
-      <section class="section" id="download">
-        <h2>내 컴퓨터에 설치하기</h2>
-        <p>무료 · macOS 12+ · Windows 11</p>
-        <article class="download">
-          <h3>macOS & Windows</h3>
-          <p>
-            macOS 12 이상 · Windows 11. 받기를 누르면 현재 컴퓨터에 맞는 파일이
-            다운로드됩니다.
-          </p>
-          <details>
-            <summary>다른 운영체제</summary>
-            <p>
-              <a
-                href="https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-universal.zip"
-                >macOS · Universal</a
-              ><br /><a
-                href="https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-win-x64-Setup.exe"
-                >Windows · x64</a
-              ><br /><a
-                href="https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-win-arm64-Setup.exe"
-                >Windows · ARM64</a
-              >
-            </p>
-          </details>
-          <p>Homebrew</p>
-          <pre><code>brew install --cask skyline-23/departure-board/departure-board</code></pre>
-        </article>
-
-        <p>
-          <a class="guide-button" href="guide/ko.html"
-            >설치 방법 보기<img
-              src="arrow-right.svg"
-              width="22"
-              height="22"
-              alt=""
-          /></a>
-        </p>
-      </section>
       <section class="section">
         <h2>자주 묻는 질문</h2>
         <details>
@@ -314,15 +277,34 @@
         </details>
       </section>
     </main>
-    <footer>
+    <footer id="download">
       <span>개발: Skyline23</span>
       <div>
+        <a href="guide/ko.html">설치 설명서</a>
+
         <a href="https://portfolio.skyline23.com/ko/projects/departure-board"
           >포트폴리오</a
         ><a href="https://github.com/Skyline-23/homebrew-departure-board"
           >GitHub</a
         ><a href="https://blog.skyline23.com">Blog</a>
       </div>
+      <details class="platform-downloads">
+        <summary>다른 운영체제</summary>
+        <div>
+          <a
+            href="https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-universal.zip"
+            >macOS · Universal</a
+          >
+          <a
+            href="https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-win-x64-Setup.exe"
+            >Windows · x64</a
+          >
+          <a
+            href="https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/DepartureBoard-win-arm64-Setup.exe"
+            >Windows · ARM64</a
+          >
+        </div>
+      </details>
     </footer>
   </body>
 </html>
