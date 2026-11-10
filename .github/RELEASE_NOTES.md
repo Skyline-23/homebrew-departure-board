@@ -3,6 +3,7 @@ Departure Board now includes **macOS 12+** (Apple Silicon and Intel) and a **Win
 - Record request failures, cache updates, display-state changes and lifecycle events without logging API keys or response bodies. See [diagnostic logs](https://github.com/Skyline-23/homebrew-departure-board/blob/main/docs/diagnostics.md).
 - Update visible Windows boards when a flight request completes, and leave the loading state when a background request fails.
 - Show duplicate gate and check-in labels only once, while preserving distinct counters and gate ranges.
+- Display a dash for unavailable gate, terminal and check-in values, and show scheduled statuses instead of blank remarks. Reuse parsed macOS colors and avoid unnecessary label splitting.
 - Use the same 40 airport profiles as a live desktop wallpaper or screen saver.
 - Display settings now share the same choices on both platforms: style, language, row density, brightness, reduced motion, scale and refresh interval.
 - Desktop layouts leave room for the menu bar, Dock or taskbar, keeping headers, rows and footers inside the usable screen area.

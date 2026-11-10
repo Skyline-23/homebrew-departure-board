@@ -78,6 +78,10 @@ public static class FlightRows
     private static string DistinctLocationLabels(string value)
     {
 
+        if (!value.Contains(','))
+        {
+            return value.Trim();
+        }
         var labels = value
             .Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
             .Distinct(StringComparer.OrdinalIgnoreCase);

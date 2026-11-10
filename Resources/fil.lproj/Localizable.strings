@@ -23,6 +23,7 @@
 "data.noDepartures" = "Walang pag-alis sa panahong ito";
 
 "data.unavailable" = "Pansamantalang hindi available ang impormasyon ng mga flight";
+"data.notAssigned" = "—";
 
 "data.configure" = "I-set up ang live na datos ng flight sa Departure Board";
 

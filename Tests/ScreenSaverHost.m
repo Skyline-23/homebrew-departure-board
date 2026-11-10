@@ -231,6 +231,26 @@ static BOOL VerifyDistinctLocationLabels(Class store) {
     return passed;
 }
 
+static BOOL VerifyMissingFieldText(void) {
+
+    NSString *(*placeholder)(NSString *, NSString *) = dlsym(RTLD_DEFAULT, "DBValueOrPlaceholder");
+    NSString *(*status)(NSString *, NSString *) = dlsym(RTLD_DEFAULT, "DBStatusText");
+    NSColor *(*color)(NSString *) = dlsym(RTLD_DEFAULT, "DBColor");
+
+    if (!placeholder || !status || !color) {
+        return NO;
+    }
+    BOOL text = [placeholder(nil, @"en") isEqual:@"—"] &&
+                [placeholder(@" \t", @"ja") isEqual:@"—"] &&
+                [placeholder(@"A12", @"ko") isEqual:@"A12"] &&
+                [status(nil, @"en") isEqual:@"Status unavailable"] &&
+                [status(@"scheduled", @"en") isEqual:@"On time"];
+    NSColor *first = color(@"123456");
+    BOOL reused = first == color(@"123456") && fabs(first.redComponent - 18.0 / 255.0) < .0001 &&
+                  fabs(color(nil).redComponent - 1) < .0001;
+    return text && reused;
+}
+
 static BOOL VerifyCompactScale(DBBoardView *board) {
 
     NSDictionary *saved = board.snapshotConfiguration;
@@ -621,8 +641,9 @@ int main(int argc, const char *argv[]) {
             !VerifySystemFontScaling() || !VerifyDiagnosticPrivacy() ||
             !VerifyAvailabilityStates(store) || !VerifySnapshotConfiguration(board) ||
             !VerifySharedRowsCache(store) || !VerifyDistinctLocationLabels(store) ||
-            !VerifyContentDrivenRendering(board, store) || !VerifyFlapTimer(board) ||
-            !VerifySharedRefreshLock(store) || !VerifyRefreshWithoutHostFrames(principal, store)) {
+            !VerifyMissingFieldText() || !VerifyContentDrivenRendering(board, store) ||
+            !VerifyFlapTimer(board) || !VerifySharedRefreshLock(store) ||
+            !VerifyRefreshWithoutHostFrames(principal, store)) {
             return 1;
         }
         [preview stopAnimation];

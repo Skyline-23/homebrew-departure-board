@@ -23,6 +23,7 @@
 "data.noDepartures" = "Ingen afgange i dette tidsrum";
 
 "data.unavailable" = "Flyoplysninger er midlertidigt utilgængelige";
+"data.notAssigned" = "—";
 
 "data.configure" = "Konfigurer flydata i realtid i Departure Board";
 

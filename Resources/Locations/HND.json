@@ -174,7 +174,6 @@
     "bodyFont": "ArialMT",
     "headerFont": "Arial-BoldMT",
     "uppercaseDestinations": true,
-    "hideScheduledStatus": true,
     "rowFontScale": 0.85,
     "minimumHeaderHeight": 170,
     "verticalRules": "20384b",

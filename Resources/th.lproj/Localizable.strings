@@ -23,6 +23,7 @@
 "data.noDepartures" = "ไม่มีเที่ยวบินขาออกในช่วงเวลานี้";
 
 "data.unavailable" = "ข้อมูลเที่ยวบินไม่พร้อมใช้งานชั่วคราว";
+"data.notAssigned" = "—";
 
 "data.configure" = "ตั้งค่าข้อมูลเที่ยวบินสดใน Departure Board";
 

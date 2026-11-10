@@ -20,6 +20,14 @@ static NSDictionary *ObjectDictionary(id value) {
 
 static NSString *DistinctLocationLabels(NSString *value) {
 
+    if (!value.length) {
+        return @"";
+    }
+
+    if ([value rangeOfString:@","].location == NSNotFound) {
+        return
+            [value stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
+    }
     NSMutableArray<NSString *> *labels = NSMutableArray.new;
     NSMutableSet<NSString *> *seen = NSMutableSet.new;
 

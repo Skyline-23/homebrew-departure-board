@@ -58,6 +58,25 @@ Reject(() => LaunchOptions.Parse(["/p", "0"]), "Reject an invalid preview parent
 
 Check(catalog.City("TYO", "en") == "TOKYO", "Resolve sample city strings.");
 Check(catalog.City("TYO", "ko") == "도쿄", "Translate sample city strings.");
+
+foreach (var language in new[] { "en", "ja", "ko" })
+{
+    Check(
+        catalog.Strings.ValueOrPlaceholder("", language) == "—"
+            && catalog.Strings.ValueOrPlaceholder(" \t", language) == "—",
+        "Missing gate and counter values should remain visibly unavailable."
+    );
+    Check(
+        catalog.Strings.ValueOrPlaceholder("A12", language) == "A12",
+        "Preserve an assigned gate or counter value."
+    );
+    Check(
+        catalog.Strings.Get("status.unknown", language).Length > 0
+            && catalog.Strings.Get("status.scheduled", language).Length > 0,
+        "Known and unavailable flight statuses must have visible labels."
+    );
+}
+
 var sampleGates = SampleSchedule
     .Rows(catalog, catalog.Get("ICN"), now, "en")
     .Select(row => row.Gate)

@@ -61,7 +61,7 @@ internal sealed class FlapRenderer(StringCatalog strings)
                 row.Time,
                 row.Destination.ToUpperInvariant(),
                 row.Flight,
-                row.Gate,
+                strings.ValueOrPlaceholder(row.Gate, frame.Language),
                 strings.Get("status." + row.Status, frame.Language).ToUpperInvariant(),
             };
 

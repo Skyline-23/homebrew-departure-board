@@ -23,6 +23,7 @@
 "data.noDepartures" = "इस समयावधि में कोई प्रस्थान नहीं है";
 
 "data.unavailable" = "उड़ान जानकारी अस्थायी रूप से उपलब्ध नहीं है";
+"data.notAssigned" = "—";
 
 "data.configure" = "Departure Board में लाइव उड़ान डेटा सेट करें";
 

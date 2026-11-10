@@ -95,6 +95,7 @@
 "data.noDepartures" = "この時間帯の出発便はありません";
 
 "data.unavailable" = "運航情報を一時的に表示できません";
+"data.notAssigned" = "—";
 
 "data.configure" = "Departure Boardで運航情報を設定してください";
 

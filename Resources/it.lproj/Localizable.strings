@@ -87,6 +87,7 @@
 "data.noDepartures" = "Nessuna partenza in questa fascia oraria";
 
 "data.unavailable" = "Informazioni sui voli temporaneamente non disponibili";
+"data.notAssigned" = "—";
 
 "data.configure" = "Configura i voli in tempo reale in Departure Board";
 
