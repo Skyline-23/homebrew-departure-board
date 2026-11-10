@@ -10,6 +10,7 @@ output.mkdir(parents=True, exist_ok=True)
 shutil.copyfile(ROOT / 'site/icon.png', output / 'icon.png')
 shutil.copyfile(ROOT / 'Resources/Guide/images/board-incheon.png', output / 'board.png')
 template = (ROOT / 'site/og-template.html').read_text()
+
 for language, title, description in [
     ('ko', '공항 전광판을<br>배경화면으로', '배경화면 · 화면 보호기'),
     ('en', 'Your airport.<br>On your desktop.', 'Wallpaper & screen saver'),

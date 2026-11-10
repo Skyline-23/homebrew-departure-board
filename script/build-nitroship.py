@@ -10,6 +10,7 @@ def main():
 
     subprocess.run(['python3', str(ROOT / 'script/build-site.py')], check=True)
     output = ROOT / 'work/nitroship'
+
     if output.exists():
         shutil.rmtree(output)
     output.mkdir(parents=True, exist_ok=True)
