@@ -379,6 +379,54 @@ static BOOL VerifySharedRefreshLock(Class store) {
     return started && reused && calls == 1;
 }
 
+static BOOL VerifyRefreshWithoutHostFrames(Class principal, Class store) {
+
+    Method rowsMethod = class_getClassMethod(store, @selector(rowsForLocation:now:));
+    Method availabilityMethod = class_getClassMethod(store, @selector(availabilityForAirport:));
+    IMP originalRows = method_getImplementation(rowsMethod);
+    IMP originalAvailability = method_getImplementation(availabilityMethod);
+    __block NSArray *rows = @[];
+    IMP mockRows = imp_implementationWithBlock(^id(id receiver, id location, id now) {
+        return rows;
+    });
+    IMP mockAvailability = imp_implementationWithBlock(^NSInteger(id receiver, id airport) {
+        return DBFlightAvailabilityLoading;
+    });
+    method_setImplementation(rowsMethod, mockRows);
+    method_setImplementation(availabilityMethod, mockAvailability);
+    ScreenSaverView *saver = [[principal alloc] initWithFrame:NSMakeRect(0, 0, 800, 450)
+                                                    isPreview:YES];
+    DBBoardView *board = (DBBoardView *)saver.subviews.firstObject;
+    board.useSampleData = NO;
+    board.locationCode = @"HND";
+    [board tick];
+    BOOL loading = [[board valueForKey:@"emptyMessageKey"] isEqual:@"data.loading"];
+    rows = @[ @{@"flight" : @"NH 1"} ];
+    NSDate *deadline = [NSDate dateWithTimeIntervalSinceNow:3];
+
+    // ExtensionKit can retain the view without delivering animateOneFrame.
+    // A completed cache refresh must still replace the initial loading frame.
+
+    while (![[board valueForKey:@"rows"] count] && deadline.timeIntervalSinceNow > 0) {
+        [NSRunLoop.currentRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:.05]];
+    }
+    BOOL refreshed = [[board valueForKey:@"rows"] count] == 1;
+    [saver stopAnimation];
+    rows = @[];
+    [NSRunLoop.currentRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1.2]];
+    BOOL stopped = [[board valueForKey:@"rows"] count] == 1;
+    method_setImplementation(rowsMethod, originalRows);
+    method_setImplementation(availabilityMethod, originalAvailability);
+    imp_removeBlock(mockRows);
+    imp_removeBlock(mockAvailability);
+
+    if (!loading || !refreshed || !stopped) {
+        fprintf(stderr, "Host callback recovery: loading=%d refreshed=%d stopped=%d\n", loading,
+                refreshed, stopped);
+    }
+    return loading && refreshed && stopped;
+}
+
 int main(int argc, const char *argv[]) {
 
     @autoreleasepool {
@@ -517,7 +565,7 @@ int main(int argc, const char *argv[]) {
             !VerifySystemFontScaling() || !VerifyAvailabilityStates(store) ||
             !VerifySnapshotConfiguration(board) || !VerifySharedRowsCache(store) ||
             !VerifyContentDrivenRendering(board, store) || !VerifyFlapTimer(board) ||
-            !VerifySharedRefreshLock(store)) {
+            !VerifySharedRefreshLock(store) || !VerifyRefreshWithoutHostFrames(principal, store)) {
             return 1;
         }
         [preview stopAnimation];

@@ -1,6 +1,17 @@
 #import "DepartureBoardView.h"
 #import "SettingsStore.h"
 #import <ScreenSaver/ScreenSaver.h>
+#import <os/log.h>
+
+static os_log_t ScreenSaverLog(void) {
+
+    static os_log_t log;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        log = os_log_create("com.skyline23.departureboard.saver", "refresh");
+    });
+    return log;
+}
 
 // The system owns animation timing. The board redraws only when its content changes.
 @interface DepartureBoardSaver : ScreenSaverView
@@ -8,6 +19,9 @@
 @property(nonatomic, strong) NSWindow *options;
 @property(nonatomic, copy) NSString *heartbeatPath;
 @property(nonatomic) NSTimeInterval lastHeartbeat;
+@property(nonatomic, strong) NSTimer *refreshTimer;
+@property(nonatomic) NSTimeInterval lastHostFrameTime;
+@property(nonatomic) BOOL refreshingWithoutHost;
 @end
 
 @implementation DepartureBoardSaver
@@ -19,23 +33,81 @@
         self.board = [[DBBoardView alloc] initWithFrame:self.bounds];
         self.board.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
         [self addSubview:self.board];
+        [self startRefreshTimer];
     }
     return self;
 }
 
 - (void)startAnimation {
 
+    os_log_info(ScreenSaverLog(), "Screen saver started; preview=%d", self.isPreview);
     [self.board reloadSettings];
     [self updateHeartbeat];
+    [self startRefreshTimer];
     [super startAnimation];
 }
 
 - (void)stopAnimation {
 
+    os_log_info(ScreenSaverLog(), "Screen saver stopped; preview=%d", self.isPreview);
+    [self.refreshTimer invalidate];
+    self.refreshTimer = nil;
+
     if (self.heartbeatPath.length) {
         [NSFileManager.defaultManager removeItemAtPath:self.heartbeatPath error:NULL];
     }
     [super stopAnimation];
+}
+
+- (void)dealloc {
+
+    [self.refreshTimer invalidate];
+}
+
+- (void)viewDidMoveToWindow {
+
+    [super viewDidMoveToWindow];
+
+    if (self.window) {
+        [self startRefreshTimer];
+    } else {
+        [self.refreshTimer invalidate];
+        self.refreshTimer = nil;
+    }
+}
+
+- (void)startRefreshTimer {
+
+    if (self.refreshTimer.valid) {
+        return;
+    }
+    // Some ExtensionKit hosts keep presenting the initial view without sending
+    // animation callbacks. Continue polling its shared cache in that case.
+    __weak DepartureBoardSaver *weakSelf = self;
+    self.refreshTimer = [NSTimer
+        timerWithTimeInterval:1
+                      repeats:YES
+                        block:^(NSTimer *timer) {
+                            DepartureBoardSaver *saver = weakSelf;
+
+                            if (!saver) {
+                                [timer invalidate];
+                                return;
+                            }
+                            NSTimeInterval elapsed =
+                                NSProcessInfo.processInfo.systemUptime - saver.lastHostFrameTime;
+
+                            if (elapsed >= 1.5) {
+                                if (!saver.refreshingWithoutHost) {
+                                    saver.refreshingWithoutHost = YES;
+                                    os_log_info(ScreenSaverLog(),
+                                                "Host frames paused; refreshing shared cache");
+                                }
+                                [saver refreshBoard];
+                            }
+                        }];
+    self.refreshTimer.tolerance = .1;
+    [NSRunLoop.mainRunLoop addTimer:self.refreshTimer forMode:NSRunLoopCommonModes];
 }
 
 - (void)setFrameSize:(NSSize)size {
@@ -46,8 +118,22 @@
 
 - (void)animateOneFrame {
 
+    if (self.refreshingWithoutHost) {
+        os_log_info(ScreenSaverLog(), "Host animation callbacks resumed");
+        self.refreshingWithoutHost = NO;
+    }
+    self.lastHostFrameTime = NSProcessInfo.processInfo.systemUptime;
+    [self refreshBoard];
+}
+
+- (void)refreshBoard {
+
     [self.board tick];
-    self.animationTimeInterval = self.board.preferredAnimationInterval;
+    NSTimeInterval interval = self.board.preferredAnimationInterval;
+
+    if (fabs(self.animationTimeInterval - interval) >= .001) {
+        self.animationTimeInterval = interval;
+    }
 
     if (NSDate.timeIntervalSinceReferenceDate - self.lastHeartbeat > 30) {
         [self updateHeartbeat];
