@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using DepartureBoard.Core.Diagnostics;
 
@@ -14,7 +16,12 @@ public sealed class FlightRepository(
 
     private sealed record CachedFile(DateTime ModifiedAt, FlightSnapshot Snapshot);
 
-    private sealed record RetryState(DateTimeOffset After, string Message);
+    private sealed record RetryState(
+        DateTimeOffset After,
+        string Message,
+        string? CredentialHash = null,
+        int Attempts = 1
+    );
 
     private readonly SemaphoreSlim gate = new(1, 1);
     private readonly Dictionary<string, CachedFile> memory = [];
@@ -127,6 +134,13 @@ public sealed class FlightRepository(
 
         var path = SnapshotPath(airport);
         Directory.CreateDirectory(directory);
+        using var providerLease = TryAcquireLease(Path.Combine(directory, "provider.lock"));
+
+        if (providerLease is null)
+        {
+            diagnostics.Write(new("flight.refresh_skipped", airport, "other_process_refresh"));
+            return;
+        }
         using var lease = TryAcquireLease(path + ".lock");
 
         if (lease is null)
@@ -147,9 +161,17 @@ public sealed class FlightRepository(
             return;
         }
 
-        var retry = ReadJson<RetryState>(path + ".retry");
+        var credentialHash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(apiKey)));
+        var accountRetry = ReadJson<RetryState>(Path.Combine(directory, "provider.retry"));
+        var airportRetry = ReadJson<RetryState>(path + ".retry");
+        var retry = new[] { accountRetry, airportRetry }
+            .Where(item =>
+                item is not null && item.CredentialHash == credentialHash && item.After > now
+            )
+            .OrderByDescending(item => item!.After)
+            .FirstOrDefault();
 
-        if (retry is not null && now < retry.After)
+        if (retry is not null)
         {
             LastError = retry.Message;
             diagnostics.Write(
@@ -163,12 +185,14 @@ public sealed class FlightRepository(
             return;
         }
 
-        await FetchAsync(airport, apiKey, path, cancellationToken).ConfigureAwait(false);
+        await FetchAsync(airport, apiKey, credentialHash, path, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     private async Task FetchAsync(
         string airport,
         string apiKey,
+        string credentialHash,
         string path,
         CancellationToken cancellationToken
     )
@@ -184,6 +208,7 @@ public sealed class FlightRepository(
                 .ConfigureAwait(false);
             await WriteJsonAsync(path, snapshot, cancellationToken).ConfigureAwait(false);
             File.Delete(path + ".retry");
+            File.Delete(Path.Combine(directory, "provider.retry"));
             LastError = null;
             diagnostics.Write(
                 new(
@@ -210,7 +235,11 @@ public sealed class FlightRepository(
                     airport,
                     path,
                     error.Message,
-                    TimeSpan.FromMinutes(15),
+                    error is ProviderRequestException providerError
+                        ? providerError.RetryAfter
+                        : null,
+                    credentialHash,
+                    error.StatusCode is { } status ? (int)status : 0,
                     cancellationToken
                 )
                 .ConfigureAwait(false);
@@ -229,7 +258,9 @@ public sealed class FlightRepository(
                     airport,
                     path,
                     "The flight request timed out.",
-                    TimeSpan.FromMinutes(2),
+                    null,
+                    credentialHash,
+                    0,
                     cancellationToken
                 )
                 .ConfigureAwait(false);
@@ -249,6 +280,8 @@ public sealed class FlightRepository(
                     path,
                     "The flight provider returned an invalid response.",
                     TimeSpan.FromMinutes(15),
+                    credentialHash,
+                    200,
                     cancellationToken
                 )
                 .ConfigureAwait(false);
@@ -259,12 +292,29 @@ public sealed class FlightRepository(
         string airport,
         string path,
         string message,
-        TimeSpan delay,
+        TimeSpan? requestedDelay,
+        string credentialHash,
+        int status,
         CancellationToken cancellationToken
     )
     {
 
         LastError = message;
+        var accountWide = status is 0 or 401 or 403 or 429 || status >= 500;
+        var retryPath = accountWide ? Path.Combine(directory, "provider.retry") : path + ".retry";
+        var previous = ReadJson<RetryState>(retryPath);
+        var attempts =
+            previous?.CredentialHash == credentialHash ? Math.Min(8, previous.Attempts + 1) : 1;
+        var delay = requestedDelay is { TotalSeconds: > 0 } explicitDelay
+            ? explicitDelay
+            : TimeSpan.FromSeconds(
+                status is 401 or 403 or 429 ? 3600
+                : status >= 500 ? Math.Min(3600, 900 * Math.Pow(2, attempts - 1))
+                : Math.Min(900, 60 * Math.Pow(2, attempts - 1))
+            );
+
+        if (delay < TimeSpan.FromSeconds(60))
+            delay = TimeSpan.FromSeconds(60);
         diagnostics.Write(
             new(
                 "flight.retry_scheduled",
@@ -273,8 +323,13 @@ public sealed class FlightRepository(
                 RetrySeconds: (int)delay.TotalSeconds
             )
         );
-        var retry = new RetryState(DateTimeOffset.UtcNow + delay, message);
-        await WriteJsonAsync(path + ".retry", retry, cancellationToken).ConfigureAwait(false);
+        var retry = new RetryState(
+            DateTimeOffset.UtcNow + delay,
+            message,
+            credentialHash,
+            attempts
+        );
+        await WriteJsonAsync(retryPath, retry, cancellationToken).ConfigureAwait(false);
     }
 
     private static FileStream? TryAcquireLease(string path)

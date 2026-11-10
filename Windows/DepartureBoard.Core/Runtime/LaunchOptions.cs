@@ -7,6 +7,7 @@ public enum LaunchMode
     Preview,
     Background,
     SelfTest,
+    Guide,
 }
 
 public sealed record LaunchOptions(LaunchMode Mode, nint PreviewParent = default)
@@ -39,6 +40,7 @@ public sealed record LaunchOptions(LaunchMode Mode, nint PreviewParent = default
             "/c" => new(LaunchMode.Settings),
             "--background" => new(LaunchMode.Background),
             "--self-test" => new(LaunchMode.SelfTest),
+            "--guide" => new(LaunchMode.Guide),
             _ => throw new ArgumentException("Unknown launch option."),
         };
     }

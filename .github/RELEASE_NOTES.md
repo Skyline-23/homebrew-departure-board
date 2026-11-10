@@ -1,17 +1,13 @@
-Departure Board now includes **macOS 12+** (Apple Silicon and Intel) and a **Windows 11 preview** (x64 and ARM64).
+Departure Board 0.7.3 improves API request handling and includes an illustrated offline guide.
 
-- Record request failures, cache updates, display-state changes and lifecycle events without logging API keys or response bodies. See [diagnostic logs](https://github.com/Skyline-23/homebrew-departure-board/blob/main/docs/diagnostics.md).
-- Update visible Windows boards when a flight request completes, and leave the loading state when a background request fails.
-- Show duplicate gate and check-in labels only once, while preserving distinct counters and gate ranges.
-- Display a dash for unavailable gate, terminal and check-in values, and show scheduled statuses instead of blank remarks. Reuse parsed macOS colors and avoid unnecessary label splitting.
-- Use the same 40 airport profiles as a live desktop wallpaper or screen saver.
-- Display settings now share the same choices on both platforms: style, language, row density, brightness, reduced motion, scale and refresh interval.
-- Desktop layouts leave room for the menu bar, Dock or taskbar, keeping headers, rows and footers inside the usable screen area.
-- Windows rendering reuses unchanged schedules and text layouts, and split-flap boards advance through later departures.
-- Windows packages include a per-user installer, the .NET runtime, a native screen saver and SHA-256 checksums.
+- Share provider retry delays across airports and processes, honor `Retry-After`, and avoid continuous refresh when only the tray/menu-bar icon is active.
+- Keep saved refresh settings; new installations default to five minutes. Language, page and codeshare changes reuse cached flights.
+- Include English and Korean installation guides with real screenshots, every display option, wallpaper/screen saver setup and troubleshooting. Open them from the app or `Install Guide.html` in the download.
+- Verify two virtual monitors at 100% + 150% and 100% + 200%, including negative screen coordinates, wallpaper, screen saver and preview DPI transitions. See the [validation record](https://github.com/Skyline-23/homebrew-departure-board/blob/main/Windows/VALIDATION.md).
+- Use the [product site](https://dpboard.skyline23.com) for downloads and the illustrated guide.
 
-The macOS download is Developer ID signed and notarized. Windows downloads are **unsigned preview builds** and can show an unknown-publisher warning. Physical mixed-DPI multi-monitor and lock/unlock coverage remains pending; see [Windows validation](https://github.com/Skyline-23/homebrew-departure-board/blob/main/Windows/VALIDATION.md).
+macOS 12+ downloads support Apple Silicon and Intel and are Developer ID signed and notarized. Windows 11 downloads support x64 and ARM64 and remain unsigned preview builds. Physical mixed-DPI hardware and lock/unlock coverage remain separate from the virtual-monitor checks.
 
-For installation and personal API-key setup, see the [README](https://github.com/Skyline-23/homebrew-departure-board#install). Live flights require your own AeroDataBox subscription; sample mode is available without an API key.
+Live flight data requires your own AeroDataBox RapidAPI subscription and key. Sample data works without a key. The app does not estimate account quotas or add a quota-based stop.
 
-The code and project branding use the MIT license. Airline artwork retains its third-party status; see [Third-party notices](https://github.com/Skyline-23/homebrew-departure-board/blob/main/THIRD_PARTY_NOTICES.md).
+Code and project branding use the MIT license. See [Third-party notices](https://github.com/Skyline-23/homebrew-departure-board/blob/main/THIRD_PARTY_NOTICES.md) for airline artwork.

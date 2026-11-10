@@ -1,6 +1,7 @@
 #import "CommandLine.h"
 #import "BackgroundAgent.h"
 #import "DepartureBoardView.h"
+#import "InstallationGuide.h"
 #import "LiveFlightStore.h"
 #import "UserInstallation.h"
 #import "WallpaperRenderer.h"
@@ -100,6 +101,10 @@ static NSString *ArgumentValue(NSArray<NSString *> *arguments, NSString *option)
 
     NSString *command = arguments.count > 1 ? arguments[1] : nil;
     NSString *value = arguments.count > 2 ? arguments[2] : nil;
+
+    if ([command isEqual:@"--guide"]) {
+        return @(DBOpenInstallationGuide(NSBundle.mainBundle) ? 0 : 1);
+    }
 
     if ([command isEqual:@"--version"]) {
         NSString *version =

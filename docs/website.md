@@ -1,0 +1,24 @@
+# Product website
+
+The portfolio landing page is `https://portfolio.skyline23.com/ko/projects/departure-board`.
+The detailed product site is `https://dpboard.skyline23.com`, hosted by the Cloudflare Pages project `departure-board`.
+The existing apex domain, blog and portfolio deployments are separate.
+
+Build the static site with Python 3:
+
+```sh
+python3 script/build-guide.py --check
+python3 script/build-site.py
+```
+
+The output is `work/site`. The build copies the same English/Korean illustrated guide that ships inside the apps. The build reads a release label from `Casks/departure-board.rb`; `--version 0.7.3` can prepare the next release. The three same-origin download endpoints stream stable GitHub `releases/latest/download/...` assets through a Pages function. A download stays on `dpboard.skyline23.com`; no GitHub page or client-side release lookup is needed. A five-minute cache bounds staleness after a new release. The page makes no flight-provider requests or runtime GitHub API calls. The Pages function only fetches a ZIP when a visitor downloads one.
+
+Cloudflare Pages is connected to this repository, with `main` as the production branch, `python3 script/build-site.py` as the build command and `work/site` as the output directory. Every published release includes the stable `DepartureBoard-universal.zip` filename alongside its versioned macOS archive. Windows archives already use stable x64 and ARM64 filenames. No additional browser-side release polling is needed.
+
+For a local preview:
+
+```sh
+python3 -m http.server 8766 --directory work/site
+```
+
+Python's local server does not run the Pages download function. Verify streamed downloads and response headers on a Pages preview before production deployment. `_routes.json` invokes the function only for `/download/*`; regular pages and images remain static.

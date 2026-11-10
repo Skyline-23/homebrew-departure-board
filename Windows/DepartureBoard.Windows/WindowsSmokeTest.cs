@@ -18,15 +18,35 @@ namespace DepartureBoard.Windows;
 
 internal static class WindowsSmokeTest
 {
-    public static int Run(string outputDirectory, bool checkDesktop = false)
+    public static int Run(
+        string outputDirectory,
+        bool checkDesktop = false,
+        bool displayOnly = false
+    )
     {
 
         Directory.CreateDirectory(outputDirectory);
         File.WriteAllText(Path.Combine(outputDirectory, "progress.txt"), "Started self-test.\n");
         var storage = Path.Combine(outputDirectory, "isolated-data");
         using var services = new AppServices(storage);
+
+        if (displayOnly)
+        {
+            if (!checkDesktop)
+            {
+                throw new ArgumentException("Display-only checks require --desktop.");
+            }
+            services.UsePreviewSettings(new BoardSettings { Airport = "ICN", SampleData = true });
+            CheckSettings(services, outputDirectory);
+            CheckDesktop(services, outputDirectory);
+            File.WriteAllText(
+                Path.Combine(outputDirectory, "result.txt"),
+                "Desktop layout validation passed."
+            );
+            return 0;
+        }
         var count = RenderAirports(services, outputDirectory);
-        CheckSettings(services);
+        CheckSettings(services, outputDirectory);
         CheckPreviewEmbedding(services);
         CheckCredentials();
         CheckFrameUpdates(services, outputDirectory);
@@ -99,10 +119,51 @@ internal static class WindowsSmokeTest
         }
     }
 
-    private static void CheckSettings(AppServices services)
+    private static void CheckSettings(AppServices services, string outputDirectory)
     {
 
+        services.UsePreviewSettings(new BoardSettings { Airport = "ICN", SampleData = true });
         var settings = new SettingsWindow(services, () => { }, () => true);
+        settings.Show();
+        settings.UpdateLayout();
+        var content = (FrameworkElement)settings.Content;
+        ((System.Windows.Controls.Control)content).Background = Brushes.White;
+        var bitmap = new RenderTargetBitmap(
+            (int)Math.Ceiling(content.ActualWidth),
+            (int)Math.Ceiling(content.ActualHeight),
+            96,
+            96,
+            PixelFormats.Pbgra32
+        );
+        var visual = new DrawingVisual();
+        using (var drawing = visual.RenderOpen())
+        {
+            drawing.DrawRectangle(
+                Brushes.White,
+                null,
+                new Rect(0, 0, content.ActualWidth, content.ActualHeight)
+            );
+            drawing.DrawRectangle(
+                new VisualBrush(content),
+                null,
+                new Rect(0, 0, content.ActualWidth, content.ActualHeight)
+            );
+        }
+        bitmap.Render(visual);
+        var encoder = new PngBitmapEncoder();
+        encoder.Frames.Add(BitmapFrame.Create(bitmap));
+        using (var stream = File.Create(Path.Combine(outputDirectory, "settings-window.png")))
+        {
+            encoder.Save(stream);
+        }
+
+        foreach (var language in new[] { "en", "ko" })
+        {
+            if (!File.Exists(InstallationGuide.PathForLanguage(language)))
+            {
+                throw new InvalidOperationException("Bundled installation guide is missing.");
+            }
+        }
 
         if (settings.AirportCount != 40 || LaunchOptions.Parse(["/p:12345"]).PreviewParent != 12345)
         {
@@ -257,6 +318,113 @@ internal static class WindowsSmokeTest
             throw new InvalidOperationException("Wallpaper did not cover every monitor.");
         }
 
+        PumpDesktop();
+
+        for (var index = 0; index < screens.Length; index++)
+        {
+            CaptureMonitor(
+                screens[index],
+                Path.Combine(outputDirectory, $"monitor-{index}-wallpaper.png")
+            );
+        }
+        var previewChecks = new List<object>();
+        var previewWindow = new BoardWindow(services, false);
+        previewWindow.Show();
+        var previewHandle = new WindowInteropHelper(previewWindow).Handle;
+
+        foreach (var screen in screens)
+        {
+            NativeMethods.SetWindowPos(
+                previewHandle,
+                0,
+                screen.Bounds.Left + 30,
+                screen.Bounds.Top + 30,
+                900,
+                600,
+                0x0014
+            );
+            PumpDesktop();
+            var dpi = NativeMethods.GetDpiForWindow(previewHandle);
+            var scale = VisualTreeHelper.GetDpi(previewWindow).DpiScaleX;
+
+            if (Math.Abs(scale * 96 - dpi) > 1)
+            {
+                throw new InvalidOperationException(
+                    "Preview scaling did not follow its monitor DPI."
+                );
+            }
+            NativeMethods.GetWindowRect(previewHandle, out var actual);
+
+            if (
+                actual.Left < screen.Bounds.Left
+                || actual.Top < screen.Bounds.Top
+                || actual.Right > screen.Bounds.Right
+                || actual.Bottom > screen.Bounds.Bottom
+            )
+            {
+                throw new InvalidOperationException("Preview moved outside its monitor.");
+            }
+            previewChecks.Add(
+                new
+                {
+                    screen.DeviceName,
+                    dpi,
+                    scale,
+                    actual.Left,
+                    actual.Top,
+                    actual.Right,
+                    actual.Bottom,
+                }
+            );
+        }
+        previewWindow.Close();
+        var saverBounds = new List<object>();
+        var savers = displays.ShowScreenSaver();
+
+        for (var index = 0; index < screens.Length; index++)
+        {
+            var handle = new WindowInteropHelper(savers[index]).Handle;
+            var expected = screens[index].Bounds;
+
+            if (
+                !NativeMethods.GetWindowRect(handle, out var actual)
+                || actual.Left != expected.Left
+                || actual.Top != expected.Top
+                || actual.Right - actual.Left != expected.Width
+                || actual.Bottom - actual.Top != expected.Height
+            )
+            {
+                throw new InvalidOperationException(
+                    "Screen saver does not fit physical monitor bounds."
+                );
+            }
+            saverBounds.Add(
+                new
+                {
+                    device = screens[index].DeviceName,
+                    expected.X,
+                    expected.Y,
+                    expected.Width,
+                    expected.Height,
+                    dpi = NativeMethods.GetDpiForWindow(handle),
+                    wpfScale = VisualTreeHelper.GetDpi(savers[index]).DpiScaleX,
+                }
+            );
+        }
+        PumpDesktop();
+
+        for (var index = 0; index < screens.Length; index++)
+        {
+            CaptureMonitor(
+                screens[index],
+                Path.Combine(outputDirectory, $"monitor-{index}-screensaver.png")
+            );
+        }
+
+        foreach (var saver in savers)
+        {
+            saver.Close();
+        }
         var bounds = new System.Collections.Generic.List<object>();
 
         for (var index = 0; index < screens.Length; index++)
@@ -276,10 +444,119 @@ internal static class WindowsSmokeTest
             }
             bounds.Add(new { width = actual.Right, height = actual.Bottom });
         }
+        displays.Dispose();
+        CheckStillWallpaper(services, screens, outputDirectory);
         File.WriteAllText(
             Path.Combine(outputDirectory, "desktop-checks.json"),
-            JsonSerializer.Serialize(new { monitors = bounds, wallpaperEmbedding = "passed" })
+            JsonSerializer.Serialize(
+                new
+                {
+                    monitors = bounds,
+                    screenSavers = saverBounds,
+                    previewMoves = previewChecks,
+                    wallpaperEmbedding = "passed",
+                }
+            )
         );
+    }
+
+    private static void CheckStillWallpaper(
+        AppServices services,
+        System.Windows.Forms.Screen[] screens,
+        string directory
+    )
+    {
+
+        using var desktop = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(
+            @"Control Panel\Desktop",
+            true
+        )!;
+        var names = new[] { "Wallpaper", "WallpaperStyle", "TileWallpaper" };
+        var original = names.ToDictionary(name => name, name => desktop.GetValue(name));
+        var imagePath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "DepartureBoard",
+            "Wallpaper.png"
+        );
+        var image = File.Exists(imagePath) ? File.ReadAllBytes(imagePath) : null;
+
+        try
+        {
+            WallpaperSnapshot.Apply(services);
+
+            for (var tick = 0; tick < 20; tick++)
+            {
+                PumpDesktop();
+            }
+
+            for (var index = 0; index < screens.Length; index++)
+            {
+                CaptureMonitor(
+                    screens[index],
+                    Path.Combine(directory, $"monitor-{index}-still.png")
+                );
+            }
+        }
+        finally
+        {
+            if (image is not null)
+            {
+                File.WriteAllBytes(imagePath, image);
+            }
+
+            foreach (var name in names)
+            {
+                if (original[name] is { } value)
+                {
+                    desktop.SetValue(name, value);
+                }
+                else
+                {
+                    desktop.DeleteValue(name, false);
+                }
+            }
+
+            if (
+                !NativeMethods.SystemParametersInfo(20, 0, original["Wallpaper"] as string ?? "", 3)
+            )
+            {
+                throw new System.ComponentModel.Win32Exception(
+                    System.Runtime.InteropServices.Marshal.GetLastWin32Error()
+                );
+            }
+
+            if (image is null && File.Exists(imagePath))
+            {
+                File.Delete(imagePath);
+            }
+        }
+    }
+
+    private static void PumpDesktop()
+    {
+
+        var frame = new System.Windows.Threading.DispatcherFrame();
+        var timer = new System.Windows.Threading.DispatcherTimer(
+            TimeSpan.FromMilliseconds(350),
+            System.Windows.Threading.DispatcherPriority.Background,
+            (_, _) => frame.Continue = false,
+            System.Windows.Threading.Dispatcher.CurrentDispatcher
+        );
+        System.Windows.Threading.Dispatcher.PushFrame(frame);
+        timer.Stop();
+    }
+
+    private static void CaptureMonitor(System.Windows.Forms.Screen screen, string path)
+    {
+
+        using var bitmap = new System.Drawing.Bitmap(screen.Bounds.Width, screen.Bounds.Height);
+        using var graphics = System.Drawing.Graphics.FromImage(bitmap);
+        graphics.CopyFromScreen(
+            screen.Bounds.Location,
+            System.Drawing.Point.Empty,
+            screen.Bounds.Size
+        );
+        bitmap.Save(path, System.Drawing.Imaging.ImageFormat.Png);
     }
 
     private static void CheckPreviewEmbedding(AppServices services)

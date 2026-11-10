@@ -35,6 +35,7 @@ internal sealed class TrayApplication : IDisposable
         menu = new Forms.ContextMenuStrip();
         menu.Items.Add("Settings", null, (_, _) => ShowSettings());
         menu.Items.Add("Preview", null, (_, _) => ShowPreview());
+        menu.Items.Add("Install & user guide", null, (_, _) => InstallationGuide.Open());
         menu.Items.Add("Quit", null, (_, _) => Application.Current.Shutdown());
         var iconPath = Path.Combine(AppContext.BaseDirectory, "Assets", "DepartureBoard.ico");
         icon = File.Exists(iconPath)
@@ -58,7 +59,7 @@ internal sealed class TrayApplication : IDisposable
         refreshTimer = new DispatcherTimer(
             TimeSpan.FromSeconds(30),
             DispatcherPriority.Background,
-            (_, _) => _ = services.RefreshAsync(),
+            (_, _) => RefreshVisibleData(),
             Application.Current.Dispatcher
         );
         ApplyWallpaper();
@@ -75,6 +76,22 @@ internal sealed class TrayApplication : IDisposable
 
         settingsWindow.Show();
         settingsWindow.Activate();
+    }
+
+    private void RefreshVisibleData()
+    {
+
+        if (
+            (
+                settingsWindow?.IsVisible == true
+                && settingsWindow.WindowState != WindowState.Minimized
+            )
+            || (preview?.IsVisible == true && preview.WindowState != WindowState.Minimized)
+            || System.Linq.Enumerable.Any(displays.WallpaperWindows, window => window.Visible)
+        )
+        {
+            _ = services.RefreshAsync();
+        }
     }
 
     private void ShowPreview()

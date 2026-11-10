@@ -28,3 +28,5 @@
 "data.configure" = "Configure os voos em tempo real no Departure Board";
 
 "column.airline" = "Companhia";
+
+"menu.guide" = "Install & user guide";

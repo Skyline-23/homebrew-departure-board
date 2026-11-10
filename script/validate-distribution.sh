@@ -7,8 +7,14 @@ CHECK_ROOT="$(mktemp -d "${RUNNER_TEMP:-${TMPDIR:-/tmp}}/departure-distribution.
 trap 'rm -rf "$CHECK_ROOT"' EXIT
 ditto -x -k "$ARCHIVE" "$CHECK_ROOT"
 
+test -f "$CHECK_ROOT/Install Guide.html"
+test -f "$CHECK_ROOT/Guide/index.html"
+test -f "$CHECK_ROOT/Guide/ko.html"
+
 for name in 'Departure Board.app' 'Departure Board.saver'; do
   bundle="$CHECK_ROOT/$name"
+  test -f "$bundle/Contents/Resources/Guide/index.html"
+  test -f "$bundle/Contents/Resources/Guide/ko.html"
   codesign --verify --strict "$bundle"
   xcrun stapler validate "$bundle"
   actual="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$bundle/Contents/Info.plist")"

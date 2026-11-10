@@ -35,6 +35,8 @@ for bundle in "$APP" "$SAVER"; do
   grep -q '^TeamIdentifier=Q23JLSJCCV$' <<< "$metadata"
   lipo "$bundle/Contents/MacOS/DepartureBoard" -verify_arch "$(uname -m)"
 done
+test -f "$APP/Contents/Resources/Guide/index.html"
+test -f "$APP/Contents/Resources/Guide/ko.html"
 spctl --assess --type execute --verbose=4 "$APP" 2>&1 | tee "$REPORT/gatekeeper.txt"
 # Gatekeeper's one-time Open confirmation requires a person. After verifying
 # the real download above, approve only these test bundles for unattended UI tests.

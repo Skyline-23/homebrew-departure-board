@@ -3,6 +3,7 @@
 #import "DestinationStore.h"
 #import "Diagnostics.h"
 #import "SettingsStore.h"
+#import <CommonCrypto/CommonDigest.h>
 #import <CoreGraphics/CoreGraphics.h>
 #import <LocalAuthentication/LocalAuthentication.h>
 #import <Security/Security.h>
@@ -12,6 +13,19 @@
 #import <unistd.h>
 
 static NSString *const APIKeyService = @"com.skyline23.departureboard.aerodatabox";
+
+static NSString *CredentialFingerprint(NSString *key) {
+
+    NSData *bytes = [key dataUsingEncoding:NSUTF8StringEncoding];
+    unsigned char digest[CC_SHA256_DIGEST_LENGTH];
+    CC_SHA256(bytes.bytes, (CC_LONG)bytes.length, digest);
+    NSMutableString *value = NSMutableString.new;
+
+    for (NSUInteger index = 0; index < sizeof(digest); index++) {
+        [value appendFormat:@"%02x", digest[index]];
+    }
+    return value;
+}
 
 static NSDictionary *ObjectDictionary(id value) {
 
@@ -506,11 +520,31 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
     return result;
 }
 
++ (NSDictionary *)retryStateForAirport:(NSString *)airport credential:(NSString *)credential {
+
+    NSString *path = [self cacheURLForAirport:airport].path;
+    NSArray *paths = @[
+        [path stringByAppendingString:@".retry.plist"],
+        [path.stringByDeletingLastPathComponent
+            stringByAppendingPathComponent:@"provider.retry.plist"]
+    ];
+    NSDictionary *latest = nil;
+
+    for (NSString *candidate in paths) {
+        NSDictionary *state = [NSDictionary dictionaryWithContentsOfFile:candidate];
+
+        if ([state[@"retryAt"] timeIntervalSinceNow] > 0 &&
+            (!credential || [state[@"credential"] isEqual:credential]) &&
+            (!latest || [state[@"retryAt"] compare:latest[@"retryAt"]] == NSOrderedDescending)) {
+            latest = state;
+        }
+    }
+    return latest;
+}
+
 + (NSInteger)refreshFailureStatusForAirport:(NSString *)airport {
 
-    NSString *path =
-        [[self cacheURLForAirport:airport].path stringByAppendingString:@".retry.plist"];
-    return [[NSDictionary dictionaryWithContentsOfFile:path][@"status"] integerValue];
+    return [[self retryStateForAirport:airport credential:nil][@"status"] integerValue];
 }
 
 + (DBFlightAvailability)availabilityForAirport:(NSString *)airport {
@@ -535,8 +569,7 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
     if (!snapshot && ![DBSettingsStore.settings[@"hasAPIKey"] boolValue]) {
         return DBFlightAvailabilityConfigurationRequired;
     }
-    NSDictionary *failure =
-        [NSDictionary dictionaryWithContentsOfFile:[path stringByAppendingString:@".retry.plist"]];
+    NSDictionary *failure = [self retryStateForAirport:airport credential:nil];
 
     if (failure) {
         return DBFlightAvailabilityUnavailable;
@@ -571,16 +604,32 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
     // The app, a wake-up refresh and every display share this lock and cache.
     // A simultaneous request reuses the refresh already in progress.
     NSString *lockPath = [[self cacheURLForAirport:airport].path stringByAppendingString:@".lock"];
+    NSString *providerPath = [lockPath.stringByDeletingLastPathComponent
+        stringByAppendingPathComponent:@"provider.lock"];
+    int providerLock = open(providerPath.fileSystemRepresentation, O_CREAT | O_RDWR, 0600);
+
+    if (providerLock < 0) {
+        return NO;
+    }
+
+    if (flock(providerLock, LOCK_EX | LOCK_NB) != 0) {
+        close(providerLock);
+        return YES;
+    }
     int lock = open(lockPath.fileSystemRepresentation, O_CREAT | O_RDWR, 0600);
 
     if (lock < 0) {
         DBDiagnosticEvent(@"data", @"flight.lock_failed",
                           @{@"airport" : airport, @"errorCode" : @(errno)});
+        flock(providerLock, LOCK_UN);
+        close(providerLock);
         return NO;
     }
 
     if (flock(lock, LOCK_EX | LOCK_NB) != 0) {
         close(lock);
+        flock(providerLock, LOCK_UN);
+        close(providerLock);
         return YES;
     }
     @try {
@@ -588,29 +637,51 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
     } @finally {
         flock(lock, LOCK_UN);
         close(lock);
+        flock(providerLock, LOCK_UN);
+        close(providerLock);
     }
 }
 
 + (void)recordFailureForAirport:(NSString *)airport
                          status:(NSInteger)status
-                     retryAfter:(NSString *)retryAfter {
+                     retryAfter:(NSString *)retryAfter
+                     credential:(NSString *)credential {
 
-    NSString *path =
-        [[self cacheURLForAirport:airport].path stringByAppendingString:@".retry.plist"];
+    NSString *airportPath = [self cacheURLForAirport:airport].path;
+    BOOL shared = status == 0 || status == 401 || status == 403 || status == 429 || status >= 500;
+    NSString *path = shared ? [airportPath.stringByDeletingLastPathComponent
+                                  stringByAppendingPathComponent:@"provider.retry.plist"]
+                            : [airportPath stringByAppendingString:@".retry.plist"];
     NSDictionary *previous = [NSDictionary dictionaryWithContentsOfFile:path];
-    NSInteger failures = MIN(8, [previous[@"failures"] integerValue] + 1);
+    NSInteger failures = [previous[@"credential"] isEqual:credential]
+                             ? MIN(8, [previous[@"failures"] integerValue] + 1)
+                             : 1;
     NSTimeInterval delay = MIN(900, 60 * pow(2, failures - 1));
 
     if (status == 401 || status == 403 || status == 429) {
         delay = 3600;
     }
 
-    if (retryAfter.doubleValue > 0) {
-        delay = MAX(delay, retryAfter.doubleValue);
+    if (status >= 500) {
+        delay = MIN(3600, 900 * pow(2, failures - 1));
+    }
+    NSTimeInterval requested = retryAfter.doubleValue;
+
+    if (retryAfter.length && requested <= 0) {
+        NSDateFormatter *format = NSDateFormatter.new;
+        format.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
+        format.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
+        format.dateFormat = @"EEE, dd MMM yyyy HH:mm:ss z";
+        requested = [[format dateFromString:retryAfter] timeIntervalSinceNow];
+    }
+
+    if (requested > 0) {
+        delay = MAX(60, requested);
     }
     [@{
         @"failures" : @(failures),
         @"status" : @(status),
+        @"credential" : credential ?: @"",
         @"retryAt" : [NSDate dateWithTimeIntervalSinceNow:delay]
     } writeToFile:path
         atomically:YES];
@@ -622,7 +693,8 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
 
     NSDictionary *cached = [self cachedSnapshotForAirport:airport];
     NSDate *fetched = [self dateFromISO:cached[@"fetchedAt"]];
-    NSTimeInterval interval = MAX(60, [DBSettingsStore.settings[@"refreshInterval"] doubleValue]);
+    NSTimeInterval interval =
+        MAX(60, [(DBSettingsStore.settings[@"refreshInterval"] ?: @300) doubleValue]);
 
     if (fetched && [NSDate.date timeIntervalSinceDate:fetched] < interval &&
         [cached[@"formatVersion"] integerValue] >= 3) {
@@ -632,9 +704,11 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
     }
     NSString *retryPath =
         [[self cacheURLForAirport:airport].path stringByAppendingString:@".retry.plist"];
-    NSDictionary *retry = [NSDictionary dictionaryWithContentsOfFile:retryPath];
+    NSString *key = [self APIKey];
+    NSString *credential = CredentialFingerprint(key);
+    NSDictionary *retry = [self retryStateForAirport:airport credential:credential];
 
-    if ([retry[@"retryAt"] timeIntervalSinceNow] > 0) {
+    if (retry) {
         DBDiagnosticEvent(@"data", @"flight.refresh_skipped", @{
             @"airport" : airport,
             @"state" : @"backoff",
@@ -642,12 +716,11 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
         });
         return YES;
     }
-    NSString *key = [self APIKey];
 
     if (!key.length) {
         DBDiagnosticEvent(@"data", @"flight.request_failed",
                           @{@"airport" : airport, @"state" : @"credential_unavailable"});
-        [self recordFailureForAirport:airport status:401 retryAfter:nil];
+        [self recordFailureForAirport:airport status:401 retryAfter:nil credential:credential];
 
         if (error) {
             *error = [NSError errorWithDomain:DBDefaultsDomain
@@ -689,7 +762,7 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
     if (dispatch_semaphore_wait(done, dispatch_time(DISPATCH_TIME_NOW, 30 * NSEC_PER_SEC)) != 0) {
         DBDiagnosticEvent(@"data", @"flight.request_failed",
                           @{@"airport" : airport, @"state" : @"timeout"});
-        [self recordFailureForAirport:airport status:0 retryAfter:nil];
+        [self recordFailureForAirport:airport status:0 retryAfter:nil credential:credential];
         return NO;
     }
     NSInteger status = [(NSHTTPURLResponse *)response statusCode];
@@ -704,7 +777,8 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
         [self recordFailureForAirport:airport
                                status:status
                            retryAfter:[(NSHTTPURLResponse *)response
-                                          valueForHTTPHeaderField:@"Retry-After"]];
+                                          valueForHTTPHeaderField:@"Retry-After"]
+                           credential:credential];
 
         if (error) {
             *error =
@@ -727,7 +801,7 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
         ![body[@"departures"] isKindOfClass:NSArray.class]) {
         DBDiagnosticEvent(@"data", @"flight.request_failed",
                           @{@"airport" : airport, @"state" : @"invalid_response"});
-        [self recordFailureForAirport:airport status:status retryAfter:nil];
+        [self recordFailureForAirport:airport status:status retryAfter:nil credential:credential];
         return NO;
     }
     NSDictionary *snapshot = [self normalizeDepartures:body airport:airport];
@@ -745,6 +819,11 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
 
     if (saved) {
         [NSFileManager.defaultManager removeItemAtPath:retryPath error:NULL];
+        [NSFileManager.defaultManager
+            removeItemAtPath:[[self cacheURLForAirport:airport]
+                                     .path.stringByDeletingLastPathComponent
+                                 stringByAppendingPathComponent:@"provider.retry.plist"]
+                       error:NULL];
         [DBDestinationStore refreshNamesForFlights:snapshot[@"flights"]];
     }
     return saved;
@@ -752,8 +831,21 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
 
 + (void)refreshInBackground {
 
+    static BOOL queued;
+    @synchronized(self) {
+        if (queued) {
+            return;
+        }
+        queued = YES;
+    }
     dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
-        [self refreshWithError:NULL];
+        @try {
+            [self refreshWithError:NULL];
+        } @finally {
+            @synchronized(self) {
+                queued = NO;
+            }
+        }
     });
 }
 
@@ -776,7 +868,8 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
 
     for (NSRunningApplication *app in [NSRunningApplication
              runningApplicationsWithBundleIdentifier:@"com.skyline23.departureboard"]) {
-        if (app.processIdentifier != getpid() && !app.terminated) {
+        if (app.processIdentifier != getpid() && !app.terminated &&
+            [DBSettingsStore.settings[@"desktopEnabled"] boolValue]) {
             return YES;
         }
     }

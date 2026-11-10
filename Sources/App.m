@@ -3,6 +3,7 @@
 #import "DepartureBoardView.h"
 #import "DesktopController.h"
 #import "Diagnostics.h"
+#import "InstallationGuide.h"
 #import "LiveFlightStore.h"
 #import "SettingsStore.h"
 #import <errno.h>
@@ -17,6 +18,7 @@
 @property(nonatomic, strong) DBDesktopController *desktop;
 @property(nonatomic, strong) NSStatusItem *statusItem;
 @property(nonatomic) BOOL runtimeRegistered;
+@property(nonatomic) NSTimeInterval lastDataRefresh;
 @end
 
 @implementation DepartureBoardApp
@@ -51,7 +53,7 @@
     self.runtimeRegistered = YES;
     [DBBackgroundAgent recordApplicationStarted];
     [self updateAnimationTimer];
-    [LiveFlightStore refreshInBackground];
+    [self refreshVisibleData];
     [DBBackgroundAgent configure];
 
     if ([arguments containsObject:@"--fullscreen"]) {
@@ -60,6 +62,19 @@
 
     if ([arguments containsObject:@"--settings"] || (!background && arguments.count == 1)) {
         [self showSettings:nil];
+    }
+}
+
+- (void)refreshVisibleData {
+
+    BOOL visible = [self previewIsVisible] ||
+                   (self.options.visible && !self.options.miniaturized) ||
+                   [DBSettingsStore.settings[@"desktopEnabled"] boolValue];
+    NSTimeInterval now = NSProcessInfo.processInfo.systemUptime;
+
+    if (visible && (!self.lastDataRefresh || now - self.lastDataRefresh >= 30)) {
+        self.lastDataRefresh = now;
+        [LiveFlightStore refreshInBackground];
     }
 }
 
@@ -88,6 +103,7 @@
                                                   [weakSelf.board tick];
                                               }
                                               [weakSelf.desktop tick];
+                                              [weakSelf refreshVisibleData];
                                               [weakSelf updateAnimationTimer];
                                           }];
     self.timer.tolerance = interval * .05;
@@ -198,6 +214,7 @@
     for (NSArray *entry in @[
              @[ @"menu.settings", NSStringFromSelector(@selector(showSettings:)) ],
              @[ @"menu.showBoard", NSStringFromSelector(@selector(showBoard:)) ],
+             @[ @"menu.guide", NSStringFromSelector(@selector(openInstallationGuide:)) ],
              @[ @"settings.setWallpaper", NSStringFromSelector(@selector(applyWallpaper:)) ]
          ]) {
         NSMenuItem *item = [menu addItemWithTitle:DBUIString(entry[0])
@@ -231,6 +248,9 @@
     [app addItemWithTitle:DBUIString(@"menu.screensaver")
                    action:@selector(openScreenSaverSettings:)
             keyEquivalent:@""];
+    [app addItemWithTitle:DBUIString(@"menu.guide")
+                   action:@selector(openInstallationGuide:)
+            keyEquivalent:@"?"];
     [app addItem:NSMenuItem.separatorItem];
     [app addItemWithTitle:DBUIString(@"menu.quit") action:@selector(terminate:) keyEquivalent:@"q"];
     appItem.submenu = app;
@@ -277,12 +297,18 @@
     NSApp.mainMenu = bar;
 }
 
+- (void)openInstallationGuide:(id)sender {
+
+    DBOpenInstallationGuide(NSBundle.mainBundle);
+}
+
 - (void)chooseLocation:(NSMenuItem *)sender {
 
     self.board.locationCode = sender.representedObject;
     [self.board saveSettings];
     [self.board tick];
-    [LiveFlightStore refreshInBackground];
+    self.lastDataRefresh = 0;
+    [self refreshVisibleData];
 }
 
 - (void)nextLocation:(id)sender {

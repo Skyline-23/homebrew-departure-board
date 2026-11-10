@@ -7,6 +7,9 @@ $package = Join-Path $env:RUNNER_TEMP 'DepartureBoard-package'
 $installed = Join-Path $env:RUNNER_TEMP 'DepartureBoard-installed'
 $installed = [IO.Path]::GetFullPath($installed)
 Expand-Archive $PackageZip $package
+foreach ($guideFile in @('Install Guide.html', 'Guide/index.html', 'Guide/ko.html', 'Guide/guide.css', 'Guide/images/macos-settings.png', 'Guide/images/windows-settings.png')) {
+    if (!(Test-Path (Join-Path $package $guideFile))) { throw "Missing packaged guide asset: $guideFile" }
+}
 & "$package/Install.ps1" -NoLaunch -Destination $installed
 $resident = $null
 $saverProcess = $null
@@ -25,8 +28,7 @@ try {
     # Bypass the .scr shell association so it cannot replace our test arguments with /s.
     $start = [Diagnostics.ProcessStartInfo]::new($saver)
     $start.UseShellExecute = $false
-    $start.ArgumentList.Add('--self-test')
-    $start.ArgumentList.Add($OutputDirectory)
+    $start.Arguments = '--self-test "' + $OutputDirectory + '"'
     $process = [Diagnostics.Process]::Start($start)
 
     if (!$process.WaitForExit(120000)) {
@@ -80,8 +82,7 @@ try {
 
     # A running .scr locks the same payload as the tray executable. Both upgrade
     # and uninstall must stop it before replacing or removing program files.
-    $start.ArgumentList.Clear()
-    $start.ArgumentList.Add('/s')
+    $start.Arguments = '/s'
     $saverProcess = [Diagnostics.Process]::Start($start)
     if (!$saverProcess.WaitForInputIdle(15000)) { throw 'Screen saver did not start.' }
     & "$package/Install.ps1" -NoLaunch -Destination $installed

@@ -3,6 +3,8 @@
 Windows 11 x64 and ARM64 port. This preview shares the macOS app's 40 airport profiles,
 translations, schedules and airline assets. macOS remains the stable release.
 
+Read the **[illustrated installation and user guide](../docs/install-guide.md)** ([한국어](../docs/install-guide.ko.md)) for screenshots, all settings and troubleshooting. An offline copy is included in every download.
+
 ## Install a preview build
 
 1. Download `DepartureBoard-win-x64.zip` or `DepartureBoard-win-arm64.zip` from the
@@ -96,3 +98,5 @@ or lock/unlock testing.
 Local diagnostic logs record request results, shared-cache updates and displayed state
 changes. Files rotate automatically and do not contain API keys or response bodies.
 See [diagnostic logs](../docs/diagnostics.md) for the location and capture commands.
+
+For isolated console display tests without credential checks, run `DepartureBoard.exe --self-test <output-folder> --desktop --display-only` as the normal signed-in user. It captures each screen and temporarily applies, then restores, a still wallpaper.

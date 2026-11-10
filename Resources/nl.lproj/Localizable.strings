@@ -28,3 +28,5 @@
 "data.configure" = "Stel live vluchtgegevens in via Departure Board";
 
 "column.airline" = "Maatschappij";
+
+"menu.guide" = "Install & user guide";

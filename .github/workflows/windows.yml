@@ -38,6 +38,8 @@ jobs:
       - name: Check C# formatting
         run: |
           dotnet tool restore --tool-manifest Windows/.config/dotnet-tools.json
+          python script/build-guide.py --check
+          python script/check-guide.py
           python Windows/scripts/test_format.py
           python Windows/scripts/format.py --check
       - name: Build and test shared logic

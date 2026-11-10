@@ -7,6 +7,15 @@ namespace DepartureBoard.Windows.Platform;
 
 internal static class NativeMethods
 {
+    [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static extern bool SystemParametersInfo(
+        uint action,
+        uint parameter,
+        string value,
+        uint flags
+    );
+
     internal delegate bool WindowCallback(nint window, nint parameter);
 
     [StructLayout(LayoutKind.Sequential)]
@@ -67,6 +76,13 @@ internal static class NativeMethods
         int height,
         uint flags
     );
+
+    [DllImport("user32.dll")]
+    internal static extern uint GetDpiForWindow(nint window);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static extern bool GetWindowRect(nint window, out NativeRect rectangle);
 
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]

@@ -25,8 +25,15 @@ internal static class Program
             {
                 return WindowsSmokeTest.Run(
                     arguments.Length > 1 ? arguments[1] : "smoke-output",
-                    arguments.Contains("--desktop")
+                    arguments.Contains("--desktop"),
+                    arguments.Contains("--display-only")
                 );
+            }
+
+            if (options.Mode == LaunchMode.Guide)
+            {
+                InstallationGuide.Open();
+                return 0;
             }
 
             using var services = new AppServices();

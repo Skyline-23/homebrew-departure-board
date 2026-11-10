@@ -75,3 +75,44 @@ The implementation detects missing Explorer hosts and monitor-layout changes
 and retries; recovery is not a substitute for those end-to-end tests. Live API
 behavior is covered by fixtures and shared-cache tests, not a paid live-provider
 account. The Windows CI separately runs native x64 and ARM64 checks.
+
+## Mixed-DPI virtual displays — 2026-11-10
+
+The 0.7.3 candidate was tested in the Windows console session using the already
+installed SudoVDA 1.10.9.289 driver. No driver restart was needed. Two virtual
+monitors were extended, with the QHD display left of and above the FHD primary:
+
+| Primary | Secondary | Secondary position | Observed native DPI |
+| --- | --- | --- | --- |
+| 1920 × 1080, 100% | 2560 × 1440, 150% | −2560, −360 | 96 / 144 |
+| 1920 × 1080, 100% | 2560 × 1440, 200% | −2560, −360 | 96 / 192 |
+
+In both cases, screen-saver HWNDs matched each physical pixel rectangle, WPF
+scale matched native DPI, and moving the preview between displays updated its
+DPI without placing it outside the display. Live and still wallpaper captures
+on the secondary display showed the header and footer above its taskbar. The
+header pixel matched the renderer in all six secondary captures. Existing
+foreground windows covered the primary desktop, so its wallpaper visibility was
+not inferred from a full-desktop capture; native bounds and its full-screen
+screen-saver output were verified separately.
+
+Wallpaper Engine was also running on the machine and could cover the Windows
+still image. Its playback was temporarily stopped for these captures, then
+resumed through its documented command-line interface. The still-image test
+restores the previous Windows wallpaper afterward. Use one active wallpaper
+manager when checking appearance.
+
+Geometry, observed DPI and capture hashes are in
+[mixed-dpi-2026-11-10.json](validation/mixed-dpi-2026-11-10.json). Reproduce from a
+normal signed-in console session with:
+
+```powershell
+DepartureBoard.exe --self-test display-output --desktop --display-only
+```
+
+The display-only check creates temporary windows, captures the desktop and
+applies then restores a still image. Credential and installer checks remain in
+the full smoke suite. The original physical display configuration and other
+wallpaper playback were restored after the test. Physical cable hot-plug,
+lock/unlock, HDR/color accuracy and other GPU/monitor combinations remain
+separate coverage.

@@ -30,7 +30,15 @@ public sealed class AeroDataBoxClient(HttpClient client)
         using var response = await client
             .SendAsync(request, cancellationToken)
             .ConfigureAwait(false);
-        response.EnsureSuccessStatusCode();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var retryAfter = response.Headers.RetryAfter;
+            var delay =
+                retryAfter?.Delta
+                ?? (retryAfter?.Date is { } date ? date - DateTimeOffset.UtcNow : (TimeSpan?)null);
+            throw new ProviderRequestException(response.StatusCode, delay);
+        }
         var bytes = await response
             .Content.ReadAsByteArrayAsync(cancellationToken)
             .ConfigureAwait(false);

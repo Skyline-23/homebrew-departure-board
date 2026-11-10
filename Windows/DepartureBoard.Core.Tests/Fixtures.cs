@@ -57,6 +57,8 @@ internal static class Fixtures
 
         internal int Calls => calls;
         internal bool Fail { get; set; }
+        internal HttpStatusCode FailureStatus { get; set; } = HttpStatusCode.TooManyRequests;
+        internal System.Net.Http.Headers.RetryConditionHeaderValue? RetryAfter { get; set; }
         internal Exception? Fault { get; set; }
 
         protected override async Task<HttpResponseMessage> SendAsync(
@@ -71,12 +73,12 @@ internal static class Fixtures
                 throw Fault;
             }
             await Task.Delay(30, cancellationToken);
-            return new HttpResponseMessage(
-                Fail ? HttpStatusCode.TooManyRequests : HttpStatusCode.OK
-            )
+            var response = new HttpResponseMessage(Fail ? FailureStatus : HttpStatusCode.OK)
             {
                 Content = new ByteArrayContent(Response),
             };
+            response.Headers.RetryAfter = RetryAfter;
+            return response;
         }
     }
 }

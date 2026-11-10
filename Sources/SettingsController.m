@@ -1,6 +1,7 @@
 #import "BackgroundAgent.h"
 #import "BoardViewInternal.h"
 #import "DrawingSupport.h"
+#import "InstallationGuide.h"
 #import "LiveFlightStore.h"
 #import "SettingsStore.h"
 
@@ -127,7 +128,7 @@
         refresh.lastItem.representedObject = interval;
 
         if (interval.integerValue ==
-            (saved[@"refreshInterval"] ? [saved[@"refreshInterval"] integerValue] : 60)) {
+            (saved[@"refreshInterval"] ? [saved[@"refreshInterval"] integerValue] : 300)) {
             [refresh selectItem:refresh.lastItem];
         }
     }
@@ -145,15 +146,17 @@
     if (date) {
         updated = DBTime(date, self.location, @"dd MMM yyyy, HH:mm z");
     }
-    NSInteger failure = [LiveFlightStore refreshFailureStatusForAirport:self.locationCode];
+    NSInteger failure =
+        self.useSampleData ? 0 : [LiveFlightStore refreshFailureStatusForAirport:self.locationCode];
     NSString *issue = failure == 401   ? @"settings.apiAuthenticationFailed"
                       : failure == 403 ? @"settings.apiSubscriptionRequired"
                       : failure == 429 ? @"settings.apiRateLimited"
                                        : nil;
     NSTextField *lastUpdate = [NSTextField
-        labelWithString:issue ? DBUIString(issue)
-                              : [NSString
-                                    stringWithFormat:DBUIString(@"settings.lastUpdate"), updated]];
+        labelWithString:self.useSampleData ? DBUIString(@"data.sample")
+                        : issue            ? DBUIString(issue)
+                                : [NSString stringWithFormat:DBUIString(@"settings.lastUpdate"),
+                                                             updated]];
     lastUpdate.frame = NSMakeRect(161, 215, 497, 22);
     lastUpdate.textColor = issue ? NSColor.systemOrangeColor : NSColor.secondaryLabelColor;
     lastUpdate.font = DBFont(11, NO, NO);
@@ -245,8 +248,19 @@
         separator.boxType = NSBoxSeparator;
         [v addSubview:separator];
     }
+    NSButton *guide = [NSButton buttonWithTitle:DBUIString(@"menu.guide")
+                                         target:self
+                                         action:@selector(openInstallationGuide:)];
+    guide.bezelStyle = NSBezelStyleRounded;
+    guide.frame = NSMakeRect(28, 24, 220, 32);
+    [v addSubview:guide];
     self.optionsWindow = window;
     return window;
+}
+
+- (void)openInstallationGuide:(id)sender {
+
+    DBOpenInstallationGuide([NSBundle bundleForClass:self.class]);
 }
 
 - (void)applySettingsFromWindow:(NSWindow *)window completion:(void (^)(BOOL saved))completion {

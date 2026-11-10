@@ -28,3 +28,5 @@
 "data.configure" = "Ställ in flygdata i realtid i Departure Board";
 
 "column.airline" = "Flygbolag";
+
+"menu.guide" = "Install & user guide";

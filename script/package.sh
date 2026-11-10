@@ -10,6 +10,8 @@ trap 'rm -rf "$STAGING"' EXIT
 ditto --noextattr --norsrc "$BUNDLES/Departure Board.app" "$STAGING/Departure Board.app"
 ditto --noextattr --norsrc "$BUNDLES/Departure Board.saver" "$STAGING/Departure Board.saver"
 cp "$PROJECT_ROOT/LICENSE" "$STAGING/LICENSE"
+cp -R "$PROJECT_ROOT/Resources/Guide" "$STAGING/Guide"
+cp "$PROJECT_ROOT/Resources/Install Guide.html" "$STAGING/Install Guide.html"
 COPYFILE_DISABLE=1 ditto -c -k --norsrc --noextattr "$STAGING" "$DIST/DepartureBoard-$VERSION-universal.zip"
 shasum -a 256 "$DIST/DepartureBoard-$VERSION-universal.zip"
 git -C "$PROJECT_ROOT" archive --format=tar.gz --prefix="departure-board-$VERSION/" HEAD > "$DIST/DepartureBoard-$VERSION-source.tar.gz"
