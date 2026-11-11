@@ -99,8 +99,13 @@ for (const filename of ["index.html", "ko.html"]) {
       .replaceAll(".", "\\.");
     html = html.replace(
       new RegExp(`<img src="${escaped}"[^>]*>`, "g"),
-      (img) =>
-        `<picture><source type="image/webp" srcset="${image.srcSet}" sizes="(max-width: 760px) calc(100vw - 48px), 960px">${img}</picture>`,
+      (img) => {
+        const sizedImage = img.replace(
+          "<img ",
+          `<img width="${image.width}" height="${image.height}" `,
+        );
+        return `<picture><source type="image/webp" srcset="${image.srcSet}" sizes="(max-width: 760px) calc(100vw - 48px), 960px">${sizedImage}</picture>`;
+      },
     );
   }
   await writeFile(target, html);
