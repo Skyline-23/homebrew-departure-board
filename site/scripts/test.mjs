@@ -134,6 +134,23 @@ try {
       0,
     );
     await page.evaluate(() => scrollTo({ top: 0, behavior: "instant" }));
+    await page.waitForFunction(() => {
+      const selected = document.querySelector(
+        'input[name="airport"]:checked',
+      ).value;
+      const letters = [...document.querySelectorAll(".flap-letter")]
+        .map((letter) => letter.textContent)
+        .join("");
+      const source = document.querySelector("#airport-board").src;
+      return (
+        !document.querySelector("#airport-expand").hasAttribute("aria-busy") &&
+        letters === selected &&
+        source.includes(`/${selected.toLowerCase()}.`) &&
+        document
+          .getAnimations()
+          .every((animation) => animation.playState !== "running")
+      );
+    });
     await page.screenshot({ path: path.join(output, `${name}.png`) });
     await page.getByRole("link", { name: "EN", exact: true }).click();
     await page.waitForLoadState("networkidle");
