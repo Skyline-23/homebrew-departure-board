@@ -7,3 +7,8 @@ _workspace
 Windows
 Sources
 Tests
+**/node_modules
+site/.next
+site/out
+site/public
+site/src/generated

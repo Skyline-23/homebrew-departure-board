@@ -1,7 +1,7 @@
-import { airports } from "./airport-data.js";
-import { createBoardTransition } from "./board-transition.js";
+import { airports } from "@/features/product/airport-data.js";
+import { createBoardTransition } from "@/features/product/board-transition.js";
 
-function initAirportPreview() {
+export function initAirportPreview() {
   const hero = document.querySelector(".airport-hero");
   const image = document.querySelector("#airport-board");
   const stage = document.querySelector("#airport-expand");
@@ -84,6 +84,8 @@ function initAirportPreview() {
   async function updateAirport(index, token) {
     const airport = airports[index];
     const next = new Image();
+    next.srcset = airport.srcSet;
+    next.sizes = image.sizes;
     next.src = airport.image;
     await next.decode();
     if (disposed || token !== generation) return;
@@ -93,6 +95,7 @@ function initAirportPreview() {
       await Promise.all([transition.play(next), animateCode(airport.code)]);
     if (disposed || token !== generation) return;
     current = index;
+    image.srcset = airport.srcSet;
     image.src = airport.image;
     image.alt = `${korean ? airport.name : airport.nameEn} · ${sampleLabel}`;
     cancelTransition();
@@ -224,10 +227,5 @@ function initAirportPreview() {
   listen(window, "pagehide", dispose, { once: true });
   updateControls(current);
   onScroll();
+  return dispose;
 }
-
-initAirportPreview();
-// Restore the event owner when the browser resumes a back/forward-cached page.
-window.addEventListener("pageshow", (event) => {
-  if (event.persisted) initAirportPreview();
-});

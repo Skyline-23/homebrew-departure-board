@@ -18,7 +18,7 @@ async function asset(request) {
   catch { return new Response('Bad request', { status: 400 }); }
   const file = resolve(root, '.' + path);
   if (!file.startsWith(root + sep) && file !== root) return new Response('Not found', { status: 404 });
-  if (path.split('/').some(part => part.startsWith('.') || part.startsWith('_'))) return new Response('Not found', { status: 404 });
+  if (path.split('/').some(part => part.startsWith('.') || (part.startsWith('_') && part !== '_next'))) return new Response('Not found', { status: 404 });
   let selected;
   let info;
   for (const candidate of (file === root ? [resolve(file, 'index.html')] : [file, file + '.html', resolve(file, 'index.html')])) {

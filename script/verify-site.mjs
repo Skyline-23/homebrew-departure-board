@@ -4,10 +4,12 @@ import { createHash } from 'node:crypto';
 import { readFile, readdir } from 'node:fs/promises';
 import { setTimeout as delay } from 'node:timers/promises';
 import { isDeepStrictEqual } from 'node:util';
+import { siteRevision } from '../site/scripts/revision.mjs';
 
 const version = process.argv[2];
 assert.match(version || '', /^\d+\.\d+\.\d+$/, 'Supply the release version.');
 const origin = 'https://dpboard.skyline23.com';
+const expectedRevision = await siteRevision();
 const imageFolder = new URL('../Resources/Guide/images/', import.meta.url);
 const expectedImages = {};
 const imageDimensions = {};
@@ -27,7 +29,7 @@ while (Date.now() < deadline) {
     });
     if (response.ok) {
       const manifest = await response.json();
-      if (manifest.version === version && isDeepStrictEqual(manifest.images, expectedImages)) {
+      if (manifest.version === version && manifest.framework === 'next' && manifest.revision === expectedRevision && isDeepStrictEqual(manifest.images, expectedImages)) {
         deployed = true;
         break;
       }
@@ -46,7 +48,7 @@ for (const path of ['/index.html', '/ko.html', '/guide/ko.html', '/guide/index.h
   assert.match(response.headers.get('content-type') || '', /text\/html/);
   const html = await response.text();
   const pageImages = new Set();
-  for (const match of html.matchAll(/<img\b[^>]*\bsrc="(images\/([^"?]+))"/g)) {
+  for (const match of html.matchAll(/<img\b[^>]*\bsrc="(\/?images\/([^"?]+))"/g)) {
     const filename = match[2].match(/^(.+)\.([a-f0-9]{12})(\.png)$/);
     assert.ok(filename, `${path} must use a content-versioned image URL.`);
     const original = filename[1] + filename[3];
@@ -68,6 +70,8 @@ for (const path of ['/index.html', '/ko.html', '/guide/ko.html', '/guide/index.h
   for (const filename of requiredImages)
     assert.ok(pageImages.has(filename), `${path} must show the current ${filename}.`);
   if (!path.startsWith('/guide/')) {
+    assert.ok(html.includes('data-site-framework="next"'), `${path} must be the Next.js product page.`);
+    assert.ok(html.includes('/_next/static/'), `${path} must load the exported Next.js assets.`);
     const image = html.match(/property="og:image"\s+content="([^"]+)"/);
     assert.ok(image, `${path} must declare an Open Graph image.`);
     const imageUrl = new URL(image[1]);

@@ -21,3 +21,8 @@ Windows/**/obj/
 
 .wrangler/
 .nitroship/
+site/node_modules/
+site/.next/
+site/out/
+site/public/
+site/src/generated/

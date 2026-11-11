@@ -1,61 +1,32 @@
 #!/usr/bin/env python3
-"""Build the public product pages without runtime API calls or dependencies."""
+"""Build the statically rendered Next.js product site and bundled guide."""
 import argparse
-import hashlib
-import json
+import os
 from pathlib import Path
-import re
 import shutil
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
+
 
 def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--version', default=None)
     args = parser.parse_args()
-    version = args.version or re.search(r'version "([^"]+)"', (ROOT / 'Casks/departure-board.rb').read_text())[1]
+    environment = os.environ.copy()
+    environment['NEXT_TELEMETRY_DISABLED'] = '1'
 
-    if not re.fullmatch(r'\d+\.\d+\.\d+', version):
-        raise SystemExit('Expected a release version such as 0.7.3')
-    subprocess.run(['python3', str(ROOT / 'script/build-guide.py'), '--check'], check=True)
+    if args.version:
+        environment['DEPARTURE_SITE_VERSION'] = args.version
+    subprocess.run(['npm', 'run', 'build'], cwd=ROOT / 'site', env=environment, check=True)
     output = ROOT / 'work/site'
 
     if output.exists():
         shutil.rmtree(output)
-    output.mkdir(parents=True, exist_ok=True)
+    shutil.copytree(ROOT / 'site/out', output)
+    print(f'Built Next.js product site: {output}')
 
-    for name in ['index.html', 'ko.html', 'site.css', 'icon.png', 'download.js', 'og-ko-v1.png', 'og-en-v1.png', 'hero.css', 'airport-demo.js', 'airport-data.js', 'board-transition.js', 'flap-tile.webp', 'arrow-right.svg']:
-        shutil.copyfile(ROOT / 'site' / name, output / name)
-
-    for name in ['index.html', 'ko.html']:
-        page = output / name
-        page.write_text(re.sub(r'(og-(?:ko|en)-v1\.png)', rf'\1?v={version}', page.read_text()))
-    shutil.copytree(ROOT / 'site/boards', output / 'boards')
-    shutil.copytree(ROOT / 'Resources/Guide', output / 'guide', dirs_exist_ok=True)
-    shutil.copytree(ROOT / 'Resources/Guide/images', output / 'images', dirs_exist_ok=True)
-    image_hashes = {}
-
-    for image in sorted((ROOT / 'Resources/Guide/images').glob('*.png')):
-        digest = hashlib.sha256(image.read_bytes()).hexdigest()[:12]
-        image_hashes[image.name] = digest
-        filename = f'{image.stem}.{digest}{image.suffix}'
-
-        for folder in ['images', 'guide/images']:
-            shutil.copyfile(image, output / folder / filename)
-
-    for page in output.rglob('*.html'):
-        html = page.read_text()
-
-        for filename, digest in image_hashes.items():
-            image = Path(filename)
-            html = html.replace(f'src="images/{filename}"', f'src="images/{image.stem}.{digest}{image.suffix}"')
-        page.write_text(html)
-    (output / 'release.json').write_text(json.dumps({'version': version, 'images': image_hashes}) + '\n')
-    (output / 'robots.txt').write_text('User-agent: *\nAllow: /\nSitemap: https://dpboard.skyline23.com/sitemap.xml\n')
-    (output / 'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+''.join(f'<url><loc>https://dpboard.skyline23.com/{path}</loc></url>' for path in ['', 'ko.html', 'guide/index.html', 'guide/ko.html'])+'</urlset>')
-    print(f'Built product site for {version}: {output}')
 
 if __name__ == '__main__':
     main()

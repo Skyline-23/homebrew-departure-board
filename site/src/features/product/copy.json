@@ -1,0 +1,122 @@
+{
+  "en": {
+    "lang": "en",
+    "title": "Departure Board — Airport displays for your desktop",
+    "description": "40 airport departure displays as a wallpaper and screen saver.",
+    "heroTitle": ["Your airport.", "On your desktop."],
+    "subtitle": "40 airports. At home on macOS and Windows.",
+    "navGuide": "Installation guide",
+    "navInstall": "Install",
+    "languageLabel": "KO",
+    "enlarge": "Enlarge the airport display",
+    "chooseAirport": "Choose an airport",
+    "airportLabels": ["Incheon ICN", "Haneda HND", "New York JFK"],
+    "get": "Get",
+    "installerNote": "Installer for your computer",
+    "platformQuestion": "Need a different operating system?",
+    "sampleLabel": "Sample preview",
+    "dialogLabel": "Airport display detail",
+    "dialogHint": "Sample display rendered by the app",
+    "close": "Close",
+    "featuresTitle": "While you work. While you’re away.",
+    "features": [
+      {
+        "title": "Three ways to use it",
+        "body": "Use a live desktop wallpaper, save a still image or let the full-screen screen saver take over."
+      },
+      {
+        "title": "40 distinct airports",
+        "body": "Airport-specific designs, local languages and time zones. Pages and codeshare flight numbers rotate in place."
+      },
+      {
+        "title": "Made for multiple screens",
+        "body": "Each monitor uses its own resolution and scale. Adjust text size, rows and spacing to suit your setup."
+      }
+    ],
+    "settingsTitle": "Make it yours.",
+    "settingsBody": "Airport, language, brightness, scale, motion and refresh interval, together in one settings window. Preview changes as you go.",
+    "settingsLabels": ["macOS settings", "Windows settings"],
+    "faqTitle": "A few things to know",
+    "faq": [
+      {
+        "title": "Can I display real flights?",
+        "body": "Yes. Add your own AeroDataBox RapidAPI key to fetch real flights. A separate provider subscription is required. Sample data works immediately without a key."
+      },
+      {
+        "title": "When does the app make API requests?",
+        "body": "Flights refresh at your chosen interval, using a shared cache. Language changes, paging and codeshare rotation do not make new requests. After a provider error, the app respects the server retry instructions."
+      },
+      {
+        "title": "What if the board feels too small?",
+        "body": "The board fits the full display, then lets you adjust its scale and row count. Each monitor adapts to its own display scale. The guide walks through the settings."
+      },
+      {
+        "title": "Does it work offline?",
+        "body": "Sample data and a saved still wallpaper work offline. The guide and its pictures are included with the app. Fetching new live flights needs an internet connection."
+      }
+    ],
+    "credit": "Made by Skyline23",
+    "portfolioLabel": "Portfolio",
+    "previewFailure": "The preview could not load. Reload the page to retry."
+  },
+  "ko": {
+    "lang": "ko",
+    "title": "Departure Board — 공항 전광판 배경화면",
+    "description": "40개 공항의 출발 안내판을 배경화면과 화면 보호기로.",
+    "heroTitle": ["공항 전광판을", "배경화면으로"],
+    "subtitle": "macOS와 Windows에서 만나는 40개 공항.",
+    "navGuide": "설치 설명서",
+    "navInstall": "설치하기",
+    "languageLabel": "EN",
+    "enlarge": "전광판 크게 보기",
+    "chooseAirport": "공항 선택",
+    "airportLabels": ["인천 ICN", "하네다 HND", "뉴욕 JFK"],
+    "get": "받기",
+    "installerNote": "컴퓨터에 맞는 설치 파일",
+    "platformQuestion": "혹시 이 운영체제가 아닌가요?",
+    "sampleLabel": "샘플 화면",
+    "dialogLabel": "전광판 크게 보기",
+    "dialogHint": "앱에서 렌더링한 샘플 화면",
+    "close": "닫기",
+    "featuresTitle": "이렇게 사용할 수 있습니다",
+    "features": [
+      {
+        "title": "배경화면과 화면 보호기",
+        "body": "움직이는 배경화면, 정지 배경화면, 전체 화면으로 띄우는 화면 보호기 중 원하는 방식을 고르세요."
+      },
+      {
+        "title": "원하는 공항을 고르세요",
+        "body": "공항별 안내판 디자인과 언어, 시간대를 반영했습니다. 페이지와 공동운항 편명은 차례로 바뀝니다."
+      },
+      {
+        "title": "모니터마다 알맞게",
+        "body": "각 모니터의 해상도와 배율에 맞춰 표시합니다. 작업 환경에 맞게 글자 크기, 행 수와 여백을 조절하세요."
+      }
+    ],
+    "settingsTitle": "내 화면을 보기 편하게",
+    "settingsBody": "공항과 언어를 고르고 글자 크기와 밝기를 조절하세요. 바뀐 모습은 미리 보기에서 확인할 수 있습니다.",
+    "settingsLabels": ["macOS 설정", "Windows 설정"],
+    "faqTitle": "자주 묻는 질문",
+    "faq": [
+      {
+        "title": "실제 항공편도 볼 수 있나요?",
+        "body": "네. 본인의 AeroDataBox RapidAPI 키를 설정하면 실시간 항공편을 조회합니다. 제공사의 별도 이용 요금제가 필요하며 샘플 데이터는 키 없이 바로 사용할 수 있습니다."
+      },
+      {
+        "title": "API 요청은 언제 발생하나요?",
+        "body": "설정한 주기에 따라 항공편을 조회하고 캐시를 공유합니다. 언어 전환, 페이지 넘김, 공동운항 편명 전환은 새 요청을 만들지 않습니다. 제공사 오류가 발생하면 서버의 재시도 안내에 따라 기다립니다."
+      },
+      {
+        "title": "화면이 잘리거나 글자가 너무 작다면?",
+        "body": "화면 전체에 맞춰 그린 뒤 설정의 크기와 행 수를 조절할 수 있습니다. 서로 다른 배율의 모니터에서도 각각 맞춰 표시합니다. 설치 설명서에 확인 순서를 담았습니다."
+      },
+      {
+        "title": "인터넷 없이 사용할 수 있나요?",
+        "body": "샘플 데이터와 저장한 정지 배경화면은 인터넷 없이 사용할 수 있습니다. 설치 설명서와 사진도 앱에 들어 있습니다. 실제 항공편을 새로 조회하려면 인터넷이 필요합니다."
+      }
+    ],
+    "credit": "개발: Skyline23",
+    "portfolioLabel": "포트폴리오",
+    "previewFailure": "미리보기를 불러오지 못했습니다. 페이지를 새로고침해 주세요."
+  }
+}

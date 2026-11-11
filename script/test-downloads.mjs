@@ -5,7 +5,7 @@ import vm from "node:vm";
 import downloads from "../site/download-handler.mjs";
 
 const source = await readFile(
-  new URL("../site/download.js", import.meta.url),
+  new URL("../site/src/features/product/download.js", import.meta.url),
   "utf8",
 );
 const cases = [
@@ -58,7 +58,7 @@ for (const item of cases) {
         : undefined,
     },
   };
-  vm.runInNewContext(source, context);
+  vm.runInNewContext(source.replace('export function', 'function') + '\ninitDownloads();', context);
   await setImmediate();
   assert.ok(
     links.every((link) => link.href.endsWith(item.expected)),
