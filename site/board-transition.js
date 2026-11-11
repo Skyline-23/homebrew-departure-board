@@ -42,7 +42,7 @@ export function createBoardTransition(stage, prefersReducedMotion) {
       Object.assign(strip.style, {
         top: `${(row * height) / rowCount}px`,
         height: `${height / rowCount + 1}px`,
-        backgroundImage: `url("${nextImage.src}")`,
+        backgroundImage: `url("${nextImage.currentSrc || nextImage.src}")`,
         backgroundSize: `${width}px ${height}px`,
         backgroundPosition: `0 -${(row * height) / rowCount}px`,
       });

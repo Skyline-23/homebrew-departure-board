@@ -58,7 +58,7 @@ for (const item of cases) {
         : undefined,
     },
   };
-  vm.runInNewContext(source, context);
+  vm.runInNewContext(source.replace('export function', 'function') + '\ninitDownloads();', context);
   await setImmediate();
   assert.ok(
     links.every((link) => link.href.endsWith(item.expected)),

@@ -1,4 +1,5 @@
-(() => {
+export function initDownloads() {
+  let active = true;
   const release =
     "https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/";
   const korean = document.documentElement.lang === "ko";
@@ -9,6 +10,7 @@
   const mobile = /Android|iPhone|iPad|iPod/i.test(agent) || touchMac;
 
   function showPlatform(platform, architecture = "") {
+    if (!active) return;
     const windows = platform === "windows";
     const arm = /arm|aarch64/i.test(architecture);
     const filename = windows
@@ -47,4 +49,7 @@
         : "Choose the computer to install on";
     }
   }
-})();
+  return () => {
+    active = false;
+  };
+}

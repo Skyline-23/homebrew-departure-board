@@ -12,6 +12,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - uses: actions/cache@v4
+        with:
+          path: site/.next/cache
+          key: next-${{ runner.os }}-${{ hashFiles('site/package-lock.json') }}-${{ github.sha }}
+          restore-keys: next-${{ runner.os }}-${{ hashFiles('site/package-lock.json') }}-
+      - run: npm ci --prefix site --no-audit --no-fund
       - run: node script/test-downloads.mjs
       - run: node --check script/verify-site.mjs
       - name: Generate Open Graph images
@@ -20,6 +31,7 @@ jobs:
           python3 script/build-og-preview.py --render
       - run: python3 script/build-site.py
       - run: python3 script/check-guide.py
+      - run: node site/scripts/test.mjs
       - uses: actions/upload-artifact@v4
         with:
           name: OpenGraph

@@ -1,0 +1,23 @@
+{
+  "name": "departure-board-site",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node scripts/prepare.mjs && next build",
+    "dev": "node scripts/prepare.mjs && next dev",
+    "start": "node nitroship/server.mjs"
+  },
+  "dependencies": {
+    "next": "16.4.6",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "sharp": "0.35.5"
+  },
+  "devDependencies": {
+    "playwright-core": "1.65.0"
+  }
+}
