@@ -1,6 +1,6 @@
-import copy from "./copy.json";
-import site from "../generated/site.json";
-import Enhancements from "./Enhancements";
+import copy from "@/features/product/copy.json";
+import site from "@/generated/site.json";
+import Enhancements from "@/features/product/Enhancements";
 
 const release =
   "https://github.com/Skyline-23/homebrew-departure-board/releases/latest/download/";
@@ -228,7 +228,7 @@ export default function ProductPage({ language }) {
           <a href="https://blog.skyline23.com">Blog</a>
         </div>
       </footer>
-      <Enhancements />
+      <Enhancements previewFailure={text.previewFailure} />
     </>
   );
 }

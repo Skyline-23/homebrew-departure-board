@@ -25,4 +25,4 @@ site/node_modules/
 site/.next/
 site/out/
 site/public/
-site/generated/
+site/src/generated/

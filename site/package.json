@@ -4,12 +4,14 @@
   "version": "1.0.0",
   "type": "module",
   "engines": {
-    "node": ">=22"
+    "node": ">=22.13.0"
   },
   "scripts": {
     "build": "node scripts/prepare.mjs && next build",
     "dev": "node scripts/prepare.mjs && next dev",
-    "start": "node nitroship/server.mjs"
+    "start": "cd ../work/nitroship && node server.mjs",
+    "lint": "eslint src scripts nitroship next.config.mjs --max-warnings=0",
+    "test:e2e": "node scripts/test.mjs"
   },
   "dependencies": {
     "next": "16.4.6",
@@ -18,6 +20,8 @@
     "sharp": "0.35.5"
   },
   "devDependencies": {
+    "eslint": "10.14.0",
+    "eslint-config-next": "16.4.6",
     "playwright-core": "1.65.0"
   }
 }

@@ -11,4 +11,4 @@ Tests
 site/.next
 site/out
 site/public
-site/generated
+site/src/generated

@@ -5,7 +5,7 @@ import vm from "node:vm";
 import downloads from "../site/download-handler.mjs";
 
 const source = await readFile(
-  new URL("../site/download.js", import.meta.url),
+  new URL("../site/src/features/product/download.js", import.meta.url),
   "utf8",
 );
 const cases = [

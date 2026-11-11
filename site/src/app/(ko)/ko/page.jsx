@@ -1,5 +1,5 @@
-import ProductPage from "../../../components/ProductPage";
-import { metadataFor } from "../../../components/metadata";
+import ProductPage from "@/features/product/ProductPage";
+import { metadataFor } from "@/features/product/metadata";
 
 export const metadata = metadataFor("ko");
 

@@ -9,7 +9,7 @@ import { siteRevision } from "./revision.mjs";
 const site = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const root = path.dirname(site);
 const output = path.join(site, "public");
-const generated = path.join(site, "generated");
+const generated = path.join(site, "src/generated");
 const hash = (bytes) =>
   createHash("sha256").update(bytes).digest("hex").slice(0, 12);
 const version =
@@ -30,7 +30,6 @@ await cp(path.join(root, "Resources/Guide"), path.join(output, "guide"), {
   recursive: true,
 });
 for (const name of [
-  "site.css",
   "icon.png",
   "arrow-right.svg",
   "og-en-v1.png",
@@ -38,6 +37,11 @@ for (const name of [
 ]) {
   await cp(path.join(site, name), path.join(output, name));
 }
+
+await cp(
+  path.join(site, "src/features/product/site.css"),
+  path.join(output, "site.css"),
+);
 
 const icon = await sharp(path.join(site, "icon.png"))
   .resize(64)

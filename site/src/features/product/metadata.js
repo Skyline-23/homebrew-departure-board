@@ -1,5 +1,5 @@
-import copy from "./copy.json";
-import site from "../generated/site.json";
+import copy from "@/features/product/copy.json";
+import site from "@/generated/site.json";
 
 export function metadataFor(language) {
   const text = copy[language];

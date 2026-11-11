@@ -1,5 +1,5 @@
-import "../site.css";
-import "../hero.css";
+import "@/features/product/site.css";
+import "@/features/product/hero.css";
 
 export default function Root({ language, children }) {
   return (

@@ -51,6 +51,7 @@ jobs:
           key: next-${{ runner.os }}-${{ hashFiles('site/package-lock.json') }}-${{ github.sha }}
           restore-keys: next-${{ runner.os }}-${{ hashFiles('site/package-lock.json') }}-
       - run: npm ci --prefix site --no-audit --no-fund
+      - run: npm run lint --prefix site
       - run: node script/test-downloads.mjs
       - run: node --check script/verify-site.mjs
       - name: Generate Open Graph images
@@ -59,7 +60,7 @@ jobs:
           python3 script/build-og-preview.py --render
       - run: python3 script/build-site.py
       - run: python3 script/check-guide.py
-      - run: node site/scripts/test.mjs
+      - run: npm run test:e2e --prefix site
       - name: Verify the deployed site after main updates
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: node script/verify-site.mjs "$(python3 -c 'import json; print(json.load(open("work/site/release.json"))["version"])')"

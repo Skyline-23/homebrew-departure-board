@@ -1,6 +1,13 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
-import { mkdir, mkdtemp, readFile, rm, symlink } from "node:fs/promises";
+import {
+  copyFile,
+  mkdir,
+  mkdtemp,
+  readFile,
+  rm,
+  symlink,
+} from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
@@ -19,15 +26,19 @@ await symlink(
   path.join(temporary, "public"),
   "dir",
 );
-const server = spawn(
-  process.execPath,
-  [path.join(root, "site/nitroship/server.mjs")],
-  {
-    cwd: temporary,
-    env: { ...process.env, PORT: "18767" },
-    stdio: "inherit",
-  },
+await copyFile(
+  path.join(root, "site/nitroship/server.mjs"),
+  path.join(temporary, "server.mjs"),
 );
+await copyFile(
+  path.join(root, "site/download-handler.mjs"),
+  path.join(temporary, "download-handler.mjs"),
+);
+const server = spawn(process.execPath, [path.join(temporary, "server.mjs")], {
+  cwd: temporary,
+  env: { ...process.env, PORT: "18767" },
+  stdio: "inherit",
+});
 let browser;
 try {
   let ready = false;
@@ -70,7 +81,9 @@ try {
         () => document.documentElement.scrollWidth <= innerWidth,
       ),
     );
-    await page.getByRole("radio", { name: "하네다 HND", exact: true }).check();
+    await page
+      .getByRole("radio", { name: "인천 ICN", exact: true })
+      .press("ArrowRight");
     await page.waitForFunction(
       () =>
         document.querySelector("#airport-board").src.includes("/hnd.") &&
@@ -87,6 +100,10 @@ try {
     assert.equal(
       await page.locator("#airport-dialog").evaluate((dialog) => dialog.open),
       false,
+    );
+    assert.equal(
+      await page.evaluate(() => document.activeElement.id),
+      "airport-expand",
     );
     await page
       .getByText("혹시 이 운영체제가 아닌가요?", { exact: true })

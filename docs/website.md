@@ -4,7 +4,7 @@ The detailed product site is `https://dpboard.skyline23.com`, hosted by the Nitr
 
 ## Build and preview
 
-The product pages use Next.js 16 with the App Router and a static export. Python 3 and Node.js 22 or later are required. Install the pinned dependencies before building.
+The product pages use Next.js 16 with the App Router and a static export. Python 3 and Node.js 22.13 or later are required. Install the pinned dependencies before building.
 
 ```sh
 npm ci --prefix site
@@ -17,9 +17,9 @@ Open `http://localhost:8767/ko` or `/` for English. The build copies the same En
 
 `nitroship.json` extracts `/app/public` from the image for Nitroship's static CDN. Fallback platform redirects run in the Incheon region, with zero idle instances and at most one active instance. `/healthz` is the runtime health check. These hosting settings do not affect the desktop app's flight-provider requests.
 
-## Deploy
+## Manual preview fallback
 
-Install the official Nitroship CLI and sign in, then run:
+Production deploys automatically from `main`, as described below. For an explicitly requested isolated deployment preview, install the official Nitroship CLI and sign in, then run:
 
 ```sh
 python3 script/build-nitroship.py
@@ -54,7 +54,7 @@ English and Korean use separate 1200×630 PNG cards with the real app icon and s
 
 The editorial landing page uses an ivory background, a yellow Get button and three split-flap airport codes. The navigation stays fixed across the whole page with an Install action. Both download actions select the same latest file for the visitor. Installation steps live in the guide, and alternate platform links stay in a compact footer disclosure. Scrolling selects Incheon, Haneda and JFK. The airport codes and the app's real sample renders turn together, with short staggered transitions. The same three airports can be selected with native radio controls. The display opens in a native dialog with Escape dismissal and focus restoration.
 
-`site/airport-demo.js` owns page events, stale image requests, scroll state and teardown. `site/board-transition.js` owns raster-strip animation and cancellation. `site/airport-data.js` exposes the three featured previews from the generated asset manifest. The 1920×1080 WebP files in `site/boards` are lossless exports of the app's fixed-date sample PNG renders. The decorative blank split-flap tile was generated for this page. Its letters remain selectable UI state rather than part of the bitmap.
+`site/src/features/product/airport-demo.js` owns page events, stale image requests, scroll state and teardown. `site/src/features/product/board-transition.js` owns raster-strip animation and cancellation. `site/src/features/product/airport-data.js` exposes the three featured previews from the generated asset manifest. The 1920×1080 WebP files in `site/boards` are lossless exports of the app's fixed-date sample PNG renders. The decorative blank split-flap tile was generated for this page. Its letters remain selectable UI state rather than part of the bitmap.
 
 Only the initial preview loads on first view. Other previews load on selection or a scroll transition. There is no autoplay, flight-provider request or GitHub API lookup. Reduced-motion mode disables scroll pinning, flip animation and section reveals. The controller cancels unfinished image transitions and releases listeners and observers when the page is left. The date is the visitor's local date.
 
@@ -66,8 +66,12 @@ GitHub validation separates site/guide checks from native app checks. Superseded
 
 ## Next.js rendering and images
 
-`site/components/ProductPage.jsx` renders the page from shared English/Korean copy. The page and metadata are generated at build time. A small client component starts the OS detection and lazily loads the existing airport controller after hydration. Normal anchors avoid background route prefetches.
+`site/src/features/product/ProductPage.jsx` renders the page from shared English/Korean copy. The page and metadata are generated at build time. A small client component starts the OS detection and lazily loads the existing airport controller after hydration. Normal anchors avoid background route prefetches.
 
 `site/scripts/prepare.mjs` creates responsive WebP variants, content-addressed screenshot URLs and a small app icon. Native board previews use lossless variants at 480, 960, 1440 and 1920 pixels. The original full-resolution board loads when the visitor opens its detail view. The illustrated guide keeps its offline source and gains responsive images in the website build.
 
 The Nitroship runtime serves the exported files and redirects downloads to GitHub Releases. The CI cache covers npm and Next.js build data. Browser checks cover desktop/mobile overflow, airport switching, dialog dismissal, language metadata and image loading. The deployed manifest must match the current source revision before the live rollout check can pass.
+
+## Frontend checks
+
+The product follows the Frontend reference: feature-owned code under `site/src/features/product`, thin App Router entries, `@/` source imports, semantic controls and owned browser lifecycles. `npm run lint --prefix site` covers nested source, build/test scripts and the server configuration. After `python3 script/build-site.py`, `npm run test:e2e --prefix site` starts an isolated static server and exercises the product flow in Chrome (`CHROME_PATH` can override `/usr/bin/google-chrome`). Both checks run in validation and release CI.

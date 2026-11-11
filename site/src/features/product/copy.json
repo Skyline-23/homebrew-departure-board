@@ -56,7 +56,8 @@
       }
     ],
     "credit": "Made by Skyline23",
-    "portfolioLabel": "Portfolio"
+    "portfolioLabel": "Portfolio",
+    "previewFailure": "The preview could not load. Reload the page to retry."
   },
   "ko": {
     "lang": "ko",
@@ -115,6 +116,7 @@
       }
     ],
     "credit": "개발: Skyline23",
-    "portfolioLabel": "포트폴리오"
+    "portfolioLabel": "포트폴리오",
+    "previewFailure": "미리보기를 불러오지 못했습니다. 페이지를 새로고침해 주세요."
   }
 }

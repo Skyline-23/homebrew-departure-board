@@ -213,7 +213,7 @@
   display: grid;
   place-items: center;
   aspect-ratio: 1100 / 1430;
-  background: url("./generated/flap-tile.webp") center / contain no-repeat;
+  background: url("../../generated/flap-tile.webp") center / contain no-repeat;
   perspective: 600px;
 }
 

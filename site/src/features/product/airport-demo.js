@@ -1,5 +1,5 @@
-import { airports } from "./airport-data.js";
-import { createBoardTransition } from "./board-transition.js";
+import { airports } from "@/features/product/airport-data.js";
+import { createBoardTransition } from "@/features/product/board-transition.js";
 
 export function initAirportPreview() {
   const hero = document.querySelector(".airport-hero");
