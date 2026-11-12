@@ -99,6 +99,9 @@ internal sealed class UpdateController : IDisposable
         {
             if (disposed)
                 return;
+
+            if (requested && IsChecking)
+                return;
             var current = updater ??= CreateUpdater();
 
             if (requested)
@@ -171,6 +174,21 @@ internal sealed class UpdateController : IDisposable
             pendingUpdate = item;
             pendingPath = path;
             Status = "Update downloaded. It will be installed when you quit.";
+            NotifyChanged();
+        };
+        current.DownloadStarted += (_, _) =>
+        {
+            Status = "Downloading update…";
+            NotifyChanged();
+        };
+        current.DownloadHadError += (_, _, _) =>
+        {
+            Status = "Couldn't download the update. Check for updates to retry.";
+            NotifyChanged();
+        };
+        current.DownloadCanceled += (_, _) =>
+        {
+            Status = "Update download canceled.";
             NotifyChanged();
         };
         current.CloseApplicationAsync += CloseApplication;
