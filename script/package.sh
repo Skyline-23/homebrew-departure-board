@@ -14,6 +14,8 @@ cp -R "$PROJECT_ROOT/Resources/Guide" "$STAGING/Guide"
 cp "$PROJECT_ROOT/Resources/Install Guide.html" "$STAGING/Install Guide.html"
 COPYFILE_DISABLE=1 ditto -c -k --norsrc --noextattr "$STAGING" "$DIST/DepartureBoard-$VERSION-universal.zip"
 shasum -a 256 "$DIST/DepartureBoard-$VERSION-universal.zip"
+COPYFILE_DISABLE=1 ditto -c -k --norsrc --noextattr --keepParent \
+  "$STAGING/Departure Board.app" "$DIST/DepartureBoard-$VERSION-update.zip"
 ln -s /Applications "$STAGING/Applications"
 DISK_IMAGE="$DIST/DepartureBoard-$VERSION-universal.dmg"
 hdiutil create -volname "Departure Board" -srcfolder "$STAGING" -fs HFS+ -format UDZO -ov "$DISK_IMAGE"

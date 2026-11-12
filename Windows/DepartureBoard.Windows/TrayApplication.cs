@@ -24,6 +24,7 @@ internal sealed class TrayApplication : IDisposable
     );
     private readonly RegisteredWaitHandle waiting;
     private readonly DispatcherTimer refreshTimer;
+    private readonly UpdateController updates;
     private SettingsWindow? settingsWindow;
     private BoardWindow? preview;
 
@@ -31,11 +32,13 @@ internal sealed class TrayApplication : IDisposable
     {
 
         this.services = services;
+        updates = new UpdateController(services.Diagnostics);
         displays = new DisplayWindows(services);
         menu = new Forms.ContextMenuStrip();
         menu.Items.Add("Settings", null, (_, _) => ShowSettings());
         menu.Items.Add("Preview", null, (_, _) => ShowPreview());
         menu.Items.Add("Install & user guide", null, (_, _) => InstallationGuide.Open());
+        menu.Items.Add("Check for updates…", null, (_, _) => updates.CheckForUpdates());
         menu.Items.Add("Quit", null, (_, _) => Application.Current.Shutdown());
         var iconPath = Path.Combine(AppContext.BaseDirectory, "Assets", "DepartureBoard.ico");
         icon = File.Exists(iconPath)
@@ -63,6 +66,7 @@ internal sealed class TrayApplication : IDisposable
             Application.Current.Dispatcher
         );
         ApplyWallpaper();
+        Application.Current.Dispatcher.BeginInvoke(updates.Start);
     }
 
     public void ShowSettings()
@@ -70,7 +74,12 @@ internal sealed class TrayApplication : IDisposable
 
         if (settingsWindow is null)
         {
-            settingsWindow = new SettingsWindow(services, ShowPreview, ApplyWallpaper);
+            settingsWindow = new SettingsWindow(
+                services,
+                ShowPreview,
+                ApplyWallpaper,
+                updates.CheckForUpdates
+            );
             settingsWindow.Closed += (_, _) => settingsWindow = null;
         }
 
@@ -117,6 +126,7 @@ internal sealed class TrayApplication : IDisposable
     {
 
         refreshTimer.Stop();
+        updates.Dispose();
         displays.Dispose();
         waiting.Unregister(null);
         showSettingsSignal.Dispose();

@@ -47,7 +47,12 @@ internal sealed class SettingsWindow : Window
     private readonly Func<bool> applyWallpaper;
     private readonly TextBlock dataStatus = new() { TextWrapping = TextWrapping.Wrap };
 
-    public SettingsWindow(AppServices services, Action preview, Func<bool> applyWallpaper)
+    public SettingsWindow(
+        AppServices services,
+        Action preview,
+        Func<bool> applyWallpaper,
+        Action? checkForUpdates = null
+    )
     {
 
         this.services = services;
@@ -134,6 +139,17 @@ internal sealed class SettingsWindow : Window
         dataStatus.FontSize = 12;
         dataStatus.Foreground = SystemColors.GrayTextBrush;
         data.Children.Add(dataStatus);
+
+        var version = typeof(SettingsWindow).Assembly.GetName().Version;
+        var updates = Section(
+            panel,
+            "Updates",
+            $"Version {version?.ToString(3)} · Checked once a day."
+        );
+        var check = ActionButton("Check for updates…");
+        check.IsEnabled = checkForUpdates is not null;
+        check.Click += (_, _) => checkForUpdates?.Invoke();
+        updates.Children.Add(check);
 
         var footer = Footer();
         Grid.SetRow(footer, 2);

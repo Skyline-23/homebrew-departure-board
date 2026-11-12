@@ -6,6 +6,8 @@
 #import "InstallationGuide.h"
 #import "LiveFlightStore.h"
 #import "SettingsStore.h"
+#import "UserInstallation.h"
+#import <Sparkle/Sparkle.h>
 #import <errno.h>
 #import <signal.h>
 #import <unistd.h>
@@ -19,6 +21,7 @@
 @property(nonatomic, strong) NSStatusItem *statusItem;
 @property(nonatomic) BOOL runtimeRegistered;
 @property(nonatomic) NSTimeInterval lastDataRefresh;
+@property(nonatomic, strong) SPUStandardUpdaterController *updaterController;
 @end
 
 @implementation DepartureBoardApp
@@ -30,6 +33,14 @@
             ?: @"development"
     });
     NSArray<NSString *> *arguments = NSProcessInfo.processInfo.arguments;
+    NSError *saverUpdateError;
+
+    if (!UpdateInstalledScreenSaver(NSBundle.mainBundle, &saverUpdateError)) {
+        DBDiagnosticEvent(@"app", @"update.screensaver_failed", @{});
+    }
+    self.updaterController = [[SPUStandardUpdaterController alloc] initWithStartingUpdater:YES
+                                                                           updaterDelegate:nil
+                                                                        userDriverDelegate:nil];
 
     if (!self.board && ![arguments containsObject:@"--background"]) {
         self.board = [DBCommandLine boardWithArguments:arguments];
@@ -223,6 +234,10 @@
         item.target = self;
     }
     [menu addItem:NSMenuItem.separatorItem];
+    NSMenuItem *update = [menu addItemWithTitle:DBUIString(@"menu.checkUpdates")
+                                         action:@selector(checkForUpdates:)
+                                  keyEquivalent:@""];
+    update.target = self.updaterController;
     NSMenuItem *quit = [menu addItemWithTitle:DBUIString(@"menu.quit")
                                        action:@selector(terminate:)
                                 keyEquivalent:@""];
@@ -252,6 +267,10 @@
                    action:@selector(openInstallationGuide:)
             keyEquivalent:@"?"];
     [app addItem:NSMenuItem.separatorItem];
+    NSMenuItem *update = [app addItemWithTitle:DBUIString(@"menu.checkUpdates")
+                                        action:@selector(checkForUpdates:)
+                                 keyEquivalent:@""];
+    update.target = self.updaterController;
     [app addItemWithTitle:DBUIString(@"menu.quit") action:@selector(terminate:) keyEquivalent:@"q"];
     appItem.submenu = app;
     NSMenuItem *placesItem = [[NSMenuItem alloc] initWithTitle:DBUIString(@"menu.location")
@@ -300,6 +319,11 @@
 - (void)openInstallationGuide:(id)sender {
 
     DBOpenInstallationGuide(NSBundle.mainBundle);
+}
+
+- (void)checkForUpdates:(id)sender {
+
+    [self.updaterController checkForUpdates:sender];
 }
 
 - (void)chooseLocation:(NSMenuItem *)sender {

@@ -2,9 +2,9 @@ name: Windows preview
 on:
   push:
     branches: [main]
-    paths: ['Windows/**', 'Resources/**', '.github/workflows/windows.yml']
+    paths: ['Windows/**', 'Resources/**', '.github/workflows/windows.yml', 'script/*update*']
   pull_request:
-    paths: ['Windows/**', 'Resources/**', '.github/workflows/windows.yml']
+    paths: ['Windows/**', 'Resources/**', '.github/workflows/windows.yml', 'script/*update*']
   workflow_dispatch:
   workflow_call:
 concurrency:
@@ -39,7 +39,6 @@ jobs:
           if ($env:GITHUB_REF -like 'refs/tags/v*') {
             $version = $env:GITHUB_REF_NAME.Substring(1)
             if ($version -notmatch '^\d+\.\d+\.\d+$') { throw 'Expected a semantic release tag.' }
-            $version += '-preview.1'
           }
           "DEPARTURE_BUILD_VERSION=$version" >> $env:GITHUB_ENV
       - uses: actions/setup-dotnet@v4
@@ -68,6 +67,12 @@ jobs:
           dotnet build Windows/DepartureBoard.Core.Tests/DepartureBoard.Core.Tests.csproj -c Release
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
           dotnet run --project Windows/DepartureBoard.Core.Tests -c Release --no-build -- Resources
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+      - name: Verify signed update feeds and version selection
+        run: |
+          python -m pip install --disable-pip-version-check -r script/requirements-updates.txt
+          python script/update-test-fixtures.py work/update-fixtures
+          dotnet run --project Windows/DepartureBoard.Update.Tests -c Release -- work/update-fixtures
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
       - name: Package self-contained preview
         run: ./Windows/scripts/Publish.ps1 -Runtime '${{ matrix.runtime }}' -Version "$env:DEPARTURE_BUILD_VERSION"

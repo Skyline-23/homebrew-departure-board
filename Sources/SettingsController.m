@@ -314,6 +314,20 @@ static NSView *DBSettingsGroup(NSString *heading, NSView *body) {
     done.translatesAutoresizingMaskIntoConstraints = NO;
     [root addSubview:guide];
     [root addSubview:done];
+    SEL updateAction = NSSelectorFromString(@"checkForUpdates:");
+
+    if ([NSApp.delegate respondsToSelector:updateAction]) {
+        NSButton *update = [NSButton buttonWithTitle:DBUIString(@"menu.checkUpdates")
+                                              target:NSApp.delegate
+                                              action:updateAction];
+        update.bezelStyle = NSBezelStyleRounded;
+        update.translatesAutoresizingMaskIntoConstraints = NO;
+        [root addSubview:update];
+        [NSLayoutConstraint activateConstraints:@[
+            [update.leadingAnchor constraintEqualToAnchor:guide.trailingAnchor constant:12],
+            [update.centerYAnchor constraintEqualToAnchor:done.centerYAnchor]
+        ]];
+    }
     [NSLayoutConstraint activateConstraints:@[
         [header.topAnchor constraintEqualToAnchor:root.topAnchor constant:24],
         [header.leadingAnchor constraintEqualToAnchor:root.leadingAnchor constant:28],

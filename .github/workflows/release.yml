@@ -58,6 +58,10 @@ jobs:
         run: command -v swiftlint >/dev/null || brew install swiftlint
       - name: Check source style
         run: ./script/lint.sh
+      - uses: actions/cache@v4
+        with:
+          path: work/dependencies/Sparkle-2.10.1.tar.xz
+          key: sparkle-2.10.1-1a856d2a
       - name: Import Developer ID certificate
         env:
           APPLE_CERTIFICATE_P12_BASE64: ${{ secrets.APPLE_CERTIFICATE_P12_BASE64 }}
@@ -83,6 +87,16 @@ jobs:
         run: ./script/notarize.sh "outputs/DepartureBoard/dist/DepartureBoard-$VERSION-universal.dmg"
       - name: Verify the final download
         run: ./script/validate-distribution.sh
+      - name: Sign the macOS update and feed
+        env:
+          UPDATE_ED25519_PRIVATE_KEY: ${{ secrets.UPDATE_ED25519_PRIVATE_KEY }}
+        run: |
+          PYTHON="$(./script/update-tools.sh)"
+          "$PYTHON" script/build-update-feed.py --version "$VERSION" --platform macos \
+            --artifact "outputs/DepartureBoard/dist/DepartureBoard-$VERSION-update.zip" --output outputs/DepartureBoard/dist
+          SPARKLE="$(./script/fetch-sparkle.sh)"
+          printf '%s' "$UPDATE_ED25519_PRIVATE_KEY" | "$SPARKLE/bin/sign_update" --ed-key-file - outputs/DepartureBoard/dist/appcast-macos.xml
+          printf '%s' "$UPDATE_ED25519_PRIVATE_KEY" | "$SPARKLE/bin/sign_update" --verify --ed-key-file - outputs/DepartureBoard/dist/appcast-macos.xml
       - name: Add a stable latest-download filename
         run: |
           cp "outputs/DepartureBoard/dist/DepartureBoard-$VERSION-universal.zip" outputs/DepartureBoard/dist/DepartureBoard-universal.zip
@@ -126,6 +140,15 @@ jobs:
         with:
           name: OpenGraph
           path: site
+      - name: Sign Windows installers and update feeds
+        env:
+          UPDATE_ED25519_PRIVATE_KEY: ${{ secrets.UPDATE_ED25519_PRIVATE_KEY }}
+        run: |
+          PYTHON="$(./script/update-tools.sh)"
+          for ARCH in x64 arm64; do
+            "$PYTHON" script/build-update-feed.py --version "$VERSION" --platform "windows-$ARCH" \
+              --artifact "work/windows-release/DepartureBoard-win-$ARCH-Setup.exe" --output work/windows-release
+          done
       - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -148,8 +171,11 @@ jobs:
               "outputs/DepartureBoard/dist/DepartureBoard-$VERSION-universal.dmg" \
               outputs/DepartureBoard/dist/DepartureBoard-universal.dmg \
               outputs/DepartureBoard/dist/DepartureBoard-universal.dmg.sha256 \
+              "outputs/DepartureBoard/dist/DepartureBoard-$VERSION-update.zip" \
+              outputs/DepartureBoard/dist/appcast-macos.xml \
               "outputs/DepartureBoard/dist/DepartureBoard-$VERSION-source.tar.gz" \
-              work/windows-release/*.zip work/windows-release/*.exe work/windows-release/*.sha256
+              work/windows-release/*.zip work/windows-release/*.exe work/windows-release/*.sha256 \
+              work/windows-release/*.xml work/windows-release/*.signature
             gh release edit "$GITHUB_REF_NAME" --draft=false --latest
           fi
       - name: Update Homebrew tap
@@ -171,3 +197,5 @@ jobs:
       - uses: actions/checkout@v4
       - name: Verify automatic website deployment and GitHub downloads
         run: node script/verify-site.mjs "${GITHUB_REF_NAME#v}"
+      - name: Verify published signed update feeds
+        run: node script/verify-update-feeds.mjs "${GITHUB_REF_NAME#v}"
