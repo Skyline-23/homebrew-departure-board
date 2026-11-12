@@ -330,6 +330,9 @@
 
 - (NSArray<NSView *> *)updateSettingsControls {
 
+    if (!self.updaterController) {
+        return @[];
+    }
     SPUUpdater *updater = self.updaterController.updater;
     NSString *version =
         NSBundle.mainBundle.infoDictionary[@"CFBundleShortVersionString"] ?: @"development";
@@ -354,8 +357,8 @@
            toObject:updater
         withKeyPath:@"allowsAutomaticUpdates"
             options:nil];
-    NSTextField *hint =
-        [NSTextField labelWithString:@"Automatic updates are installed when you quit the app."];
+    NSTextField *hint = [NSTextField
+        labelWithString:@"Automatic updates install when you quit. Changes save automatically."];
     hint.font = [NSFont systemFontOfSize:12];
     hint.textColor = NSColor.secondaryLabelColor;
     NSTextField *last = [NSTextField labelWithString:@""];

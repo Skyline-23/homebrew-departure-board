@@ -295,11 +295,15 @@ static NSView *DBSettingsGroup(NSString *heading, NSView *body) {
 
     if ([NSApp.delegate conformsToProtocol:@protocol(DBUpdateSettingsProviding)]) {
         id<DBUpdateSettingsProviding> provider = (id<DBUpdateSettingsProviding>)NSApp.delegate;
-        NSStackView *updates = [NSStackView stackViewWithViews:[provider updateSettingsControls]];
-        updates.orientation = NSUserInterfaceLayoutOrientationVertical;
-        updates.alignment = NSLayoutAttributeLeading;
-        updates.spacing = 10;
-        [groups addArrangedSubview:DBSettingsGroup(@"Updates", updates)];
+        NSArray<NSView *> *controls = [provider updateSettingsControls];
+
+        if (controls.count) {
+            NSStackView *updates = [NSStackView stackViewWithViews:controls];
+            updates.orientation = NSUserInterfaceLayoutOrientationVertical;
+            updates.alignment = NSLayoutAttributeLeading;
+            updates.spacing = 10;
+            [groups addArrangedSubview:DBSettingsGroup(@"Updates", updates)];
+        }
     }
     groups.orientation = NSUserInterfaceLayoutOrientationVertical;
     groups.alignment = NSLayoutAttributeLeading;
