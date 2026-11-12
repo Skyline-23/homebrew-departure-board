@@ -22,6 +22,9 @@ internal sealed class UpdateConfiguration : RegistryConfiguration
     {
         base.Reload();
         using var key = Registry.CurrentUser.OpenSubKey(BuildRegistryPath());
+        // NetSparkle intentionally resets its legacy CheckForUpdate value to
+        // true when saving. Keep the user's choice in our own persistent value.
+        CheckForUpdate = key?.GetValue("AutomaticChecks", 1) is not int checks || checks != 0;
         AutomaticUpdates = key?.GetValue("AutomaticUpdates") is int value && value == 1;
     }
 
@@ -29,6 +32,7 @@ internal sealed class UpdateConfiguration : RegistryConfiguration
     {
 
         using var key = Registry.CurrentUser.CreateSubKey(BuildRegistryPath());
+        key.SetValue("AutomaticChecks", checks ? 1 : 0, RegistryValueKind.DWord);
         key.SetValue("AutomaticUpdates", automaticUpdates ? 1 : 0, RegistryValueKind.DWord);
         CheckForUpdate = checks;
         AutomaticUpdates = automaticUpdates;
