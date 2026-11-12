@@ -13,7 +13,20 @@ concurrency:
 permissions:
   contents: read
 jobs:
+  update-fixtures:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate signed fixtures once for both Windows architectures
+        run: |
+          PYTHON="$(./script/update-tools.sh)"
+          "$PYTHON" script/update-test-fixtures.py work/update-fixtures
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Update-test-fixtures
+          path: work/update-fixtures/
   windows:
+    needs: update-fixtures
     strategy:
       fail-fast: false
       matrix:
@@ -69,9 +82,12 @@ jobs:
           dotnet run --project Windows/DepartureBoard.Core.Tests -c Release --no-build -- Resources
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
       - name: Verify signed update feeds and version selection
+        uses: actions/download-artifact@v4
+        with:
+          name: Update-test-fixtures
+          path: work/update-fixtures
+      - name: Test signed update feeds and version selection
         run: |
-          python -m pip install --disable-pip-version-check -r script/requirements-updates.txt
-          python script/update-test-fixtures.py work/update-fixtures
           dotnet run --project Windows/DepartureBoard.Update.Tests -c Release -- work/update-fixtures
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
       - name: Package self-contained preview
