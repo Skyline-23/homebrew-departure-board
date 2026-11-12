@@ -28,7 +28,9 @@ for bundle in "$INSTALLATION_ROOT/Departure Board.app" "$INSTALLATION_ROOT/Depar
     continue
   fi
   FRAMEWORK="$bundle/Contents/Frameworks/Sparkle.framework/Versions/B"
+
   if [[ -d "$FRAMEWORK" ]]; then
+
     for component in "$FRAMEWORK/XPCServices/Installer.xpc" "$FRAMEWORK/XPCServices/Downloader.xpc" \
         "$FRAMEWORK/Autoupdate" "$FRAMEWORK/Updater.app" "$bundle/Contents/Frameworks/Sparkle.framework" \
         "$bundle/Contents/Resources/Departure Board.saver"; do
