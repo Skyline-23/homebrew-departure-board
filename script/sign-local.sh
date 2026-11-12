@@ -27,6 +27,14 @@ for bundle in "$INSTALLATION_ROOT/Departure Board.app" "$INSTALLATION_ROOT/Depar
   if codesign --verify --strict --test-requirement "=certificate leaf = H\"$LOCAL_IDENTITY\"" "$bundle" 2>/dev/null; then
     continue
   fi
+  FRAMEWORK="$bundle/Contents/Frameworks/Sparkle.framework/Versions/B"
+  if [[ -d "$FRAMEWORK" ]]; then
+    for component in "$FRAMEWORK/XPCServices/Installer.xpc" "$FRAMEWORK/XPCServices/Downloader.xpc" \
+        "$FRAMEWORK/Autoupdate" "$FRAMEWORK/Updater.app" "$bundle/Contents/Frameworks/Sparkle.framework" \
+        "$bundle/Contents/Resources/Departure Board.saver"; do
+      codesign --force --sign "$LOCAL_IDENTITY" --options runtime --timestamp "$component"
+    done
+  fi
   codesign --force --sign "$LOCAL_IDENTITY" --options runtime --timestamp "$bundle"
   codesign --verify --strict "$bundle"
 done
