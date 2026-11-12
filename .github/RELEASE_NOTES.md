@@ -1,5 +1,7 @@
 Departure Board 0.7.7 adds in-app updates for macOS and Windows.
 
+- Choose automatic checks and automatic installation in the Updates settings, with the current version and last check time shown.
+- Download updates in the background and install when quitting, or review release notes and choose to install, skip or defer manually.
 - Check for updates from the app settings or menu. New releases are checked once a day in the background.
 - Verify update files with Ed25519 signatures before installation. macOS also uses Developer ID signing and notarization.
 - Download and install updates directly from GitHub Releases, then restart the app with existing settings and API keys.

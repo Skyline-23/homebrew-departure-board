@@ -2,6 +2,7 @@
 """Sign one platform's immutable GitHub release download and update feed."""
 import argparse
 import base64
+from html import escape
 import os
 from pathlib import Path
 import re
@@ -12,6 +13,18 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 ROOT = Path(__file__).resolve().parents[1]
 NAMESPACE = 'http://www.andymatuschak.org/xml-namespaces/sparkle'
 ET.register_namespace('sparkle', NAMESPACE)
+
+
+def release_notes():
+
+    path = ROOT / '.github/RELEASE_NOTES.md'
+
+    if not path.exists():
+        return 'A new version of Departure Board is ready to install.'
+    lines = path.read_text().splitlines()
+    introduction = next((line for line in lines if line.strip()), '')
+    bullets = [line[2:] for line in lines if line.startswith('- ')]
+    return '<p>' + escape(introduction) + '</p><ul>' + ''.join('<li>' + escape(item) + '</li>' for item in bullets) + '</ul>'
 
 
 def build_feed(version, platform, artifact, output, seed):
@@ -30,7 +43,7 @@ def build_feed(version, platform, artifact, output, seed):
     ET.SubElement(channel, 'title').text = 'Departure Board Updates'
     item = ET.SubElement(channel, 'item')
     ET.SubElement(item, 'title').text = f'Departure Board {version}'
-    ET.SubElement(item, 'description').text = 'A new version of Departure Board is ready to install.'
+    ET.SubElement(item, 'description').text = release_notes()
     machine_version = version
     ET.SubElement(item, f'{{{NAMESPACE}}}version').text = machine_version
     ET.SubElement(item, f'{{{NAMESPACE}}}shortVersionString').text = version

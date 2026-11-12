@@ -39,7 +39,7 @@ internal sealed class TrayApplication : IDisposable
         menu.Items.Add("Preview", null, (_, _) => ShowPreview());
         menu.Items.Add("Install & user guide", null, (_, _) => InstallationGuide.Open());
         menu.Items.Add("Check for updates…", null, (_, _) => updates.CheckForUpdates());
-        menu.Items.Add("Quit", null, (_, _) => Application.Current.Shutdown());
+        menu.Items.Add("Quit", null, (_, _) => updates.Quit());
         var iconPath = Path.Combine(AppContext.BaseDirectory, "Assets", "DepartureBoard.ico");
         icon = File.Exists(iconPath)
             ? new Icon(iconPath)
@@ -74,12 +74,7 @@ internal sealed class TrayApplication : IDisposable
 
         if (settingsWindow is null)
         {
-            settingsWindow = new SettingsWindow(
-                services,
-                ShowPreview,
-                ApplyWallpaper,
-                updates.CheckForUpdates
-            );
+            settingsWindow = new SettingsWindow(services, ShowPreview, ApplyWallpaper, updates);
             settingsWindow.Closed += (_, _) => settingsWindow = null;
         }
 

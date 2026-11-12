@@ -1,3 +1,4 @@
+#import "ApplicationUpdates.h"
 #import "BackgroundAgent.h"
 #import "BoardViewInternal.h"
 #import "DrawingSupport.h"
@@ -291,6 +292,15 @@ static NSView *DBSettingsGroup(NSString *heading, NSView *body) {
     scroll.documentView = document;
     NSStackView *groups =
         [NSStackView stackViewWithViews:@[ displayGroup, desktopGroup, dataGroup ]];
+
+    if ([NSApp.delegate conformsToProtocol:@protocol(DBUpdateSettingsProviding)]) {
+        id<DBUpdateSettingsProviding> provider = (id<DBUpdateSettingsProviding>)NSApp.delegate;
+        NSStackView *updates = [NSStackView stackViewWithViews:[provider updateSettingsControls]];
+        updates.orientation = NSUserInterfaceLayoutOrientationVertical;
+        updates.alignment = NSLayoutAttributeLeading;
+        updates.spacing = 10;
+        [groups addArrangedSubview:DBSettingsGroup(@"Updates", updates)];
+    }
     groups.orientation = NSUserInterfaceLayoutOrientationVertical;
     groups.alignment = NSLayoutAttributeLeading;
     groups.spacing = 16;
@@ -314,20 +324,6 @@ static NSView *DBSettingsGroup(NSString *heading, NSView *body) {
     done.translatesAutoresizingMaskIntoConstraints = NO;
     [root addSubview:guide];
     [root addSubview:done];
-    SEL updateAction = NSSelectorFromString(@"checkForUpdates:");
-
-    if ([NSApp.delegate respondsToSelector:updateAction]) {
-        NSButton *update = [NSButton buttonWithTitle:DBUIString(@"menu.checkUpdates")
-                                              target:NSApp.delegate
-                                              action:updateAction];
-        update.bezelStyle = NSBezelStyleRounded;
-        update.translatesAutoresizingMaskIntoConstraints = NO;
-        [root addSubview:update];
-        [NSLayoutConstraint activateConstraints:@[
-            [update.leadingAnchor constraintEqualToAnchor:guide.trailingAnchor constant:12],
-            [update.centerYAnchor constraintEqualToAnchor:done.centerYAnchor]
-        ]];
-    }
     [NSLayoutConstraint activateConstraints:@[
         [header.topAnchor constraintEqualToAnchor:root.topAnchor constant:24],
         [header.leadingAnchor constraintEqualToAnchor:root.leadingAnchor constant:28],

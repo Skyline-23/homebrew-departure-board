@@ -49,6 +49,7 @@ internal static class WindowsSmokeTest
         CheckSettings(services, outputDirectory);
         CheckPreviewEmbedding(services);
         CheckCredentials();
+        CheckUpdatePreferences();
         CheckFrameUpdates(services, outputDirectory);
         CheckDiagnosticTransitions(services);
         WindowsPerformanceTest.Run(services, outputDirectory);
@@ -62,6 +63,44 @@ internal static class WindowsSmokeTest
             $"Rendered {count} airport images; settings and native preview embedding passed."
         );
         return 0;
+    }
+
+    private static void CheckUpdatePreferences()
+    {
+
+        var path = @"Software\Skyline23\DepartureBoard.UpdateTests\" + Guid.NewGuid().ToString("N");
+
+        try
+        {
+            var preferences = new UpdateConfiguration(path);
+
+            if (!preferences.CheckForUpdate || preferences.AutomaticUpdates)
+                throw new InvalidOperationException("Unexpected update defaults.");
+            preferences.TouchCheckTime();
+            var checkedAt = preferences.LastCheckTime;
+            preferences.SaveOptions(false, true);
+            var restored = new UpdateConfiguration(path);
+
+            if (
+                restored.CheckForUpdate
+                || !restored.AutomaticUpdates
+                || Math.Abs((restored.LastCheckTime - checkedAt).TotalSeconds) >= 1
+            )
+                throw new InvalidOperationException(
+                    "Update preferences or check time were not preserved."
+                );
+            restored.SaveOptions(true, false);
+            var enabled = new UpdateConfiguration(path);
+
+            if (!enabled.CheckForUpdate || enabled.AutomaticUpdates)
+                throw new InvalidOperationException(
+                    "Update options did not persist after toggling."
+                );
+        }
+        finally
+        {
+            Microsoft.Win32.Registry.CurrentUser.DeleteSubKeyTree(path, false);
+        }
     }
 
     private static int RenderAirports(AppServices services, string outputDirectory)
