@@ -9,7 +9,9 @@ cp "work/Build.noindex/Bundles/Departure Board.app/Contents/Info.plist" "$TEST_A
 /usr/libexec/PlistBuddy -c 'Set :CFBundleIdentifier com.skyline23.departureboard.lifecycle-tests' "$TEST_APP/Contents/Info.plist"
 ditto --noextattr --norsrc Resources "$TEST_APP/Contents/Resources"
 source "$PROJECT_ROOT/script/common-sources.sh"
+SPARKLE_ROOT="$("$PROJECT_ROOT/script/fetch-sparkle.sh")"
 xcrun clang -I "$PROJECT_ROOT/Sources" -fobjc-arc -fmodules -O2 -mmacosx-version-min=12.0 \
+  -F "$SPARKLE_ROOT" -framework Sparkle "-Wl,-rpath,$SPARKLE_ROOT" \
   -framework Cocoa -framework QuartzCore -framework Security -framework LocalAuthentication \
   "${COMMON_SOURCES[@]}" "${APP_SOURCES[@]}" Tests/AppLifecycle.m -o "$TEST_APP/Contents/MacOS/AppLifecycleTests"
 RESULT="$(mktemp "${TMPDIR:-/tmp}/departure-lifecycle.XXXXXX")"

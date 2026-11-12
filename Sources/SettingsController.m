@@ -1,3 +1,4 @@
+#import "ApplicationUpdates.h"
 #import "BackgroundAgent.h"
 #import "BoardViewInternal.h"
 #import "DrawingSupport.h"
@@ -291,6 +292,19 @@ static NSView *DBSettingsGroup(NSString *heading, NSView *body) {
     scroll.documentView = document;
     NSStackView *groups =
         [NSStackView stackViewWithViews:@[ displayGroup, desktopGroup, dataGroup ]];
+
+    if ([NSApp.delegate conformsToProtocol:@protocol(DBUpdateSettingsProviding)]) {
+        id<DBUpdateSettingsProviding> provider = (id<DBUpdateSettingsProviding>)NSApp.delegate;
+        NSArray<NSView *> *controls = [provider updateSettingsControls];
+
+        if (controls.count) {
+            NSStackView *updates = [NSStackView stackViewWithViews:controls];
+            updates.orientation = NSUserInterfaceLayoutOrientationVertical;
+            updates.alignment = NSLayoutAttributeLeading;
+            updates.spacing = 10;
+            [groups addArrangedSubview:DBSettingsGroup(@"Updates", updates)];
+        }
+    }
     groups.orientation = NSUserInterfaceLayoutOrientationVertical;
     groups.alignment = NSLayoutAttributeLeading;
     groups.spacing = 16;

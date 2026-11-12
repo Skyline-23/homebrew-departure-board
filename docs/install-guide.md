@@ -167,6 +167,10 @@ Open **Windows Settings → System → Display** and select each screen to inspe
 
 ## 9. Update or remove
 
+**In-app updates (0.7.7 and later)** open **Check for Updates…** from the Mac menu bar, or **Check for updates…** in Windows Settings or the tray menu. The Updates section shows the current version and last check time. Automatic checks are enabled by default and run once a day. Automatic installation is off by default. Enable it to download updates in the background and install when quitting the app; on Windows, quit from the tray menu. Release notes, skip and reminder actions are available when an update is found. Choose Install to download the signed update, replace the app and restart. Settings and saved API keys are preserved. On Mac, the installed screen saver is updated when the new app starts.
+
+If you have version 0.7.6 or earlier, install the latest version once using the methods below. After that, updates are available inside the app. Offline checks leave the current app usable; try again when connected.
+
 **Mac / Homebrew** update with the following commands. Existing settings and the saved key remain.
 
 ```sh

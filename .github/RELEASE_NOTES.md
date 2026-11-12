@@ -1,15 +1,17 @@
-Departure Board 0.7.6 automates the complete release and website rollout.
+Departure Board 0.7.7 adds in-app updates for macOS and Windows.
 
-- Build macOS, Windows and the website checks in parallel, then publish the complete installer set to GitHub Releases.
-- Update Homebrew and deploy the product website automatically. CI verifies the deployed version, both installation guides and all three native installer downloads before completing.
-- Derive Windows application and installer versions from the release tag.
-- Generate Korean and English social sharing images in CI and verify their published dimensions and versioned URLs.
-- Retry temporary Apple ticket-service failures during notarization.
+- Choose automatic checks and automatic installation in the Updates settings, with the current version and last check time shown.
+- Download updates in the background and install when quitting, or review release notes and choose to install, skip or defer manually.
+- Check for updates from the app settings or menu. New releases are checked once a day in the background.
+- Verify update files with Ed25519 signatures before installation. macOS also uses Developer ID signing and notarization.
+- Download and install updates directly from GitHub Releases, then restart the app with existing settings and API keys.
+- Keep the Mac screen saver aligned with the updated companion app.
+- Generate and sign platform-specific update feeds automatically in the release workflow.
 
-The refreshed native settings, illustrated offline guide, responsive product page and OS-specific downloads from 0.7.5 are included.
+If you use 0.7.6 or earlier, install 0.7.7 once from the website. Subsequent updates are available inside the app.
 
-macOS 12+ supports Apple Silicon and Intel. Windows 11 supports x64 and ARM64 and remains an unsigned preview.
+macOS 12+ supports Apple Silicon and Intel. Windows 11 supports x64 and ARM64 and remains an unsigned preview; update authenticity is verified with the app's pinned Ed25519 key.
 
 Live flight data requires your own AeroDataBox RapidAPI subscription and key. Sample data works offline without a key.
 
-Code and project branding use the MIT license. See [Third-party notices](https://github.com/Skyline-23/homebrew-departure-board/blob/main/THIRD_PARTY_NOTICES.md) for artwork licenses.
+See [Third-party notices](https://github.com/Skyline-23/homebrew-departure-board/blob/main/THIRD_PARTY_NOTICES.md) for library and artwork licenses.

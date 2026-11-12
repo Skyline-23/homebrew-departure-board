@@ -2,9 +2,9 @@ name: Windows preview
 on:
   push:
     branches: [main]
-    paths: ['Windows/**', 'Resources/**', '.github/workflows/windows.yml']
+    paths: ['Windows/**', 'Resources/**', '.github/workflows/windows.yml', 'script/*update*']
   pull_request:
-    paths: ['Windows/**', 'Resources/**', '.github/workflows/windows.yml']
+    paths: ['Windows/**', 'Resources/**', '.github/workflows/windows.yml', 'script/*update*']
   workflow_dispatch:
   workflow_call:
 concurrency:
@@ -13,7 +13,20 @@ concurrency:
 permissions:
   contents: read
 jobs:
+  update-fixtures:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate signed fixtures once for both Windows architectures
+        run: |
+          PYTHON="$(./script/update-tools.sh)"
+          "$PYTHON" script/update-test-fixtures.py work/update-fixtures
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Update-test-fixtures
+          path: work/update-fixtures/
   windows:
+    needs: update-fixtures
     strategy:
       fail-fast: false
       matrix:
@@ -39,7 +52,6 @@ jobs:
           if ($env:GITHUB_REF -like 'refs/tags/v*') {
             $version = $env:GITHUB_REF_NAME.Substring(1)
             if ($version -notmatch '^\d+\.\d+\.\d+$') { throw 'Expected a semantic release tag.' }
-            $version += '-preview.1'
           }
           "DEPARTURE_BUILD_VERSION=$version" >> $env:GITHUB_ENV
       - uses: actions/setup-dotnet@v4
@@ -68,6 +80,15 @@ jobs:
           dotnet build Windows/DepartureBoard.Core.Tests/DepartureBoard.Core.Tests.csproj -c Release
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
           dotnet run --project Windows/DepartureBoard.Core.Tests -c Release --no-build -- Resources
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+      - name: Verify signed update feeds and version selection
+        uses: actions/download-artifact@v4
+        with:
+          name: Update-test-fixtures
+          path: work/update-fixtures
+      - name: Test signed update feeds and version selection
+        run: |
+          dotnet run --project Windows/DepartureBoard.Update.Tests -c Release -- work/update-fixtures
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
       - name: Package self-contained preview
         run: ./Windows/scripts/Publish.ps1 -Runtime '${{ matrix.runtime }}' -Version "$env:DEPARTURE_BUILD_VERSION"

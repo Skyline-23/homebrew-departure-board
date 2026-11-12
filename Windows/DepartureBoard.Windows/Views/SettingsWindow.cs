@@ -47,7 +47,12 @@ internal sealed class SettingsWindow : Window
     private readonly Func<bool> applyWallpaper;
     private readonly TextBlock dataStatus = new() { TextWrapping = TextWrapping.Wrap };
 
-    public SettingsWindow(AppServices services, Action preview, Func<bool> applyWallpaper)
+    public SettingsWindow(
+        AppServices services,
+        Action preview,
+        Func<bool> applyWallpaper,
+        UpdateController? updates = null
+    )
     {
 
         this.services = services;
@@ -135,6 +140,8 @@ internal sealed class SettingsWindow : Window
         dataStatus.Foreground = SystemColors.GrayTextBrush;
         data.Children.Add(dataStatus);
 
+        AddUpdateSettings(panel, updates);
+
         var footer = Footer();
         Grid.SetRow(footer, 2);
         layout.Children.Add(footer);
@@ -147,6 +154,81 @@ internal sealed class SettingsWindow : Window
     }
 
     public int AirportCount => airport.Items.Count;
+
+    private void AddUpdateSettings(StackPanel panel, UpdateController? updates)
+    {
+
+        var version = typeof(SettingsWindow).Assembly.GetName().Version;
+        var section = Section(panel, "Updates", $"Version {version?.ToString(3)}");
+        var automaticChecks = new CheckBox
+        {
+            Content = "Automatically check for updates",
+            IsEnabled = updates is not null,
+        };
+        var automaticUpdates = new CheckBox
+        {
+            Content = "Download and install updates automatically",
+            IsEnabled = updates is not null,
+        };
+        AddOption(section, automaticChecks);
+        AddOption(section, automaticUpdates);
+        section.Children.Add(
+            new TextBlock
+            {
+                Text =
+                    "Checks run once a day. Automatic updates are installed when you quit. These options are saved automatically.",
+                TextWrapping = TextWrapping.Wrap,
+                FontSize = 12,
+                Foreground = SystemColors.GrayTextBrush,
+                Margin = new Thickness(0, 4, 0, 12),
+            }
+        );
+        var checkedAt = new TextBlock
+        {
+            TextWrapping = TextWrapping.Wrap,
+            FontSize = 12,
+            Foreground = SystemColors.GrayTextBrush,
+        };
+        section.Children.Add(checkedAt);
+        var check = ActionButton("Check for updates…");
+        check.Margin = new Thickness(0, 12, 0, 0);
+        check.IsEnabled = updates is not null;
+        check.Click += (_, _) => updates?.CheckForUpdates();
+        section.Children.Add(check);
+
+        if (updates is null)
+            return;
+        var synchronizing = false;
+        void Refresh()
+        {
+
+            synchronizing = true;
+            automaticChecks.IsChecked = updates.AutomaticChecks;
+            automaticUpdates.IsChecked = updates.AutomaticUpdates;
+            automaticUpdates.IsEnabled = updates.AutomaticChecks;
+            check.IsEnabled = !updates.IsChecking;
+            var date = updates.LastChecked?.ToString("g") ?? "Not yet checked";
+            checkedAt.Text = $"Last checked: {date}\n{updates.Status}";
+            synchronizing = false;
+        }
+        void SaveOptions(object sender, RoutedEventArgs args)
+        {
+
+            if (!synchronizing)
+                updates.SetOptions(
+                    automaticChecks.IsChecked == true,
+                    automaticUpdates.IsChecked == true
+                );
+        }
+        automaticChecks.Checked += SaveOptions;
+        automaticChecks.Unchecked += SaveOptions;
+        automaticUpdates.Checked += SaveOptions;
+        automaticUpdates.Unchecked += SaveOptions;
+        EventHandler changed = (_, _) => Refresh();
+        updates.Changed += changed;
+        Closed += (_, _) => updates.Changed -= changed;
+        Refresh();
+    }
 
     private void Populate()
     {

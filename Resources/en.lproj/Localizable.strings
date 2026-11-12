@@ -249,3 +249,5 @@
 "settings.groupDesktop" = "Desktop";
 "settings.groupData" = "Flight data";
 "settings.subtitle" = "Wallpaper and screen saver";
+
+"menu.checkUpdates" = "Check for Updates…";

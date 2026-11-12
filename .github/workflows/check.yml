@@ -30,7 +30,7 @@ jobs:
           git diff --name-only "$BASE_SHA" HEAD > "$RUNNER_TEMP/changed-files"
           native=false
           site=false
-          if grep -Eq '^(Sources/|Resources/|Tests/|\.clang-format|\.swift|script/(build\.sh|common-sources\.sh|validate|lint\.sh|format\.sh|function-spacing\.py)|\.github/workflows/(check|release)\.yml)' "$RUNNER_TEMP/changed-files"; then native=true; fi
+          if grep -Eq '^(Sources/|Resources/|Tests/|\.clang-format|\.swift|script/(build\.sh|fetch-sparkle\.sh|update-tools\.sh|build-update-feed\.py|update-test-fixtures\.py|requirements-updates\.txt|common-sources\.sh|validate|lint\.sh|format\.sh|function-spacing\.py)|\.github/workflows/(check|release)\.yml)' "$RUNNER_TEMP/changed-files"; then native=true; fi
           if grep -Eq '^(site/|nitroship\.json|\.dockerignore|Resources/Guide/|docs/install-guide|script/(build-site|build-guide|build-og|check-guide|build-nitroship|test-downloads|verify-site)|\.github/workflows/)' "$RUNNER_TEMP/changed-files"; then site=true; fi
           echo "native=$native" >> "$GITHUB_OUTPUT"
           echo "site=$site" >> "$GITHUB_OUTPUT"
@@ -83,7 +83,18 @@ jobs:
       - uses: actions/checkout@v4
       - run: command -v swiftlint >/dev/null || brew install swiftlint
       - run: ./script/lint.sh
+      - uses: actions/cache@v4
+        with:
+          path: work/dependencies/Sparkle-2.10.1.tar.xz
+          key: sparkle-2.10.1-1a856d2a
       - run: ./script/build.sh
+      - name: Verify Sparkle signing compatibility
+        run: |
+          PYTHON="$(./script/update-tools.sh)"
+          "$PYTHON" script/update-test-fixtures.py work/update-fixtures
+          SPARKLE="$(./script/fetch-sparkle.sh)"
+          SIGNATURE="$("$PYTHON" -c 'import xml.etree.ElementTree as E; print(E.parse("work/update-fixtures/appcast-macos.xml").find(".//enclosure").attrib["{http://www.andymatuschak.org/xml-namespaces/sparkle}edSignature"])')"
+          "$SPARKLE/bin/sign_update" --verify --ed-key-file work/update-fixtures/test-only-private-key.txt work/update-fixtures/macos.bin "$SIGNATURE"
       - run: ./script/validate.sh
       - uses: actions/upload-artifact@v4
         with:

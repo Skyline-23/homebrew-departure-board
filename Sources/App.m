@@ -1,3 +1,4 @@
+#import "ApplicationUpdates.h"
 #import "BackgroundAgent.h"
 #import "CommandLine.h"
 #import "DepartureBoardView.h"
@@ -6,11 +7,14 @@
 #import "InstallationGuide.h"
 #import "LiveFlightStore.h"
 #import "SettingsStore.h"
+#import "UserInstallation.h"
+#import <Sparkle/Sparkle.h>
 #import <errno.h>
 #import <signal.h>
 #import <unistd.h>
 
-@interface DepartureBoardApp : NSObject <NSApplicationDelegate, NSWindowDelegate>
+@interface DepartureBoardApp
+    : NSObject <NSApplicationDelegate, NSWindowDelegate, DBUpdateSettingsProviding>
 @property(nonatomic, strong) NSWindow *window;
 @property(nonatomic, strong) DBBoardView *board;
 @property(nonatomic, strong) NSWindow *options;
@@ -19,6 +23,7 @@
 @property(nonatomic, strong) NSStatusItem *statusItem;
 @property(nonatomic) BOOL runtimeRegistered;
 @property(nonatomic) NSTimeInterval lastDataRefresh;
+@property(nonatomic, strong) SPUStandardUpdaterController *updaterController;
 @end
 
 @implementation DepartureBoardApp
@@ -30,6 +35,14 @@
             ?: @"development"
     });
     NSArray<NSString *> *arguments = NSProcessInfo.processInfo.arguments;
+    NSError *saverUpdateError;
+
+    if (!UpdateInstalledScreenSaver(NSBundle.mainBundle, &saverUpdateError)) {
+        DBDiagnosticEvent(@"app", @"update.screensaver_failed", @{});
+    }
+    self.updaterController = [[SPUStandardUpdaterController alloc] initWithStartingUpdater:YES
+                                                                           updaterDelegate:nil
+                                                                        userDriverDelegate:nil];
 
     if (!self.board && ![arguments containsObject:@"--background"]) {
         self.board = [DBCommandLine boardWithArguments:arguments];
@@ -223,6 +236,10 @@
         item.target = self;
     }
     [menu addItem:NSMenuItem.separatorItem];
+    NSMenuItem *update = [menu addItemWithTitle:DBUIString(@"menu.checkUpdates")
+                                         action:@selector(checkForUpdates:)
+                                  keyEquivalent:@""];
+    update.target = self.updaterController;
     NSMenuItem *quit = [menu addItemWithTitle:DBUIString(@"menu.quit")
                                        action:@selector(terminate:)
                                 keyEquivalent:@""];
@@ -252,6 +269,10 @@
                    action:@selector(openInstallationGuide:)
             keyEquivalent:@"?"];
     [app addItem:NSMenuItem.separatorItem];
+    NSMenuItem *update = [app addItemWithTitle:DBUIString(@"menu.checkUpdates")
+                                        action:@selector(checkForUpdates:)
+                                 keyEquivalent:@""];
+    update.target = self.updaterController;
     [app addItemWithTitle:DBUIString(@"menu.quit") action:@selector(terminate:) keyEquivalent:@"q"];
     appItem.submenu = app;
     NSMenuItem *placesItem = [[NSMenuItem alloc] initWithTitle:DBUIString(@"menu.location")
@@ -300,6 +321,64 @@
 - (void)openInstallationGuide:(id)sender {
 
     DBOpenInstallationGuide(NSBundle.mainBundle);
+}
+
+- (void)checkForUpdates:(id)sender {
+
+    [self.updaterController checkForUpdates:sender];
+}
+
+- (NSArray<NSView *> *)updateSettingsControls {
+
+    if (!self.updaterController) {
+        return @[];
+    }
+    SPUUpdater *updater = self.updaterController.updater;
+    NSString *version =
+        NSBundle.mainBundle.infoDictionary[@"CFBundleShortVersionString"] ?: @"development";
+    NSTextField *current =
+        [NSTextField labelWithString:[NSString stringWithFormat:@"Version %@", version]];
+    current.textColor = NSColor.secondaryLabelColor;
+    NSButton *checks = [NSButton checkboxWithTitle:@"Automatically check for updates"
+                                            target:nil
+                                            action:NULL];
+    [checks bind:NSValueBinding
+           toObject:updater
+        withKeyPath:@"automaticallyChecksForUpdates"
+            options:nil];
+    NSButton *automatic = [NSButton checkboxWithTitle:@"Download and install updates automatically"
+                                               target:nil
+                                               action:NULL];
+    [automatic bind:NSValueBinding
+           toObject:updater
+        withKeyPath:@"automaticallyDownloadsUpdates"
+            options:nil];
+    [automatic bind:NSEnabledBinding
+           toObject:updater
+        withKeyPath:@"allowsAutomaticUpdates"
+            options:nil];
+    NSTextField *hint = [NSTextField
+        labelWithString:@"Automatic updates install when you quit. Changes save automatically."];
+    hint.font = [NSFont systemFontOfSize:12];
+    hint.textColor = NSColor.secondaryLabelColor;
+    NSTextField *last = [NSTextField labelWithString:@""];
+    NSDateFormatter *format = NSDateFormatter.new;
+    format.dateStyle = NSDateFormatterMediumStyle;
+    format.timeStyle = NSDateFormatterShortStyle;
+    last.formatter = format;
+    [last bind:NSValueBinding
+           toObject:updater
+        withKeyPath:@"lastUpdateCheckDate"
+            options:@{NSNullPlaceholderBindingOption : @"Not yet checked"}];
+    NSTextField *label = [NSTextField labelWithString:@"Last checked:"];
+    NSStackView *dateRow = [NSStackView stackViewWithViews:@[ label, last ]];
+    dateRow.spacing = 6;
+    NSButton *check = [NSButton buttonWithTitle:DBUIString(@"menu.checkUpdates")
+                                         target:self
+                                         action:@selector(checkForUpdates:)];
+    check.bezelStyle = NSBezelStyleRounded;
+    [check bind:NSEnabledBinding toObject:updater withKeyPath:@"canCheckForUpdates" options:nil];
+    return @[ current, checks, automatic, hint, dateRow, check ];
 }
 
 - (void)chooseLocation:(NSMenuItem *)sender {

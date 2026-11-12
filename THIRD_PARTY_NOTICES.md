@@ -70,3 +70,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
+
+## Application update frameworks
+
+- Sparkle 2.10.1: Copyright Sparkle contributors, MIT license. The license is bundled in `Resources/ThirdParty/Sparkle-LICENSE`.
+- NetSparkle 3.1.0: Copyright NetSparkle contributors, MIT license. The license is bundled in `Resources/ThirdParty/NetSparkle-LICENSE.md`. Its Ed25519 verifier uses the MIT-licensed [Chaos.NaCl](https://github.com/CodesInChaos/Chaos.NaCl) library; its license is bundled in `Resources/ThirdParty/Chaos.NaCl-LICENSE.md`.
+
+Updates are distributed through GitHub Releases and verified against the app's embedded Ed25519 public key.

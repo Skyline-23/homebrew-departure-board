@@ -154,3 +154,28 @@ BOOL RegisterUserInstallation(NSString *installationRoot, NSError **error) {
     }
     return YES;
 }
+
+BOOL UpdateInstalledScreenSaver(NSBundle *application, NSError **error) {
+
+    if (![application.bundlePath isEqual:@"/Applications/Departure Board.app"]) {
+        return YES;
+    }
+    NSString *destination = [NSHomeDirectory()
+        stringByAppendingPathComponent:@"Library/Screen Savers/Departure Board.saver"];
+    NSBundle *installed = [NSBundle bundleWithPath:destination];
+
+    if (![installed.bundleIdentifier isEqual:@"com.skyline23.departureboard.saver"]) {
+        return YES;
+    }
+    NSString *version = application.infoDictionary[@"CFBundleShortVersionString"];
+    NSString *installedVersion = installed.infoDictionary[@"CFBundleShortVersionString"];
+
+    if (!version || !installedVersion ||
+        [version compare:installedVersion options:NSNumericSearch] != NSOrderedDescending) {
+        return YES;
+    }
+    NSString *source =
+        [application.resourcePath stringByAppendingPathComponent:@"Departure Board.saver"];
+    return InstallBundle(source, destination, @"com.skyline23.departureboard.saver",
+                         @"io.skyline.departureboard.saver", error);
+}
