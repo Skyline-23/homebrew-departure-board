@@ -84,6 +84,9 @@ internal sealed class UpdateController : IDisposable
             CustomInstallerArguments =
                 $"/SILENT /SUPPRESSMSGBOXES /NORESTART /SP- /DIR=\"{Path.TrimEndingDirectorySeparator(AppContext.BaseDirectory)}\"",
         };
+        // The tray can stay open for weeks. Keep the daily loop active even on
+        // the first launch, after NetSparkle persists its initial configuration.
+        current.Configuration.Reload();
         current.CloseApplicationAsync += CloseApplication;
         return current;
     }
