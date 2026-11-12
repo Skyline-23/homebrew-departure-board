@@ -1,5 +1,6 @@
-Departure Board 0.7.7 adds in-app updates for macOS and Windows.
+Departure Board 0.7.8 adds in-app updates for macOS and Windows.
 
+- Allow macOS updates to install and restart while the settings window is open.
 - Choose automatic checks and automatic installation in the Updates settings, with the current version and last check time shown.
 - Download updates in the background and install when quitting, or review release notes and choose to install, skip or defer manually.
 - Check for updates from the app settings or menu. New releases are checked once a day in the background.
@@ -8,7 +9,7 @@ Departure Board 0.7.7 adds in-app updates for macOS and Windows.
 - Keep the Mac screen saver aligned with the updated companion app.
 - Generate and sign platform-specific update feeds automatically in the release workflow.
 
-If you use 0.7.6 or earlier, install 0.7.7 once from the website. Subsequent updates are available inside the app.
+If you use 0.7.6 or earlier, install the latest version once from the website. Subsequent updates are available inside the app. If you already use 0.7.7 on macOS, close the settings window before choosing Install and Relaunch.
 
 macOS 12+ supports Apple Silicon and Intel. Windows 11 supports x64 and ARM64 and remains an unsigned preview; update authenticity is verified with the app's pinned Ed25519 key.
 

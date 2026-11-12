@@ -94,6 +94,7 @@ static NSView *DBSettingsGroup(NSString *heading, NSView *body) {
     window.title = DBUIString(@"settings.title");
     window.contentMinSize = NSMakeSize(620, 500);
     window.releasedWhenClosed = NO;
+    window.preventsApplicationTerminationWhenModal = NO;
     NSView *root = window.contentView;
     NSDictionary *saved = DBSettingsStore.settings;
     NSPopUpButton *locations = [[NSPopUpButton alloc] initWithFrame:NSZeroRect pullsDown:NO];

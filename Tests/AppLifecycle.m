@@ -108,6 +108,17 @@ int main(int argc, const char *argv[]) {
                                                atomically:YES
                                                  encoding:NSUTF8StringEncoding
                                                     error:NULL];
+            // A settings sheet must not block Quit or Sparkle's install-and-relaunch.
+            [controller showSettings:nil];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC),
+                           dispatch_get_main_queue(), ^{
+                               [@"failed" writeToFile:resultPath
+                                           atomically:YES
+                                             encoding:NSUTF8StringEncoding
+                                                error:NULL];
+                               [controller closeSettings];
+                               [application terminate:nil];
+                           });
             [application terminate:nil];
         });
         [application run];
