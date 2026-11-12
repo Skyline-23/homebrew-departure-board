@@ -1,15 +1,22 @@
 class DepartureBoard < Formula
   desc "Airport departure boards as a native macOS screen saver"
   homepage "https://github.com/Skyline-23/homebrew-departure-board"
-  url "https://github.com/Skyline-23/homebrew-departure-board/releases/download/v0.7.6/DepartureBoard-0.7.6-source.tar.gz"
-  sha256 "ea12d18429c7b2042bbadbdfe064302dc33ac766be8cc09e3a47bebd783061a4"
-  version "0.7.6"
+  url "https://github.com/Skyline-23/homebrew-departure-board/releases/download/v0.7.7/DepartureBoard-0.7.7-source.tar.gz"
+  sha256 "502068c157f9522496c0a87154471e4d4ad8f229fa375f98f1022ad78f6cf4b0"
+  version "0.7.7"
   license "MIT"
 
   depends_on macos: :monterey
 
+  resource "sparkle" do
+    url "https://github.com/sparkle-project/Sparkle/releases/download/2.10.1/Sparkle-2.10.1.tar.xz"
+    sha256 "1a856d2a9edb8e628de88121d7be04cf0e2167f8641650b78fca00b14244cf27"
+  end
+
   def install
     ENV["VERSION"] = version.to_s
+    resource("sparkle").stage(buildpath/"sparkle")
+    ENV["SPARKLE_ROOT"] = (buildpath/"sparkle").to_s
     system "bash", "script/build.sh"
     libexec.install "work/Build.noindex/Bundles/Departure Board.app"
     libexec.install "work/Build.noindex/Bundles/Departure Board.saver"
