@@ -18,6 +18,18 @@
 
 @end
 
+@interface DBDesktopDisplayChoices : NSStackView
+@end
+
+@implementation DBDesktopDisplayChoices
+
+- (NSInteger)tag {
+
+    return 211;
+}
+
+@end
+
 static NSTextField *DBSettingsLabel(NSString *text) {
 
     NSTextField *label = [NSTextField labelWithString:text];
@@ -178,6 +190,22 @@ static NSView *DBSettingsGroup(NSString *heading, NSView *body) {
                                              action:NULL];
     desktop.tag = 204;
     desktop.state = [saved[@"desktopEnabled"] boolValue];
+    NSMutableArray<NSView *> *displayChoices = NSMutableArray.new;
+
+    for (NSScreen *display in NSScreen.screens) {
+        NSString *title =
+            [NSString stringWithFormat:@"%lu. %@", displayChoices.count + 1, display.localizedName];
+        NSButton *choice = [NSButton checkboxWithTitle:title target:nil action:NULL];
+        choice.identifier = [DBSettingsStore identifierForScreen:display];
+        choice.state = [DBSettingsStore desktopIncludesScreen:display settings:saved];
+        [displayChoices addObject:choice];
+    }
+    NSStackView *displays = [DBDesktopDisplayChoices stackViewWithViews:displayChoices];
+    displays.orientation = NSUserInterfaceLayoutOrientationVertical;
+    displays.alignment = NSLayoutAttributeLeading;
+    displays.spacing = 8;
+    NSView *displaySelection =
+        DBSettingsGrid(@[ DBSettingsRow(DBUIString(@"settings.desktopDisplays"), displays) ]);
     NSButton *spaces = [NSButton checkboxWithTitle:DBUIString(@"settings.showAllSpaces")
                                             target:nil
                                             action:NULL];
@@ -200,8 +228,8 @@ static NSView *DBSettingsGroup(NSString *heading, NSView *body) {
     NSStackView *desktopActions = [NSStackView stackViewWithViews:@[ wallpaper, saver ]];
     desktopActions.orientation = NSUserInterfaceLayoutOrientationHorizontal;
     desktopActions.spacing = 10;
-    NSStackView *desktopOptions =
-        [NSStackView stackViewWithViews:@[ desktop, spaces, login, desktopActions ]];
+    NSStackView *desktopOptions = [NSStackView
+        stackViewWithViews:@[ desktop, displaySelection, spaces, login, desktopActions ]];
     desktopOptions.orientation = NSUserInterfaceLayoutOrientationVertical;
     desktopOptions.alignment = NSLayoutAttributeLeading;
     desktopOptions.spacing = 14;
@@ -372,6 +400,20 @@ static NSView *DBSettingsGroup(NSString *heading, NSView *body) {
     saved[@"launchAtLogin"] = @([(NSButton *)[v viewWithTag:208] state] == NSControlStateValueOn);
     saved[@"showAllSpaces"] = @([(NSButton *)[v viewWithTag:209] state] == NSControlStateValueOn);
     saved[@"boardScale"] = [(NSPopUpButton *)[v viewWithTag:210] selectedItem].representedObject;
+    id storedExclusions = saved[@"desktopExcludedDisplays"];
+    NSMutableArray *excluded = [storedExclusions isKindOfClass:NSArray.class]
+                                   ? [storedExclusions mutableCopy]
+                                   : NSMutableArray.new;
+    NSStackView *displays = [v viewWithTag:211];
+
+    for (NSButton *choice in displays.arrangedSubviews) {
+        [excluded removeObject:choice.identifier];
+
+        if (choice.state != NSControlStateValueOn) {
+            [excluded addObject:choice.identifier];
+        }
+    }
+    saved[@"desktopExcludedDisplays"] = excluded;
     NSButton *button = (NSButton *)[v viewWithTag:205];
     button.enabled = NO;
     button.title = DBUIString(@"settings.saving");

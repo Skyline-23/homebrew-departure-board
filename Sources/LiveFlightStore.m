@@ -866,10 +866,21 @@ static void MergeFlightVariants(NSMutableDictionary *flight, NSDictionary *alias
         }
     }
 
+    NSDictionary *settings = DBSettingsStore.settings;
+    BOOL desktopVisible = NO;
+
+    if ([settings[@"desktopEnabled"] boolValue]) {
+        for (NSScreen *screen in NSScreen.screens) {
+            if ([DBSettingsStore desktopIncludesScreen:screen settings:settings]) {
+                desktopVisible = YES;
+                break;
+            }
+        }
+    }
+
     for (NSRunningApplication *app in [NSRunningApplication
              runningApplicationsWithBundleIdentifier:@"com.skyline23.departureboard"]) {
-        if (app.processIdentifier != getpid() && !app.terminated &&
-            [DBSettingsStore.settings[@"desktopEnabled"] boolValue]) {
+        if (app.processIdentifier != getpid() && !app.terminated && desktopVisible) {
             return YES;
         }
     }

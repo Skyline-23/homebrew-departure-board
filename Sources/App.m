@@ -82,7 +82,7 @@
 
     BOOL visible = [self previewIsVisible] ||
                    (self.options.visible && !self.options.miniaturized) ||
-                   [DBSettingsStore.settings[@"desktopEnabled"] boolValue];
+                   self.desktop.hasDesktopWindows;
     NSTimeInterval now = NSProcessInfo.processInfo.systemUptime;
 
     if (visible && (!self.lastDataRefresh || now - self.lastDataRefresh >= 30)) {

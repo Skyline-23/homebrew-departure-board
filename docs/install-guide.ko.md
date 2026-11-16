@@ -87,6 +87,8 @@ Get-FileHash "$env:USERPROFILE\Downloads\DepartureBoard-win-x64-Setup.exe" -Algo
 
 **Desktop**에서 **Live wallpaper**(Mac) 또는 **Live desktop wallpaper**(Windows)를 켭니다. Mac은 **Apply**, Windows는 **Apply changes**를 누르면 적용됩니다. 전광판이 바탕화면 아이콘 뒤에서 갱신됩니다. 앱이 실행 중이어야 계속 움직이며, 완전히 종료하면 움직이는 전광판도 사라집니다.
 
+Mac에서는 **Desktop → Displays**에서 라이브 전광판을 표시할 모니터를 고릅니다. 모니터의 체크를 해제하고 **Apply**를 누르면 해당 화면의 이전 배경화면을 복원합니다. 기본값은 모든 모니터에 표시이며, 연결을 해제했다가 다시 연결해도 선택값은 유지됩니다. **Show on all Spaces**와는 별도 설정입니다. 모니터를 연결한 뒤에는 설정창을 다시 열면 목록이 갱신됩니다.
+
 **Show on all Spaces / Show on all desktops**는 여러 가상 데스크톱에 표시할지를 정합니다. 여러 물리 모니터를 하나의 가로로 긴 전광판으로 합치는 옵션은 아닙니다. 각 모니터에는 별도의 전광판이 표시됩니다.
 
 로그인할 때도 계속 쓰려면 **Launch in background at login / sign-in**을 켭니다. 배경화면이 필요 없으면 Live wallpaper를 끄고 Apply를 누르세요.

@@ -87,6 +87,8 @@ Get-FileHash "$env:USERPROFILE\Downloads\DepartureBoard-win-x64-Setup.exe" -Algo
 
 Under **Desktop**, enable **Live wallpaper** (Mac) or **Live desktop wallpaper** (Windows). Select **Apply** on Mac or **Apply changes** on Windows. The board updates behind desktop icons while the app runs. Quitting the app removes its live desktop windows.
 
+On Mac, **Desktop → Displays** lets you choose which monitors show the live board. Uncheck a monitor and select **Apply** to restore its previous wallpaper. All monitors are selected by default; choices are remembered when a display is disconnected and reconnected. This selection is separate from **Show on all Spaces**. Reopen settings after connecting a monitor to update the display list.
+
 **Show on all Spaces / Show on all desktops** controls virtual desktops. It does not combine physical monitors into one stretched board. Each physical monitor receives its own board.
 
 Enable **Launch in background at login / sign-in** to resume the app after signing in. To stop live wallpaper, turn off its checkbox and apply.

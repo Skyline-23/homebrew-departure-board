@@ -1,6 +1,7 @@
 #import "WallpaperRenderer.h"
 #import "DepartureBoardView.h"
 #import "LiveFlightStore.h"
+#import "SettingsStore.h"
 #import <CoreGraphics/CoreGraphics.h>
 
 @implementation DBWallpaperRenderer
@@ -13,15 +14,7 @@
 
 + (NSString *)identifierForScreen:(NSScreen *)screen {
 
-    CGDirectDisplayID display = [screen.deviceDescription[@"NSScreenNumber"] unsignedIntValue];
-    CFUUIDRef uuid = CGDisplayCreateUUIDFromDisplayID(display);
-    NSString *identifier = uuid ? CFBridgingRelease(CFUUIDCreateString(NULL, uuid))
-                                : [NSString stringWithFormat:@"%u", display];
-
-    if (uuid) {
-        CFRelease(uuid);
-    }
-    return identifier;
+    return [DBSettingsStore identifierForScreen:screen];
 }
 
 + (NSEdgeInsets)contentInsetsForScreen:(NSScreen *)screen {
@@ -127,13 +120,14 @@
                 }
             }
 
-            if (!screen) {
+            if (!screen || ![DBSettingsStore desktopIncludesScreen:screen
+                                                          settings:DBSettingsStore.settings]) {
                 continue;
             }
             NSString *identifier = item[@"identifier"];
             NSURL *current = [NSWorkspace.sharedWorkspace desktopImageURLForScreen:screen];
 
-            if (!originals[identifier] && current && ![current.path hasPrefix:self.rootPath]) {
+            if (current && ![current.path hasPrefix:[self.rootPath stringByAppendingString:@"/"]]) {
                 NSDictionary *options =
                     [NSWorkspace.sharedWorkspace desktopImageOptionsForScreen:screen];
                 originals[identifier] = @{
@@ -142,7 +136,11 @@
                         ?: @(NSImageScaleProportionallyUpOrDown),
                     @"clipping" : options[NSWorkspaceDesktopImageAllowClippingKey] ?: @YES
                 };
-                [originals writeToFile:originalsPath atomically:YES];
+
+                if (![originals writeToFile:originalsPath atomically:YES]) {
+                    success = NO;
+                    continue;
+                }
             }
             NSSize pixels = NSMakeSize(screen.frame.size.width * screen.backingScaleFactor,
                                        screen.frame.size.height * screen.backingScaleFactor);

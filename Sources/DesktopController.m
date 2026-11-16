@@ -99,10 +99,15 @@
     NSDictionary *originals = [NSDictionary dictionaryWithContentsOfFile:path];
 
     for (NSScreen *screen in NSScreen.screens) {
+        if ([self.appliedSettings[@"desktopEnabled"] boolValue] &&
+            [DBSettingsStore desktopIncludesScreen:screen settings:self.appliedSettings]) {
+            continue;
+        }
         NSURL *current = [NSWorkspace.sharedWorkspace desktopImageURLForScreen:screen];
         NSDictionary *original = originals[[self identifierForScreen:screen]];
 
-        if ([current.path hasPrefix:self.wallpaperRoot] && original[@"url"]) {
+        if ([current.path hasPrefix:[self.wallpaperRoot stringByAppendingString:@"/"]] &&
+            original[@"url"]) {
             [NSWorkspace.sharedWorkspace
                 setDesktopImageURL:[NSURL URLWithString:original[@"url"]]
                          forScreen:screen
@@ -167,20 +172,25 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             DBDesktopController *controller = weakSelf;
 
-            if (controller.wallpaperTask != finished) {
-                return;
-            }
-            controller.wallpaperTask = nil;
+            // A helper already rendering when a display is deselected may finish after restoration.
+            [controller restoreSystemWallpapers];
 
-            if (finished.terminationStatus != 0) {
-                NSLog(@"Wallpaper rendering failed with status %d", finished.terminationStatus);
+            BOOL currentTask = controller.wallpaperTask == finished;
+            BOOL success = currentTask && finished.terminationStatus == 0;
+
+            if (currentTask) {
+                controller.wallpaperTask = nil;
+
+                if (!success) {
+                    NSLog(@"Wallpaper rendering failed with status %d", finished.terminationStatus);
+                }
             }
 
             for (void (^callback)(BOOL) in completions) {
-                callback(finished.terminationStatus == 0);
+                callback(success);
             }
 
-            if (controller.wallpaperPending) {
+            if (currentTask && controller.wallpaperPending) {
                 controller.wallpaperPending = NO;
                 [controller updateSystemWallpapersWithCompletion:nil];
             }
@@ -216,7 +226,12 @@
     [self.wallpaperTask terminate];
     self.wallpaperTask = nil;
     self.wallpaperPending = NO;
+    NSArray *cancelled = self.wallpaperCompletions.copy;
     [self.wallpaperCompletions removeAllObjects];
+
+    for (void (^callback)(BOOL) in cancelled) {
+        callback(NO);
+    }
 }
 
 - (NSDictionary *)currentScreenLayout {
@@ -265,8 +280,18 @@
 
     NSDictionary *settings = DBSettingsStore.settings;
     BOOL enabled = [settings[@"desktopEnabled"] boolValue];
+    BOOL settingsChanged = ![self.appliedSettings isEqual:settings];
+    NSDictionary *layout = [self currentScreenLayout];
+    BOOL layoutChanged = ![layout isEqual:self.screenLayout];
 
-    if (![self.appliedSettings isEqual:settings]) {
+    if (settingsChanged) {
+        id previousSelection = self.appliedSettings[@"desktopExcludedDisplays"] ?: @[];
+        id nextSelection = settings[@"desktopExcludedDisplays"] ?: @[];
+        BOOL selectionChanged = ![previousSelection isEqual:nextSelection];
+
+        if (selectionChanged || !enabled) {
+            [self stop];
+        }
         self.appliedSettings = settings;
         self.nextWallpaperUpdate = 0;
 
@@ -275,27 +300,41 @@
         }
     }
 
-    if (!enabled) {
-        [self stop];
-
-        if (self.windows.count) {
-            [self restoreSystemWallpapers];
-        }
-
-        for (NSWindow *window in self.windows) {
+    for (NSWindow *window in self.windows.copy) {
+        if (!enabled || !window.screen || !layout[[self identifierForScreen:window.screen]] ||
+            ![DBSettingsStore desktopIncludesScreen:window.screen settings:settings]) {
             [window close];
+            [self.windows removeObject:window];
         }
-        [self.windows removeAllObjects];
-        return;
+    }
+    self.screenLayout = layout;
+
+    if (settingsChanged || layoutChanged) {
+        [self restoreSystemWallpapers];
     }
 
-    if (self.windows.count) {
+    if (!enabled) {
         return;
     }
-    self.screenLayout = [self currentScreenLayout];
     NSTimeInterval cycleStart = NSProcessInfo.processInfo.systemUptime;
 
     for (NSScreen *screen in NSScreen.screens) {
+        if (![DBSettingsStore desktopIncludesScreen:screen settings:settings]) {
+            continue;
+        }
+        BOOL exists = NO;
+
+        for (NSWindow *window in self.windows) {
+            if ([[self identifierForScreen:window.screen]
+                    isEqual:[self identifierForScreen:screen]]) {
+                exists = YES;
+                break;
+            }
+        }
+
+        if (exists) {
+            continue;
+        }
         NSWindow *window = [[NSWindow alloc] initWithContentRect:screen.frame
                                                        styleMask:NSWindowStyleMaskBorderless
                                                          backing:NSBackingStoreBuffered
@@ -332,6 +371,11 @@
     window.collectionBehavior =
         NSWindowCollectionBehaviorStationary | NSWindowCollectionBehaviorIgnoresCycle |
         ([self showOnAllSpaces] ? NSWindowCollectionBehaviorCanJoinAllSpaces : 0);
+}
+
+- (BOOL)hasDesktopWindows {
+
+    return self.windows.count > 0;
 }
 
 - (BOOL)shouldUpdateWindow:(NSWindow *)window {

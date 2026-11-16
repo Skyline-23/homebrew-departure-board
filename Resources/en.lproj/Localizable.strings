@@ -170,6 +170,7 @@
 "data.retrieved" = "Retrieved";
 
 "settings.desktop" = "Live wallpaper";
+"settings.desktopDisplays" = "Displays";
 "settings.lastUpdate" = "Flight data: AeroDataBox · Updated: %@";
 "settings.neverUpdated" = "Not retrieved yet";
 "settings.apiKeySaved" = "API key saved in Keychain. Enter a new key to replace it.";
