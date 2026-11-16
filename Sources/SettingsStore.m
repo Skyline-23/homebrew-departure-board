@@ -12,6 +12,26 @@ static NSTimeInterval nextSettingsCheck;
 
 @implementation DBSettingsStore
 
++ (NSString *)identifierForScreen:(NSScreen *)screen {
+
+    CGDirectDisplayID display = [screen.deviceDescription[@"NSScreenNumber"] unsignedIntValue];
+    CFUUIDRef uuid = CGDisplayCreateUUIDFromDisplayID(display);
+    NSString *identifier = uuid ? CFBridgingRelease(CFUUIDCreateString(NULL, uuid))
+                                : [NSString stringWithFormat:@"%u", display];
+
+    if (uuid) {
+        CFRelease(uuid);
+    }
+    return identifier;
+}
+
++ (BOOL)desktopIncludesScreen:(NSScreen *)screen settings:(NSDictionary *)settings {
+
+    id excluded = settings[@"desktopExcludedDisplays"];
+    return ![excluded isKindOfClass:NSArray.class] ||
+           ![excluded containsObject:[self identifierForScreen:screen]];
+}
+
 + (NSURL *)settingsURL {
 
     NSString *folder = [[LiveFlightStore userHome]

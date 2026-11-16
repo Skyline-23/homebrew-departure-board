@@ -20,3 +20,5 @@ printf 'pending' > "$RESULT"
 open -g -n -W "$TEST_APP" --args "$RESULT"
 test "$(cat "$RESULT")" = passed
 printf 'Passed 12 close/reopen cycles, agent-only Dock policy and startup/recovery decisions.\n'
+
+./script/validate_desktop.sh
